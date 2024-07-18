@@ -18,4 +18,6 @@ socket.on('connection', (client_socket) => {
 
 server.listen(port, () => {
     console.log(`Server is listening on port ${port}`); // Server listening on http://localhost:2000/login.html
+                                                    // If you change the `port` varibale here, you have to change the login.js
+                                                    // In, login.js, change the port of the `host` variable. 
 })
