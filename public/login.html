@@ -5,18 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Page</title>
     <link rel="stylesheet" href="login.css">
+    <script src="https://cdn.socket.io/socket.io-3.0.1.min.js"></script>
 </head>
 <body>
     <div class="login-container">
         <img src="draft-logo-of-noteroom.gif" alt="Logo of NoteRoom">
         <h2>Login to NoteRoom</h2>
         <form>
-            <input type="text" name="username" placeholder="Username" required>
+            <input type="text" name="username" placeholder="Username" class="username" required>
             <br>
-            <input type="password" name="password" placeholder="Password" required>
+            <input type="password" name="password" placeholder="Password" class="password" required>
             <br>
-            <button type="submit">Login</button>
+            <button type="submit" onclick="sendCred()">Login</button>
         </form>
     </div>
+    <script src="login.js"></script>
 </body>
 </html>
