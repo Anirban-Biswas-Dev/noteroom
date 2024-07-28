@@ -14,10 +14,14 @@
         <form>
             <input type="text" name="username" placeholder="Username" class="username" required>
             <br>
-            <input type="password" name="password" placeholder="Password" class="password" required>
+            <div class="password-container">
+                <input type="password" name="password" placeholder="Password" class="password" required>
+                <span class="toggle-password">Show</span>
+            </div>
             <br>
             <button type="submit" onclick="sendCred()">Login</button>
         </form>
+        <a href="help.html">Need Help?</a>
     </div>
     <script src="login.js"></script>
 </body>
