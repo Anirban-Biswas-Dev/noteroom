@@ -31,26 +31,27 @@ app.use(express.static(path.join(__dirname, '../public'))) // Middleware for usi
 // })) // Middleware for working with POST requests. 
 // app.use('/login', loginRouter) // Middleware for using routers of "/routers/login.js". Keep this lines(28-31) commented while working 
 
-app.get('/login', (req, res) => {
+app.get('/login-user', (req, res) => {
     res.status(200)
     res.render('login')
 }) /* Arnob here is a simple code snippet that will help you to run your code in browser in real-time 
 Whenever you will add a new ejs file, to check that in the browser, do these:
+
     => Copy from line 34 to 37, I mean that app.get code snippet
     => Paste below this comment
-    => In the first argument, I mean where I have place '/login', use any route you want. That will be used to locate your file
+    => In the first argument, I mean where I have place '/login-user', use any route you want. That will be used to locate your file
         in browser.
-    => In app.render(), write the ejs file(without the extension) name that you want to see in the broswer. In the above example 
-        I have written 'login' to see the 'login.ejs' file (in views folder) to see in the browser.
-    => Now in the browser, use the route (in this case 'localhost:2000/login') to see the file. 
+    => In app.render(), write the ejs file (without the extension) name that you want to see in the broswer. In the above example 
+        I have written 'login' to see the 'login.ejs' file (in views folder) to see in the browser with that route.
+    => Now in the browser, use the route (in this case 'localhost:2000/login-user') to see the file. 
     => Reload the browser if you change the ejs file
 
     I am giving the bar-loader example below that
 */
 
-app.get('/loader', (req, res) => { // route='/loader' that means localhost:2000/loader
-    res.status(200)                                   //                  ^
-    res.render('bar-loader') // Rendering bar-loader.ejs in that route -----|
+app.get('/loader', (req, res) => { // route='/loader' that means (localhost:2000/loader)
+    res.status(200)               //                                             ^
+    res.render('bar-loader') // Rendering "views/bar-loader.ejs" in that route --|
 })
 
 // Connecting with the client to the server using socket
