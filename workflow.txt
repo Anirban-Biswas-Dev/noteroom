@@ -64,3 +64,4 @@ PROJECT STRCUTURE:
         => Type 'npm start' in the terminal (The server should be running)
         => To check if the server is running or not, go to the browser and enter this url: localhost:2000/login
         => Read the server.js for using routers and rendering ejs file (make sure the server is running)
+   => This is another change
