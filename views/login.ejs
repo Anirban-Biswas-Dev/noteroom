@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link rel="stylesheet" href="css\login.css"> 
+        <!-- 
+            When linking stylesheets. Use this format: href="css\stylesheet_file_name.css"
+            This will automatically understand that the stylesheets are in "public\css" folder
+        -->
+    <script src="https://cdn.socket.io/socket.io-3.0.1.min.js"></script>
+</head>
+<body>
+    <div class="login-container">
+        <img src="images\draft-logo-of-noteroom.gif" alt="Logo of NoteRoom">
+            <!-- 
+                Same goes for images. Use this format: src="images\image_file_name.gif"
+            -->
+        <h2>Login to NoteRoom</h2>
+        <form action="/login">
+            <input type="text" name="studentid" placeholder="Student ID" class="studentid" required>
+            <br>
+            <div class="password-container">
+                <input type="password" name="password" placeholder="Password" class="password" required>
+                <span class="toggle-password">Show</span>
+            </div>
+            <br>
+            <button type="submit" name="submit">Login</button>
+        </form>
+        <a href="help.html">Need Help?</a>
+    </div>
+    <script src="js\login.js"></script>
+        <!-- 
+            Also for scripts. Use this format: src="js\login.js". This will automatically determine "public\js" folder
+        -->
+</body>
+</html>
