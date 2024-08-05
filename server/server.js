@@ -1,65 +1,51 @@
-// Importing external and internal modules
 const express = require('express')
 const path = require('path')
 const app = express()
 const server = require('http').createServer(app)
-const socket = require('socket.io')(server, {
-    cors: { origin: '*' }
-})
-const mongoose = require('mongoose')
-const bodyParser = require('body-parser')
+const io = require('socket.io')(server, { cors: { origin: '*' } })
 
-// const loginRouter = require('./routers/login') 
-
-// Connecting to 'MY LOCAL' database on 'MY LOCAL MACHINE'.  
+// const session = require('express-session')
+// const mongoose = require('mongoose')
+// const bodyParser = require('body-parser')
+// const loginRouter = require('./routers/login')
+// const userRouter = require('./routers/user') // Keep this commented while you are working 
 
 // const url = 'mongodb://localhost:27017/information'
 // mongoose.connect(url).then(() => {
 //     console.log(`Connected to database information`);
-// })  //So Arnob, keep these lines(12-19) commented when you are working
+// }) // Keep these commented while you are working
 
-const port = 2000 // localhost port
+const port = 2000
 
 // Setting the view engine as EJS. And all the ejs files are stored in "/views" folder
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, '../views'))
 
 app.use(express.static(path.join(__dirname, '../public'))) // Middleware for using static files. All are stored in "/public" folder
-
 // app.use(bodyParser.urlencoded({
 //     extended: true
 // })) // Middleware for working with POST requests. 
-// app.use('/login', loginRouter) // Middleware for using routers of "/routers/login.js". Keep this lines(28-31) commented while working 
+// app.use(session({
+//     secret: 'a-secret-key',
+//     resave: true,
+//     saveUninitialized: true
+// })) // Middleware for working with sessions
+// app.use('/login', loginRouter(io)) // Middleware for using routers of "/routers/login.js". 
+// app.use('/user', userRouter()) // Middleware for using routers of "/routers/user.js". 
 
-app.get('/login-user', (req, res) => {
-    res.status(200)
-    res.render('login')
-}) /* Arnob here is a simple code snippet that will help you to run your code in browser in real-time 
-Whenever you will add a new ejs file, to check that in the browser, do these:
+app.get('/login', (req, res) => {
+    res.render('login') // Arnob work here if you really want to work with the server
+})
 
-    => Copy from line 34 to 37, I mean that app.get code snippet
-    => Paste below this comment
-    => In the first argument, I mean where I have place '/login-user', use any route you want. That will be used to locate your file
-        in browser.
-    => In app.render(), write the ejs file (without the extension) name that you want to see in the broswer. In the above example 
-        I have written 'login' to see the 'login.ejs' file (in views folder) to see in the browser with that route.
-    => Now in the browser, use the route (in this case 'localhost:2000/login-user') to see the file. 
-    => Reload the browser if you change the ejs file
-
-    I am giving the bar-loader example below that
-*/
-
-app.get('/loader', (req, res) => { // route='/loader' that means (localhost:2000/loader)
-    res.status(200)               //                                             ^
-    res.render('bar-loader') // Rendering "views/bar-loader.ejs" in that route --|
+app.get('/bar-loader', (req, res) => {
+    res.render('bar-loader')
 })
 
 // Connecting with the client to the server using socket
-socket.on('connection', (client_socket) => {
-    console.log(`User captured ID: ${client_socket.id}`);
+io.on('connection', (socket) => {
+    console.log(`User captured ID: ${socket.id}`);
 })
 
-// Server is in listening mode! Ok, thats why this is called a server. Duuh!
 server.listen(port, () => {
     console.log(`Server is listening on localhost:${port}`);
 })
