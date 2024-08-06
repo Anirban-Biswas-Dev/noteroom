@@ -1,32 +1,45 @@
-// Importing external and internal modules
+// Don't touch this while working
 const express = require('express')
 const Students = require('../schemas/students')
 const router = express.Router()
 
-function add_student(studentObj) {
-    let student = Students.create(studentObj)
-    return student
+function loginRouter(io) {
+    async function extract(studentID) {
+        let student = await Students.find({ student_id: studentID })
+        return new Promise((resolve, reject) => {
+            if (student.length != 0) {
+                resolve(student[0]["password"])
+            } else {
+                reject('No students found!')
+            }
+        })
+    }
+
+    router.get('/', (req, res) => {
+        if(req.session.stdid) {
+            res.redirect(`/user/${req.session.stdid}`)
+        } else {
+            res.status(200)
+            res.render('login')
+        }
+    })
+
+    router.post('/', (req, res) => {
+        let studentid = req.body.studentid
+        let password = req.body.password
+
+        extract(studentid).then(actualPass => {
+            if (password === actualPass) {
+                req.session.stdid = studentid
+                res.redirect(`/user/${req.session.stdid}`)  
+            } else {
+                io.emit('wrong-password')
+            }
+        }).catch(err => {
+            io.emit('no-studentid')
+        })
+    })
+    return router
 }
 
-router.get('/', (req, res) => {
-    res.status(200)
-    res.render('login')
-})
-
-router.post('/', (req, res) => {
-    let studentid = req.body.studentid
-    let password = req.body.password
-    add_student({
-        student_id: studentid,
-        password: password
-    }).then((student) => {
-        console.log(`Student added ${student}`);
-    }).catch((err) => {
-        console.log(err.message);
-    })
-    res.send(`<h1>Hello ${studentid}</h1>`)
-})
-
-module.exports = router
-
-// Arnob, I'll handle this file. DON'T TOUCH IT! DANGEROUS ERRORS WILL KILL YOU!
+module.exports = loginRouter
