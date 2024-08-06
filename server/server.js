@@ -41,6 +41,10 @@ app.get('/bar-loader', (req, res) => {
     res.render('bar-loader')
 })
 
+app.get('/user-profile', (req, res) => {
+    res.render('user-profile')
+})
+
 // Connecting with the client to the server using socket
 io.on('connection', (socket) => {
     console.log(`User captured ID: ${socket.id}`);
