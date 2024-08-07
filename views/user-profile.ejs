@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile</title>
-    <link rel="stylesheet" href="css\user-profile.css">
+    <link rel="stylesheet" href="/css/user-profile.css">
     <!-- this is the famous font awesome cloud cdn link to access the icons used -->
     <link rel=”stylesheet” href=”https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css”>
-
+    <script src="https://cdn.socket.io/socket.io-3.0.1.min.js"></script>
 
 </head>
 <body>
@@ -21,21 +21,24 @@
                 <i class="fa-solid fa-magnifying-glass"></i>
             </button>
     </div>
+    <!-- Rafi: Arnob the elements starting with <%//=  %> are varibales, don't focus on them. I am commenting them out because you currently don't have access to the database. 
+    After finishing signup page, I will add that in the internet and then you can work with them -->
     <div class="middle-section">
         <div class="ms-first-row">
             <!--img needs to be discussed, for sample look, I'm using mine-->
-            <img src="public/images/Anirban%20Caricature%20-%20NoteRoom.png" alt="Profile Picture">
+            <!-- Rafi:  Don't use the 'public/images/image.png', just write 'images/image.png' -->
+            <img src="images/Anirban%20Caricature%20-%20NoteRoom.png" alt="Profile Picture">
             <div class="info-items-1"><!--We'll update the frontend js codes for these element soon-->
-                <span class="user-name" >Anirban Biswas</span>
-                <span class="user-clg-id" >ID: 154872DE</span><!--for this non-editable data, basic data fetch will do or even DOM-->
-                <div class="user-group">Science</div>
+                <span class="user-name" ><% //= student.user_name %> Anirban Biswas</span>
+                <span class="user-clg-id" >ID: <%//= student.student_id %>6789</span><!--for this non-editable data, basic data fetch will do or even DOM-->
+                <div class="user-group"><%//= student.group %>Science</div>
                 <!-- fetching exam rank needs to be discussed-->
-                <div class="exam-ranking">Previous Exam Ranking: No Exams Yet</div>
+                <!-- <div class="exam-ranking">Previous Exam Ranking: No Exams Yet</div> -->
             </div>
             <div class="divider"></div>
             <div class="user-gains"><!--this is another core feature we need to develop. Looking forward to your algorithms and overall my plan is DOM manipulation-->
-                <div class="top-voice-badge">No Badges Gained</div>
-                <div class="featured-note">No Notes to Feature</div>
+                <div class="top-voice-badge"><%//= student.badge %>No Badge</div>
+                <div class="featured-note">Featured notes count: <%//= student.featured_notes.length %>0</div>
             </div>
         </div>
 
@@ -43,13 +46,13 @@
             <div class="user-display-name">
                 <span class="input-label" >Display Name</span>
                 <div class="display-name-box">
-                    <p>Anirban Biswas</p>
+                    <p><%//= student.user_name %>Anirban Biswas</p>
                 </div>  
             </div>
             <div class="user-college-year">
                 <span class="input-label" >College Year</span>
                 <div class="display-year-box">
-                    <p>1st Year</p>
+                    <p><%//= student.year %>1st Year</p>
                 </div>
             </div>
         </div>
@@ -57,13 +60,13 @@
             <div class="user-bio">
                 <span class="input-label" >Bio</span>
                 <div class="bio-box">
-                    <p>On a mission to abolish pseudo studying.</p>
+                    <p><%//= student.bio %>Frontend developer</p>
                 </div>  
             </div>
             <div class="user-email">
                 <span class="input-label">Email Address</span>
                 <div class="email-box">
-                    <p>anirban.biswas.biz@gmail.com</p>
+                    <p><%//= student.email %>anirban@gmail.com</p>
                 </div>  
             </div>
         </div>
@@ -71,7 +74,7 @@
             <div class="user-college-roll">
                 <span class="input-label" >College Roll</span>
                 <div class="college-roll-box">
-                    <p>422</p>
+                    <p><%//= student.roll_number %>452</p>
                 </div>  
             </div>
             <div class="user-college-section">
@@ -85,13 +88,13 @@
             <div class="user-fav-sub">
                 <span class="input-label" >Favourite Subject</span>
                 <div class="fav-sub-box">
-                    <p>Higher Math</p>
+                    <p><%//= student.favourite_sub %>Higher Math</p>
                 </div>  
             </div>
             <div class="user-non-fav-sub">
                 <span class="input-label">Not So Favourite Subject</span>
                 <div class="non-fav-sub-box">
-                    <p>Bangla</p>
+                    <p><%//= student.non_fav_sub %>Bangla</p>
                 </div>
             </div>
         </div>
@@ -99,7 +102,12 @@
         <!-- We can use DOM here to show the notes prview here. -->
          <!-- This section can be called the ms-sixth-row. -->
         <div class="uploaded-notes-section">
-            <h2>My Notes</h2>
+            <% // if (visiting) { %>
+                <!-- <h2><%//= student.user_name %>'s Notes</h2> -->
+            <%// } else { %>
+                <h2>My Notes</h2>
+            <% //} %> 
+            <!-- Rafi: This is an ejs logic for dynamic viewing, also I am commenting that because it won't work on your machine --> -->
             <div class="notes-container">
                 <div class="note-card">
                     <img src="images\note-1.png" alt="Note 1 Thumbnail">
@@ -122,14 +130,13 @@
                     <p>Note content summary or excerpt goes here...</p>
                 </div>
                 <!-- More cards will come through dom js -->
+                <!-- Rafi: We will work on notes after finishing evrything related profile and signup -->
             </div>
         </div>
         
     </div>
 
-    <script>
-
-    </script>
+    <script src="/js/user-profile.js"></script> <!-- Rafi: Add your javascript related to this in this js-file (user-profile.js)  -->
     
 </body>
 </html>
