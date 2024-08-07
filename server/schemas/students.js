@@ -12,10 +12,16 @@ const studentsSchema = new mongoose.Schema({
     },
     email: {
         type: String,
-        // validate: {
-        //     validator: (email) => email.includes("@"),
-        //     message: (data) => `${data.value} doesn't contain @`
-        // },
+        validate: {
+            validator: (email) => email.includes("@"),
+            message: (data) => `${data.value} doesn't contain @`
+        },
+        default: "test@test.com"
+    },
+    bio: {
+        type: String,
+        minLength: 0,
+        maxLength: 100,
         default: ""
     },
     profile_pic: {
@@ -24,11 +30,11 @@ const studentsSchema = new mongoose.Schema({
     },
     user_name: {
         type: String,
-        // minLength: 10,
-        // maxLength: 20,
+        minLength: 5,
+        maxLength: 20,
         default: ''
     },
-    class_: {
+    year: {
         type: String,
         default: ''
     },
@@ -40,17 +46,13 @@ const studentsSchema = new mongoose.Schema({
         type: Number,
         default: ''
     },
-    interests: {
-        type: [String],
-        default: []
+    favourite_sub: {
+        type: String,
+        default: ""
     },
-    favourite_subs: {
-        type: [String],
-        default: []
-    },
-    weaknesses: {
-        type: [String],
-        default: []
+    non_fav_sub: {
+        type: String,
+        default: ""
     },
     owned_notes: {
         type: [mongoose.Schema.Types.ObjectId],
@@ -74,7 +76,7 @@ const studentsSchema = new mongoose.Schema({
     },
     badge: {
         type: String,
-        default: ""
+        default: "No Badge"
     }
 })
 

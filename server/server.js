@@ -8,12 +8,12 @@ const io = require('socket.io')(server, { cors: { origin: '*' } })
 // const mongoose = require('mongoose')
 // const bodyParser = require('body-parser')
 // const loginRouter = require('./routers/login')
-// const userRouter = require('./routers/user') // Keep this commented while you are working 
+// const userRouter = require('./routers/user')
 
 // const url = 'mongodb://localhost:27017/information'
 // mongoose.connect(url).then(() => {
 //     console.log(`Connected to database information`);
-// }) // Keep these commented while you are working
+// }) 
 
 const port = 2000
 
@@ -31,16 +31,20 @@ app.use(express.static(path.join(__dirname, '../public'))) // Middleware for usi
 //     saveUninitialized: true
 // })) // Middleware for working with sessions
 // app.use('/login', loginRouter(io)) // Middleware for using routers of "/routers/login.js". 
-// app.use('/user', userRouter()) // Middleware for using routers of "/routers/user.js". 
+// app.use('/user', userRouter(io)) // Middleware for using routers of "/routers/user.js". 
+
+// app.get('/', (req, res) => {
+//     req.session.destroy()
+//     res.clearCookie('stdid')
+//     res.redirect('/login')
+// })
 
 app.get('/login', (req, res) => {
-    res.render('login') // Arnob work here if you really want to work with the server
+    res.render('login')
 })
-
 app.get('/bar-loader', (req, res) => {
     res.render('bar-loader')
 })
-
 app.get('/user-profile', (req, res) => {
     res.render('user-profile')
 })
