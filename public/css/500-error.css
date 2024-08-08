@@ -288,97 +288,95 @@ button {
   overflow: hidden;
   max-height: 100vh;
 }
-@media (max-width: 1400px) { 
-  .error__content {
-    top: 40%;
-  }
-  .message__title {
-    font-size: 5rem;
-  }
-}
-@media (max-width: 900px) {
-
-  .message__title {
-    font-size: 34px;
-
-  }
-  .error__content {
-    top: 55%;
-  }
-  }
-@media (max-width: 950px) {
-  .lamp__wrap {
-    max-height: 100vh;
-    overflow: hidden;
-    max-width: 100vw;
-  }
-  .error__social {
-    bottom: 30px;
-    top: auto;
-    transform: none;
-    width: 100%;
-    position: fixed;
-    left: 0;
-  }
-  .e-social__icon {
-    display: inline-block;
-    padding-right: 30px;
-  }
-  .e-social__icon:last-child {
-    padding-right: 0;
-  }
-  .e-social__icon {
-    padding-bottom: 0;
-  }
-}
-@media (max-width: 750px) {
-  body, html, {
-    max-height: 100vh;
-  }
-   .error__content {
-    position: static;
-    margin: 0 auto;
-    transform: none;
-    padding-top: 300px;
-  }
-  .error {
-    padding-top: 0;
-    padding-bottom: 100px;
-    height: 100vh;
-  }
-}
-@media (max-width: 650px) {
-  .message__title {
-    font-size: 36px;
-    padding-bottom: 20px;
-  }
-  .message__text {
-    font-size: 16px;
-    line-height: 2;
-    padding-right: 20px;
-    padding-left: 20px;
-  }
-  .lamp {
-    zoom: .6;
-  }
-  .error__content {
-    padding-top: 180px;
-  }
-  }
+/* Mobile Phones (portrait and landscape) ----------- */
 @media (max-width: 480px) {
-
-  .message__title {
-    font-size: 2rem;
+    .message__title {
+      font-size: 2rem;
+      padding: 15px;
+    }
+    .message__text {
+      padding-left: 10px;
+      padding-right: 10px;
+      font-size: 15px;
+    }
   }
-  .message__text {
-    padding-left: 10px;
-    padding-right: 10px;
-    font-size: 15px;
+  
+  /* Small devices (landscape phones) */
+  @media (min-width: 481px) and (max-width: 650px) {
+    .message__title {
+      font-size: 36px;
+      padding-bottom: 20px;
+    }
+    .message__text {
+      font-size: 16px;
+      line-height: 2;
+      padding-right: 20px;
+      padding-left: 20px;
+    }
   }
-  .error__nav {
-    margin-top: 20px;
+  
+  /* Medium devices (tablets) */
+  @media (min-width: 651px) and (max-width: 750px) {
+    body, html {
+      max-height: 100vh;
+    }
+    .error__content {
+      position: static;
+      margin: 0 auto;
+      transform: none;
+      padding-top: 300px;
+    }
+    .error {
+      padding-top: 0;
+      padding-bottom: 100px;
+      height: 100vh;
+    }
   }
-  .error__content{
-    margin-top: 50px;
+  
+  /* Medium-large devices (small laptops) */
+  @media (min-width: 751px) and (max-width: 950px) {
+    .error__social {
+      bottom: 30px;
+      top: auto;
+      transform: none;
+      width: 100%;
+      position: fixed;
+      left: 0;
+    }
+    .e-social__icon {
+      display: inline-block;
+      padding-right: 30px;
+    }
+    .e-social__icon:last-child {
+      padding-right: 0;
+    }
+    .e-social__icon {
+      padding-bottom: 0;
+    }
+    .message__title {
+      font-size: 2.5rem;
+    }
   }
-}
+  
+  /* Large devices (desktops) */
+  @media (min-width: 951px) and (max-width: 1400px) {
+    .message__title {
+      font-size: 3rem;
+    }
+    .error__content {
+      top: 40%;
+    }
+    .message__text{
+      font-size: 1.2rem;
+    }
+  }
+  
+  /* Extra-large devices (large desktops) */
+  @media (min-width: 1401px) {
+    .error__content {
+      top: 40%;
+    }
+    .message__title {
+      font-size: 4rem;
+    }
+  }

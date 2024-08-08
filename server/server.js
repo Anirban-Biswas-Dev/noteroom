@@ -51,7 +51,9 @@ app.get('/user-profile', (req, res) => {
 app.get('/404-error', (req, res) => {
     res.render('404-error')
 })
-
+app.get('/500-error', (req, res) => {
+    res.render('500-error')
+})
 // Connecting with the client to the server using socket
 io.on('connection', (socket) => {
     console.log(`User captured ID: ${socket.id}`);
