@@ -48,6 +48,9 @@ app.get('/bar-loader', (req, res) => {
 app.get('/user-profile', (req, res) => {
     res.render('user-profile')
 })
+app.get('/404-error', (req, res) => {
+    res.render('404-error')
+})
 
 // Connecting with the client to the server using socket
 io.on('connection', (socket) => {
