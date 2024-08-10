@@ -9,6 +9,7 @@ const io = require('socket.io')(server, { cors: { origin: '*' } })
 // const bodyParser = require('body-parser')
 // const loginRouter = require('./routers/login')
 // const userRouter = require('./routers/user')
+// const errorHandler = require('./errorhandlers/errors')
 
 // const url = 'mongodb://localhost:27017/information'
 // mongoose.connect(url).then(() => {
@@ -31,7 +32,8 @@ app.use(express.static(path.join(__dirname, '../public'))) // Middleware for usi
 //     saveUninitialized: true
 // })) // Middleware for working with sessions
 // app.use('/login', loginRouter(io)) // Middleware for using routers of "/routers/login.js". 
-// app.use('/user', userRouter(io)) // Middleware for using routers of "/routers/user.js". 
+// app.use('/user', userRouter(io)) // Middleware for using routers of "/routers/user.js".
+// app.use(errorHandler) // Middleware for handling errors
 
 // app.get('/', (req, res) => {
 //     req.session.destroy()
@@ -49,11 +51,17 @@ app.get('/user-profile', (req, res) => {
     res.render('user-profile')
 })
 app.get('/404-error', (req, res) => {
-    res.render('404-error')
+    res.render('404-error', { message: 'The page you are looking for is not found' }) // this `message` varible will be used in `404-error.ejs` in line 26
 })
 app.get('/500-error', (req, res) => {
     res.render('500-error')
 })
+
+app.get('*', (req, res) => {
+    res.status(404)
+    res.render('404-error', { message: 'The page you are looking for is not found' }) 
+}) // 404 if any url requested by the user is not found
+
 // Connecting with the client to the server using socket
 io.on('connection', (socket) => {
     console.log(`User captured ID: ${socket.id}`);
