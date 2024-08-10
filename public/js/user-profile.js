@@ -3,10 +3,6 @@ const socket = io(host)
 
 socket.emit('connection')
 
-socket.on('no-studentid', function(url) {
-    window.location.href = url
-})
-
 // Get the current badge content
 let userBadge = document.querySelector('.top-voice-badge').textContent.trim();
 
