@@ -129,6 +129,14 @@ body {
     font-size: 1.3rem;
     margin-top: 5px;
 }
+/* this will triggered with DOM */
+.no-badge{
+    background: linear-gradient(90deg, #B0BEC5 0%, #ffffff 53%, #FFFFFF 100%); 
+    color: black; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 15px;
+}
+/* more badges to come */
 .featured-note{
     width: 442px;
     height: 41px;
