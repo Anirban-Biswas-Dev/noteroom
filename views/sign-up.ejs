@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign-Up Page</title>
+    <link rel="stylesheet" href="/css/sign-up.css"> 
+    <script src="https://cdn.socket.io/socket.io-3.0.1.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+</head>
+<body>
+    <div class="signup-container">
+        
+        <img src="images/draft-logo-of-noteroom.gif" alt="Logo of NoteRoom">
+        <h2>Sign Up</h2>
+        <div class="message-container">
+            <p id="step-message">Welcome!Let’s get started.</p>
+        </div>
+        <div class="progress-container">
+            <div class="progress-bar"></div>
+        </div>
+        <form id="signupForm">
+            <!-- Step 1: Profile Picture & Basic Info -->
+            <div class="step active" id="step-1">
+                <div class="profile-picture-upload">
+                    <label for="profile-picture" class="profile-picture-label">
+                        <div class="profile-picture-placeholder">
+                            <span><i class="fa-solid fa-camera"></i></span>
+                        </div>
+                    </label>
+                    <input type="file" id="profile-picture" name="profile-picture" class="profile-picture-input" required>
+                    <p class="instructions">Please upload a clear image of yourself for authentication purposes.</p>
+                </div>
+                <input type="text" name="displayname" placeholder="Display Name" class="input-field" required>
+                <input type="email" name="email" placeholder="Email" class="input-field" required>
+                <input type="password" name="password" placeholder="Password" class="input-field" required>
+                <button type="button" class="next-button">Next</button>
+            </div>
+
+            <!-- Step 2: College Information -->
+            <div class="step" id="step-2">
+                <input type="text" name="studentid" placeholder="Student ID" class="input-field" required>
+                <input type="text" name="rollnumber" placeholder="Roll Number" class="input-field" required>
+                <select name="collegesection" class="input-field" required>
+                    <option value="">College Section</option>
+                </select>
+                <input type="text" name="collegeyear" placeholder="College Year" class="input-field" required>
+                <textarea name="bio" placeholder="Bio (Optional)" class="input-field"></textarea>
+                <button type="button" class="back-button">Back</button>
+                <button type="button" class="next-button">Next</button>
+            </div>
+
+            <!-- Step 3: Academic Preferences -->
+            <div class="step" id="step-3">
+                <input type="text" name="favouritesubject" placeholder="Favorite Subject" class="input-field" required>
+                <input type="text" name="notsubject" placeholder="Not-so-Favorite Subject" class="input-field" required>
+                <select name="group" class="input-field" required>
+                    <option value="Science">Science</option>
+                    <option value="Arts">Arts</option>
+                    
+                </select>
+                <button type="button" class="back-button">Back</button>
+                <button type="button" class="next-button">Next</button>
+            </div>
+
+            <!-- Step 4: Final Information -->
+            <div class="step" id="step-4">
+                <input type="text" name="username" placeholder="Choose an username" class="input-field" required>
+                <p>*Please note that you won't be able to edit your information for the first month after signing up.So, make sure they are accurate.</p>
+                <div class="privacy-policy">
+                    <input type="checkbox" id="privacy-policy" name="privacy-policy" required checked>
+                    <label for="privacy-policy">I agree to the <a href="#privacy-policy" target="_blank">Privacy Policy</a>.</label>
+                </div>
+                <button type="button" class="back-button">Back</button>
+                <button type="submit" class="submit-button">Sign Up</button>              
+            </div>
+        </form>
+    </div>
+    <script src="/js/sign-up.js"></script>
+</body>
+</html>

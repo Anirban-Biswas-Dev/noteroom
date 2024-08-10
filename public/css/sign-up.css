@@ -1,0 +1,168 @@
+body {
+    font-family: 'Inter', Helvetica, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background: linear-gradient(120deg, #ffffff .5%, #04DBF7);
+}
+
+.signup-container {
+    padding: 20px;
+    text-align: center;
+    width: 300px;
+}
+
+.signup-container img {
+    max-width: 80px;
+    margin-bottom: 1px;
+}
+
+.signup-container h2 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}
+.message-container {
+    margin-bottom: 20px;
+}
+
+.message-container p {
+    font-size: 1.1em;
+    color: #07192D;
+    font-weight: bold;
+}
+
+.progress-container {
+    width: 100%;
+    background-color: white;
+    border-radius: 8px;
+    height: 10px;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.progress-bar {
+    width: 0;
+    height: 100%;
+    background-color: #07192D;
+    border-radius: 8px;
+    transition: width 0.3s ease;
+}
+
+.step {
+    display: none;
+    transition: opacity 0.5s ease-in-out; /* Smooth transition */
+}
+
+.step.active {
+    display: block;
+    opacity: 1;
+}
+
+.profile-picture-upload {
+    margin-bottom: 20px;
+}
+
+.profile-picture-label {
+    display: block;
+    cursor: pointer;
+}
+
+.profile-picture-placeholder {
+    width: 100px;
+    height: 100px;
+    background-color: white;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 10px;
+    border: 1px solid #07192D;
+    font-size: 1.5rem;
+}
+
+.profile-picture-input {
+    display: none;
+}
+
+.instructions {
+    font-size: 0.9em;
+    color: #07192D;
+}
+*:focus {
+    outline:none;
+}
+.input-field {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    box-sizing: border-box;
+    font-size: 1em;
+    box-shadow: 3px 5px 4px #00000025;
+}
+textarea{
+    font-family: 'Inter';
+}
+.privacy-policy {
+    display: flex;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.privacy-policy input {
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.privacy-policy label {
+    font-size: 0.9em;
+    color: #07192D;
+}
+
+.privacy-policy a {
+    color: blue;
+    text-decoration: underline;
+}
+
+
+.signup-container button {
+    width: 50%;
+    padding: 10px;
+    background-color: #07192D;
+    color: #04DBF7;
+    text-transform: uppercase;
+    font-weight: 600;
+    line-height: 27px;
+    letter-spacing:1px;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 1em;
+    margin-top: 15px;
+    box-shadow: 0px 4px 4px #00000025;
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Added effect for buttons */
+}
+
+.signup-container button:hover {
+    background-color: rgba(0, 0, 0, 0.75);
+    transform: scale(1.05); /* Slight scaling effect */
+}
+
+.back-button {
+    margin-right: 5px;
+}
+
+.back-button:hover {
+    background-color: rgba(0, 0, 0, 0.75);
+}
+
+.next-button, .submit-button {
+    background-color: #07192D;
+}
+
+.submit-button {
+    margin-top: 25px;
+}
