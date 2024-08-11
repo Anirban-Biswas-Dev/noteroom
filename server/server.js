@@ -56,6 +56,9 @@ app.get('/404-error', (req, res) => {
 app.get('/500-error', (req, res) => {
     res.render('500-error')
 })
+app.get('/sign-up', (req, res) => {
+    res.render('sign-up')
+})
 
 app.get('*', (req, res) => {
     res.status(404)
