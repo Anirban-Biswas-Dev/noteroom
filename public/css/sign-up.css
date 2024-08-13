@@ -8,6 +8,10 @@ body {
     background: linear-gradient(301deg, #04DBF7 34.2%, #FFFFFF 95.62%);
 }
 
+a {
+    text-decoration: none;
+}
+
 .signup-container {
     padding: 20px;
     text-align: center;

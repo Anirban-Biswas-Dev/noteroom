@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 const notesSchema = new mongoose.Schema({
-    owners_id: {
+    ownersid: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref: 'Root'

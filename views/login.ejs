@@ -14,9 +14,13 @@
 </head>
 <body>
     <div class="login-container">
-        <img src="images/draft-logo-of-noteroom.gif" alt="Logo of NoteRoom">
+        <img src="/images/draft-logo-of-noteroom.gif" alt="Logo of NoteRoom">
+            <!-- 
+                Same goes for images. Use this format: src="/images/image_file_name.gif"
+            -->
         <h2>Login to NoteRoom</h2>
-        <form action="/login">
+        <p class="message" id="message" style="color: black;"></p>
+        <form action="/login" method="post">
             <input type="text" name="studentid" placeholder="Student ID" class="studentid" required>
             <br>
             <div class="password-container">
@@ -26,7 +30,7 @@
             <br>
             <button type="submit" name="submit">Login</button>
         </form>
-        <p>Don't have an account?<a href="sign-up.ejs"> Sign Up</a></p>
+        <p  style="color: black;">Don't have an account? <a href="/sign-up">Sign Up</a></p>
         <a href="help.html">Need Help?</a>
     </div>
     <script src="/js/login.js"></script>
