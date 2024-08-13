@@ -6,7 +6,10 @@
     <title>Profile</title>
     <link rel="stylesheet" href="/css/user-profile.css">
     <!-- this is the famous font awesome cloud cdn link to access the icons used -->
-    <link rel=”stylesheet” href=”https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css”>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
     <script src="https://cdn.socket.io/socket.io-3.0.1.min.js"></script>
 
 </head>
@@ -28,7 +31,7 @@
         <div class="ms-first-row">
             <img src="/images/something.png" alt="Profile Picture">
             <div class="info-items-1"><!--We'll update the frontend js codes for these element soon-->
-                <span class="user-name" ><%= student.username %></span>
+                <span class="display-name" ><%= student.displayname %></span>
                 <span class="user-clg-id" >ID: <%= student.studentid %></span><!--for this non-editable data, basic data fetch will do or even DOM-->
                 <div class="user-group"><%= student.group %></div>
                 <!-- fetching exam rank needs to be discussed-->
@@ -42,10 +45,10 @@
         </div>
 
         <div class="ms-second-row">
-            <div class="user-display-name">
-                <span class="input-label" >Display Name</span>
-                <div class="display-name-box">
-                    <p><%= student.displayname %></p>
+            <div class="user-username">
+                <span class="input-label" >Username</span>
+                <div class="username-box">
+                    <p><%= student.username %></p>
                 </div>  
             </div>
             <div class="user-college-year">
@@ -99,7 +102,7 @@
         </div>
 
         <% if (!visiting) { %> <!-- Rafi: This logic ensures that if you visit another person's profile then the logout button won't appear, but when you are in your profile (the profile you logged in as), the button will appear which is logical -->
-            <button class="logout" onclick="logout()">Logout</button> <!-- Rafi: Place this logout button in a suitable place and design. You have to login as a user to see the logout button in your profile. -->
+            <button class="logout" onclick="alert('Are you sure you want to logout from NoteRoom?'),logout()">Logout</button> <!-- Rafi: Place this logout button in a suitable place and design. You have to login as a user to see the logout button in your profile. -->
         <% } %>
         
         <!-- We can use DOM here to show the notes prview here. -->
