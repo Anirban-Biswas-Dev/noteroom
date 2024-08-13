@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Profile</title>
+</head>
+<body>
+    <label>Student ID: </label>
+    <input type="text" name="studentid" placeholder="Student ID to search" class="studentid">
+    <button class="btn-find-student" onclick="find()">Go to ID</button>
+    <script>
+        function find() {
+            window.location.href = `user/${document.querySelector('.studentid').value}`
+        }
+    </script>
+</body>
+</html>

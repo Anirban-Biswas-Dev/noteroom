@@ -1,30 +1,30 @@
 const mongoose = require('mongoose')
 
 const interactionsSchema = new mongoose.Schema({
-    note_id: {
+    noteid: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref: 'Notes'
     },
-    student_id: {
+    studentid: {
         type: [mongoose.Schema.Types.ObjectId],
         required: true,
         default: [],
         ref: 'Root'
     },
-    interactions_count: {
+    interactionsCount: {
         type: Number,
         default: 0
     },
-    interactions_type: {
+    interactionsType: {
         type: [String],
         default: []
     },
-    reactions_type: {
+    reactionsType: {
         type: [String],
         default: []
     },
-    comments_contents: {
+    commentsContents: {
         type: [String],
         default: []
     },
