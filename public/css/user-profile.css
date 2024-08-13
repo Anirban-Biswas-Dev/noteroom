@@ -1,7 +1,7 @@
-*{
+* {
     font-family: 'Inter';
-    margin: 0px;
-    padding: 0px;
+    margin: 0;
+    padding: 0;
 }
 
 body {
@@ -10,21 +10,28 @@ body {
     justify-content: center;
     flex-direction: column;
 }
-.search-bar-box{
+
+/* Search Bar Box */
+.search-bar-box {
     background-color: #ebebeb;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
-    position: absolute;
-    width: 987px;
-    height: 139px;
-    left: 400px;
-    top: 0px;
+    position: fixed; 
+    width: 100%; 
+    max-width: 980px; 
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%); 
+    z-index: 1000; 
     display: flex;
     justify-content: center;
     align-items: center;
     outline: none;
+    padding: 20px; 
+    box-sizing: border-box;
 }
 
-.search-bar{
+/* Search Bar */
+.search-bar {
     box-sizing: border-box;
     background: rgba(255, 255, 255, 0.18);
     border: 2px solid #1E1E1E;
@@ -35,8 +42,14 @@ body {
     height: 57px;
     padding-left: 20px;
     font-size: 24px;
+    font-size: 1.2rem;
 }
-.search-bar-box button{
+.search-bar:focus{
+    outline: none;
+}
+
+/* Search Bar Button */
+.search-bar-box button {
     cursor: pointer;
     background: rgba(255, 255, 255, 0.18);
     border: 2px solid #1E1E1E;
@@ -50,53 +63,70 @@ body {
     padding: 0 20px;
     width: 60px;
 }
-/* having issues with showing the search icon*/
 
-/* Main Middle Section */
-.middle-section{
-    position: absolute;
-    width: 979px;
-    left: 400px;
-    top: 146px;
+/* Middle Section */
+.middle-section {
+    position: relative; 
+    width: 100%; 
+    max-width: 980px; 
+    margin: 0 auto;
+    padding-top: 80px; 
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
+    overflow-y: auto; 
+    overflow-x: hidden; /
 }
-.ms-first-row{
+
+
+.middle-section::-webkit-scrollbar {
+    width: 0; 
+    height: 0;
+}
+
+.middle-section::-webkit-scrollbar-track,
+.middle-section::-webkit-scrollbar-thumb {
+    display: none;
+}
+
+.ms-first-row {
     width: 979px;
     background: #FFFFFF;
-    display:flex;
+    display: flex;
     margin-top: 70px;
     overflow: hidden;
     justify-content: space-evenly;
 }
+
 .ms-first-row img {
     box-sizing: border-box;
     width: 125px;
     height: 125px;
-    left: 128px;
-    top: 81px;
     border: 1px solid #000000;
     border-radius: 100px;
     margin-left: 40px;
 }
-.info-items-1{
-    margin-left:5px;
+
+.info-items-1 {
+    margin-left: 5px;
     padding: 5px;
     display: flex;
     flex-direction: column;
     justify-content: center;
 }
-.user-name{
+
+.display-name {
     font-size: 19px;
     font-weight: 600;
 }
-.user-clg-id{
+
+.user-clg-id {
     font-size: 14px;
     margin-top: 5px;
 }
-.user-group{
+
+.user-group {
     width: 161px;
     height: 37px;
     background: linear-gradient(89.76deg, #07192D 0.19%, #FFFFFF 99.81%);
@@ -105,9 +135,10 @@ body {
     font-size: 14px;
     color: #FFFFFF;
     text-align: center;
-    align-content:center;
+    align-content: center;
 }
-.exam-ranking{
+
+.exam-ranking {
     margin-top: 25px;
 }
 
@@ -116,12 +147,14 @@ body {
     height: 130px;
     background: #07192D;
     margin-top: 5px;
-    margin-left: 40px;   
+    margin-left: 40px;
 }
+
 .user-gains {
     margin-left: 30px;
 }
-.top-voice-badge{
+
+.top-voice-badge {
     width: 280px;
     height: 25px;
     align-content: center;
@@ -129,15 +162,17 @@ body {
     font-size: 1.3rem;
     margin-top: 5px;
 }
-/* this will triggered with DOM */
-.no-badge{
-    background: linear-gradient(90deg, #B0BEC5 0%, #ffffff 53%, #FFFFFF 100%); 
-    color: black; 
+
+/* this will be triggered with DOM */
+.no-badge {
+    background: linear-gradient(90deg, #B0BEC5 0%, #ffffff 53%, #FFFFFF 100%);
+    color: black;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     border-radius: 15px;
 }
+
 /* more badges to come */
-.featured-note{
+.featured-note {
     width: 442px;
     height: 41px;
     background: linear-gradient(90deg, #FDDD37 0%, #EDB015 53%, #FFFFFF 100%);
@@ -146,7 +181,8 @@ body {
     padding-left: 10px;
     margin-top: 30px;
 }
-.ms-second-row{
+
+.ms-second-row {
     width: 979px;
     padding-top: 15px;
     padding-bottom: 15px;
@@ -154,8 +190,9 @@ body {
     justify-content: space-evenly;
     align-items: center;
 }
-/* This input label is a template for all the label of data input */
-.input-label{
+
+/* This input label is a template for all the labels of data input */
+.input-label {
     font-family: 'Inter';
     font-style: normal;
     font-weight: 600;
@@ -164,7 +201,14 @@ body {
     color: #07192D;
 }
 
-.display-name-box{
+.username-box,
+.display-year-box,
+.bio-box,
+.email-box,
+.college-roll-box,
+.college-section-box,
+.fav-sub-box,
+.non-fav-sub-box {
     box-sizing: border-box;
     width: 240px;
     height: 43px;
@@ -174,54 +218,36 @@ body {
     padding-left: 5px;
     margin-top: 5px;
 }
-.display-year-box{
-    box-sizing: border-box;
-    width: 240px;
-    height: 43px;
-    border: 1px solid #07192D;
-    border-radius: 14px;
-    align-content: center;
-    padding-left: 5px;
-    margin-top: 5px;
+
+.display-year-box,
+.college-section-box,
+.non-fav-sub-box {
     margin-right: 100px;
 }
-.ms-third-row{
+
+.bio-box,
+.email-box {
+    width: 600px;
+    height: 43px;
+    margin-bottom: 25px;
+}
+
+.ms-third-row {
     width: 979px;
     padding-top: 15px;
     padding-bottom: 15px;
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
-    /* align-items: center; */
 }
-.user-bio{
+
+.user-bio,
+.user-email {
     margin-left: 135px;
 }
-.user-email{
-    margin-left: 135px;
-}
-.bio-box{
-    box-sizing: border-box;
-    width: 600px;
-    height: 43px;
-    border: 1px solid #07192D;
-    border-radius: 14px;
-    align-content: center;
-    padding-left: 5px;
-    margin-top: 5px;
-    margin-bottom: 25px;
-}
-.email-box{
-    box-sizing: border-box;
-    width: 600px;
-    height: 43px;
-    border: 1px solid #07192D;
-    border-radius: 14px;
-    align-content: center;
-    padding-left: 5px;
-    margin-top: 5px;
-}
-.ms-fourth-row{
+
+.ms-fourth-row,
+.ms-fifth-row {
     width: 979px;
     padding-top: 15px;
     padding-bottom: 15px;
@@ -229,60 +255,26 @@ body {
     justify-content: space-evenly;
     align-items: center;
 }
-.college-roll-box{
-    box-sizing: border-box;
-    width: 240px;
-    height: 43px;
-    border: 1px solid #07192D;
-    border-radius: 14px;
-    align-content: center;
-    padding-left: 5px;
-    margin-top: 5px;
+/* Temporary log our button */
+.logout{
+    background-color:#07192D;
+    padding: 10px 5px;
+    letter-spacing: 1px;
+    color: #04DBF7;
+    border-radius: 25px;
+    width: 80px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
-.college-section-box{
-    box-sizing: border-box;
-    width: 240px;
-    height: 43px;
-    border: 1px solid #07192D;
-    border-radius: 14px;
-    align-content: center;
-    padding-left: 5px;
-    margin-top: 5px;
-    margin-right: 100px;
+.logout:hover{
+    background-color: rgba(255, 0, 0, 0.78);
+    color: white;
+    transform: scale(1.05); 
+
 }
-.ms-fifth-row{
-    width: 979px;
-    padding-top: 15px;
-    padding-bottom: 15px;
-    display: flex;
-    justify-content: space-evenly;
-    align-items: center;
-}
-.fav-sub-box{
-    box-sizing: border-box;
-    width: 240px;
-    height: 43px;
-    border: 1px solid #07192D;
-    border-radius: 14px;
-    align-content: center;
-    padding-left: 5px;
-    margin-top: 5px;
-}
-.non-fav-sub-box{
-    box-sizing: border-box;
-    width: 240px;
-    height: 43px;
-    border: 1px solid #07192D;
-    border-radius: 14px;
-    align-content: center;
-    padding-left: 5px;
-    margin-top: 5px;
-    margin-right: 100px;
-}
-/* General Styles for Uploaded Notes Section */
 .uploaded-notes-section {
     margin: 20px 0;
-    
 }
 
 .uploaded-notes-section h2 {
@@ -296,7 +288,6 @@ body {
     display: grid;
     grid-template-columns: repeat(4, 1fr); /* 4 columns */
     gap: 20px;
-    /* Ensure the grid container takes full width and handles wrapping */
     width: 100%;
 }
 
@@ -332,7 +323,7 @@ body {
     color: #555;
 }
 
-/* Responsive adjustments */
+/* Responsive adjustments only for my notes section */
 @media (max-width: 1200px) {
     .notes-container {
         grid-template-columns: repeat(3, 1fr); /* 3 columns on medium screens */
