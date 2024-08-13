@@ -47,6 +47,9 @@ app.get('/logout', (req, res) => {
 app.get('/search-profile', (req, res) => {
     res.render('search-profile')
 })
+app.get('/sign-up', (req, res) => {
+    res.render('sign-up')
+})
 
 app.get('*', (req, res) => {
     res.status(404)
