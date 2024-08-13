@@ -1,14 +1,12 @@
 const mongoose = require('mongoose')
 
 const studentsSchema = new mongoose.Schema({
-    student_id: {
-        type: String, // or ObjectID 
-        required: true,
-        immutable: true
+    profile_pic: {
+        type: String, // I have to work on image saving in cloud and accessing those via url
+        default: ""
     },
-    password: {
-        type: String,
-        required: true
+    displayname: {
+        type: String
     },
     email: {
         type: String,
@@ -16,7 +14,27 @@ const studentsSchema = new mongoose.Schema({
             validator: (email) => email.includes("@"),
             message: (data) => `${data.value} doesn't contain @`
         },
-        default: "test@test.com"
+        unique: true
+    },
+    password: {
+        type: String,
+        required: true
+    },
+    studentid: {
+        type: String, // or ObjectID 
+        required: true,
+        immutable: true,
+        unique: true
+    },
+    rollnumber: {
+        type: Number,
+        unique: true
+    },
+    collegesection: {
+        type: String
+    },
+    collegeyear: {
+        type: String
     },
     bio: {
         type: String,
@@ -24,35 +42,18 @@ const studentsSchema = new mongoose.Schema({
         maxLength: 100,
         default: ""
     },
-    profile_pic: {
-        type: String, // I have to work on image saving in cloud and accessing those via url
-        default: ""
+    favouritesubject: {
+        type: String
     },
-    user_name: {
-        type: String,
-        minLength: 5,
-        maxLength: 20,
-        default: ''
-    },
-    year: {
-        type: String,
-        default: ''
+    notfavsubject: {
+        type: String
     },
     group: {
-        type: String,
-        default: ''
+        type: String
     },
-    roll_number: {
-        type: Number,
-        default: ''
-    },
-    favourite_sub: {
+    username: {
         type: String,
-        default: ""
-    },
-    non_fav_sub: {
-        type: String,
-        default: ""
+        unique: true
     },
     owned_notes: {
         type: [mongoose.Schema.Types.ObjectId],

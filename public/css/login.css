@@ -76,3 +76,10 @@ body {
     color: rgba(0, 0, 0, 0.75);
     text-decoration: underline;
 }
+.login-container p{
+    color: #FFFFFF;
+    font-size: 1.2rem;
+}
+a {
+    text-decoration: none;
+}

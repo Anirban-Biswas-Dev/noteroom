@@ -4,7 +4,7 @@ const Students = require('../schemas/students')
 
 function userRouter(io) {
     async function extract(studentID) {
-        let student = await Students.find({ student_id: studentID })
+        let student = await Students.find({ studentid: studentID })
         return new Promise((resolve, reject) => {
             if (student.length != 0) {
                 resolve(student)

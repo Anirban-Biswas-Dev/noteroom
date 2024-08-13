@@ -1,11 +1,10 @@
-// Don't touch this while working
 const express = require('express')
 const Students = require('../schemas/students')
 const router = express.Router()
 
 function loginRouter(io) {
     async function extract(studentID) {
-        let student = await Students.find({ student_id: studentID })
+        let student = await Students.find({ studentid: studentID })
         return new Promise((resolve, reject) => {
             if (student.length != 0) {
                 resolve(student[0]["password"])
@@ -24,7 +23,7 @@ function loginRouter(io) {
         }
     })
 
-    router.post('/', (req, res) => {
+    router.post('/', (req, res, next) => {
         let studentid = req.body.studentid
         let password = req.body.password
 
@@ -33,12 +32,13 @@ function loginRouter(io) {
                 req.session.stdid = studentid
                 res.redirect(`/user/${req.session.stdid}`)  
             } else {
-                io.emit('wrong-password')
+                io.emit('wrong-cred')
             }
         }).catch(err => {
             io.emit('no-studentid')
         })
     })
+    
     return router
 }
 
