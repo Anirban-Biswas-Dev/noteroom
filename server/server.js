@@ -44,11 +44,12 @@ app.get('/logout', (req, res) => {
     res.redirect('/login')
 })
 
+app.get('/', (req, res) => {
+    res.redirect('/sign-up')
+})
+
 app.get('/search-profile', (req, res) => {
     res.render('search-profile')
-})
-app.get('/sign-up', (req, res) => {
-    res.render('sign-up')
 })
 
 app.get('*', (req, res) => {

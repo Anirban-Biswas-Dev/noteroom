@@ -40,7 +40,7 @@
             <div class="divider"></div>
             <div class="user-gains"><!--this is another core feature we need to develop. Looking forward to your algorithms and overall my plan is DOM manipulation-->
                 <div class="top-voice-badge"><%= student.badge %></div>
-                <div class="featured-note">Featured notes count: <%= student.featured_notes.length %></div>
+                <div class="featured-note"><span class="featured-count"><%= student.featured_notes.length %></span></div>
             </div>
         </div>
 
@@ -112,7 +112,7 @@
                 <h2><%= student.displayname %>'s Notes</h2> 
             <% } else { %>
                 <h2>My Notes</h2>
-            <% } %> <!-- Keep this thing untouched. Cause it does nothing and there is no need to modify this for now -->
+            <% } %> 
             <div class="notes-container">
                 <div class="note-card">
                     <img src="images\note-1.png" alt="Note 1 Thumbnail">
