@@ -4,7 +4,7 @@ const socket = io(host)
 socket.emit('connection')
 
 socket.on('duplicate-value', (duplicate_field) => {
-    document.querySelector("p#message").innerHTML = `the <b>${duplicate_field}</b> you provided is already in use`
+    document.querySelector("p#message").innerHTML = `The <b>${duplicate_field}</b> you provided is already in use`
     document.querySelector(`input[name=${duplicate_field}]`).style.border = "2px solid red"
 })
 
