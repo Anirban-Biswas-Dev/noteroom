@@ -13,8 +13,7 @@ const userRouter = require('./routers/user')
 const signupRouter = require('./routers/sign-up')
 const errorHandler = require('./errorhandlers/errors')
 
-// const url = process.env.MONGO_URI
-const url = 'mongodb://localhost:27017/information'
+const url = process.env.MONGO_URI
 mongoose.connect(url).then(() => {
     console.log(`Connected to database information`);
 }) 
