@@ -13,7 +13,7 @@ function badgeStyling() {
     const badgeElement = document.querySelector('.top-voice-badge');
     
     function add_label(subject) {
-        badgeElement.innerHTML = `<div class="top-voice-badge no-badge">Top ${subject} voice</div>`;
+        badgeElement.innerHTML = `<div class="top-voice-badge">Top ${subject} voice</div>`;
     }
     switch(userBadge) {
         case "Chemistry":
@@ -35,7 +35,7 @@ function badgeStyling() {
             add_label("Bangla")
             break
         default:
-            badgeElement.innerHTML = '<div class="top-voice-badge no-badge">No badge</div>';
+            badgeElement.innerHTML = '<div class="no-badge">No badge</div>';
             break
     }
 }

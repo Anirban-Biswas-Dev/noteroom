@@ -1,0 +1,38 @@
+[33m0dab1ac[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{0}: checkout: moving from end-of-sprint-final-user-profile-page-update to main
+[33mad0f7a4[m[33m ([m[1;31morigin/end-of-sprint-final-user-profile-page-update[m[33m, [m[1;32mend-of-sprint-final-user-profile-page-update[m[33m)[m HEAD@{1}: checkout: moving from main to end-of-sprint-final-user-profile-page-update
+[33m0dab1ac[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{2}: checkout: moving from end-of-sprint-final-user-profile-page-update to main
+[33mad0f7a4[m[33m ([m[1;31morigin/end-of-sprint-final-user-profile-page-update[m[33m, [m[1;32mend-of-sprint-final-user-profile-page-update[m[33m)[m HEAD@{3}: checkout: moving from main to end-of-sprint-final-user-profile-page-update
+[33m0dab1ac[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{4}: checkout: moving from end-of-sprint-final-user-profile-page-update to main
+[33mad0f7a4[m[33m ([m[1;31morigin/end-of-sprint-final-user-profile-page-update[m[33m, [m[1;32mend-of-sprint-final-user-profile-page-update[m[33m)[m HEAD@{5}: commit: added img placeholder
+[33mcebb21b[m HEAD@{6}: commit: final tweak with user profile
+[33m0dab1ac[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{7}: checkout: moving from main to end-of-sprint-final-user-profile-page-update
+[33m0dab1ac[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{8}: pull origin main: Fast-forward
+[33m5ef43bd[m HEAD@{9}: checkout: moving from user-authentication-page-updates to main
+[33mf0f91e0[m[33m ([m[1;31morigin/user-authentication-page-updates[m[33m, [m[1;32muser-authentication-page-updates[m[33m)[m HEAD@{10}: commit: updated the user profile and sign up page small changes
+[33m5ef43bd[m HEAD@{11}: checkout: moving from main to user-authentication-page-updates
+[33m5ef43bd[m HEAD@{12}: pull origin main: Fast-forward
+[33m4b74cc6[m HEAD@{13}: commit: slight changes to login and sign page design
+[33ma5f0e98[m HEAD@{14}: commit: sign up page
+[33m14dd728[m HEAD@{15}: checkout: moving from sign-up-front-end to main
+[33mf130640[m[33m ([m[1;31morigin/sign-up-front-end[m[33m, [m[1;32msign-up-front-end[m[33m)[m HEAD@{16}: checkout: moving from main to sign-up-front-end
+[33m14dd728[m HEAD@{17}: checkout: moving from sign-up-front-end to main
+[33mf130640[m[33m ([m[1;31morigin/sign-up-front-end[m[33m, [m[1;32msign-up-front-end[m[33m)[m HEAD@{18}: commit: sign up page added
+[33m14dd728[m HEAD@{19}: checkout: moving from main to sign-up-front-end
+[33m14dd728[m HEAD@{20}: commit: Conflicts resolved
+[33m6a4aa07[m HEAD@{21}: commit (merge): Merge branch 'main' of https://github.com/Anirban-Biswas-Dev/noteroom
+[33m9944256[m HEAD@{22}: commit: minor changes to user profile
+[33mb202b5a[m HEAD@{23}: commit: updated 404 and 500 error page
+[33ma663941[m HEAD@{24}: commit: 500 Error page added
+[33m306c31c[m HEAD@{25}: commit: 404 error page added
+[33m310a222[m HEAD@{26}: pull: Fast-forward
+[33ma35d342[m HEAD@{27}: pull: Fast-forward
+[33m5c74f8c[m HEAD@{28}: checkout: moving from frontend-user-profile-page-update to main
+[33md70bdf9[m[33m ([m[1;31morigin/frontend-user-profile-page-update[m[33m, [m[1;32mfrontend-user-profile-page-update[m[33m)[m HEAD@{29}: commit: html skeleton ready for js and backend work
+[33med182a1[m HEAD@{30}: commit: 15% structure done. Work on 5 more info box and major work is left to be done
+[33m5c74f8c[m HEAD@{31}: checkout: moving from main to frontend-user-profile-page-update
+[33m5c74f8c[m HEAD@{32}: pull: Fast-forward
+[33mc92252c[m HEAD@{33}: checkout: moving from client-facing to main
+[33mf626b11[m[33m ([m[1;31morigin/client-facing[m[33m, [m[1;32mclient-facing[m[33m)[m HEAD@{34}: commit: changed the workflow.txt
+[33mc92252c[m HEAD@{35}: checkout: moving from main to client-facing
+[33mc92252c[m HEAD@{36}: commit: test change
+[33mc1748be[m HEAD@{37}: clone: from https://github.com/Anirban-Biswas-Dev/noteroom

@@ -153,25 +153,34 @@ body {
 .user-gains {
     margin-left: 30px;
 }
+.badge{
+    display: flex;
+    align-items: center;
 
-.top-voice-badge {
-    width: 280px;
+    img{
+        box-sizing: border-box;
+        width: 80px;
+        height: 80px;
+        border-radius: 100px;
+        border: none;
+        margin: 0px;
+        object-fit: contain;
+        /* filter: drop-shadow(0 0 15px); glow effect around the badge icon */
+    }
+}
+
+.top-voice-badge, .no-badge {
+    width: 250px;
     height: 25px;
     align-content: center;
     text-align: center;
     font-size: 1.3rem;
     margin-top: 5px;
+    padding-bottom: 10px;
 }
 
 /* this will be triggered with DOM */
-.no-badge {
-    background: linear-gradient(90deg, #B0BEC5 0%, #ffffff 53%, #FFFFFF 100%);
-    color: black;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    border-radius: 15px;
-}
 
-/* more badges to come */
 .featured-note {
     width: 442px;
     height: 41px;
@@ -179,8 +188,12 @@ body {
     border-radius: 15px;
     align-content: center;
     padding-left: 10px;
-    margin-top: 30px;
+    margin-top: 10px;
 }
+/* for notes to features shortcut */
+/* .no{
+    background: none;
+} */
 
 .ms-second-row {
     width: 979px;

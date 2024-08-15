@@ -29,7 +29,7 @@
     </div>
     <div class="middle-section">
         <div class="ms-first-row">
-            <img src="/images/something.png" alt="Profile Picture">
+            <img src="/images/anirban.png" alt="Profile Picture">
             <div class="info-items-1"><!--We'll update the frontend js codes for these element soon-->
                 <span class="display-name" ><%= student.displayname %></span>
                 <span class="user-clg-id" >ID: <%= student.studentid %></span><!--for this non-editable data, basic data fetch will do or even DOM-->
@@ -39,13 +39,15 @@
             </div>
             <div class="divider"></div>
             <div class="user-gains"><!--this is another core feature we need to develop. Looking forward to your algorithms and overall my plan is DOM manipulation-->
-                <div class="top-voice-badge"><%= student.badge %></div>
-                <div class="featured-note">
+                <div class="badge">
+                    <img src="\images\chemistry-top-voice-badge.png">
+                    <div    class="top-voice-badge"><%= student.badge %></div>
+                </div>
                     <% let featuredNotesCount = student.featured_notes.length %>
                     <% if (featuredNotesCount) { %>
-                        <span class="featured-count">Featured notes count: <%= featuredNotesCount %></span> <!-- If there are 1+ featured notes -->
+                        <div class="featured-note">Featured notes count: <%= featuredNotesCount %></div> <!-- If there are 1+ featured notes -->
                     <% } else { %>
-                        <span class="featured-count">No notes to be featured</span> <!-- If there is no featured notes -->
+                        <div class="no featured-note">No notes to be featured</div> <!-- If there is no featured notes -->
                     <% } %>
                 </div>
             </div>
