@@ -40,7 +40,14 @@
             <div class="divider"></div>
             <div class="user-gains"><!--this is another core feature we need to develop. Looking forward to your algorithms and overall my plan is DOM manipulation-->
                 <div class="top-voice-badge"><%= student.badge %></div>
-                <div class="featured-note"><span class="featured-count"><%= student.featured_notes.length %></span></div>
+                <div class="featured-note">
+                    <% let featuredNotesCount = student.featured_notes.length %>
+                    <% if (featuredNotesCount) { %>
+                        <span class="featured-count">Featured notes count: <%= featuredNotesCount %></span> <!-- If there are 1+ featured notes -->
+                    <% } else { %>
+                        <span class="featured-count">No notes to be featured</span> <!-- If there is no featured notes -->
+                    <% } %>
+                </div>
             </div>
         </div>
 
