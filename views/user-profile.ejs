@@ -14,9 +14,6 @@
 
 </head>
 <body>
-    <!-- Rafi: Arnob treat every varibale like a value inside a paragraph tag. Modify their apperence 
-            And if you want to use them in your js, use document.querySelector().innerHTML .
-     -->
     <!-- on the left side we'll keep the side panel containing notes or whatever ui design requires : we'll code that during dashboard sprint -->
 
     <!-- this is the middle section of the page. -->
@@ -40,8 +37,8 @@
             <div class="divider"></div>
             <div class="user-gains"><!--this is another core feature we need to develop. Looking forward to your algorithms and overall my plan is DOM manipulation-->
                 <div class="badge">
-                    <img src="\images\chemistry-top-voice-badge.png">
-                    <div    class="top-voice-badge"><%= student.badge %></div>
+                    <img class="badge-logo" src="dynamic" alt="Badge Logo"> <!-- The badge-logo will be dynamically added; see public/js/user-profile.js -->
+                    <div class="top-voice-badge"><%= student.badge %></div>
                 </div>
                     <% let featuredNotesCount = student.featured_notes.length %>
                     <% if (featuredNotesCount) { %>

@@ -11,10 +11,13 @@ function badgeStyling() {
     // Get the current badge content
     let userBadge = document.querySelector('.top-voice-badge').textContent.trim();
     const badgeElement = document.querySelector('.top-voice-badge');
+    const badgeLogo = document.querySelector('img.badge-logo')
     
     function add_label(subject) {
-        badgeElement.innerHTML = `<div class="top-voice-badge">Top ${subject} voice</div>`;
+        badgeElement.innerHTML = `Top ${subject} voice`;
+        badgeLogo.src = `\\images\\badges\\${subject.toLowerCase()}.png` // This will automatically add the right badge according to the subject
     }
+    
     switch(userBadge) {
         case "Chemistry":
             add_label("Chemistry")
