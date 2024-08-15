@@ -154,7 +154,7 @@ body {
     margin-left: 30px;
 }
 
-.top-voice-badge {
+.top-voice-badge, .no-badge {
     width: 280px;
     height: 25px;
     align-content: center;
@@ -164,14 +164,7 @@ body {
 }
 
 /* this will be triggered with DOM */
-.no-badge {
-    background: linear-gradient(90deg, #B0BEC5 0%, #ffffff 53%, #FFFFFF 100%);
-    color: black;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    border-radius: 15px;
-}
 
-/* more badges to come */
 .featured-note {
     width: 442px;
     height: 41px;
@@ -180,6 +173,10 @@ body {
     align-content: center;
     padding-left: 10px;
     margin-top: 30px;
+}
+/* for notes to features shortcut */
+.no{
+    background: none;
 }
 
 .ms-second-row {
