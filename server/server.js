@@ -51,6 +51,9 @@ app.get('/', (req, res) => {
 app.get('/search-profile', (req, res) => {
     res.render('search-profile')
 })
+app.get('/upload-note', (req, res) => {
+    res.render('upload-note')
+})
 
 app.get('*', (req, res) => {
     res.status(404)

@@ -154,7 +154,7 @@ textarea{
 
 .signup-container button:hover {
     background-color: rgba(0, 0, 0, 0.75);
-    transform: scale(1.05); /* Slight scaling effect */
+    transform: scale(1.05); 
 }
 
 .back-button {
