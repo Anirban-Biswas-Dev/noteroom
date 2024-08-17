@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Note</title>
+    <link rel="stylesheet" href="/css/upload-note.css"> 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/be4b1d4185.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <!-- **********  Search Bar ************* -->
+    <div class="search-bar-box">
+        <input type="text" class="search-bar" placeholder="Search Notes">
+        <button>
+            <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+    </div>
+    <!-- ****** Middle Section ****** -->
+    <div class="middle-section">
+        <h2>Upload</h2>
+        <div class="upload-container">
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+            <p class="upload-msg">Drag & drop files</p>
+            <p class="suggested-formats-msg">Suggested Formats : PDF, PNG, JPG</p>
+            <span class="device-upload-sep">Or</span>  
+                <p class="upload-msg">Upload pictures from your         
+                    device
+                </p>
+            <div class="browse-file-container"> <!--Backend integration for file type-->
+                <input type="file" id="fileInput" class="file-input" />
+                <label for="fileInput" class="browse-files-btn">
+                    <pre><i class="fa-regular fa-file"></i> Browse</pre>
+                </label>
+            </div>
+        </div>
+        <!--Arnob: Add the backend integration in this moshiur -->
+        <form action="" id="">
+            <select name="note-subject" class="note-subject" required>
+                <option value="No Subject" disabled selected >Choose Subject</option>
+                <option value="Physics 1">Physics 1st Paper</option>
+                <option value="Physics 2">Physics 2st Paper</option>
+                <option value="Chemistry 1">Chemistry 1st Paper</option>
+                <option value="Chemistry 2">Chemistry 2st Paper</option>
+                <option value="Biology 1">Biology 1st Paper</option>
+                <option value="Biology 2">Biology 2st Paper</option>
+                <option value="Higher Mathematics 1">Higher Mathematics 1st Paper</option>
+                <option value="Higher Mathematics 2">Higher Mathematics 2nd Paper</option>
+                <option value="ICT">ICT</option>
+                <option value="Bangla">Bangla</option>
+                <option value="English">English</option>
+                <option value="History">History</option>
+                <option value="Geography">Geography</option>
+                <option value="Logic">Logic</option>
+                <option value="Philosophy">Philosophy</option>
+            </select>
+            <input type="text" class="note-title" placeholder="Note's Title">
+            <textarea name="note-description" class="note-description" rows="4" placeholder="Tell a bit about your note" required></textarea>
+            <button class="publish-note-btn">Publish</button>
+        </form>
+    </div>
+    
+</body>
+</html>
