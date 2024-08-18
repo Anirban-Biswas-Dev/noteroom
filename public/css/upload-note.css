@@ -111,7 +111,7 @@ body {
     justify-content:space-evenly;
     align-items: center;
 }
-.fa-cloud-arrow-up{
+.upload-container svg{
     font-size: 2.5rem;
     padding: 5%;
 }
@@ -271,21 +271,25 @@ body {
     transform: scale(1.03); 
 }
 /* ***** Set Thumbnail Pop Design ****** */
-.thumbnail-pop-up{
+.thumbnail-pop-up {
     z-index: 1000;
     background: rgba(255, 255, 255);
     position: fixed; 
+    top: 50%; 
+    left: 50%;
+    transform: translate(-50%, -50%);
     width: 100%; 
     max-width: 980px;
-    display: flex;
+    display: none; 
     flex-direction: column;
     align-items: center;
     overflow-y: auto; 
     overflow-x: hidden;
     box-sizing: border-box;
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2), 
-    0 3px 6px rgba(0, 0, 0, 0); 
-
+                0 3px 6px rgba(0, 0, 0, 0.15);
+    transition: opacity 0.3s ease, visibility 0.3s ease; 
+    animation: animatemode .3s forwards;
 }
 .popup-heading {
     display: flex;
@@ -364,4 +368,20 @@ body {
 .thumbnail-done-btn:hover{
     background-color: #02c8e2;
     transform: scale(1.03);
+}
+/* ******* Animations ******* */
+/* pop up animation */
+@keyframes animatemode {
+    from {
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0.8);
+        opacity: 0;
+    }
+    to {
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
 }
