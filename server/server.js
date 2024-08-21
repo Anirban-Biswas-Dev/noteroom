@@ -4,21 +4,24 @@ require('dotenv').config({ path: path.join(__dirname, '.env') })
 const app = express()
 const server = require('http').createServer(app)
 const io = require('socket.io')(server, { cors: { origin: '*' } })
-
+const cookieParser = require('cookie-parser')
 const session = require('express-session')
 const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
+
 const loginRouter = require('./routers/login')
 const userRouter = require('./routers/user')
 const signupRouter = require('./routers/sign-up')
 const errorHandler = require('./errorhandlers/errors')
+const uploadRouter = require('./routers/upload-note')
+const noteViewRouter = require('./routers/note-view')
 
 const url = process.env.MONGO_URI
 mongoose.connect(url).then(() => {
     console.log(`Connected to database information`);
 }) 
 
-const port = 2000
+const port = process.env.PORT
 
 // Setting the view engine as EJS. And all the ejs files are stored in "/views" folder
 app.set('view engine', 'ejs')
@@ -33,9 +36,12 @@ app.use(session({
     resave: true,
     saveUninitialized: true
 })) // Middleware for working with sessions
-app.use('/login', loginRouter(io)) // Middleware for using routers of "/routers/login.js". 
-app.use('/user', userRouter(io)) // Middleware for using routers of "/routers/user.js".
+app.use(cookieParser()) // Middleware for working with cookies
+app.use('/login', loginRouter(io))  
+app.use('/user', userRouter(io))
 app.use('/sign-up', signupRouter(io))
+app.use('/upload', uploadRouter(io))
+app.use('/view', noteViewRouter(io))
 app.use(errorHandler) // Middleware for handling errors
 
 app.get('/logout', (req, res) => {
@@ -45,14 +51,11 @@ app.get('/logout', (req, res) => {
 })
 
 app.get('/', (req, res) => {
-    res.redirect('/sign-up')
+    res.redirect('/login')
 })
 
 app.get('/search-profile', (req, res) => {
     res.render('search-profile')
-})
-app.get('/upload-note', (req, res) => {
-    res.render('upload-note')
 })
 
 app.get('*', (req, res) => {

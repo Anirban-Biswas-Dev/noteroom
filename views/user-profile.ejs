@@ -119,28 +119,24 @@
             <% } else { %>
                 <h2>My Notes</h2>
             <% } %> 
+
             <div class="notes-container">
-                <div class="note-card">
-                    <img src="images\note-1.png" alt="Note 1 Thumbnail">
-                    <h3>Note Title 1</h3>
-                    <p>Note content summary or excerpt goes here...</p>
-                </div>
-                <div class="note-card">
-                    <img src="images\note-1.png" alt="Note 2 Thumbnail">
-                    <h3>Note Title 2</h3>
-                    <p>Note content summary or excerpt goes here...</p>
-                </div>
-                <div class="note-card">
-                    <img src="images\note-1.png" alt="Note 3 Thumbnail">
-                    <h3>Note Title 3</h3>
-                    <p>Note content summary or excerpt goes here...</p>
-                </div>
-                <div class="note-card">
-                    <img src="images\note-1.png" alt="Note 4 Thumbnail">
-                    <h3>Note Title 4</h3>
-                    <p>Note content summary or excerpt goes here...</p>
-                </div>
-                <!-- More cards will come through dom js -->
+                <% if(notes != 0) { %>
+                    <% for (const note of notes) { %>
+                        <div class="note-card">
+                            <a href="../view/<%= note._id %>"><h3><%= note.title %></h3></a> <!-- Note title along with the note-view link for each notes -->
+                            <% let description = note.description %>
+                            <!-- If the description's length > 30, the '...' will be added, else the full description will be shown -->
+                            <% if(description.length > 30) { %>
+                                <p><%= description.slice(0, 30) %>...</p> <!-- First 30 characters of the description will be shown -->
+                            <% } else { %>
+                                <p><%= description %></p> 
+                            <% } %>
+                        </div>
+                    <% } %>
+                <% } else { %>
+                    <p>Currently no notes to be shown</p>
+                <% } %>
             </div>
         </div>
     </div>

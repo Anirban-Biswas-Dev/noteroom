@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Note Repos</title>
+</head>
+<body>
+    <div class="note-repo">
+        <% notes.forEach(element => { %>
+            <h1><a href='view/<%= element._id %>'><%= element.title %></a></h1>
+        <% }) %>
+    </div>
+</body>
+</html>

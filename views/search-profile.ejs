@@ -1,18 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Search Profile</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <style>
+        body {
+            background-color: rgb(223, 238, 233);
+        }
+        .container {
+            margin-top: 100px;
+        }
+    </style>
 </head>
+
 <body>
-    <label>Student ID: </label>
-    <input type="text" name="studentid" placeholder="Student ID to search" class="studentid">
-    <button class="btn-find-student" onclick="find()">Go to ID</button>
+    <div class="container">
+        <div class="input-group mb-3">
+            <span class="input-group-text" id="basic-addon1">ID</span>
+            <input type="text" class="form-control" placeholder="Student's ID" aria-label="Student's ID"
+                aria-describedby="button-addon2">
+            <button class="btn btn-secondary" type="button" id="button-addon2" onclick="find()">Search</button>
+        </div>
+    </div>
     <script>
         function find() {
-            window.location.href = `user/${document.querySelector('.studentid').value}`
+            window.location.href = `user/${document.querySelector('.form-control').value}`
         }
     </script>
 </body>
+
 </html>
