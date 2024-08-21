@@ -46,7 +46,7 @@
             </div>
         </div>
         <!--Arnob: Add the backend integration in this moshiur -->
-        <form action="" id="">
+        <form action="/upload" id="" method="post">
             <select name="note-subject" class="note-subject" required>
                 <option value="No Subject" disabled selected >Choose Subject</option>
                 <option value="Physics 1">Physics 1st Paper</option>
@@ -65,16 +65,16 @@
                 <option value="Logic">Logic</option>
                 <option value="Philosophy">Philosophy</option>
             </select>
-            <input type="text" class="note-title" placeholder="Note's Title">
+            <input type="text" class="note-title" placeholder="Note's Title" name="note-title">
             <textarea name="note-description" class="note-description" rows="4" placeholder="Tell a bit about your note" required></textarea>
-            <button class="publish-note-btn">Publish</button>
+            <button class="publish-note-btn" name="submit" type="submit">Publish</button>
         </form>
     </div>
     <!-- ***** Pop up to set a thumbnail **** -->
-     <div class="thumbnail-pop-up">
+    <!-- <div class="thumbnail-pop-up">
         <div class="popup-heading">
             <h2>Preview</h2>
-            <button class="discard-btn">Discard &times;</button>
+            <button class="discard-btn">Discard &times;</button>uplo
         </div>
         <div class="thumbnail-container">
             <img src="/images/test-note-img.png">
@@ -82,7 +82,7 @@
         <div class="popup-footer">
             <button class="thumbnail-done-btn">Done</button>
         </div>
-     </div>
+     </div> -->
     <script src="/js/upload-note.js"></script>
 </body>
 </html>

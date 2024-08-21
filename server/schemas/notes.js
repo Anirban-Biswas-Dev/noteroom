@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 const notesSchema = new mongoose.Schema({
-    ownersid: {
+    ownerid: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref: 'Root'
@@ -12,17 +12,20 @@ const notesSchema = new mongoose.Schema({
         required: true,
     },
     content: {
-        type: String, // or URLs, if they are pictures
-        required: true
+        type: [String], // or URLs, if they are pictures
+        // required: true
     },
     description: {
         type: String,
-        maxLength: 250,
+        required: true
+    },
+    subject: {
+        type: String,
         required: true
     },
     tags: {
         type: [String],
-        required: true
+        // required: true
     },
     isFeatured: {
         type: Boolean,
@@ -30,10 +33,12 @@ const notesSchema = new mongoose.Schema({
     },
     createdAt: {
         type: Date,
-        required: true
+        required: true,
+        default: Date.now
     },
     updatedAt: {
-        type: Date
+        type: Date,
+        default: Date.now
     }
 })
 

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div class="note">
+        <% if(mynote) { %>
+            <h1>Your Note</h1> <!-- If the note is created by you, 'Your Note' will be shown -->
+        <% } else { %>
+            <h1><%= owner.displayname %>'s Note</h1> <!-- If the note is not created by you, the owner's name will be shown -->
+        <% } %>
+        <!-- Here the carousel of all the note images will be placed -->
+
+        <h1><%= note.subject  %></h1> <!-- Note subject -->
+        <h3><%= note.title %></h3> <!-- Note title -->
+        <p><%= note.description %></p> <!-- Note description -->
+        <% if(note.isFeatured) { %>
+            <p>This is a <b>Featured Note</b></p>
+        <% } else { %>
+            <p>This is not a Featured Note</p>
+        <% } %>
+    </div>
+</body>
+</html>

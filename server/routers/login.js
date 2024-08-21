@@ -4,10 +4,10 @@ const router = express.Router()
 
 function loginRouter(io) {
     async function extract(studentID) {
-        let student = await Students.find({ studentid: studentID })
+        let student = await Students.findOne({ studentid: studentID })
         return new Promise((resolve, reject) => {
             if (student.length != 0) {
-                resolve(student[0]["password"])
+                resolve({ studentPass: student["password"], recordID: student["_id" ] })
             } else {
                 reject('No students found!')
             }
@@ -23,14 +23,15 @@ function loginRouter(io) {
         }
     })
 
-    router.post('/', (req, res, next) => {
+    router.post('/', (req, res) => {
         let studentid = req.body.studentid
         let password = req.body.password
 
-        extract(studentid).then(actualPass => {
-            if (password === actualPass) {
-                req.session.stdid = studentid
-                res.redirect(`/user/${req.session.stdid}`)  
+        extract(studentid).then(student => {
+            if (password === student['studentPass']) {
+                req.session.stdid = studentid // setting the session with the student ID
+                res.cookie('recordID', student['recordID']) // setting a cookie with a value of the document ID of the user
+                res.redirect(`/user/${req.session.stdid}`)
             } else {
                 io.emit('wrong-cred')
             }
