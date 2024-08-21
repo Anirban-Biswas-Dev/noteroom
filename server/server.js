@@ -54,6 +54,9 @@ app.get('/search-profile', (req, res) => {
 app.get('/upload-note', (req, res) => {
     res.render('upload-note')
 })
+app.get('/privacy-policy', (req, res) => {
+    res.render('privacy-policy')
+})
 
 app.get('*', (req, res) => {
     res.status(404)
