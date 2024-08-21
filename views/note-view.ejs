@@ -3,9 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <link rel="stylesheet" href="/css/note-view.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/be4b1d4185.js" crossorigin="anonymous"></script>
+    <title><%= note.title %></title>
 </head>
 <body>
+    <!-- **********  Search Bar ************* -->
+    <div class="search-bar-box">
+        <input type="text" class="search-bar" placeholder="Search Notes">
+        <button>
+            <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+    </div>
+    <div class="middle-section">
+        <div class="carousel-container">
+            <div class="carousel">
+                <div class="carousel-slide active">
+                    <img src="/images/test-note-img.img" alt="Note 1">
+                </div>
+                <div class="carousel-slide">
+                    <img src="/images/test-note-img.img" alt="Note 2">
+                </div>
+                <div class="carousel-slide">
+                    <img src="/images/test-note-img.img" alt="Note 3">
+                </div>
+            </div>
+            <button class="carousel-control prev" onclick="prevSlide()">&#10094;</button>
+            <button class="carousel-control next" onclick="nextSlide()">&#10095;</button>
+        </div>
+    </div>
+
     <div class="note">
         <% if(mynote) { %>
             <h1>Your Note</h1> <!-- If the note is created by you, 'Your Note' will be shown -->
@@ -22,6 +52,7 @@
         <% } else { %>
             <p>This is not a Featured Note</p>
         <% } %>
-    </div>
+    </div> 
+
 </body>
 </html>
