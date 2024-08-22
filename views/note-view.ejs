@@ -68,6 +68,39 @@
             <h3>Note description</h3>
             <p><%= note.description %></p> 
         </div>
+        <div class="feedbacks-section">
+            <h2>Feedbacks</h2>
+            
+            <!-- feedback Input Area -->
+            <div class="feedback-input">
+                <textarea placeholder="Write a feedback..." rows="3"></textarea>
+                <button type="button" class="btn-submit-feedback">Post feedback</button>
+            </div>
+        
+            <!-- Feedbacks List -->
+            <div class="feedbacks-list">
+                <!-- Individual feedback -->
+                <div class="feedback">
+                    <div class="feedback-header">
+                        <img src="https://via.placeholder.com/40" alt="User Avatar" class="feedback-avatar">
+                        <div class="feedback-author-info">
+                            <h4 class="feedback-author">Devajit Mutsuddy Rohit</h4>
+                            <span class="feedback-date">August 19, 2024</span>
+                        </div>
+                    </div>
+                    <div class="feedback-body">
+                        <p>This is a sample feedback to show how the feedbacks will be displayed. Users can write their thoughts here.</p>
+                    </div>
+                    <div class="feedback-actions">
+                        <button type="button" class="btn-reply">Reply</button>
+                        <button type="button" class="btn-like">Like</button>
+                    </div>
+                </div>
+        
+                <!-- More feedbacks can be added here in the same structure -->
+            </div>
+        </div>
+        
     </div>
     <script src="/js/note-view.js"></script>
 </body>

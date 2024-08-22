@@ -191,9 +191,9 @@ body {
     margin-top: 10px;
 }
 /* for notes to features shortcut */
-/* .no{
+.no{
     background: none;
-} */
+}
 
 .ms-second-row {
     width: 979px;
@@ -268,7 +268,7 @@ body {
     justify-content: space-evenly;
     align-items: center;
 }
-/* Temporary log our button */
+/* Temporary log out button */
 .logout{
     background-color:#07192D;
     padding: 10px 5px;
@@ -291,9 +291,12 @@ body {
 }
 
 .uploaded-notes-section h2 {
-    font-size: 24px;
+    font-size: 1.8rem;
     margin-bottom: 20px;
     text-align: center;
+    font-weight: 500;
+    line-height: 42px;
+    letter-spacing: -0.06em;
 }
 
 /* Grid Container for Notes */
@@ -302,6 +305,8 @@ body {
     grid-template-columns: repeat(4, 1fr); /* 4 columns */
     gap: 20px;
     width: 100%;
+    border: solid 1px;
+    padding: 10px 10px 10px 10px;
 }
 
 /* Individual Note Card */
@@ -312,6 +317,7 @@ body {
     padding: 15px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
 }
 
 .note-card:hover {
@@ -335,7 +341,35 @@ body {
     font-size: 14px;
     color: #555;
 }
+.note-card a{
+    display: block;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+.note-card a:hover{
+    color: #04DBF7;
+}
+.note-card a:visited{
+    color: #04DBF7;
+}
+.no-notes-content{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+}
+.no-notes-content svg {
+    font-size: 4rem;
+    color: rgba(0, 0, 0, 0.3);
+    margin-bottom: 15px;
+    fill: #dbdada15; 
+    stroke-width: 1; 
+}
 
+.no-notes-content p {
+    font-size: 1.2rem;
+    color: rgba(0, 0, 0, 0.8);
+}
 /* Responsive adjustments only for my notes section */
 @media (max-width: 1200px) {
     .notes-container {
