@@ -37,7 +37,7 @@
             <div class="divider"></div>
             <div class="user-gains"><!--this is another core feature we need to develop. Looking forward to your algorithms and overall my plan is DOM manipulation-->
                 <div class="badge">
-                    <img class="badge-logo" src="dynamic" alt="Badge Logo"> <!-- The badge-logo will be dynamically added; see public/js/user-profile.js -->
+                    <img class="badge-logo" src="dynamic"> <!-- The badge-logo will be dynamically added; see public/js/user-profile.js -->
                     <div class="top-voice-badge"><%= student.badge %></div>
                 </div>
                     <% let featuredNotesCount = student.featured_notes.length %>
@@ -124,7 +124,8 @@
                 <% if(notes != 0) { %>
                     <% for (const note of notes) { %>
                         <div class="note-card">
-                            <a href="../view/<%= note._id %>"><h3><%= note.title %></h3></a> <!-- Note title along with the note-view link for each notes -->
+                            <a href="../view/<%= note._id %>">
+                            <h3><%= note.title %></h3><!-- Note title along with the note-view link for each notes -->
                             <% let description = note.description %>
                             <!-- If the description's length > 30, the '...' will be added, else the full description will be shown -->
                             <% if(description.length > 30) { %>
@@ -132,10 +133,19 @@
                             <% } else { %>
                                 <p><%= description %></p> 
                             <% } %>
+                            </a>
                         </div>
                     <% } %>
                 <% } else { %>
-                    <p>Currently no notes to be shown</p>
+                    <div class="no-notes-content">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather feather-frown">
+                            <circle cx="12" cy="12" r="10" stroke-width="1"></circle>
+                            <path d="M9 9h.01" stroke-width="1"></path>
+                            <path d="M15 9h.01" stroke-width="1"></path>
+                            <path d="M9 15a4 4 0 0 1 6 0" stroke-width="1"></path>
+                        </svg>
+                        <p class="notes-unavailable" >No Notes to Show</p>
+                    </div>
                 <% } %>
             </div>
         </div>
