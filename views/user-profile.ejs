@@ -124,8 +124,8 @@
                 <% if(notes != 0) { %>
                     <% for (const note of notes) { %>
                         <div class="note-card">
-                            <a href="../view/<%= note._id %>">
-                            <h3><%= note.title %></h3><!-- Note title along with the note-view link for each notes -->
+                            <a href="../view/<%= note._id %>"><!-- A: now the whole card is will act for the link-->
+                            <h3><%= note.title %></h3>
                             <% let description = note.description %>
                             <!-- If the description's length > 30, the '...' will be added, else the full description will be shown -->
                             <% if(description.length > 30) { %>
