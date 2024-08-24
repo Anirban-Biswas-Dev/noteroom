@@ -1,5 +1,5 @@
 /* A: This document contains all the data related to each notecard in the feed. Moshiur you can customize the file organization, to everything to make the workflow conducive to backend. Also you don't need to limit yourself to this type of data fetch. Let me know your thoughs.*/
-noteCards = [
+const noteCards = [
   {
     thumbnail: "test-ICT-chp-4-thumbnail.png",
     authorImg: "anirban.png",

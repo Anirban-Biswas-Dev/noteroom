@@ -1,3 +1,5 @@
+/* This generates html for the feed notecards from the feed.js data */
+
 let noteCardsHtml = "";
 
 noteCards.forEach((noteCard) => {
@@ -27,4 +29,53 @@ noteCards.forEach((noteCard) => {
    `;
 });
 document.querySelector(".feed-container").innerHTML = noteCardsHtml;
-console.log(noteCardsHtml);
+
+// Using the similar algorithm for dynamic notification loading
+
+// If you think the char limit shoudld be more, define a character limit for the title
+const titleCharLimit = 40;
+
+let notificationHtml = "";
+
+notifications.forEach((notification) => {
+  let truncatedTitle =
+    notification.nfnTitle.length > titleCharLimit
+      ? notification.nfnTitle.slice(0, titleCharLimit) + "..."
+      : notification.nfnTitle;
+
+  notificationHtml += `
+    <div class="notification">
+        <div class="first-row">
+            <span class="notification-title">
+                ${truncatedTitle}
+            </span>
+            <span class="remove-notification">&times;</span>
+        </div>
+        <div class="notification-msg">
+            ${notification.nfnMsg}
+        </div>
+    </div>`;
+});
+
+document.querySelector(".notifications-container").innerHTML = notificationHtml;
+
+// Using the similar algorithm for dynamic saved notes
+const svNotesCharLimit = 38;
+let savedNotesHtml = "";
+
+savedNotes.forEach((savedNote) => {
+  // Truncate the title if it exceeds the character limit
+  let truncatedTitle =
+    savedNote.noteTitle.length > svNotesCharLimit
+      ? savedNote.noteTitle.slice(0, svNotesCharLimit) + "..."
+      : savedNote.noteTitle;
+
+  savedNotesHtml += `
+    <div class="saved-note">
+        <span class="sv-note-title">
+            ${truncatedTitle}
+        </span>
+    </div>`;
+});
+
+document.querySelector(".saved-notes-container").innerHTML = savedNotesHtml;
