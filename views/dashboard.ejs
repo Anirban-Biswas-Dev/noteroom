@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/be4b1d4185.js" crossorigin="anonymous"></script>
+    <title>Dashboard</title>
+</head>
+<body>
+    <div class="search-bar-box">
+        <input type="text" class="search-bar" placeholder="Search Notes">
+        <button>
+            <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+    </div>
+    <div class="middle-section">
+        <!-- In this div, I bring all the note cards with DOM, check feed.js for data storage and dashboard js for DOM calling. -->
+        <div class="feed-container">
+        </div>
+    </div>
+    <script src="/js/data/feed.js"></script>
+    <script src="/js/dashboard.js"></script>
+</body>
+</html>

@@ -57,6 +57,9 @@ app.get('/', (req, res) => {
 app.get('/search-profile', (req, res) => {
     res.render('search-profile')
 })
+app.get('/dashboard', (req, res) => {
+    res.render('dashboard')
+})
 
 app.get('*', (req, res) => {
     res.status(404)
