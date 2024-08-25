@@ -1,5 +1,7 @@
 const express = require('express')
 const Students = require('../schemas/students')
+const fs = require('fs') //! for local usage, will be removed
+const path = require('path')
 const router = express.Router()
 
 function signupRouter(io) {
@@ -18,7 +20,7 @@ function signupRouter(io) {
     })
 
     router.post('/', (req, res, next) => {
-        let student = {
+        let studentData = {
             displayname: req.body.displayname,
             email: req.body.email,
             password: req.body.password,
@@ -32,8 +34,15 @@ function signupRouter(io) {
             group: req.body.group,
             username: req.body.username
         }
-        add_student(student).then(student => {
-            console.log(`Student added`);
+        add_student(studentData).then(student => {
+            fs.mkdir(path.join(__dirname, `../../public/firebase/${student._id}`), { recursive: true }, err => {
+                if(err) {
+                    next(err)
+                } else {
+                    console.log(`Student added`);
+                }
+            }) //* a new dir will be created for the user in the cloud named after his doc-id. For now in the firebase directory
+            //! This is for local usage, will be deleted soon when I will add them in the cloud
             res.redirect('/login')
         }).catch(err => {
             // err.code == 11000 for duplicate value of a unique field

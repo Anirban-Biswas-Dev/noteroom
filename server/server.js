@@ -8,6 +8,7 @@ const cookieParser = require('cookie-parser')
 const session = require('express-session')
 const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
+const fileUpload = require('express-fileupload')
 
 const loginRouter = require('./routers/login')
 const userRouter = require('./routers/user')
@@ -30,13 +31,15 @@ app.set('views', path.join(__dirname, '../views'))
 app.use(express.static(path.join(__dirname, '../public'))) // Middleware for using static files. All are stored in "/public" folder
 app.use(bodyParser.urlencoded({
     extended: true
-})) // Middleware for working with POST requests. 
+})) // Middleware for working with POST requests.
+// app.use(express.json());
 app.use(session({
     secret: 'a-secret-key',
     resave: true,
     saveUninitialized: true
 })) // Middleware for working with sessions
 app.use(cookieParser()) // Middleware for working with cookies
+app.use(fileUpload()) // Middleware for working with files
 app.use('/login', loginRouter(io))  
 app.use('/user', userRouter(io))
 app.use('/sign-up', signupRouter(io))
@@ -67,7 +70,9 @@ app.get('*', (req, res) => {
 }) // 404 if any url requested by the user is not found
 
 // Connecting with the client to the server using socket
-io.on('connection', (socket) => {})
+io.on('connection', (socket) => {
+    
+})
 
 server.listen(port, () => {
     console.log(`Server is listening on localhost:${port}`);
