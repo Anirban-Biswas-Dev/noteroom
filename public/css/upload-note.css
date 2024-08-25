@@ -351,7 +351,7 @@ body {
     padding: 10px 15px;
 }
 
-.thumbnail-done-btn{
+.thumbnail-addstack-btn{
     box-sizing: border-box;
     width: 150px;
     height: 50px;
@@ -365,7 +365,7 @@ body {
     align-self: center;
     transition: background-color 0.2s ease, transform 0.2s ease; 
 }
-.thumbnail-done-btn:hover{
+.thumbnail-addstack-btn:hover{
     background-color: #02c8e2;
     transform: scale(1.03);
 }

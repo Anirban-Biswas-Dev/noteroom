@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
     <script src="https://kit.fontawesome.com/be4b1d4185.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.socket.io/socket.io-3.0.1.min.js"></script>
 </head>
 <body>
     <!-- **********  Search Bar ************* -->
@@ -39,24 +40,23 @@
                     device
                 </p>
             <div class="browse-file-container"> <!--Backend integration for file type-->
-                <input type="file" id="fileInput" class="file-input" />
+                <input type="file" id="fileInput" class="file-input" name="images"/>
                 <label for="fileInput" class="browse-files-btn">
                     <pre><i class="fa-regular fa-file"></i> Browse</pre>
                 </label>
             </div>
         </div>
-        <!--Arnob: Add the backend integration in this moshiur -->
-        <form action="/upload" id="" method="post">
-            <select name="note-subject" class="note-subject" required>
+        <div class="text-form">
+            <select name="noteSubject" class="note-subject" required>
                 <option value="No Subject" disabled selected >Choose Subject</option>
-                <option value="Physics 1">Physics 1st Paper</option>
-                <option value="Physics 2">Physics 2st Paper</option>
-                <option value="Chemistry 1">Chemistry 1st Paper</option>
-                <option value="Chemistry 2">Chemistry 2st Paper</option>
-                <option value="Biology 1">Biology 1st Paper</option>
-                <option value="Biology 2">Biology 2st Paper</option>
-                <option value="Higher Mathematics 1">Higher Mathematics 1st Paper</option>
-                <option value="Higher Mathematics 2">Higher Mathematics 2nd Paper</option>
+                <option value="Physics 1st Paper">Physics 1st Paper</option>
+                <option value="Physics 2nd Paper">Physics 2nd Paper</option>
+                <option value="Chemistry 1st Paper">Chemistry 1st Paper</option>
+                <option value="Chemistry 2nd Papeer">Chemistry 2nd Paper</option>
+                <option value="Biology 1st Paper">Biology 1st Paper</option>
+                <option value="Biology 2nd Paper">Biology 2nd Paper</option>
+                <option value="Higher Mathematics 1st Paper">Higher Mathematics 1st Paper</option>
+                <option value="Higher Mathematics 2nd Paper">Higher Mathematics 2nd Paper</option>
                 <option value="ICT">ICT</option>
                 <option value="Bangla">Bangla</option>
                 <option value="English">English</option>
@@ -65,24 +65,24 @@
                 <option value="Logic">Logic</option>
                 <option value="Philosophy">Philosophy</option>
             </select>
-            <input type="text" class="note-title" placeholder="Note's Title" name="note-title">
-            <textarea name="note-description" class="note-description" rows="4" placeholder="Tell a bit about your note" required></textarea>
-            <button class="publish-note-btn" name="submit" type="submit">Publish</button>
-        </form>
+            <input type="text" class="note-title" placeholder="Note's Title" name="noteTitle">
+            <textarea name="noteDescription" class="note-description" rows="4" placeholder="Tell a bit about your note" required></textarea>
+            <button class="publish-note-btn" onclick="publish()">Publish</button>
+        </div>
     </div>
     <!-- ***** Pop up to set a thumbnail **** -->
-    <!-- <div class="thumbnail-pop-up">
+    <div class="thumbnail-pop-up">
         <div class="popup-heading">
             <h2>Preview</h2>
-            <button class="discard-btn">Discard &times;</button>uplo
+            <button class="discard-btn">Discard &times;</button>
         </div>
         <div class="thumbnail-container">
-            <img src="/images/test-note-img.png">
+            <img alt="Note Image" id="noteImage">
         </div>
         <div class="popup-footer">
-            <button class="thumbnail-done-btn">Done</button>
+            <button class="thumbnail-addstack-btn">Add to Stack</button>
         </div>
-     </div> -->
+     </div>
     <script src="/js/upload-note.js"></script>
 </body>
 </html>

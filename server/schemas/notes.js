@@ -12,8 +12,8 @@ const notesSchema = new mongoose.Schema({
         required: true,
     },
     content: {
-        type: [String], // or URLs, if they are pictures
-        // required: true
+        type: [String], // The directory where all the images are placed
+        default: ['']
     },
     description: {
         type: String,
