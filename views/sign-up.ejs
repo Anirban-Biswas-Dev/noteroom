@@ -36,8 +36,11 @@
                     <input type="file" id="profile-picture" name="profile-picture" class="profile-picture-input" accept="image/*">
                     <p class="instructions">Please upload a clear image of yourself for authentication purposes.</p>
                 </div>
-                <!-- * Arnob this is the profile picture preview. Make this logical to see -->
-                <img alt="Profile Picture" style="display: none;" id="profile-picture-preview">
+                <!-- * This picture is dynamically triggered on the uploading an image -->
+                 <div class="profile-pic-preview-placeholder">
+                    <img alt="Profile Picture" style="display: none;" id="profile-picture-preview" class="profile-picture-preview">
+                    <p class="prfl-pic-success-msg" >Successfully uploaded Image!</p>
+                 </div>
                 <input type="text" name="displayname" placeholder="Display Name" class="input-field">
                 <input type="email" name="email" placeholder="Email" class="input-field">
                 <input type="password" name="password" placeholder="Password" class="input-field">

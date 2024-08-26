@@ -79,7 +79,8 @@ document.querySelector('#profile-picture').addEventListener('change', function(e
         document.querySelector('.profile-picture-upload').style.display = 'none';
         profilePreview.style.display = 'block'
         profilePreview.onload = function() {
-            URL.revokeObjectURL(profilePreview.src)
+            URL.revokeObjectURL(profilePreview.src);
+            document.querySelector('.profile-pic-preview-placeholder').style.display = 'flex';
         }
     }
 });
