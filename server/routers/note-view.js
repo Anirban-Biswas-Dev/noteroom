@@ -8,7 +8,7 @@ function noteViewRouter(io) {
         // If the noteid is given in the url, the specific note will be shown. Otherwise all the notes will be shown (note repo)
         if(noteID) {
             let note = await Notes.findById(noteID, { title: 1, subject: 1, description: 1, ownerid: 1 , content: 1 } )
-            let owner = await Students.findById(note.ownerid, { displayname: 1, studentid: 1 })
+            let owner = await Students.findById(note.ownerid, { displayname: 1, studentid: 1, profile_pic: 1 })
             return { note: note, owner: owner }
         } else {
             let notes = await Notes.find({}, { title: 1, subject: 1, description: 1 })
