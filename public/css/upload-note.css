@@ -189,7 +189,7 @@ body {
     transform: scale(1.03); 
 }
 
-.middle-section form{
+.text-form{
     display: flex;
     flex-direction: column;
     width: 65%;
