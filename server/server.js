@@ -63,7 +63,9 @@ app.get('/search-profile', (req, res) => {
 app.get('/dashboard', (req, res) => {
     res.render('dashboard')
 })
-
+app.get('/settings', (req, res) => {
+    res.render('settings')
+})
 app.get('*', (req, res) => {
     res.status(404)
     res.render('404-error', { message: 'The page you are looking for is not found' }) 

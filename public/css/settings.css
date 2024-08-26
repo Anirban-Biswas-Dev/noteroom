@@ -1,0 +1,154 @@
+* {
+  font-family: "Inter";
+  margin: 0;
+  padding: 0;
+}
+:root {
+  --squid-ink: #06192d;
+  --neon-blue: #04dbf6;
+  --gray: #ebebeb;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+.container{
+    width: 95%;
+    max-width: 1000px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+h1{
+    font-weight: 600;
+    font-size: 2rem;
+    color: #07192D;
+    padding: 10px;
+    margin-top:2vh;
+}
+.section{
+    width: 100%;
+    padding-bottom: 3vh;
+}
+
+.others{
+    padding: 10px;
+}
+.section-header{
+    width: 100%;
+    border-bottom: 3px solid rgba(217, 217, 217, 0.9);
+    display: flex;
+    align-items: center;
+}
+.section-title{
+    font-weight: 600;
+    font-size: 1.4rem;
+    padding: 0px 10px 0px 10px;
+}
+.msg-section{
+    width: 100%;
+    display: flex;
+    justify-content: space-between ;
+    align-items: center;
+    font-weight: 600;
+    font-size: 1.2rem;
+    padding: 5px;
+}
+/* slightly adjusting notification msg container for to match layout */
+.nft-msg{
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+.section-btn {
+    background-color: white;
+    border: none;
+    color: #333;
+    font-size: 1rem;  
+    border-radius: 5px;
+    cursor: pointer; 
+    transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.section-btn:hover {
+    background-color: #f2f2f2; 
+    color: #000; 
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); 
+}
+
+.section-btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.2); 
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 3.75em; 
+    height: 2.125em; 
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--gray);
+    transition: 0.4s;
+    border-radius: 2.125em; 
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 1.625em; 
+    width: 1.625em; 
+    left: 0.25em; 
+    bottom: 0.25em; 
+    background-color: var(--neon-blue);
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: var(--squid-ink);
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px var(--gray);
+}
+
+input:checked + .slider:before {
+    transform: translateX(1.625em); /* 26px equivalent */
+}
+
+/* ****** Responsiveness Part ******* */
+@media (max-width: 480px) {
+    .switch {
+        width: 3em;
+        height: 1.75em; 
+    }
+
+    .slider:before {
+        height: 1.25em;
+        width: 1.25em; 
+        left: 0.2em; 
+        bottom: 0.2em; 
+    }
+
+    input:checked + .slider:before {
+        transform: translateX(1.5em); 
+    }
+}
