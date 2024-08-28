@@ -17,7 +17,8 @@ const errorHandler = require('./errorhandlers/errors')
 const uploadRouter = require('./routers/upload-note')
 const noteViewRouter = require('./routers/note-view')
 
-const url = process.env.MONGO_URI
+// const url = process.env.MONGO_URI
+const url = 'mongodb://localhost:27017/information'
 mongoose.connect(url).then(() => {
     console.log(`Connected to database information`);
 }) 

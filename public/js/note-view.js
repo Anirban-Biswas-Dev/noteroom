@@ -1,6 +1,8 @@
 const host = 'http://localhost:2000'
 const socket = io(host)
 
+socket.emit('join-room', window.location.pathname.split('/')[2])
+
 socket.on('add-feedback', (feedbackData) => {
 	//* Broadcasted feedback handler. The extented-feedback is broadcasted
 
@@ -60,7 +62,7 @@ showSlide(currentIndex);
 document.querySelector('.post-feedback').addEventListener('click', async function () {
 	let feedback = document.querySelector('textarea[name="feedbackText"]').value
 
-	socket.emit('feedback', feedback, window.location.pathname.split('/')[2], decodeURIComponent(document.cookie).split(':')[1].replaceAll('"', '')) 
+	socket.emit('feedback', window.location.pathname.split('/')[2], feedback, window.location.pathname.split('/')[2], decodeURIComponent(document.cookie).split(':')[1].replaceAll('"', '')) 
 		//* sending feedback-text, noteid and studentid (doc-id) to server so that the server
 
 	document.querySelector('textarea[name="feedbackText"]').value = ''
