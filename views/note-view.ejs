@@ -11,6 +11,7 @@
         href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
         rel="stylesheet">
     <script src="https://kit.fontawesome.com/be4b1d4185.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.socket.io/socket.io-3.0.1.min.js"></script>
     <title>
         <%= note.title %>
     </title>
@@ -89,32 +90,44 @@
             <h2>Feedbacks</h2>
             
             <!-- feedback Input Area -->
-            <div class="feedback-input">
-                <textarea placeholder="Write a feedback..." rows="3"></textarea>
-                <button type="button" class="btn-submit-feedback">Post feedback</button>
-            </div>
+             <% if(!mynote) { %>
+                <div class="feedback-input">
+                    <textarea placeholder="Write a feedback..." rows="3" name="feedbackText"></textarea>
+                    <button type="button" class="btn-submit-feedback post-feedback">Post feedback</button>
+                </div>
+             <% } %>
         
             <!-- Feedbacks List -->
             <div class="feedbacks-list">
                 <!-- Individual feedback -->
-                <div class="feedback">
-                    <div class="feedback-header">
-                        <img src="https://via.placeholder.com/40" alt="User Avatar" class="feedback-avatar">
-                        <div class="feedback-author-info">
-                            <h4 class="feedback-author">Devajit Mutsuddy Rohit</h4>
-                            <span class="feedback-date">August 19, 2024</span>
+                <% feedbacks.forEach(feedback => { %>
+                    <% 
+                    let date = new Date(feedback.createdAt)
+                    const formattedDate = date.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    }); // Human readable date format while grabing all the feedbacks from database
+                    %>
+                    <div class="feedback">
+                        <div class="feedback-header">
+                            <img src="/<%= feedback.studentid.profile_pic %>" alt="User Avatar" class="feedback-avatar">
+                            <div class="feedback-author-info">
+                                <a href='/user/<%= feedback.studentid.studentid %>'><h4 class="feedback-author"><%= feedback.studentid.displayname %></h4></a>
+                                <span class="feedback-date"><%= formattedDate %></span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="feedback-body">
-                        <p>This is a sample feedback to show how the feedbacks will be displayed. Users can write their thoughts here.</p>
-                    </div>
-                    <div class="feedback-actions">
-                        <button type="button" class="btn-reply">Reply</button>
-                        <button type="button" class="btn-like">Like</button>
-                    </div>
-                </div>
-        
-                <!-- More feedbacks can be added here in the same structure -->
+                        <div class="feedback-body">
+                            <p><%= feedback.feedbackContents %></p>
+                        </div>
+                        <div class="feedback-actions">
+                            <!-- <button type="button" class="btn-reply">Reply</button>
+                            <button type="button" class="btn-like">Like</button> -->
+                        </div>
+                  </div>
+                <% }) %> <!--* This feedbackcards are the one grabbed from the database, not the one posted via websockets -->
             </div>
         </div>
         

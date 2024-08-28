@@ -41,6 +41,7 @@ app.use(session({
 app.use(cookieParser()) // Middleware for working with cookies
 app.use(fileUpload()) // Middleware for working with files
 app.use('/login', loginRouter(io))  
+
 app.use('/user', userRouter(io))
 app.use('/sign-up', signupRouter(io))
 app.use('/upload', uploadRouter(io))
@@ -74,10 +75,6 @@ app.get('*', (req, res) => {
     res.render('404-error', { message: 'The page you are looking for is not found' }) 
 }) // 404 if any url requested by the user is not found
 
-// Connecting with the client to the server using socket
-io.on('connection', (socket) => {
-    
-})
 
 server.listen(port, () => {
     console.log(`Server is listening on localhost:${port}`);
