@@ -42,7 +42,11 @@ function noteViewRouter(io) {
     }
 
     io.on('connection', (socket) => {
-        socket.on('feedback', (feedback, noteid, studentid) => {
+        socket.on('join-room', room => {
+            socket.join(room)
+            console.log(`A user added to room: ${room}`)
+        })
+        socket.on('feedback', (room, feedback, noteid, studentid) => {
             let feedbackData = {
                 noteid: noteid,
                 studentid: studentid,
@@ -50,7 +54,7 @@ function noteViewRouter(io) {
             } // Preparing raw data of the feedback
             addFeedback(feedbackData).then(feedback /* The extented-feedback document with commenter info */ => {
                 console.log(`Feedback added: ${feedback}`)
-                io.emit('add-feedback', feedback.toObject()) //* Sending extented-feedback to all the users via websockets
+                io.to(room).emit('add-feedback', feedback.toObject()) //* Sending extented-feedback to all the users via websockets
             })
         })
     })
@@ -64,7 +68,6 @@ function noteViewRouter(io) {
                     let note = information['note']
                     let owner = information['owner']
                     let feedbacks = information['feedbacks']
-                    console.log(feedbacks)
                     if (note.ownerid == req.cookies['recordID']) {
                         res.render('note-view', { note: note, mynote: mynote, owner: owner, feedbacks: feedbacks }) // Specific notes: visiting my notes
                     } else {
