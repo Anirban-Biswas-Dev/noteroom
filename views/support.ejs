@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/support.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+        rel="stylesheet">
+    <script src="https://kit.fontawesome.com/be4b1d4185.js" crossorigin="anonymous"></script>
+    <title>Support & Feedback</title>
+</head>
+<body>
+    <div class="container">
+        <h1>We'd love to hear from you!</h1>
+        <p class="msg">Provide your valuable feedback on how we can improve NoteRoom and share your experience with us.</p> 
+        <form action="" class="support-form" onsubmit="showPopup(event)">
+            <input type="text" class="user-name" placeholder="Name" required>
+            <input type="text" class="contact-details" placeholder="Whatsapp No. (Preferred) or Email" required>
+            <small class="contact-preference">For faster support, please provide your WhatsApp number.</small>
+            <input type="number" class="college-id" placeholder="College ID" required>
+            <textarea placeholder="Tell us more about the problem you're facing or the suggestion you have" oninput="autoResize(this)" required></textarea>
+            <button type="submit" class="submit-btn">Submit</button>
+        </form>
+    </div>
+    <div class="overlay"></div>
+    <div class="popup" id="popup">
+        <button class="close-btn" onclick="closePopup()">&times;</button>
+        <h2>Thank you for reaching out!</h2>
+        <p>We'll be in touch shortly. We appreciate your time and effort.</p>
+        <button class="home-btn" onclick="goHome()">Go to Home</button>
+    </div>
+    
+
+    <script>
+        function showPopup(event) {
+            event.preventDefault();
+            document.querySelector('.popup').style.display = 'flex';
+            document.querySelector('.overlay').style.display = 'flex';
+        }
+
+            function closePopup() {
+        document.querySelector('.popup').style.display = 'none';
+        document.querySelector('.overlay').style.display = 'none';
+    }
+
+    function goHome() {
+        window.location.href = '/dashboard';
+}
+
+
+        function autoResize(textarea) {
+            textarea.style.height = 'auto'; 
+            textarea.style.height = textarea.scrollHeight + 'px'; 
+        }
+    </script>
+</body>
+</html>
