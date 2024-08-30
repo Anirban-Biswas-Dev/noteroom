@@ -20,8 +20,8 @@ const studentsSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    studentID: {
-        type: String, // college ID 
+    studentid: {
+        type: String, // or ObjectID 
         required: true,
         immutable: true,
         unique: true
@@ -57,22 +57,22 @@ const studentsSchema = new mongoose.Schema({
     },
     owned_notes: {
         type: [mongoose.Schema.Types.ObjectId],
-        ref: 'notes',
+        ref: 'Notes',
         default: []
     },
     saved_notes: {
         type: [mongoose.Schema.Types.ObjectId],
-        ref: 'notes',
+        ref: 'Notes',
         default: []
     },
     featured_notes: {
         type: [mongoose.Schema.Types.ObjectId],
-        ref: 'notes',
+        ref: 'Notes',
         default: []
     },
     downloaded_notes: {
         type: [mongoose.Schema.Types.ObjectId],
-        ref: 'notes',
+        ref: 'Notes',
         default: []
     },
     badge: {

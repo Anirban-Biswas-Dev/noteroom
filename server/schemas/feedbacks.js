@@ -1,12 +1,11 @@
 const mongoose = require('mongoose')
 
 const feedbackSchema = new mongoose.Schema({
-    noteDocID: {
+    noteid: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
-        ref: 'notes'
     },
-    commenterDocID: {
+    studentid: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref: 'students'

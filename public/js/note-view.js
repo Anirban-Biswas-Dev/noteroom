@@ -1,7 +1,7 @@
 const host = 'http://localhost:2000'
 const socket = io(host)
 
-socket.emit('join-room', window.location.pathname.split('/')[2] /* The note-id as the unique room name */)
+socket.emit('join-room', window.location.pathname.split('/')[2])
 
 socket.on('add-feedback', (feedbackData) => {
 	//* Broadcasted feedback handler. The extented-feedback is broadcasted
@@ -16,9 +16,9 @@ socket.on('add-feedback', (feedbackData) => {
 	}) // Human readable date format
 	let feedbackCard = `<div class="feedback">
 							<div class="feedback-header">
-								<img src="/${feedbackData.commenterDocID.profile_pic}" alt="User Avatar" class="feedback-avatar">
+								<img src="/${feedbackData.studentid.profile_pic}" alt="User Avatar" class="feedback-avatar">
 								<div class="feedback-author-info">
-									<a href='/user/${feedbackData.commenterDocID.studentID}'><h4 class="feedback-author">${feedbackData.commenterDocID.displayname}</h4></a>
+									<a href='/user/${feedbackData.studentid.studentid}'><h4 class="feedback-author">${feedbackData.studentid.displayname}</h4></a>
 									<span class="feedback-date">${formattedDate}</span>
 								</div>
 							</div>
@@ -60,19 +60,10 @@ prevButton.addEventListener("click", () => {
 showSlide(currentIndex);
 
 document.querySelector('.post-feedback').addEventListener('click', async function () {
-	let feedback = document.querySelector('textarea[name="feedbackText"]').value // Feedback text
-	let ownerUsername = document.querySelector('span.studentusername').innerHTML // Note owner's username
-	let noteDocID = window.location.pathname.split('/')[2] // Note's document ID
-	let commenterDocID = Cookies.get('recordID').split(':')[1].replaceAll('"', '') // Commenter's document ID
+	let feedback = document.querySelector('textarea[name="feedbackText"]').value
 
-	socket.emit('feedback', 
-		noteDocID, 
-		feedback, 
-		noteDocID, 
-		commenterDocID, 
-		ownerUsername
-	) 
-	//* sending room-name (unique noteDocID), feedback-text, noteid and commenter's doc-id, and note owner's username to the server 
+	socket.emit('feedback', window.location.pathname.split('/')[2], feedback, window.location.pathname.split('/')[2], decodeURIComponent(document.cookie).split(':')[1].replaceAll('"', '')) 
+		//* sending feedback-text, noteid and studentid (doc-id) to server so that the server
 
 	document.querySelector('textarea[name="feedbackText"]').value = ''
 
