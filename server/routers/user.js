@@ -5,8 +5,8 @@ const Notes = require('../schemas/notes')
 
 function userRouter(io) {
     async function extract(studentID) {
-        let student = await Students.findOne({ studentid: studentID })
-        let students_notes_ids = student['owned_notes']
+        let student = await Students.findOne({ studentID: studentID })
+        let students_notes_ids = student['owned_notes'] // owned notes list
         let notes;
         if(students_notes_ids.length != 0) {
             notes = await Notes.find({ _id: { $in: students_notes_ids } })

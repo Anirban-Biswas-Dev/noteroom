@@ -16,8 +16,10 @@ const signupRouter = require('./routers/sign-up')
 const errorHandler = require('./errorhandlers/errors')
 const uploadRouter = require('./routers/upload-note')
 const noteViewRouter = require('./routers/note-view')
+const dashboardRouter = require('./routers/dashboard')
 
 const url = process.env.MONGO_URI
+// const url = 'mongodb://localhost:27017/information'
 mongoose.connect(url).then(() => {
     console.log(`Connected to database information`);
 }) 
@@ -46,6 +48,7 @@ app.use('/user', userRouter(io))
 app.use('/sign-up', signupRouter(io))
 app.use('/upload', uploadRouter(io))
 app.use('/view', noteViewRouter(io))
+app.use('/dashboard', dashboardRouter(io))
 app.use(errorHandler) // Middleware for handling errors
 
 app.get('/logout', (req, res) => {
@@ -75,6 +78,8 @@ app.get('*', (req, res) => {
     res.render('404-error', { message: 'The page you are looking for is not found' }) 
 }) // 404 if any url requested by the user is not found
 
+io.on('connection', function(socket) {
+})
 
 server.listen(port, () => {
     console.log(`Server is listening on localhost:${port}`);
