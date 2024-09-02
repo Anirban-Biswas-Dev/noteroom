@@ -1,5 +1,13 @@
 const mongoose = require('mongoose')
 
+const baseOptions = {
+    discriminatorKey: 'docType',
+    collection: 'notifications' 
+}
+
+const NotifsSchema = new mongoose.Schema({}, baseOptions)
+const NotifsModel = mongoose.model('notifications', NotifsSchema)
+
 const feedBackSchema = new mongoose.Schema({
     noteDocID: { 
         type: mongoose.Schema.Types.ObjectId,
@@ -11,17 +19,32 @@ const feedBackSchema = new mongoose.Schema({
         ref: 'students',
         required: true,
     },
-    docType: {
-        type: String,
-        required: true
-    },
     ownerUsername: String, 
     createdAt: {
         type: Date,
         default: Date.now
     }
-})
+}, { _id: false })
+const feedBackNotifs = NotifsModel.discriminator('feedback', feedBackSchema)
 
-const feedBackModel = mongoose.model('notifications', feedBackSchema)
+const uploadNoteSchema = new mongoose.Schema({
+    noteDocID: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'notes',
+        required: true
+    },
+    ownerDocID: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'students',
+        required: true
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now
+    }
+}, { _id: false })
+const uploadNoteNotifs = NotifsModel.discriminator('upload-note', uploadNoteSchema)
 
-module.exports.feedBackModel = feedBackModel
+module.exports.Notifs = NotifsModel
+module.exports.feedBackNotifs = feedBackNotifs
+module.exports.uploadNoteNotifs = uploadNoteNotifs

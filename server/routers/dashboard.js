@@ -1,7 +1,7 @@
 const express = require('express')
 const Students = require('../schemas/students')
 const Notes = require('../schemas/notes')
-const FeedBackNotifications = require('../schemas/notifications').feedBackModel
+const allNotifs = require('../schemas/notifications').Notifs
 const router = express.Router()
 
 function dashboardRouter(io) {
@@ -11,14 +11,33 @@ function dashboardRouter(io) {
     }
 
     async function getNotifications(ownerUsername) {
-        let notis = await FeedBackNotifications.find({ ownerUsername: ownerUsername })
-                                            .populate('noteDocID', 'title')
-                                            .populate('commenterDocID', 'studentID displayname')
-                                            
-        return notis
-    }
+        let allNotifications = await allNotifs.find()
+        let populatedNotifications = []
+        allNotifications.map(doc => {
+            if (doc['docType'] === 'feedback') {
+                if(doc.ownerUsername == ownerUsername) {
+                    populatedNotifications.push(doc.populate([
+                        { path: 'noteDocID', select: 'title' },
+                        { path: 'commenterDocID', select: 'displayname studentID' }
+                    ]))
+                }
+            } else {
+                populatedNotifications.push(doc)
+            }
+        })
 
-    router.get('/',  async (req, res, next) => {
+        let data = await Promise.all(populatedNotifications)
+        return data
+    }
+    // TODO: Will work on this after the front-end remove notofications
+    // io.on('connection', (socket) => {
+    //     socket.on('delete-noti', async (notiID) => {
+    //         await allNotifs.deleteOne({ _id: notiID })
+    //         socket.emit('noti-deleted')
+    //     })
+    // })
+
+    router.get('/', async (req, res, next) => {
         if(req.session.stdid) {
             let student = await getStudent(req.session.stdid)
             let notis = await getNotifications(req.cookies['recordName'])
