@@ -84,7 +84,7 @@ function uploadRouter(io) {
             }) //* After adding everything into the note-db except content (image links), this will update the content field with the image links
 
             // let owner = await getStudentInfo(req.cookies['recordID'])
-            // io.emit('note-upload', { noteid: noteDocId, nfnTitle: noteData.title, ownerDisplayName: owner.displayname, ownerID: owner.studentid })
+            // io.emit('note-upload', { noteid: noteDocId, nfnTitle: noteData.title, ownerDisplayName: owner.displayname, ownerID: owner.studentID })
         }
     })
 

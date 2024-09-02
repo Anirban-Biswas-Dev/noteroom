@@ -1,5 +1,3 @@
-/* This generates html for the feed notecards from the feed.js data */
-
 const host = 'http://localhost:2000'
 const socket = io(host)
 
@@ -107,3 +105,11 @@ savedNotes.forEach((savedNote) => {
 });
 
 document.querySelector(".saved-notes-container").innerHTML = savedNotesHtml;
+
+//R: Change the snippet if you want to
+document.querySelectorAll('.remove-notification').forEach(notification /* selecting each notification and adding a click event */ => {
+    notification.addEventListener('click', function() {
+        //R: Place your remove-notifications logic here
+        alert('notifications deleted')
+    })
+})

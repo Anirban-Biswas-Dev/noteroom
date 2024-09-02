@@ -2,7 +2,8 @@ const express = require('express')
 const router = express.Router()
 const Notes = require('../schemas/notes')
 const Students = require('../schemas/students')
-const FeedBackNotifications = require('../schemas/notifications').feedBackModel
+const feedBackNotifs = require('../schemas/notifications').feedBackNotifs
+const allNotifs = require('../schemas/notifications').Notifs
 const Feedbacks = require('../schemas/feedbacks')
 
 /*
@@ -45,7 +46,7 @@ function noteViewRouter(io) {
     }
 
     async function addFeedbackNotifications(notiObj) {
-        let feednoti = await FeedBackNotifications.create(notiObj)
+        let feednoti = await feedBackNotifs.create(notiObj)
         return feednoti
     }
 
@@ -69,12 +70,11 @@ function noteViewRouter(io) {
                 commenterDisplayName /* The student's displayname who gave the feedback: the link will contain commenter's displayname */ : feedback.commenterDocID.displayname,
                 ownerUsername /* The student's username who ownes the note: varifing with recordName if the notification will be dropped or not */: ownerUsername
             })
-            let feedbackNoti = await addFeedbackNotifications({ 
-                docType: 'feedback', 
+            let feedbackNoti = await addFeedbackNotifications({
                 noteDocID: noteDocID, 
                 commenterDocID: commenterDocID, 
                 ownerUsername: ownerUsername
-            })
+            }) // Save the feedback notifications in database
             console.log(feedbackNoti)
         })
     })
