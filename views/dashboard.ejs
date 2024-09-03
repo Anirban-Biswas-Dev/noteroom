@@ -90,7 +90,7 @@
         </defs>
         </svg>
       <a href='/user/<%= student.studentID %>'><img src="/<%= student.profile_pic %>" class="profile-pic" /></a>
-      <i class="fa-solid fa-gear settings-icon"></i>
+      <i class="fa-solid fa-gear settings-icon" onclick="window.location.href = '/settings'"></i>
     </div>
     <p class="sub-header">
       Notifications
@@ -102,14 +102,13 @@
 		<% if(notis.length != 0) { %>
 			<% notis.forEach(noti => { %>
         <!--* Notification Start -->
-        <span style="display: none;" class="notification-id"><%= noti._id %></span>
         <% if(noti.docType == 'feedback') { %>
-          <div class="notification">
+          <div class="notification" id="<%= noti._id %>">
             <div class="first-row">
               <span class="notification-title">
               <a href='/view/<%= noti.noteDocID._id %>'><%= noti.noteDocID.title %></a>
               </span>
-              <span class="remove-notification">&times;</span>
+              <span class="remove-notification" onclick="deleteNoti('<%= noti._id %>')">&times;</span>
             </div>
             <div class="notification-msg">
               <a href='/user/<%= noti.commenterDocID.studentID %>'><%= noti.commenterDocID.displayname %></a> has given a feedback in your notes! Check that out. <br>
@@ -125,7 +124,7 @@
   <div class="background-overlay"></div>
   <script src="/js/data/feed.js"></script>
   <script src="/js/data/saved-notes.js"></script>
-  <script src="/js/dashboard.js" type="module"></script>
+  <script src="/js/dashboard.js"></script>
 </body>
 
 </html>
