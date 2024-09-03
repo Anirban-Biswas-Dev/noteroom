@@ -3,7 +3,6 @@ const router = express.Router()
 const Notes = require('../schemas/notes')
 const Students = require('../schemas/students')
 const feedBackNotifs = require('../schemas/notifications').feedBackNotifs
-const allNotifs = require('../schemas/notifications').Notifs
 const Feedbacks = require('../schemas/feedbacks')
 
 /*
@@ -63,19 +62,21 @@ function noteViewRouter(io) {
             } // Preparing raw data of the feedback
             let feedback = await addFeedback(feedbackData) /* The extented-feedback document with commenter info */
             io.to(room).emit('add-feedback', feedback.toObject()) //* Adding feedback under the note view: Sending extented-feedback to all the users via websockets
-            io.emit('feedback-given', { //* Feedback-notifications: This will go to everyuser, but the user with ownerUsername=recordName will keep it
-                noteDocID /* The note on which the feedback is given: to create a direct link to that note */: noteDocID,
-                nfnTitle /* The note's title on which the feedback is given: the link will contain the note's title */: feedback.noteDocID.title, 
-                commenterStudentID /* Commenter's student-id: to create a direct link to the commenter's profile */: feedback.commenterDocID.studentID, 
-                commenterDisplayName /* The student's displayname who gave the feedback: the link will contain commenter's displayname */ : feedback.commenterDocID.displayname,
-                ownerUsername /* The student's username who ownes the note: varifing with recordName if the notification will be dropped or not */: ownerUsername
-            })
+
             let feedbackNoti = await addFeedbackNotifications({
                 noteDocID: noteDocID, 
                 commenterDocID: commenterDocID, 
                 ownerUsername: ownerUsername
             }) // Save the feedback notifications in database
-            console.log(feedbackNoti)
+
+            io.emit('feedback-given', { //* Feedback-notifications: This will go to everyuser, but the user with ownerUsername=recordName will keep it
+                noteDocID /* The note on which the feedback is given: to create a direct link to that note */: noteDocID,
+                nfnTitle /* The note's title on which the feedback is given: the link will contain the note's title */: feedback.noteDocID.title, 
+                commenterStudentID /* Commenter's student-id: to create a direct link to the commenter's profile */: feedback.commenterDocID.studentID, 
+                commenterDisplayName /* The student's displayname who gave the feedback: the link will contain commenter's displayname */ : feedback.commenterDocID.displayname,
+                ownerUsername /* The student's username who ownes the note: varifing with recordName if the notification will be dropped or not */: ownerUsername,
+                notiID: /* The document ID of notification. This is used to remove specific notifications later */ feedbackNoti._id
+            })
         })
     })
 

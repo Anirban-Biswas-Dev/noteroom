@@ -68,12 +68,12 @@ socket.on('feedback-given', (feedbackData) => {
 
     if(feedbackData.ownerUsername == selfUsername) { // If the note owner on which the feedback is given and the recordName are same, the notification will be kept
         let notificationHtml = `
-        <div class="notification">
+        <div class="notification" id="${feedbackData.notiID}">
             <div class="first-row">
                 <span class="notification-title">
                     <a href='/view/${feedbackData.noteDocID}'>${truncatedTitle(feedbackData.nfnTitle)}</a>
                 </span>
-                <span class="remove-notification">&times;</span>
+                <span class="remove-notification" onclick="deleteNoti('${feedbackData.notiID}')">&times;</span>
             </div>
             <div class="notification-msg">
                 <a href='/user/${feedbackData.commenterStudentID}'>${feedbackData.commenterDisplayName}</a> has given a feedback in your notes! Check that out.
@@ -114,13 +114,11 @@ savedNotes.forEach((savedNote) => {
 
 document.querySelector(".saved-notes-container").innerHTML = savedNotesHtml;
 
-//R: Change the snippet if you want to
-document.querySelectorAll('.remove-notification').forEach(notification /* selecting each notification and adding a click event */ => {
-    notification.addEventListener('click', function() {
-        //R: Place your remove-notifications logic here
-        alert('notifications deleted')
-    })
-})
+function deleteNoti(id) {
+    let notification = document.getElementById(id) // getting the exact notification which is clicked to remove by its unique ID
+    notification.style.display = 'none' // Just removing the notification from the front-end
+    socket.emit('delete-noti', id) // Sending an event to remove the notification from database
+}
 
 const notificationPanel = document.querySelector('.notification-panel');
 const notificationButton = document.querySelector('.mobile-nft-btn'); 

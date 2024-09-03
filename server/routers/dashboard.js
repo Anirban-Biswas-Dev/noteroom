@@ -1,6 +1,5 @@
 const express = require('express')
 const Students = require('../schemas/students')
-const Notes = require('../schemas/notes')
 const allNotifs = require('../schemas/notifications').Notifs
 const router = express.Router()
 
@@ -29,15 +28,13 @@ function dashboardRouter(io) {
         let data = await Promise.all(populatedNotifications)
         return data
     }
-    // TODO: Will work on this after the front-end remove notofications
-    // io.on('connection', (socket) => {
-    //     socket.on('delete-noti', async (notiID) => {
-    //         await allNotifs.deleteOne({ _id: notiID })
-    //         socket.emit('noti-deleted')
-    //     })
-    // })
+    io.on('connection', (socket) => {
+        socket.on('delete-noti', async (notiID) => {
+            await allNotifs.deleteOne({ _id: notiID }) // Deleteing notification based on the ID given from the frontend
+        })
+    })
 
-    router.get('/', async (req, res, next) => {
+    router.get('/', async (req, res) => {
         if(req.session.stdid) {
             let student = await getStudent(req.session.stdid)
             let notis = await getNotifications(req.cookies['recordName'])
