@@ -80,7 +80,15 @@ socket.on('feedback-given', (feedbackData) => {
             </div>
         </div>`;
     
-        document.querySelector('.notifications-container').insertAdjacentHTML('afterbegin', notificationHtml) 
+        document.querySelector('.notifications-container').insertAdjacentHTML('afterbegin', notificationHtml);
+        const nftShake = document.querySelector('.mobile-nft-btn')
+        nftShake.classList.add('shake');
+        
+        setTimeout(() => {
+            nftShake.classList.remove('shake');
+        }, 300);
+        
+        console.log(nftShake);
     }
 })
 
@@ -112,4 +120,22 @@ document.querySelectorAll('.remove-notification').forEach(notification /* select
         //R: Place your remove-notifications logic here
         alert('notifications deleted')
     })
+})
+
+const notificationPanel = document.querySelector('.notification-panel');
+const notificationButton = document.querySelector('.mobile-nft-btn'); 
+const backgroundOverlay = document.querySelector('.background-overlay');
+const hideNotificationPanel = document.querySelector('.btn-hide-nft');
+
+notificationButton.addEventListener('click', () => {
+  notificationPanel.classList.toggle('show');
+  backgroundOverlay.classList.toggle('show-overlay'); 
+});
+backgroundOverlay.addEventListener('click', () => {
+    notificationPanel.classList.remove('show'); 
+    backgroundOverlay.classList.remove('show-overlay'); 
+  });
+hideNotificationPanel.addEventListener('click', () => {
+    notificationPanel.classList.remove('show'); 
+    backgroundOverlay.classList.remove('show-overlay');
 })
