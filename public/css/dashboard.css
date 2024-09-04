@@ -38,6 +38,7 @@ body {
 /* Search Bar */
 .search-bar {
   max-width: 980px;
+  min-width: 100px;
   box-sizing: border-box;
   background: rgba(255, 255, 255, 0.18);
   border: 2px solid #1e1e1e;
@@ -46,7 +47,7 @@ body {
   border-bottom-right-radius: 0px;
   width: 768px;
   height: 57px;
-  padding-left: 20px;
+  padding-left: 10px;
   font-size: 1.2rem;
 }
 .search-bar:focus {
@@ -66,12 +67,15 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 20px;
   width: 60px;
+  min-width: 30px;
 }
 .mobile-nft-btn{
   display: none;
   cursor: pointer;
+  min-width: 40px;
+  padding: 0px 10px 0px 10px;
+  padding:0px 2vw;
   transition: transform 0.2s ease, opacity 0.2s ease, background-color 0.2s ease;
 }
 
@@ -94,8 +98,6 @@ body {
 .shake {
   animation: rotate-shake 0.5s; 
 }
-
-
 
 /* ***** Middle Section ****** */
 /* Middle Section */
@@ -216,6 +218,7 @@ body {
   height: 100vh;
   background: var(--gray);
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 10px;
   box-sizing: border-box;
   box-shadow: -1px 4px 4px rgba(0, 0, 0, 0.25);
@@ -238,7 +241,9 @@ body {
   background-color: rgba(0, 0, 0, 0.5); 
   z-index: 1000; 
   display: none;
-  transition: opacity 0.3s ease; 
+  transition: opacity 0.3s ease;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px); 
 }
 .notification-panel-header {
   width: 100%;
@@ -255,10 +260,15 @@ body {
   border-radius: 50px;
   object-fit: contain;
 }
+.btn-hide-nft{
+  display: none;
+  min-width: 40px;
+}
 .settings-icon {
   font-size: 3rem;
   margin-left: 45px;
   margin-right: 20px;
+  cursor: pointer;
   transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
@@ -309,19 +319,40 @@ body {
   font-size: 1.05rem;
   transition: color 0.3s ease;
 }
+.notification-link{
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+.notification-link-2{
+  display: inline;
+  text-decoration: none;
+  color: inherit;
+}
 
 .remove-notification {
   font-size: 2rem;
   cursor: pointer;
   transition: transform 0.2s ease, color 0.2s ease;
+  text-decoration: none;
 }
 .remove-notification:hover {
   transform: scale(1.1);
   color: #ff6666;
 }
 .notification-msg {
+  width: 100%;
   font-weight: 400;
   padding: 0 0 5px 0;
+}
+.commenter-prfl{
+  text-decoration: none;
+}
+.commenter-prfl:hover{
+  text-decoration: underline;
+}
+.commenter-prfl:visited{
+  color: var(--squid-ink);
 }
 
 /* Left Panel */
@@ -498,13 +529,23 @@ body {
   border-color: #b0b0b0;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+/* Keep all the Mobile Version of the code here */
+.mbl-profile-pic{
+  box-sizing: border-box;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--squid-ink);
+  border-radius: 50px;
+  object-fit: contain;
+  display: none;
+}
 
 /* ****** Responsiveness ***** */
 
 /* Temporarily Hiding the notification panel */
   @media (max-width: 1530px) {
   .notification-panel {
-    width: 15%;
+    width: 20%;
   }
 } 
 
@@ -516,9 +557,6 @@ body {
   .btn-upload-note{
     min-height: 40px;
     max-height: 55px;
-  }
-  .btn-hide-nft{
-    display: none;
   }
 }
 /* change the min width for targeting more smaller sizes */
@@ -565,7 +603,10 @@ body {
     height: 40px;
     width: 30px;
     font-size: 1.2rem;
-    margin-right:5vw;
+    
+  }
+  .mbl-profile-pic{
+    display: block;
   }
 
 }
@@ -579,14 +620,15 @@ body {
 @media (max-width: 480px) {
   .notification-panel {
     position: fixed;
+    overflow-x: hidden;
     top: 0;
     right: -100%; 
-    width: 90vw; 
+    width: 80vw;
     height: 100vh;
     transform: translateX(0); 
     box-shadow: none;
     z-index: 1001;
-    box-shadow: -10px 0px 30px rgba(0, 0, 0, 0.3);
+    box-shadow: -10px 0px 30px rgba(255, 255, 255, 0.3);
   }
   .profile-pic{
     display: none;
@@ -596,6 +638,35 @@ body {
     opacity: 1;
   }
   .show{
-    transform: translateX(-100%); 
+    transform: translateX(-100%);
+    left: 100%; 
+  }
+  .btn-hide-nft{
+    display: block;
+  }
+  .notification-title{
+    font-size: .9rem;
+  }
+  .notification-msg {
+    font-size: .8rem;
+    width: 100%;
+  }
+  .commenter-prfl{
+    text-decoration: underline;
+  }
+  .notification{
+    margin-bottom: 15px;
+  }
+}
+@media (max-width: 768px) {
+  .settings-icon {
+    margin-left: 20px;
+    margin-right: 10px;
+    font-size:2rem;
+  }
+
+  .settings-icon:hover {
+    transform: scale(1.1); 
+    opacity: 0.9; 
   }
 }
