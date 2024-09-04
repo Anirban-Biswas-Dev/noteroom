@@ -5,7 +5,13 @@ let noteCardsHtml = "";
 
 noteCards.forEach((noteCard) => {
   noteCardsHtml += `<div class="feed-note-card">
-                <img class="thumbnail" src="/images/${noteCard.thumbnail}">
+                <div class="thumbnail-container">
+        <img class="thumbnail" src="/images/${noteCard.thumbnail}">
+        <button class="save-note-btn" id="save-btn-${noteCard.id}">
+    <i class="fa-regular fa-bookmark"></i>
+    <i class="fa-solid fa-bookmark saved"></i>
+</button>
+    </div>
                 <div class="note-details">
                     <div class="author-info">
                         <img src="/images/${noteCard.authorImg}" class="author-img">
@@ -137,3 +143,74 @@ hideNotificationPanel.addEventListener('click', () => {
     notificationPanel.classList.remove('show'); 
     backgroundOverlay.classList.remove('show-overlay');
 })
+// Saved notes functionality for adding visual effect when saved. 
+
+document.addEventListener('DOMContentLoaded', () => {
+    const buttons = document.querySelectorAll('.save-note-btn');
+  
+    buttons.forEach(button => {
+      const isSaved = button.classList.contains('saved');
+      const iconRegular = button.querySelector('.fa-regular');
+      const iconSolid = button.querySelector('.fa-solid');
+      
+      iconRegular.style.display = isSaved ? 'none' : 'inline';
+      iconSolid.style.display = isSaved ? 'inline' : 'none';
+  
+      button.addEventListener('click', () => {
+        if (iconRegular.style.display === 'none') {
+          iconRegular.style.display = 'inline';
+          iconSolid.style.display = 'none';
+          button.classList.remove('saved');
+        } else {
+          iconRegular.style.display = 'none';
+          iconSolid.style.display = 'inline';
+          button.classList.add('saved');
+          
+          button.classList.add('active');
+          setTimeout(() => button.classList.remove('active'), 600); 
+  
+          createConfetti(button);
+        }
+      });
+    });
+  });
+  
+  function createConfetti(button) {
+    const confettiContainer = document.createElement('div');
+    confettiContainer.className = 'confetti';
+    button.appendChild(confettiContainer);
+  
+    for (let i = 0; i < 50; i++) {
+      const confettiPiece = document.createElement('div');
+      confettiPiece.className = 'confetti-piece';
+      confettiPiece.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 70%)`;
+      confettiPiece.style.top = `${Math.random() * 100}%`;
+      confettiPiece.style.left = `${Math.random() * 100}%`;
+
+      const size = Math.random() * 8 + 4; 
+      confettiPiece.style.width = `${size}px`;
+      confettiPiece.style.height = `${size}px`;
+      confettiPiece.style.opacity = 1;
+      
+      confettiContainer.appendChild(confettiPiece);
+  
+      confettiPiece.animate([
+        { transform: `translateY(0) rotate(${Math.random() * 360}deg)` },
+        { transform: `translateY(${Math.random() * -300}px) rotate(${Math.random() * 360}deg)` }
+      ], {
+        duration: 1500 + Math.random() * 1000,
+        easing: 'ease-out',
+        fill: 'forwards'
+      });
+    }
+
+    setTimeout(() => confettiContainer.remove(), 2000);
+  }
+  
+  
+  
+  
+
+
+
+  

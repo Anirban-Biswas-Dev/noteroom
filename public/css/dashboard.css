@@ -144,12 +144,90 @@ body {
   margin-bottom: 75px;
   min-width: 90%;
 }
-.thumbnail {
+.thumbnail-container {
+  position: relative;
   width: 90%;
+}
+
+.thumbnail {
+  width: 100%;
   height: 360px;
   border: 1px solid #081c30;
   border-radius: 8px;
   object-fit: cover;
+}
+
+.thumbnail-container {
+  position: relative;
+  display: inline-block;
+}
+
+.save-note-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border-radius: 8px;
+  padding: 5px 10px;
+  cursor: pointer;
+  border: none;
+  font-size: 2.5rem;
+  background: rgba(255, 255, 255, 0.5);
+  transition: transform 0.3s, box-shadow 0.3s;
+  box-sizing: border-box;
+}
+
+.save-note-btn i.fa-solid {
+  display: none; 
+}
+
+.save-note-btn.saved i.fa-regular {
+  display: none; 
+}
+.save-note-btn.saved i.fa-solid {
+  display: inline; 
+}
+
+.save-note-btn.active {
+  animation: bounce 0.6s ease;
+  box-shadow: 0 0 15px rgba(0, 255, 0, 0.8);
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-20px);
+  }
+  60% {
+    transform: translateY(-10px);
+  }
+}
+
+.save-note-btn.saved {
+  border: 2px solid rgba(0, 255, 0, 0.6);
+}
+
+.confetti {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 999;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0);
+}
+
+.confetti-piece {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background-color: hsl(0, 100%, 70%);
+  opacity: 0;
+  border-radius: 50%;
 }
 .note-details {
   display: flex;
