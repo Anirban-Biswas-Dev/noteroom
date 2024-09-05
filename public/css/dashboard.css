@@ -397,12 +397,12 @@ body {
   font-size: 1.05rem;
   transition: color 0.3s ease;
 }
-.notification-link{
+div.first-row > .notification-link{
   display: block;
   text-decoration: none;
   color: inherit;
 }
-.notification-link-2{
+div.notification-msg > .notification-link-2 {
   display: inline;
   text-decoration: none;
   color: inherit;
@@ -423,13 +423,13 @@ body {
   font-weight: 400;
   padding: 0 0 5px 0;
 }
-.commenter-prfl{
+div.notification-msg > .commenter-prfl{
   text-decoration: none;
 }
-.commenter-prfl:hover{
+div.notification-msg > .commenter-prfl:hover{
   text-decoration: underline;
 }
-.commenter-prfl:visited{
+div.notification-msg > .commenter-prfl:visited{
   color: var(--squid-ink);
 }
 

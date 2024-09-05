@@ -1,23 +1,50 @@
 const host = 'http://localhost:2000'
 const socket = io(host)
 
-let noteCardsHtml = "";
+/*
+FIXME: Solve the notification and adding notes bug
+BUG: 
+!    After uploading any note or giving any feedback, the note is added in the dashboard and the feedback's notification is sent 
+!    to the owner respectively. When clicking the note which is added in real-time via websockets, the user is redirected to the 
+!    note but after coming back, the note vanishes because of the note's not being saved in the memory (but it is saved in db).
+!    But it comes back when reloading the dashborad fetching the data from db. Same goes for notifications.
+*/
 
-noteCards.forEach((noteCard) => {
-  noteCardsHtml += `<div class="feed-note-card">
-                <div class="thumbnail-container">
-        <img class="thumbnail" src="/images/${noteCard.thumbnail}">
-        <button class="save-note-btn" id="save-btn-${noteCard.id}">
-    <i class="fa-regular fa-bookmark"></i>
-    <i class="fa-solid fa-bookmark saved"></i>
-</button>
-    </div>
+const titleCharLimit = 30;
+
+function truncatedTitle(title) {
+  let truncatedTitle =
+    title.length > titleCharLimit
+      ? title.slice(0, titleCharLimit) + "..."
+      : title;
+
+  return truncatedTitle
+}
+
+socket.on('note-upload', (noteData) => {
+  /*
+  noteData:
+    thumbnail: The first image of the image-stack, will be used for preview at dashboard
+    noteID: Unique id for each note to redirect users to the specific note (view/<note-id>)
+    profile_pic: The profile picture of the owner of the note
+    noteTitle: Title of the note
+    ownerID: Note owner's student ID, will be used to redirect users to the note-owner (user/<owner-ID>)
+    ownerDisplayname: Note owner's displayname
+  */
+  let noteCardsHtml = `<div class="feed-note-card">
+                      <div class="thumbnail-container">
+                        <img class="thumbnail" src="${noteData.thumbnail}">
+                        <button class="save-note-btn" id="save-btn-${noteData.noteID}">
+                          <i class="fa-regular fa-bookmark"></i>
+                          <i class="fa-solid fa-bookmark saved"></i>
+                        </button>
+                    </div>
                 <div class="note-details">
                     <div class="author-info">
-                        <img src="/images/${noteCard.authorImg}" class="author-img">
+                        <img src="/${noteData.profile_pic}" class="author-img">
                         <div class="author-title-container">
-                            <div class="note-title">${noteCard.noteTitle}</div>
-                            <div class="author">${noteCard.noteAuthor}</div>
+                            <div class="note-title"><a href="/view/${noteData.noteID}" onclick='location.reload()'>${noteData.noteTitle}</a></div>
+                            <div class="author"><a href="/user/${noteData.ownerID}">${noteData.ownerDisplayName}</a></div>
                         </div>
                     </div>
                     <div class="note-engagement">
@@ -32,70 +59,60 @@ noteCards.forEach((noteCard) => {
                         </svg>
                     </div>            
                 </div>
-            </div>
-   `;
-});
-document.querySelector(".feed-container").innerHTML = noteCardsHtml;
-
-// Using the similar algorithm for dynamic notification loading
-
-// If you think the char limit shoudld be more, define a character limit for the title
-const titleCharLimit = 30;
-
-function truncatedTitle(title) {
-    let truncatedTitle =
-    title.length > titleCharLimit
-      ? title.slice(0, titleCharLimit) + "..."
-      : title;
-
-    return truncatedTitle
-}
-
-socket.on('note-upload', (noteData) => {
-    
-	// let notificationHtml = `
-    // <div class="notification">
-    //     <div class="first-row">
-    //         <span class="notification-title">
-    //             <a href='/view/${noteData.noteid}'>${truncatedTitle(noteData.nfnTitle)}</a>
-    //         </span>
-    //         <span class="remove-notification">&times;</span>
-    //     </div>
-    //     <div class="notification-msg">
-    //         <a href='/user/${noteData.ownerID}'>${noteData.ownerDisplayName}</a> has uploaded a new note, check that out!
-    //     </div>
-    // </div>`;
-
-    // document.querySelector('.notifications-container').insertAdjacentHTML('afterbegin', notificationHtml) 
+            </div> 
+   `; // same html structure as ejs file
+  document.querySelector('.feed-container').insertAdjacentHTML('beforeend', noteCardsHtml);
 })
 
-socket.on('feedback-given', (feedbackData) => {
-	let selfUsername = Cookies.get('recordName') // The student's username in cookie
 
-    if(feedbackData.ownerUsername == selfUsername) { // If the note owner on which the feedback is given and the recordName are same, the notification will be kept
-        let notificationHtml = `
+socket.on('feedback-given' /* This is the event hanlder of FEEDBACK NOTIFICATION, raised by note-view.js router */, (feedbackData) => {
+  /*
+  Process: This event will be handled by every user of noteroom. But will only be taken by the owner of the note whose note is commented.
+  While giving feedback, the owenr's username will be sent to all the users. This will be matched with the recordName cookie which helds
+  the value of every user's username while logging in. If the value is matched with the owner's username, then the notification will be 
+  shown. Otherwise dropped. //! This process will be changed to sending notification to the specific user via IDs rather than broadcast
+  */
+
+  /*
+  Data View
+  feedbackData (an Object which has the below keys and their values):
+    ownerUsername: The username of the owner of the note of which the feedback is given
+    notiID: Unique ID of the feedback notification
+    noteDocID: Unique ID of the note, will be used to redirect the owner to note on which the feedback is given (view/<note-id>)
+    nfnTitle: This is actually the title of the note, will be used for notification title
+    commenterStudentID: The student ID of the student who gave the feedback, will be used for redirecting the owner to the commenter's profile (user/<commenter-student-id>)
+    commenterDisplayname: The displayname of the commenter
+  */
+  let selfUsername = Cookies.get('recordName') // The student's username in cookie
+
+  if (feedbackData.ownerUsername == selfUsername) { // If the note owner on which the feedback is given and the recordName are same, the notification will be kept
+    let notificationHtml = `
         <div class="notification" id="${feedbackData.notiID}">
             <div class="first-row">
+              <a href='/view/${feedbackData.noteDocID}' class="notification-link">
                 <span class="notification-title">
-                    <a href='/view/${feedbackData.noteDocID}'>${truncatedTitle(feedbackData.nfnTitle)}</a>
+                ${truncatedTitle(feedbackData.nfnTitle)}
                 </span>
-                <span class="remove-notification" onclick="deleteNoti('${feedbackData.notiID}')">&times;</span>
+              </a>  
+              <span class="remove-notification" onclick="deleteNoti('${feedbackData.notiID}')">&times;</span>
             </div>
             <div class="notification-msg">
-                <a href='/user/${feedbackData.commenterStudentID}'>${feedbackData.commenterDisplayName}</a> has given a feedback in your notes! Check that out.
+              <a href='/user/${feedbackData.commenterStudentID}' class="commenter-prfl">
+              ${feedbackData.commenterDisplayName}
+              </a><a href='/view/${feedbackData.noteDocID}' class="notification-link-2"> has given feedback on your notes! Check it out.</a>
             </div>
-        </div>`;
-    
-        document.querySelector('.notifications-container').insertAdjacentHTML('afterbegin', notificationHtml);
-        const nftShake = document.querySelector('.mobile-nft-btn')
-        nftShake.classList.add('shake');
-        
-        setTimeout(() => {
-            nftShake.classList.remove('shake');
-        }, 300);
-        
-        console.log(nftShake);
-    }
+        </div>` // Same html strcuture as the ejs file
+
+    document.querySelector('.notifications-container').insertAdjacentHTML('afterbegin', notificationHtml);
+    const nftShake = document.querySelector('.mobile-nft-btn')
+    nftShake.classList.add('shake');
+
+    setTimeout(() => {
+      nftShake.classList.remove('shake');
+    }, 300);
+
+    console.log(nftShake);
+  }
 })
 
 
@@ -121,96 +138,88 @@ savedNotes.forEach((savedNote) => {
 document.querySelector(".saved-notes-container").innerHTML = savedNotesHtml;
 
 function deleteNoti(id) {
-    let notification = document.getElementById(id) // getting the exact notification which is clicked to remove by its unique ID
-    notification.style.display = 'none' // Just removing the notification from the front-end
-    socket.emit('delete-noti', id) // Sending an event to remove the notification from database
+  let notification = document.getElementById(id) // getting the exact notification which is clicked to remove by its unique ID
+  notification.style.display = 'none' // Just removing the notification from the front-end
+  socket.emit('delete-noti', id) // Sending an event to remove the notification from database
 }
 
 const notificationPanel = document.querySelector('.notification-panel');
-const notificationButton = document.querySelector('.mobile-nft-btn'); 
+const notificationButton = document.querySelector('.mobile-nft-btn');
 const backgroundOverlay = document.querySelector('.background-overlay');
 const hideNotificationPanel = document.querySelector('.btn-hide-nft');
 
 notificationButton.addEventListener('click', () => {
   notificationPanel.classList.toggle('show');
-  backgroundOverlay.classList.toggle('show-overlay'); 
+  backgroundOverlay.classList.toggle('show-overlay');
 });
 backgroundOverlay.addEventListener('click', () => {
-    notificationPanel.classList.remove('show'); 
-    backgroundOverlay.classList.remove('show-overlay'); 
-  });
+  notificationPanel.classList.remove('show');
+  backgroundOverlay.classList.remove('show-overlay');
+});
 hideNotificationPanel.addEventListener('click', () => {
-    notificationPanel.classList.remove('show'); 
-    backgroundOverlay.classList.remove('show-overlay');
+  notificationPanel.classList.remove('show');
+  backgroundOverlay.classList.remove('show-overlay');
 })
 // Saved notes functionality for adding visual effect when saved. 
 
 document.addEventListener('DOMContentLoaded', () => {
-    const buttons = document.querySelectorAll('.save-note-btn');
-  
-    buttons.forEach(button => {
-      const isSaved = button.classList.contains('saved');
-      const iconRegular = button.querySelector('.fa-regular');
-      const iconSolid = button.querySelector('.fa-solid');
-      
-      iconRegular.style.display = isSaved ? 'none' : 'inline';
-      iconSolid.style.display = isSaved ? 'inline' : 'none';
-  
-      button.addEventListener('click', () => {
-        if (iconRegular.style.display === 'none') {
-          iconRegular.style.display = 'inline';
-          iconSolid.style.display = 'none';
-          button.classList.remove('saved');
-        } else {
-          iconRegular.style.display = 'none';
-          iconSolid.style.display = 'inline';
-          button.classList.add('saved');
-          
-          button.classList.add('active');
-          setTimeout(() => button.classList.remove('active'), 600); 
-  
-          createConfetti(button);
-        }
-      });
+  const buttons = document.querySelectorAll('.save-note-btn');
+
+  buttons.forEach(button => {
+    const isSaved = button.classList.contains('saved');
+    const iconRegular = button.querySelector('.fa-regular');
+    const iconSolid = button.querySelector('.fa-solid');
+
+    iconRegular.style.display = isSaved ? 'none' : 'inline';
+    iconSolid.style.display = isSaved ? 'inline' : 'none';
+
+    button.addEventListener('click', () => {
+      if (iconRegular.style.display === 'none') {
+        iconRegular.style.display = 'inline';
+        iconSolid.style.display = 'none';
+        button.classList.remove('saved');
+      } else {
+        iconRegular.style.display = 'none';
+        iconSolid.style.display = 'inline';
+        button.classList.add('saved');
+
+        button.classList.add('active');
+        setTimeout(() => button.classList.remove('active'), 600);
+
+        createConfetti(button);
+      }
     });
   });
-  
-  function createConfetti(button) {
-    const confettiContainer = document.createElement('div');
-    confettiContainer.className = 'confetti';
-    button.appendChild(confettiContainer);
-  
-    for (let i = 0; i < 50; i++) {
-      const confettiPiece = document.createElement('div');
-      confettiPiece.className = 'confetti-piece';
-      confettiPiece.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 70%)`;
-      confettiPiece.style.top = `${Math.random() * 100}%`;
-      confettiPiece.style.left = `${Math.random() * 100}%`;
+});
 
-      const size = Math.random() * 8 + 4; 
-      confettiPiece.style.width = `${size}px`;
-      confettiPiece.style.height = `${size}px`;
-      confettiPiece.style.opacity = 1;
-      
-      confettiContainer.appendChild(confettiPiece);
-  
-      confettiPiece.animate([
-        { transform: `translateY(0) rotate(${Math.random() * 360}deg)` },
-        { transform: `translateY(${Math.random() * -300}px) rotate(${Math.random() * 360}deg)` }
-      ], {
-        duration: 1500 + Math.random() * 1000,
-        easing: 'ease-out',
-        fill: 'forwards'
-      });
-    }
+function createConfetti(button) {
+  const confettiContainer = document.createElement('div');
+  confettiContainer.className = 'confetti';
+  button.appendChild(confettiContainer);
 
-    setTimeout(() => confettiContainer.remove(), 2000);
+  for (let i = 0; i < 50; i++) {
+    const confettiPiece = document.createElement('div');
+    confettiPiece.className = 'confetti-piece';
+    confettiPiece.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 70%)`;
+    confettiPiece.style.top = `${Math.random() * 100}%`;
+    confettiPiece.style.left = `${Math.random() * 100}%`;
+
+    const size = Math.random() * 8 + 4;
+    confettiPiece.style.width = `${size}px`;
+    confettiPiece.style.height = `${size}px`;
+    confettiPiece.style.opacity = 1;
+
+    confettiContainer.appendChild(confettiPiece);
+
+    confettiPiece.animate([
+      { transform: `translateY(0) rotate(${Math.random() * 360}deg)` },
+      { transform: `translateY(${Math.random() * -300}px) rotate(${Math.random() * 360}deg)` }
+    ], {
+      duration: 1500 + Math.random() * 1000,
+      easing: 'ease-out',
+      fill: 'forwards'
+    });
   }
-  
-  
-  
-  
 
-
-
-  
+  setTimeout(() => confettiContainer.remove(), 2000);
+}
