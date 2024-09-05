@@ -12,6 +12,7 @@
     rel="stylesheet" />
   <script src="https://kit.fontawesome.com/be4b1d4185.js" crossorigin="anonymous"></script>
   <script src="https://cdn.socket.io/socket.io-3.0.1.min.js"></script>
+  <!-- <script src="/js/socket.io.min.js"></script> -->
   <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
   <title>Dashboard</title>
 </head>
@@ -24,16 +25,18 @@
           <img src="/images/draft-logo-of-noteroom.gif" alt="NoteRoom Logo" />
     </div>
     <button class="btn-home">
-      <svg width="28" height="28" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-        <rect width="24.4687" height="24.4687" fill="url(#pattern0_1185_1183)"/>
+      <svg width="28" height="28" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink">
+        <rect width="24.4687" height="24.4687" fill="url(#pattern0_1185_1183)" />
         <defs>
-        <pattern id="pattern0_1185_1183" patternContentUnits="objectBoundingBox" width="1" height="1">
-        <use xlink:href="#image0_1185_1183" transform="scale(0.01)"/>
-        </pattern>
-        <image id="image0_1185_1183" width="100" height="100" xlink:href="data:image/png;base64,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"/>
+          <pattern id="pattern0_1185_1183" patternContentUnits="objectBoundingBox" width="1" height="1">
+            <use xlink:href="#image0_1185_1183" transform="scale(0.01)" />
+          </pattern>
+          <image id="image0_1185_1183" width="100" height="100"
+            xlink:href="data:image/png;base64,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" />
         </defs>
-        </svg>
-        
+      </svg>
+
       Home
     </button>
     <button class="btn-upload-note" onclick="window.location.href = '/upload'">
@@ -63,33 +66,81 @@
     <button>
       <i class="fa-solid fa-magnifying-glass"></i>
     </button>
-    <svg class="mobile-nft-btn" width="40" height="40" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-      <rect width="30" height="30" fill="url(#pattern0_1165_1252)"/>
+    <svg class="mobile-nft-btn" width="40" height="40" viewBox="0 0 30 30" fill="none"
+      xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+      <rect width="30" height="30" fill="url(#pattern0_1165_1252)" />
       <defs>
-      <pattern id="pattern0_1165_1252" patternContentUnits="objectBoundingBox" width="1" height="1">
-      <use xlink:href="#image0_1165_1252" transform="scale(0.01)"/>
-      </pattern>
-      <image id="image0_1165_1252" width="100" height="100" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAAAXNSR0IArs4c6QAABNJJREFUeAHtncuLFEccx79rV/UuSlwf/4D4AAkaun41u4sv3IPGi3hbEvAegklMwESFHKInPYkIXlUQER8I4v8QyE0FUcjjkIeYhyaEKPgO1WPNMuMyr+6a6qr+NQwFM9O/qvp8+lc10z1TDfDGBJgAE2ACTIAJMAEmwASYABNgAv0TGNdrIOgrJHQ2fwj9JSamVvcfgN9ZEoF3U0h9ClI9h6TX7Y/8uZOAliVVxmF6EFgEQdfbJXRKodcQ2TUAi3rE4pcLE5B6X08Z81nzUeH6OEAPAon+qW8hifqhRzR+uRABM2HPH/0dc8cCw5Z570S2qlCdvHMXAkJvHViIaGzpEpFfKkRANGaHEDJbqE7euQsBFtIFzqhfGs/WQdKJgTPE7GP25a0MAnoSUn0GoW4PIaJ90hd0E5I+BWaWltGymsWYWYpUHYWkvwuLePtT2SOkdATY8k7NoA7Z3VR9iFTddyCiM2N+Q0ofDNnKOuy2cTlkdsm5iLcz5iKgJ+tAuP8+jtNaCLrnQUYzaxL6Hqle33+DY36n1DOQ9MibjFbGqIeQqhEz6t59k41pSPWPfxmt0y7mQ4Tu3fAY32HOMUn1oEIy7KT/B8yFr3ptsxMQdKuCMppSzHcWzE7Ux4mk05WV0ZpT9Kl6CGmesX1VfSH0CkJtj1zKXFLKaZDWUdyajO34X26ZD10xXwZOaW8AmdEuNeJv82MQdCc4IebEZpTbMNcyRjU09arHzHvRbVKdCy47rKiEzkTmYy6BVH8GK0Sqv4C5JB4pItscrgz7SU7PRCREHwhfCH0RjxCpLkQg5HxMQr6LQMi38QgZxSVZ+4nIVSno13iESPovggz5NyYhLyMQ8jImIe3nh1wNK67jRmPENahRxWch9ktZRUoWUhERNgNZCAtxcwzYIyz00g0dD1FDF2Hb7wGdmypth0Iv3dDxEDV0Ebb9HtC5qdJ2KPTSDR0PUUMXYdvvAZ2bKm2HQi/d0PEQNXQRtv0e0Lmp0nYo9NINHQ9RQxdh2+8BnZsqbYdCL93Q8RA1dBG2/R7QuanSdij00g0dD1FDF2Hb7wGdmypth0Iv3dDxEDV0Ebb9HtC5qdJ2KPTSDR0PUUMXYdvvAZ2bKm2HQi/d0Bl11OmVEfxIrvm7MkyvHDW9cuuT2RQGWda16hkk9C8IdFHNMUj9OSQ9jSY7WgeLet5cAC2Yv0vrSQh9JT4RHT9JSrMbwKYV5Q4pZUczyxsl2Y/Ry5jPlp9h/q5XyU3q/XEOUR2Z0ZJhn1fPYPpeqU3QwfpkhRXRUZp7l1Rjy5ZBqse1F2IYVGLtRtHYyTLeZItQO/wniaBdLMQK0e/7F4J8yHrCUqoyZJlDQqhDtRdSnUn9TZJK+gSSfq+fGLOQp/q4AkPVQk2YS/Lb1pmlVuvwyG/RF9OiNAs55eeYABNgAoETaM5HlyGpyKOmS4i7cN9csL/gahDZlIum1TSmXlzsfJl6Ary3pKbwHHVb0NWhv+OYC2a8lUwg1Rsh1YvBpagXSBsbSm4Nh8sJCPp6YCFCH2Z67giMIdXH+5aSqmMAxtw1hyM3CYyrPV3vWSXUXSS0m3GNlIC50wJty3+Sk9BZmNWnBX2DfFlwPr80UhVcGRNgAkyACTABJsAEmAATYAJBE/gfawhHLlMvr4MAAAAASUVORK5CYII="/>
+        <pattern id="pattern0_1165_1252" patternContentUnits="objectBoundingBox" width="1" height="1">
+          <use xlink:href="#image0_1165_1252" transform="scale(0.01)" />
+        </pattern>
+        <image id="image0_1165_1252" width="100" height="100"
+          xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAAAXNSR0IArs4c6QAABNJJREFUeAHtncuLFEccx79rV/UuSlwf/4D4AAkaun41u4sv3IPGi3hbEvAegklMwESFHKInPYkIXlUQER8I4v8QyE0FUcjjkIeYhyaEKPgO1WPNMuMyr+6a6qr+NQwFM9O/qvp8+lc10z1TDfDGBJgAE2ACTIAJMAEmwASYABNgAv0TGNdrIOgrJHQ2fwj9JSamVvcfgN9ZEoF3U0h9ClI9h6TX7Y/8uZOAliVVxmF6EFgEQdfbJXRKodcQ2TUAi3rE4pcLE5B6X08Z81nzUeH6OEAPAon+qW8hifqhRzR+uRABM2HPH/0dc8cCw5Z570S2qlCdvHMXAkJvHViIaGzpEpFfKkRANGaHEDJbqE7euQsBFtIFzqhfGs/WQdKJgTPE7GP25a0MAnoSUn0GoW4PIaJ90hd0E5I+BWaWltGymsWYWYpUHYWkvwuLePtT2SOkdATY8k7NoA7Z3VR9iFTddyCiM2N+Q0ofDNnKOuy2cTlkdsm5iLcz5iKgJ+tAuP8+jtNaCLrnQUYzaxL6Hqle33+DY36n1DOQ9MibjFbGqIeQqhEz6t59k41pSPWPfxmt0y7mQ4Tu3fAY32HOMUn1oEIy7KT/B8yFr3ptsxMQdKuCMppSzHcWzE7Ux4mk05WV0ZpT9Kl6CGmesX1VfSH0CkJtj1zKXFLKaZDWUdyajO34X26ZD10xXwZOaW8AmdEuNeJv82MQdCc4IebEZpTbMNcyRjU09arHzHvRbVKdCy47rKiEzkTmYy6BVH8GK0Sqv4C5JB4pItscrgz7SU7PRCREHwhfCH0RjxCpLkQg5HxMQr6LQMi38QgZxSVZ+4nIVSno13iESPovggz5NyYhLyMQ8jImIe3nh1wNK67jRmPENahRxWch9ktZRUoWUhERNgNZCAtxcwzYIyz00g0dD1FDF2Hb7wGdmypth0Iv3dDxEDV0Ebb9HtC5qdJ2KPTSDR0PUUMXYdvvAZ2bKm2HQi/d0PEQNXQRtv0e0Lmp0nYo9NINHQ9RQxdh2+8BnZsqbYdCL93Q8RA1dBG2/R7QuanSdij00g0dD1FDF2Hb7wGdmypth0Iv3dDxEDV0Ebb9HtC5qdJ2KPTSDR0PUUMXYdvvAZ2bKm2HQi/d0Bl11OmVEfxIrvm7MkyvHDW9cuuT2RQGWda16hkk9C8IdFHNMUj9OSQ9jSY7WgeLet5cAC2Yv0vrSQh9JT4RHT9JSrMbwKYV5Q4pZUczyxsl2Y/Ry5jPlp9h/q5XyU3q/XEOUR2Z0ZJhn1fPYPpeqU3QwfpkhRXRUZp7l1Rjy5ZBqse1F2IYVGLtRtHYyTLeZItQO/wniaBdLMQK0e/7F4J8yHrCUqoyZJlDQqhDtRdSnUn9TZJK+gSSfq+fGLOQp/q4AkPVQk2YS/Lb1pmlVuvwyG/RF9OiNAs55eeYABNgAoETaM5HlyGpyKOmS4i7cN9csL/gahDZlIum1TSmXlzsfJl6Ary3pKbwHHVb0NWhv+OYC2a8lUwg1Rsh1YvBpagXSBsbSm4Nh8sJCPp6YCFCH2Z67giMIdXH+5aSqmMAxtw1hyM3CYyrPV3vWSXUXSS0m3GNlIC50wJty3+Sk9BZmNWnBX2DfFlwPr80UhVcGRNgAkyACTABJsAEmAATYAJBE/gfawhHLlMvr4MAAAAASUVORK5CYII=" />
       </defs>
     </svg>
     <a href='/user/<%= student.studentID %>'><img src="/<%= student.profile_pic %>" class="mbl-profile-pic" /></a>
   </div>
   <div class="middle-section">
-    <div class="feed-container"></div>
+    <!--* The main feed back container where all the notes will be shown dynamically -->
+    <div class="feed-container">
+      <% if(notes.length != 0) { %>
+        <% notes.forEach(note => { %>
+          <div class="feed-note-card">
+            <div class="thumbnail-container">
+              <img class="thumbnail" src="<%= note.content[0] %>">
+              <button class="save-note-btn" id="save-btn-<%= note._id %>">
+                <i class="fa-regular fa-bookmark"></i>
+                <i class="fa-solid fa-bookmark saved"></i>
+              </button>
+            </div>
+            <div class="note-details">
+              <div class="author-info">
+                <img src="<%= note.ownerDocID.profile_pic %>" class="author-img">
+                <div class="author-title-container">
+                  <div class="note-title"><a href="/view/<%= note._id %>"><%= note.title %></a></div>
+                  <div class="author"><a href="/user/<%= note.ownerDocID.studentID %>"><%= note.ownerDocID.displayname %></a></div>
+                </div>
+              </div>
+              <div class="note-engagement">
+                <svg class="download-icon" width="40" height="40" viewBox="0 0 43 43" fill="none"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M37.1541 26.5395V33.6165C37.1541 34.555 36.7813 35.455 36.1177 36.1186C35.4541 36.7822 34.5541 37.155 33.6156 37.155H8.84623C7.90776 37.155 7.00773 36.7822 6.34414 36.1186C5.68054 35.455 5.30774 34.555 5.30774 33.6165V26.5395M12.3847 17.6933L21.2309 26.5395M21.2309 26.5395L30.0771 17.6933M21.2309 26.5395V5.30859"
+                    stroke="#1E1E1E" stroke-width="2.29523" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                <svg class="comment-icon" width="40" height="40" viewBox="0 0 36 37" fill="none"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M34.4051 23.9151C34.4051 24.8838 34.0257 25.8128 33.3505 26.4978C32.6753 27.1828 31.7595 27.5676 30.8045 27.5676H9.20113L2 34.8726V5.65252C2 4.68381 2.37934 3.75478 3.05458 3.0698C3.72982 2.38482 4.64564 2 5.60057 2H30.8045C31.7595 2 32.6753 2.38482 33.3505 3.0698C34.0257 3.75478 34.4051 4.68381 34.4051 5.65252V23.9151Z"
+                    stroke="#1E1E1E" stroke-width="2.40038" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                <svg class="share-icon" width="40" height="40" viewBox="0 0 46 46" fill="none"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M30.6079 32.5223L27.8819 29.8441L36.6816 21.0444L27.8819 12.2446L30.6079 9.56641L42.0858 21.0444L30.6079 32.5223ZM3.82599 36.3483V28.6963C3.82599 26.05 4.7506 23.8023 6.59983 21.953C8.48094 20.0719 10.7446 19.1314 13.391 19.1314H25.2037L18.3169 12.2446L21.0429 9.56641L32.5209 21.0444L21.0429 32.5223L18.3169 29.8441L25.2037 22.9574H13.391C11.7968 22.9574 10.4418 23.5153 9.32584 24.6312C8.20993 25.7471 7.65197 27.1022 7.65197 28.6963V36.3483H3.82599Z"
+                    fill="#1D1B20" />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <% }) %>
+      <% } %>
+    </div>
   </div>
   <div class="notification-panel">
     <div class="notification-panel-header">
       <!-- This is button only visible on mobile -->
-      <svg class="btn-hide-nft" width="40" height="40" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-        <rect width="30" height="30" fill="url(#pattern0_1223_1186)"/>
-        <path d="M27.4999 3.4985L0.999934 26" stroke="#EBEBEB" stroke-width="2"/>
+      <svg class="btn-hide-nft" width="40" height="40" viewBox="0 0 30 30" fill="none"
+        xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <rect width="30" height="30" fill="url(#pattern0_1223_1186)" />
+        <path d="M27.4999 3.4985L0.999934 26" stroke="#EBEBEB" stroke-width="2" />
         <defs>
-        <pattern id="pattern0_1223_1186" patternContentUnits="objectBoundingBox" width="1" height="1">
-        <use xlink:href="#image0_1223_1186" transform="scale(0.01)"/>
-        </pattern>
-        <image id="image0_1223_1186" width="100" height="100" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAAAXNSR0IArs4c6QAABNJJREFUeAHtncuLFEccx79rV/UuSlwf/4D4AAkaun41u4sv3IPGi3hbEvAegklMwESFHKInPYkIXlUQER8I4v8QyE0FUcjjkIeYhyaEKPgO1WPNMuMyr+6a6qr+NQwFM9O/qvp8+lc10z1TDfDGBJgAE2ACTIAJMAEmwASYABNgAv0TGNdrIOgrJHQ2fwj9JSamVvcfgN9ZEoF3U0h9ClI9h6TX7Y/8uZOAliVVxmF6EFgEQdfbJXRKodcQ2TUAi3rE4pcLE5B6X08Z81nzUeH6OEAPAon+qW8hifqhRzR+uRABM2HPH/0dc8cCw5Z570S2qlCdvHMXAkJvHViIaGzpEpFfKkRANGaHEDJbqE7euQsBFtIFzqhfGs/WQdKJgTPE7GP25a0MAnoSUn0GoW4PIaJ90hd0E5I+BWaWltGymsWYWYpUHYWkvwuLePtT2SOkdATY8k7NoA7Z3VR9iFTddyCiM2N+Q0ofDNnKOuy2cTlkdsm5iLcz5iKgJ+tAuP8+jtNaCLrnQUYzaxL6Hqle33+DY36n1DOQ9MibjFbGqIeQqhEz6t59k41pSPWPfxmt0y7mQ4Tu3fAY32HOMUn1oEIy7KT/B8yFr3ptsxMQdKuCMppSzHcWzE7Ux4mk05WV0ZpT9Kl6CGmesX1VfSH0CkJtj1zKXFLKaZDWUdyajO34X26ZD10xXwZOaW8AmdEuNeJv82MQdCc4IebEZpTbMNcyRjU09arHzHvRbVKdCy47rKiEzkTmYy6BVH8GK0Sqv4C5JB4pItscrgz7SU7PRCREHwhfCH0RjxCpLkQg5HxMQr6LQMi38QgZxSVZ+4nIVSno13iESPovggz5NyYhLyMQ8jImIe3nh1wNK67jRmPENahRxWch9ktZRUoWUhERNgNZCAtxcwzYIyz00g0dD1FDF2Hb7wGdmypth0Iv3dDxEDV0Ebb9HtC5qdJ2KPTSDR0PUUMXYdvvAZ2bKm2HQi/d0PEQNXQRtv0e0Lmp0nYo9NINHQ9RQxdh2+8BnZsqbYdCL93Q8RA1dBG2/R7QuanSdij00g0dD1FDF2Hb7wGdmypth0Iv3dDxEDV0Ebb9HtC5qdJ2KPTSDR0PUUMXYdvvAZ2bKm2HQi/d0Bl11OmVEfxIrvm7MkyvHDW9cuuT2RQGWda16hkk9C8IdFHNMUj9OSQ9jSY7WgeLet5cAC2Yv0vrSQh9JT4RHT9JSrMbwKYV5Q4pZUczyxsl2Y/Ry5jPlp9h/q5XyU3q/XEOUR2Z0ZJhn1fPYPpeqU3QwfpkhRXRUZp7l1Rjy5ZBqse1F2IYVGLtRtHYyTLeZItQO/wniaBdLMQK0e/7F4J8yHrCUqoyZJlDQqhDtRdSnUn9TZJK+gSSfq+fGLOQp/q4AkPVQk2YS/Lb1pmlVuvwyG/RF9OiNAs55eeYABNgAoETaM5HlyGpyKOmS4i7cN9csL/gahDZlIum1TSmXlzsfJl6Ary3pKbwHHVb0NWhv+OYC2a8lUwg1Rsh1YvBpagXSBsbSm4Nh8sJCPp6YCFCH2Z67giMIdXH+5aSqmMAxtw1hyM3CYyrPV3vWSXUXSS0m3GNlIC50wJty3+Sk9BZmNWnBX2DfFlwPr80UhVcGRNgAkyACTABJsAEmAATYAJBE/gfawhHLlMvr4MAAAAASUVORK5CYII="/>
+          <pattern id="pattern0_1223_1186" patternContentUnits="objectBoundingBox" width="1" height="1">
+            <use xlink:href="#image0_1223_1186" transform="scale(0.01)" />
+          </pattern>
+          <image id="image0_1223_1186" width="100" height="100"
+            xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAAAXNSR0IArs4c6QAABNJJREFUeAHtncuLFEccx79rV/UuSlwf/4D4AAkaun41u4sv3IPGi3hbEvAegklMwESFHKInPYkIXlUQER8I4v8QyE0FUcjjkIeYhyaEKPgO1WPNMuMyr+6a6qr+NQwFM9O/qvp8+lc10z1TDfDGBJgAE2ACTIAJMAEmwASYABNgAv0TGNdrIOgrJHQ2fwj9JSamVvcfgN9ZEoF3U0h9ClI9h6TX7Y/8uZOAliVVxmF6EFgEQdfbJXRKodcQ2TUAi3rE4pcLE5B6X08Z81nzUeH6OEAPAon+qW8hifqhRzR+uRABM2HPH/0dc8cCw5Z570S2qlCdvHMXAkJvHViIaGzpEpFfKkRANGaHEDJbqE7euQsBFtIFzqhfGs/WQdKJgTPE7GP25a0MAnoSUn0GoW4PIaJ90hd0E5I+BWaWltGymsWYWYpUHYWkvwuLePtT2SOkdATY8k7NoA7Z3VR9iFTddyCiM2N+Q0ofDNnKOuy2cTlkdsm5iLcz5iKgJ+tAuP8+jtNaCLrnQUYzaxL6Hqle33+DY36n1DOQ9MibjFbGqIeQqhEz6t59k41pSPWPfxmt0y7mQ4Tu3fAY32HOMUn1oEIy7KT/B8yFr3ptsxMQdKuCMppSzHcWzE7Ux4mk05WV0ZpT9Kl6CGmesX1VfSH0CkJtj1zKXFLKaZDWUdyajO34X26ZD10xXwZOaW8AmdEuNeJv82MQdCc4IebEZpTbMNcyRjU09arHzHvRbVKdCy47rKiEzkTmYy6BVH8GK0Sqv4C5JB4pItscrgz7SU7PRCREHwhfCH0RjxCpLkQg5HxMQr6LQMi38QgZxSVZ+4nIVSno13iESPovggz5NyYhLyMQ8jImIe3nh1wNK67jRmPENahRxWch9ktZRUoWUhERNgNZCAtxcwzYIyz00g0dD1FDF2Hb7wGdmypth0Iv3dDxEDV0Ebb9HtC5qdJ2KPTSDR0PUUMXYdvvAZ2bKm2HQi/d0PEQNXQRtv0e0Lmp0nYo9NINHQ9RQxdh2+8BnZsqbYdCL93Q8RA1dBG2/R7QuanSdij00g0dD1FDF2Hb7wGdmypth0Iv3dDxEDV0Ebb9HtC5qdJ2KPTSDR0PUUMXYdvvAZ2bKm2HQi/d0Bl11OmVEfxIrvm7MkyvHDW9cuuT2RQGWda16hkk9C8IdFHNMUj9OSQ9jSY7WgeLet5cAC2Yv0vrSQh9JT4RHT9JSrMbwKYV5Q4pZUczyxsl2Y/Ry5jPlp9h/q5XyU3q/XEOUR2Z0ZJhn1fPYPpeqU3QwfpkhRXRUZp7l1Rjy5ZBqse1F2IYVGLtRtHYyTLeZItQO/wniaBdLMQK0e/7F4J8yHrCUqoyZJlDQqhDtRdSnUn9TZJK+gSSfq+fGLOQp/q4AkPVQk2YS/Lb1pmlVuvwyG/RF9OiNAs55eeYABNgAoETaM5HlyGpyKOmS4i7cN9csL/gahDZlIum1TSmXlzsfJl6Ary3pKbwHHVb0NWhv+OYC2a8lUwg1Rsh1YvBpagXSBsbSm4Nh8sJCPp6YCFCH2Z67giMIdXH+5aSqmMAxtw1hyM3CYyrPV3vWSXUXSS0m3GNlIC50wJty3+Sk9BZmNWnBX2DfFlwPr80UhVcGRNgAkyACTABJsAEmAATYAJBE/gfawhHLlMvr4MAAAAASUVORK5CYII=" />
         </defs>
-        </svg>
+      </svg>
       <a href='/user/<%= student.studentID %>'><img src="/<%= student.profile_pic %>" class="profile-pic" /></a>
       <i class="fa-solid fa-gear settings-icon" onclick="window.location.href = '/settings'"></i>
     </div>
@@ -100,31 +151,30 @@
       </svg>
     </p>
     <div class="notifications-container">
-      <% if(notis.length != 0) { %>
+      <% if(notis.length !=0) { %>
         <% notis.forEach(noti => { %>
-          <!--* Notification Start -->
-          <% if(noti.docType == 'feedback') { %>
-            <a href='/view/<%= noti.noteDocID._id %>' class="notification-link">
+          <% if(noti.docType=='feedback' ) { %>
               <div class="notification" id="<%= noti._id %>">
                 <div class="first-row">
-                  <span class="notification-title">
-                    <%= noti.noteDocID.title %>
-                  </span>
+                  <a href='/view/<%= noti.noteDocID._id %>' class="notification-link">
+                    <span class="notification-title">
+                      <%= noti.noteDocID.title %>
+                    </span>
+                  </a>  
                   <span class="remove-notification" onclick="deleteNoti('<%= noti._id %>')">&times;</span>
                 </div>
                 <div class="notification-msg">
-                  <a href='/user/<%= noti.commenterDocID.studentID %>' class="commenter-prfl"><%= noti.commenterDocID.displayname %></a><a href='/view/<%= noti.noteDocID._id %>' class="notification-link-2"> has given feedback on your notes! Check it out.</a>
+                  <a href='/user/<%= noti.commenterDocID.studentID %>' class="commenter-prfl">
+                    <%= noti.commenterDocID.displayname %>
+                  </a><a href='/view/<%= noti.noteDocID._id %>' class="notification-link-2"> has given feedback on your notes! Check it out.</a>
                 </div>
               </div>
-            </a>
           <% } %>
-          <!--* Notification End -->
         <% }) %>
-      <% } %>      
+      <% } %>
     </div>
   </div>
   <div class="background-overlay"></div>
-  <script src="/js/data/feed.js"></script>
   <script src="/js/data/saved-notes.js"></script>
   <script src="/js/dashboard.js"></script>
 </body>
