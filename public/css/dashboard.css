@@ -265,6 +265,20 @@ body {
   font-size: 1.3rem;
   letter-spacing: -0.08em;
 }
+.note-title a{
+  text-decoration: none;
+  color: inherit;
+}
+.author-prfl-link{
+  text-decoration: none;
+  color: inherit;
+}
+.note-title:hover, .author-prfl-link:hover{
+  text-decoration: underline;
+}
+.note-title:visited, .author-prfl-link:visited{
+  color: var(--squid-ink);
+}
 
 .author {
   font-weight: 500;

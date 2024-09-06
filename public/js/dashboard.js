@@ -44,7 +44,7 @@ socket.on('note-upload', (noteData) => {
                         <img src="/${noteData.profile_pic}" class="author-img">
                         <div class="author-title-container">
                             <div class="note-title"><a href="/view/${noteData.noteID}" onclick='location.reload()'>${noteData.noteTitle}</a></div>
-                            <div class="author"><a href="/user/${noteData.ownerID}">${noteData.ownerDisplayName}</a></div>
+                            <div class="author"><a class="author-prfl-link" href="/user/${noteData.ownerID}">${noteData.ownerDisplayName}</a></div>
                         </div>
                     </div>
                     <div class="note-engagement">
