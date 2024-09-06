@@ -645,7 +645,7 @@ div.notification-msg > .commenter-prfl:visited{
   bottom: 0px;
   background: var(--squid-ink);
   overflow-x: hidden; 
-  box-shadow: 0px -20px 40px rgba(255, 255, 255, 0.8);
+  box-shadow: 0px -20px 40px rgba(0, 0, 0, 0.2);
 }
   .mbl-ctrl-panel svg{
     height: auto;
@@ -661,6 +661,7 @@ div.notification-msg > .commenter-prfl:visited{
   }
   
   /* SPECIALIZED UPLOAD BUTTON - Primary button effects */
+  /* Troubleshoot */
   .mbl-upload-btn {
     position: relative;
     transition: transform 0.4s ease, box-shadow 0.4s ease, background-color 0.4s ease;
@@ -853,4 +854,50 @@ div.notification-msg > .commenter-prfl:visited{
   .mbl-upload-btn{
     min-width: 40px;
   }
+}
+@media (max-width:360px) {
+  .middle-section{
+    padding-top: 40px;
+    padding-bottom: 40px;
+  }
+
+  .feed-note-card{
+    margin-bottom:8vh;
+  }
+  .thumbnail{
+    height: 35vh;
+  }
+  .thumbnail-container{
+    width: 95vw;
+  }
+  .save-note-btn {
+    font-size: 1.8rem;
+  }
+  .note-details{
+    width: 95vw;
+    justify-content: around;
+  }
+  .author-img{
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+  }
+  .note-title{
+    font-size: .8rem;
+  }
+  .author-info{
+    flex-grow: 1.2;
+  }
+  .author{
+    font-size: .7rem;
+  }
+  .note-engagement{
+    margin-left: 10px;
+  }
+  .note-engagement svg{
+    margin-left: 10px;
+    width: 20px;
+    height: 20px;
+  }
+
 }
