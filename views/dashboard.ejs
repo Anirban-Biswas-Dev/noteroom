@@ -21,7 +21,7 @@
   <div class="left-panel">
     <div class="left-panel-header">
       <span class="users-db-msg">
-        <%= student.displayname.split(' ')[0] %>' s NoteRoom</span>
+        <%= student.displayname.split(' ')[0] %>'s NoteRoom</span>
           <img src="/images/draft-logo-of-noteroom.gif" alt="NoteRoom Logo" />
     </div>
     <button class="btn-home">
@@ -97,7 +97,7 @@
                 <img src="<%= note.ownerDocID.profile_pic %>" class="author-img">
                 <div class="author-title-container">
                   <div class="note-title"><a href="/view/<%= note._id %>"><%= note.title %></a></div>
-                  <div class="author"><a href="/user/<%= note.ownerDocID.studentID %>"><%= note.ownerDocID.displayname %></a></div>
+                  <div class="author"><a class="author-prfl-link" href="/user/<%= note.ownerDocID.studentID %>"><%= note.ownerDocID.displayname %></a></div>
                 </div>
               </div>
               <div class="note-engagement">

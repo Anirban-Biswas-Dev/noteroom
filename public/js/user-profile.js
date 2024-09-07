@@ -15,7 +15,8 @@ function badgeStyling() {
     
     function add_label(subject) {
         badgeElement.innerHTML = `Top ${subject} voice`;
-        badgeLogo.src = `\\images\\badges\\${subject.toLowerCase()}.png` // This will automatically add the right badge according to the subject
+        // badgeLogo.src = `\\images\\badges\\${subject.toLowerCase()}.png` // This will automatically add the right badge according to the subject
+        badgeLogo.src = `\\images\\badges\\no-badge.png`;
     }
     
     switch(userBadge) {
@@ -33,6 +34,9 @@ function badgeStyling() {
             break
         case "ICT":
             add_label("ICT")
+            break
+        case "Bangla":
+            add_label("Bangla")
             break
         case "Bangla":
             add_label("Bangla")
