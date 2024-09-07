@@ -60,38 +60,11 @@ function addNote(noteData) {
                 </div>
             </div> 
    `; // same html structure as ejs file
-  document.querySelector('.feed-container').insertAdjacentHTML('beforeend', noteCardsHtml);   
+  document.querySelector('.feed-container').insertAdjacentHTML('beforeend', noteCardsHtml);
 }
 
-socket.on('note-upload', (noteData) => {
- localStorage.setItem(noteData.noteID, JSON.stringify(noteData)) // Adding note data in the localStorage (BUG-1)
- addNote(noteData)
-})
-
-/* 
-*BUG-1 Resolved
-  After uploading the note, the note-data is saved in the localStorage of the browsers. When the student clicks on the note, he will be redirected to the note.
-  When coming back (not reloading; just back button), it raises a back_forward(:1) navigation and the bug occures. Capturing the back_forward navigation, the 
-  note-datas is fetched from the localStorage (:2) and shown each of them via addNote (:3). But in chrome, the bug doesn't occur, so the note is added twice (both
-  from the localStorage and the WebSockets one). So before adding the note from localStorage, it checks if there is any unique save button there (:4) cause the save button's
-  ID is unique based on the note's Doc ID. If there is no button, the note is added from the localStorage
-*/
-
-let [navigate] = performance.getEntriesByType('navigation')
-if((navigate.type === 'navigate') || (navigate.type == 'reload')) {
-  localStorage.clear() // The localStorage is cleared when the page is relaoded or navigated for the first time
-} else if(navigate.type === 'back_forward') /* :1 */ {
-  let noteDatas = Object.values(localStorage) /* :2 */
-  noteDatas.forEach(noteCardStr => {
-    let noteData = JSON.parse(noteCardStr)
-    let button = document.querySelector(`#save-btn-${noteData.noteID}`)
-    if(button === null) /* :4 */ addNote(noteData) /* :3 */
-  })
-}
-
-socket.on('feedback-given' /* This is the event hanlder of FEEDBACK NOTIFICATION, raised by note-view.js router */, (feedbackData) => {
+function addNoti(feedbackData) {
   /*
-  Data View
   feedbackData (an Object which has the below keys and their values):
     ownerUsername: The username of the owner of the note of which the feedback is given
     notiID: Unique ID of the feedback notification
@@ -100,9 +73,7 @@ socket.on('feedback-given' /* This is the event hanlder of FEEDBACK NOTIFICATION
     commenterStudentID: The student ID of the student who gave the feedback, will be used for redirecting the owner to the commenter's profile (user/<commenter-student-id>)
     commenterDisplayname: The displayname of the commenter
   */
-
-  if (feedbackData.ownerUsername == Cookies.get('recordName')) { // If the note owner on which the feedback is given and the recordName are same, the notification will be kept
-    let notificationHtml = `
+  let notificationHtml = `
         <div class="notification" id="${feedbackData.notiID}">
             <div class="first-row">
               <a href='/view/${feedbackData.noteDocID}' class="notification-link">
@@ -118,19 +89,54 @@ socket.on('feedback-given' /* This is the event hanlder of FEEDBACK NOTIFICATION
               </a><a href='/view/${feedbackData.noteDocID}' class="notification-link-2"> has given feedback on your notes! Check it out.</a>
             </div>
         </div>` // Same html strcuture as the ejs file
+  document.querySelector('.notifications-container').insertAdjacentHTML('afterbegin', notificationHtml);
+}
 
-    document.querySelector('.notifications-container').insertAdjacentHTML('afterbegin', notificationHtml);
+socket.on('note-upload', (noteData) => {
+  localStorage.setItem(noteData.noteID, JSON.stringify(noteData)) // Adding note data in the localStorage (BUG-1)
+  addNote(noteData)
+})
+
+
+socket.on('feedback-given', (feedbackData) => {
+  if (feedbackData.ownerUsername == Cookies.get('recordName')) {
+    feedbackData.isNote = true
+    localStorage.setItem(feedbackData.notiID, JSON.stringify(feedbackData)) // Adding notification data in the localStorage (BUG-1)
+    addNoti(feedbackData)
+
     const nftShake = document.querySelector('.mobile-nft-btn')
-    nftShake.classList.add('shake');
-
+    nftShake.classList.add('shake')
     setTimeout(() => {
       nftShake.classList.remove('shake');
-    }, 300);
-
+    }, 300)
     console.log(nftShake);
   }
 })
 
+/* 
+*BUG-1 Resolved
+  After uploading the note, the note-data is saved in the localStorage of the browsers. When the student clicks on the note, he will be redirected to the note.
+  When coming back (not reloading; just back button), it raises a back_forward(:1) navigation and the bug occures. Capturing the back_forward navigation, the 
+  note-datas is fetched from the localStorage (:2) and shown each of them via addNote (:3). But in chrome, the bug doesn't occur, so the note is added twice (both
+  from the localStorage and the WebSockets one). So before adding the note from localStorage, it checks if there is any unique save button there (:4) cause the save button's
+  ID is unique based on the note's Doc ID. If there is no button, the note is added from the localStorage. Same method is used for notifications. 
+*/
+
+let [navigate] = performance.getEntriesByType('navigation')
+if ((navigate.type === 'navigate') || (navigate.type == 'reload')) {
+  localStorage.clear() // The localStorage is cleared when the page is relaoded or navigated for the first time
+} else if (navigate.type === 'back_forward') /* :1 */ {
+  let Datas = Object.values(localStorage) /* :2 */
+  Datas.forEach(CardStr => {
+    let data = JSON.parse(CardStr)
+    if (data.isNote == undefined) {
+      let button = document.querySelector(`#save-btn-${data.noteID}`)
+      if (button === null) /* :4 */ addNote(data) /* :3 */
+    } else if (data.isNote) {
+      addNoti(data)
+    }
+  })
+}
 
 // Using the similar algorithm for dynamic saved notes
 const svNotesCharLimit = 38;
@@ -156,6 +162,7 @@ document.querySelector(".saved-notes-container").innerHTML = savedNotesHtml;
 function deleteNoti(id) {
   let notification = document.getElementById(id) // getting the exact notification which is clicked to remove by its unique ID
   notification.style.display = 'none' // Just removing the notification from the front-end
+  localStorage.removeItem(id) // Removing from localStorage so that it can't be shown in back_forward
   socket.emit('delete-noti', id) // Sending an event to remove the notification from database
 }
 
