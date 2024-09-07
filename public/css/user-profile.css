@@ -8,133 +8,54 @@
     --neon-blue: #04dbf6;
     --gray: #ebebeb;
   }  
-body {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-}
-
-/* Search Bar Box */
-.search-bar-box {
-    background-color: #ebebeb;
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
-    position: fixed; 
-    width: 100%; 
-    max-width: 980px; 
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%); 
-    z-index: 1000; 
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    outline: none;
-    padding: 20px; 
-    box-sizing: border-box;
-}
-
-/* Search Bar */
-.search-bar {
-    box-sizing: border-box;
-    background: rgba(255, 255, 255, 0.18);
-    border: 2px solid #1E1E1E;
-    border-radius: 25px;
-    border-top-right-radius: 0px;
-    border-bottom-right-radius: 0px;
-    width: 768px;
-    height: 57px;
-    padding-left: 20px;
-    font-size: 24px;
-    font-size: 1.2rem;
-}
-.search-bar:focus{
-    outline: none;
-}
-
-/* Search Bar Button */
-.search-bar-box button {
-    cursor: pointer;
-    background: rgba(255, 255, 255, 0.18);
-    border: 2px solid #1E1E1E;
-    border-left: none;
-    border-top-right-radius: 25px;
-    border-bottom-right-radius: 25px;
-    height: 57px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0 20px;
-    width: 60px;
-}
 
 /* Middle Section */
 .middle-section {
-    position: relative; 
-    width: 100%; 
-    max-width: 980px; 
-    margin: 0 auto;
-    padding-top: 80px; 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    overflow-y: auto; 
-    overflow-x: hidden; 
+    padding-top: 125px;
 }
-
-
-.middle-section::-webkit-scrollbar {
-    width: 0; 
-    height: 0;
-}
-
-.middle-section::-webkit-scrollbar-track,
-.middle-section::-webkit-scrollbar-thumb {
-    display: none;
-}
-
+  
+/* First Row */
 .ms-first-row {
-    width: 979px;
-    background: #FFFFFF;
+    width: 100%;
     display: flex;
-    margin-top: 70px;
     overflow: hidden;
     justify-content: space-evenly;
+    align-items: center;
 }
 
-.ms-first-row img {
+.user-prfl-pic {
     box-sizing: border-box;
     width: 125px;
     height: 125px;
     border: 1px solid #000000;
     border-radius: 100px;
-    margin-left: 40px;
+    margin-left: 5vw;
 }
 
+/* Information Items */
 .info-items-1 {
-    margin-left: 5px;
-    padding: 5px;
+    width: 30%;
+    min-width: fit-content;
+    padding: 1vw 1vw;
     display: flex;
     flex-direction: column;
     justify-content: center;
 }
 
 .display-name {
-    font-size: 19px;
+    font-size: 1.2rem;
     font-weight: 600;
 }
 
 .user-clg-id {
-    font-size: 14px;
-    margin-top: 5px;
+    font-size: .9rem;
+    padding: 1vw 0px;
 }
 
 .user-group {
-    width: 161px;
-    height: 37px;
+    width: 95%;
+    height: 35px;
     background: linear-gradient(89.76deg, #07192D 0.19%, #FFFFFF 99.81%);
-    margin-top: 15px;
     font-weight: 400;
     font-size: 14px;
     color: #FFFFFF;
@@ -142,73 +63,69 @@ body {
     align-content: center;
 }
 
-.exam-ranking {
-    margin-top: 25px;
-}
-
 .divider {
     width: 5px;
-    height: 130px;
+    min-width: 2px;
+    height: 15vh;
     background: #07192D;
-    margin-top: 5px;
-    margin-left: 40px;
+    margin:5px 4% 0px 4%; 
 }
 
 .user-gains {
-    margin-left: 30px;
+ 
+    width: 50%;
 }
-.badge{
+
+.badge {
+    width: 90%;
     display: flex;
     align-items: center;
+}
 
-    img{
-        box-sizing: border-box;
-        width: 80px;
-        height: 80px;
-        border-radius: 100px;
-        border: none;
-        margin: 0px;
-        object-fit: contain;
-        /* filter: drop-shadow(0 0 15px); glow effect around the badge icon */
-    }
+.badge img {
+    box-sizing: border-box;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: none;
+    margin: 0px;
+    object-fit: contain;
 }
 
 .top-voice-badge, .no-badge {
-    width: 250px;
-    height: 25px;
+    width: 80%;
+    height: 40%;
     align-content: center;
     text-align: center;
     font-size: 1.3rem;
-    margin-top: 5px;
-    padding-bottom: 10px;
+    padding:1.5vh 0px;
 }
 
-/* this will be triggered with DOM */
-
+/* Featured Note */
 .featured-note {
-    width: 442px;
-    height: 41px;
+    width: 100%;
+    height: 40px;
     background: linear-gradient(90deg, #FDDD37 0%, #EDB015 53%, #FFFFFF 100%);
     border-radius: 15px;
     align-content: center;
     padding-left: 10px;
     margin-top: 10px;
 }
-/* for notes to features shortcut */
-.no{
+
+.no {
     background: none;
 }
 
+/* Second Row */
 .ms-second-row {
-    width: 979px;
-    padding-top: 15px;
-    padding-bottom: 15px;
+    width: 100%;
+    padding:15px; 
     display: flex;
     justify-content: space-evenly;
     align-items: center;
 }
 
-/* This input label is a template for all the labels of data input */
+/* Input Labels */
 .input-label {
     font-family: 'Inter';
     font-style: normal;
@@ -216,6 +133,16 @@ body {
     font-size: 1.2rem;
     letter-spacing: -0.06em;
     color: #07192D;
+    padding: 8px 5px;
+}
+.user-username,
+.user-college-year,
+.user-college-roll,
+.user-college-section,
+.user-fav-sub,
+.user-non-fav-sub{
+    width: 25%;
+    min-width: 150px;
 }
 
 .username-box,
@@ -227,54 +154,51 @@ body {
 .fav-sub-box,
 .non-fav-sub-box {
     box-sizing: border-box;
-    width: 240px;
-    height: 43px;
+    width: 100%;
+    height: 45px;
     border: 1px solid #07192D;
-    border-radius: 14px;
+    border-radius: 15px;
     align-content: center;
     padding-left: 5px;
-    margin-top: 5px;
 }
 
-.display-year-box,
-.college-section-box,
-.non-fav-sub-box {
-    margin-right: 100px;
-}
 
-.bio-box,
-.email-box {
-    width: 613px;
-    height: 43px;
-    margin-bottom: 25px;
-}
-
+/* Third Row */
 .ms-third-row {
-    width: 979px;
+    width: 100%;
     padding-top: 15px;
     padding-bottom: 15px;
     display: flex;
     flex-direction: column;
-    justify-content: space-evenly;
+    justify-content: center;
+    align-items: center;
 }
-
 .user-bio,
 .user-email {
-    margin-left: 135px;
+    width: 66%;
+    min-width: 300px;
 }
-
+.bio-box,
+.email-box {
+    width: 100%;
+    height: fit-content;
+    margin-bottom: 2vh;
+    min-height: fit-content;
+    padding: 10px;
+}
+/* Fourth and Fifth Rows */
 .ms-fourth-row,
 .ms-fifth-row {
-    width: 979px;
-    padding-top: 15px;
-    padding-bottom: 15px;
+    width: 100%;
+    padding: 15px 0px;
     display: flex;
     justify-content: space-evenly;
     align-items: center;
 }
-/* Temporary log out button */
-.logout{
-    background-color:#07192D;
+
+/* Log Out Button */
+.logout {
+    background-color: #07192D;
     padding: 10px 5px;
     letter-spacing: 1px;
     color: #04DBF7;
@@ -284,14 +208,17 @@ body {
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
-.logout:hover{
+
+.logout:hover {
     background-color: rgba(255, 0, 0, 0.78);
     color: white;
-    transform: scale(1.05); 
-
+    transform: scale(1.05);
 }
+
+/* Uploaded Notes Section */
 .uploaded-notes-section {
-    margin: 20px 0;
+    width: 100%;
+    margin: 2vh 0px;
 }
 
 .uploaded-notes-section h2 {
@@ -306,15 +233,16 @@ body {
 /* Grid Container for Notes */
 .notes-container {
     display: grid;
-    grid-template-columns: repeat(4, 1fr); /* 4 columns */
-    gap: 20px;
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 10px;
     width: 100%;
-    border: solid 1px;
     padding: 10px 10px 10px 10px;
 }
 
 /* Individual Note Card */
 .note-card {
+    max-width: 250px;
+    min-height: 20vh;
     background-color: #f9f9f9;
     border: 1px solid #ddd;
     border-radius: 8px;
@@ -332,6 +260,7 @@ body {
 .note-card img {
     width: 100%;
     height: auto;
+    object-fit: contain;
     border-radius: 8px;
     margin-bottom: 10px;
 }
@@ -345,35 +274,42 @@ body {
     font-size: 14px;
     color: #555;
 }
-.note-card a{
+
+.note-card a {
     display: block;
     text-decoration: none;
     transition: color 0.2s;
 }
-.note-card a:hover{
+
+.note-card a:hover {
     color: #04DBF7;
 }
-.note-card a:visited{
+
+.note-card a:visited {
     color: #07192D;
 }
-.no-notes-content{
+
+/* No Notes Content */
+.no-notes-content {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 200px;
+    height: 200px; 
 }
+
 .no-notes-content svg {
     font-size: 4rem;
     color: rgba(0, 0, 0, 0.3);
     margin-bottom: 15px;
-    fill: #dbdada15; 
+    fill: #dbdada15;
     stroke-width: 1; 
 }
 
 .no-notes-content p {
     font-size: 1.2rem;
-    color: rgba(0, 0, 0, 0.8);
+    color: rgba(0, 0, 0, 0.8); 
 }
+/* ****** Responsiveness ***** */
 /* Responsive adjustments only for my notes section */
 @media (max-width: 1200px) {
     .notes-container {
@@ -390,5 +326,11 @@ body {
 @media (max-width: 600px) {
     .notes-container {
         grid-template-columns: 1fr; /* 1 column on very small screens */
+    }
+}
+@media (max-width:360px) {
+    .user-prfl-pic{
+        width: 70px;
+        height: 70px;
     }
 }
