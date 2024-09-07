@@ -3,7 +3,11 @@
     margin: 0;
     padding: 0;
 }
-
+:root {
+    --squid-ink: #06192d;
+    --neon-blue: #04dbf6;
+    --gray: #ebebeb;
+  }  
 body {
     display: flex;
     align-items: center;

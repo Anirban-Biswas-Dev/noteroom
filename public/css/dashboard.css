@@ -11,7 +11,6 @@
 
 body {
   display: flex;
-  /* align-items: center; */
   justify-content: center;
   flex-direction: column;
 }
@@ -647,69 +646,114 @@ div.notification-msg > .commenter-prfl:visited{
   overflow-x: hidden; 
   box-shadow: 0px -20px 40px rgba(0, 0, 0, 0.2);
 }
-  .mbl-ctrl-panel svg{
-    height: auto;
-    min-width: 30px;
-    transition: transform 0.3s ease, color 0.3s ease;
-    padding: 0px 10px;
-  }
-  
-  /* Hover and touch effect for all icons */
-  .mbl-ctrl-panel svg:hover, .mbl-ctrl-panel svg:active {
-    transform: scale(1.1);
-    cursor: pointer;
-  }
-  
-  /* SPECIALIZED UPLOAD BUTTON - Primary button effects */
-  /* Troubleshoot */
-  .mbl-upload-btn {
-    position: relative;
-    transition: transform 0.4s ease, box-shadow 0.4s ease, background-color 0.4s ease;
-    border-radius: 50%; 
-    background-color: linear-gradient(45deg, #00bfff, #1e90ff);
-    padding: 10px;
-    min-width: 40px;
-    min-height: 50px;
-  }
 
-  .mbl-upload-btn::before {
-    content: '';
-    position: absolute;
-    top: -15px;
-    left: -15px;
-    right: -15px;
-    bottom: -15px;
-    border-radius: 50%; 
-    background-color: radial-gradient(circle, rgba(0, 183, 255, 0.4), transparent);
-    animation: pulse 2s infinite; 
+.mbl-ctrl-panel svg {
+  height: auto;
+  min-width: 8vw;  /* Proportional width for consistent scaling */
+  max-width: 12vw;  /* To prevent icons from growing too large */
+  padding: 0px 2vw; /* Relative padding to ensure uniform spacing */
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.mbl-ctrl-panel svg:hover, .mbl-ctrl-panel svg:active {
+  transform: scale(1.1);
+  cursor: pointer;
+}
+
+/* UPLOAD BUTTON (Responsive special effects) */
+.mbl-upload-btn {
+  position: relative;
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  border-radius: 50%;
+  min-width: 12vw;
+  min-height: 12vw; 
+  padding: 2vw;
+}
+
+.mbl-upload-btn:hover, .mbl-upload-btn:active {
+  transform: scale(1.2);
+  box-shadow: 0px 0px 30px 10px rgba(255, 255, 255, 0.19); 
+}
+
+.mbl-upload-btn::before {
+  content: '';
+  position: absolute;
+  top: -15%;
+  left: -15%;
+  right: -15%;
+  bottom: -15%;
+  border-radius: 50%;
+  background-color: rgba(0, 183, 255, 0.4);
+  animation: pulse 2s infinite;
+  opacity: 0;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
   }
-  .mbl-btn-home{
-    margin-left: 2vw;
+  50% {
+    transform: scale(1.3);
+    opacity: 0.3;
   }
-  .mbl-settings-icon{
-    margin-right: 2vw;
+  100% {
+    transform: scale(1);
+    opacity: 0.7;
   }
-  
-  @keyframes pulse {
-    0% {
-      transform: scale(1);
-      opacity: 1;
-    }
-    50% {
-      transform: scale(1.2);
-      opacity: 0.6;
-    }
-    100% {
-      transform: scale(1);
-      opacity: 1;
-    }
+}
+
+/* Timed special effect after a few seconds (for upload button) */
+@keyframes spin-border {
+  0% {
+    border-color: transparent;
   }
-  
-  .mbl-upload-btn:hover, .mbl-upload-btn:active {
-    transform: scale(1.2); 
-    box-shadow: 0px 0px 30px 10px rgba(0, 183, 255, 0.7); 
-    background-color: linear-gradient(45deg, #1e90ff, #00bfff); 
+  25% {
+    border-color: #00bfff;
+    transform: rotate(0deg);
   }
+  50% {
+    border-color: #1e90ff;
+    transform: rotate(180deg);
+  }
+  75% {
+    border-color: #00bfff;
+    transform: rotate(360deg);
+  }
+  100% {
+    border-color: transparent;
+    transform: rotate(720deg);
+  }
+}
+
+.mbl-upload-btn-effect {
+  border: 3px solid transparent;
+  border-radius: 50%;
+  position: absolute;
+  top: -10%;
+  left: -10%;
+  right: -10%;
+  bottom: -10%;
+  animation: spin-border 2s ease infinite;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.mbl-btn-home {
+  margin-left: 2vw;
+}
+
+.mbl-settings-icon {
+  margin-right: 2vw;
+}
+@keyframes blink-effect {
+  0%, 90% {
+    opacity: 0;
+  }
+  95%, 100% {
+    opacity: 1;
+  }
+}
   
 /* ****** Responsiveness ***** */
 
@@ -855,6 +899,32 @@ div.notification-msg > .commenter-prfl:visited{
     min-width: 40px;
   }
 }
+@media (max-width: 767px) {
+  .mbl-ctrl-panel svg {
+    min-width: 8vw;
+    max-width: 12vw;
+    padding: 0px 2vw;
+  }
+
+  .mbl-upload-btn {
+    min-width: 15vw; /* Slightly larger upload button */
+    min-height: 15vw;
+    padding: 3vw; /* Padding relative to the screen size */
+  }
+
+  .mbl-upload-btn::after {
+    content: '';
+    position: absolute;
+    top: -10%;
+    left: -10%;
+    right: -10%;
+    bottom: -10%;
+    border-radius: 50%;
+    border: 2px solid rgba(0, 183, 255, 0.5);
+    opacity: 0;
+    animation: blink-effect 5s ease-in-out infinite;
+  }
+}
 @media (max-width:360px) {
   .middle-section{
     padding-top: 40px;
@@ -883,13 +953,13 @@ div.notification-msg > .commenter-prfl:visited{
     margin-right: 10px;
   }
   .note-title{
-    font-size: .8rem;
+    font-size: .7rem;
   }
   .author-info{
-    flex-grow: 1.2;
+    width: 80%;
   }
   .author{
-    font-size: .7rem;
+    font-size: .5rem;
   }
   .note-engagement{
     margin-left: 10px;
@@ -899,5 +969,54 @@ div.notification-msg > .commenter-prfl:visited{
     width: 20px;
     height: 20px;
   }
-
+}
+@media (min-width:361px) and ( max-width:480px) {
+  .middle-section{
+    padding-top: 40px;
+    padding-bottom: 40px;
+  }
+  .feed-note-card{
+    margin-bottom:8vh;
+  }
+  .thumbnail{
+    height: 35vh;
+  }
+  .thumbnail-container{
+    width: 95vw;
+  }
+  .save-note-btn {
+    font-size: 1.8rem;
+  }
+  .note-details{
+    width: 95vw;
+    justify-content: space-evenly;
+  }
+  .author-img{
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+  }
+  .note-title{
+    font-size: .85rem;
+  }
+  .author-info, .author-title-container{
+    width: 70%;
+  }
+  .author{
+    font-size: .7rem;
+  }
+  .note-engagement{
+    margin-left: 15px;
+  }
+  .note-engagement svg{
+    margin-left: 10px;
+    width: 30px;
+    height: 30px;
+  }
+}
+@media (min-width:1025px) and (max-width:1310px) {
+  .users-db-msg{
+    font-size:1rem;
+    font-weight: 600;
+  }
 }
