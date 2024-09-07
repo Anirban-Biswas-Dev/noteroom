@@ -2,26 +2,25 @@ const host = 'http://localhost:2000'
 const socket = io(host)
 
 /*
-FIXME: Solve the notification and adding notes bug
-BUG: 
+*BUG-1: 
 !    After uploading any note or giving any feedback, the note is added in the dashboard and the feedback's notification is sent 
 !    to the owner respectively. When clicking the note which is added in real-time via websockets, the user is redirected to the 
 !    note but after coming back, the note vanishes because of the note's not being saved in the memory (but it is saved in db).
-!    But it comes back when reloading the dashborad fetching the data from db. Same goes for notifications.
+!    But it comes back when reloading the dashborad fetching the data from db. Same goes for notifications
 */
 
-const titleCharLimit = 30;
 
 function truncatedTitle(title) {
+  const titleCharLimit = 30;
   let truncatedTitle =
     title.length > titleCharLimit
       ? title.slice(0, titleCharLimit) + "..."
       : title;
-
   return truncatedTitle
 }
 
-socket.on('note-upload', (noteData) => {
+
+function addNote(noteData) {
   /*
   noteData:
     thumbnail: The first image of the image-stack, will be used for preview at dashboard
@@ -61,18 +60,36 @@ socket.on('note-upload', (noteData) => {
                 </div>
             </div> 
    `; // same html structure as ejs file
-  document.querySelector('.feed-container').insertAdjacentHTML('beforeend', noteCardsHtml);
+  document.querySelector('.feed-container').insertAdjacentHTML('beforeend', noteCardsHtml);   
+}
+
+socket.on('note-upload', (noteData) => {
+ localStorage.setItem(noteData.noteID, JSON.stringify(noteData)) // Adding note data in the localStorage (BUG-1)
+ addNote(noteData)
 })
 
+/* 
+*BUG-1 Resolved
+  After uploading the note, the note-data is saved in the localStorage of the browsers. When the student clicks on the note, he will be redirected to the note.
+  When coming back (not reloading; just back button), it raises a back_forward(:1) navigation and the bug occures. Capturing the back_forward navigation, the 
+  note-datas is fetched from the localStorage (:2) and shown each of them via addNote (:3). But in chrome, the bug doesn't occur, so the note is added twice (both
+  from the localStorage and the WebSockets one). So before adding the note from localStorage, it checks if there is any unique save button there (:4) cause the save button's
+  ID is unique based on the note's Doc ID. If there is no button, the note is added from the localStorage
+*/
+
+let [navigate] = performance.getEntriesByType('navigation')
+if((navigate.type === 'navigate') || (navigate.type == 'reload')) {
+  localStorage.clear() // The localStorage is cleared when the page is relaoded or navigated for the first time
+} else if(navigate.type === 'back_forward') /* :1 */ {
+  let noteDatas = Object.values(localStorage) /* :2 */
+  noteDatas.forEach(noteCardStr => {
+    let noteData = JSON.parse(noteCardStr)
+    let button = document.querySelector(`#save-btn-${noteData.noteID}`)
+    if(button === null) /* :4 */ addNote(noteData) /* :3 */
+  })
+}
 
 socket.on('feedback-given' /* This is the event hanlder of FEEDBACK NOTIFICATION, raised by note-view.js router */, (feedbackData) => {
-  /*
-  Process: This event will be handled by every user of noteroom. But will only be taken by the owner of the note whose note is commented.
-  While giving feedback, the owenr's username will be sent to all the users. This will be matched with the recordName cookie which helds
-  the value of every user's username while logging in. If the value is matched with the owner's username, then the notification will be 
-  shown. Otherwise dropped. //! This process will be changed to sending notification to the specific user via IDs rather than broadcast
-  */
-
   /*
   Data View
   feedbackData (an Object which has the below keys and their values):
@@ -83,9 +100,8 @@ socket.on('feedback-given' /* This is the event hanlder of FEEDBACK NOTIFICATION
     commenterStudentID: The student ID of the student who gave the feedback, will be used for redirecting the owner to the commenter's profile (user/<commenter-student-id>)
     commenterDisplayname: The displayname of the commenter
   */
-  let selfUsername = Cookies.get('recordName') // The student's username in cookie
 
-  if (feedbackData.ownerUsername == selfUsername) { // If the note owner on which the feedback is given and the recordName are same, the notification will be kept
+  if (feedbackData.ownerUsername == Cookies.get('recordName')) { // If the note owner on which the feedback is given and the recordName are same, the notification will be kept
     let notificationHtml = `
         <div class="notification" id="${feedbackData.notiID}">
             <div class="first-row">
