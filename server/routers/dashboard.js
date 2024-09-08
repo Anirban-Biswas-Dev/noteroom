@@ -5,6 +5,14 @@ const allNotifs = require('../schemas/notifications').Notifs
 const router = express.Router()
 
 function dashboardRouter(io) {
+    async function addSaveNote(studentDocID, noteDocID) {
+        await Students.updateOne(
+            { _id: studentDocID },
+            { $push: { saved_notes: noteDocID } }, 
+            { new: true }
+        )
+    }
+
     async function getStudent(studentID) {
         let student = await Students.findOne({ studentID: studentID }, { profile_pic: 1, displayname: 1, studentID: 1 })
         return student
@@ -35,9 +43,19 @@ function dashboardRouter(io) {
         return notes
     }
 
+    async function getSavedNotes(studentID) {
+        let student = await Students.findOne({ studentID: studentID }, { saved_notes: 1 } )
+        let saved_notes_ids = student['saved_notes']
+        let notes = await Notes.find({ _id: { $in: saved_notes_ids } }, { title: 1 })
+        return notes
+    }
+
     io.on('connection', (socket) => {
         socket.on('delete-noti', async (notiID) => {
             await allNotifs.deleteOne({ _id: notiID }) // Deleteing notification based on the ID given from the frontend
+        })
+        socket.on('save-note', async (studentDocID, noteDocID) => {
+            await addSaveNote(studentDocID, noteDocID)
         })
     })
 
@@ -46,7 +64,9 @@ function dashboardRouter(io) {
             let student = await getStudent(req.session.stdid)
             let notis = await getNotifications(req.cookies['recordName'])
             let allNotes = await getAllNotes()
-            res.render('dashboard', { student: student, notis: notis, notes: allNotes })
+            let savedNotes = await getSavedNotes(req.session.stdid)
+            // console.log(savedNotes)
+            res.render('dashboard', { student: student, notis: notis, notes: allNotes, savedNotes: savedNotes })
         } else {
             res.redirect('login')
         }

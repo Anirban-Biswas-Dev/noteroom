@@ -30,36 +30,37 @@ function addNote(noteData) {
     ownerID: Note owner's student ID, will be used to redirect users to the note-owner (user/<owner-ID>)
     ownerDisplayname: Note owner's displayname
   */
-  let noteCardsHtml = `<div class="feed-note-card">
-                      <div class="thumbnail-container">
-                        <img class="thumbnail" src="${noteData.thumbnail}">
-                        <button class="save-note-btn" id="save-btn-${noteData.noteID}">
-                          <i class="fa-regular fa-bookmark"></i>
-                          <i class="fa-solid fa-bookmark saved"></i>
-                        </button>
-                    </div>
-                <div class="note-details">
-                    <div class="author-info">
-                        <img src="/${noteData.profile_pic}" class="author-img">
-                        <div class="author-title-container">
-                            <div class="note-title"><a href="/view/${noteData.noteID}" onclick='location.reload()'>${noteData.noteTitle}</a></div>
-                            <div class="author"><a class="author-prfl-link" href="/user/${noteData.ownerID}">${noteData.ownerDisplayName}</a></div>
-                        </div>
-                    </div>
-                    <div class="note-engagement">
-                        <svg class="download-icon" width="40" height="40" viewBox="0 0 43 43" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M37.1541 26.5395V33.6165C37.1541 34.555 36.7813 35.455 36.1177 36.1186C35.4541 36.7822 34.5541 37.155 33.6156 37.155H8.84623C7.90776 37.155 7.00773 36.7822 6.34414 36.1186C5.68054 35.455 5.30774 34.555 5.30774 33.6165V26.5395M12.3847 17.6933L21.2309 26.5395M21.2309 26.5395L30.0771 17.6933M21.2309 26.5395V5.30859" stroke="#1E1E1E" stroke-width="2.29523" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                        <svg class="comment-icon" width="40" height="40" viewBox="0 0 36 37" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M34.4051 23.9151C34.4051 24.8838 34.0257 25.8128 33.3505 26.4978C32.6753 27.1828 31.7595 27.5676 30.8045 27.5676H9.20113L2 34.8726V5.65252C2 4.68381 2.37934 3.75478 3.05458 3.0698C3.72982 2.38482 4.64564 2 5.60057 2H30.8045C31.7595 2 32.6753 2.38482 33.3505 3.0698C34.0257 3.75478 34.4051 4.68381 34.4051 5.65252V23.9151Z" stroke="#1E1E1E" stroke-width="2.40038" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                        <svg class="share-icon" width="40" height="40" viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M30.6079 32.5223L27.8819 29.8441L36.6816 21.0444L27.8819 12.2446L30.6079 9.56641L42.0858 21.0444L30.6079 32.5223ZM3.82599 36.3483V28.6963C3.82599 26.05 4.7506 23.8023 6.59983 21.953C8.48094 20.0719 10.7446 19.1314 13.391 19.1314H25.2037L18.3169 12.2446L21.0429 9.56641L32.5209 21.0444L21.0429 32.5223L18.3169 29.8441L25.2037 22.9574H13.391C11.7968 22.9574 10.4418 23.5153 9.32584 24.6312C8.20993 25.7471 7.65197 27.1022 7.65197 28.6963V36.3483H3.82599Z" fill="#1D1B20"/>
-                        </svg>
-                    </div>            
-                </div>
-            </div> 
-   `; // same html structure as ejs file
+
+  let noteCardsHtml = `<div class="feed-note-card" id="note-${noteData.noteID}">
+						<div class="thumbnail-container">
+						<img class="thumbnail" src="${noteData.thumbnail}"> 
+						<button class="save-note-btn" id="save-btn-${noteData.noteID}" onclick="saveNote('${noteData.noteID}')">
+							<i class="fa-regular fa-bookmark"></i>
+							<i class="fa-solid fa-bookmark saved"></i>
+						</button>
+					</div>
+				<div class="note-details">
+					<div class="author-info">
+						<img src="/${noteData.profile_pic}" class="author-img">
+						<div class="author-title-container">
+							<div class="note-title"><a href="/view/${noteData.noteID}" onclick='location.reload()'>${noteData.noteTitle}</a></div>
+							<div class="author"><a class="author-prfl-link" href="/user/${noteData.ownerID}">${noteData.ownerDisplayName}</a></div>
+						</div>
+					</div>
+					<div class="note-engagement">
+						<svg class="download-icon" width="40" height="40" viewBox="0 0 43 43" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<path d="M37.1541 26.5395V33.6165C37.1541 34.555 36.7813 35.455 36.1177 36.1186C35.4541 36.7822 34.5541 37.155 33.6156 37.155H8.84623C7.90776 37.155 7.00773 36.7822 6.34414 36.1186C5.68054 35.455 5.30774 34.555 5.30774 33.6165V26.5395M12.3847 17.6933L21.2309 26.5395M21.2309 26.5395L30.0771 17.6933M21.2309 26.5395V5.30859" stroke="#1E1E1E" stroke-width="2.29523" stroke-linecap="round" stroke-linejoin="round"/>
+						</svg>
+						<svg class="comment-icon" width="40" height="40" viewBox="0 0 36 37" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<path d="M34.4051 23.9151C34.4051 24.8838 34.0257 25.8128 33.3505 26.4978C32.6753 27.1828 31.7595 27.5676 30.8045 27.5676H9.20113L2 34.8726V5.65252C2 4.68381 2.37934 3.75478 3.05458 3.0698C3.72982 2.38482 4.64564 2 5.60057 2H30.8045C31.7595 2 32.6753 2.38482 33.3505 3.0698C34.0257 3.75478 34.4051 4.68381 34.4051 5.65252V23.9151Z" stroke="#1E1E1E" stroke-width="2.40038" stroke-linecap="round" stroke-linejoin="round"/>
+						</svg>
+						<svg class="share-icon" width="40" height="40" viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<path d="M30.6079 32.5223L27.8819 29.8441L36.6816 21.0444L27.8819 12.2446L30.6079 9.56641L42.0858 21.0444L30.6079 32.5223ZM3.82599 36.3483V28.6963C3.82599 26.05 4.7506 23.8023 6.59983 21.953C8.48094 20.0719 10.7446 19.1314 13.391 19.1314H25.2037L18.3169 12.2446L21.0429 9.56641L32.5209 21.0444L21.0429 32.5223L18.3169 29.8441L25.2037 22.9574H13.391C11.7968 22.9574 10.4418 23.5153 9.32584 24.6312C8.20993 25.7471 7.65197 27.1022 7.65197 28.6963V36.3483H3.82599Z" fill="#1D1B20"/>
+						</svg>
+					</div>            
+				</div>
+			</div> 
+	`; // same html structure as ejs file
   document.querySelector('.feed-container').insertAdjacentHTML('beforeend', noteCardsHtml);
 }
 
@@ -92,15 +93,31 @@ function addNoti(feedbackData) {
   document.querySelector('.notifications-container').insertAdjacentHTML('afterbegin', notificationHtml);
 }
 
+function addSaveNote(noteData) {
+  /*
+  noteData:
+    noteTitle: The title of the note
+    noteDocID: The doc-id of the note to redirect user to the specific note (/view/note-doc-id)
+  */
+  let savedNotesHtml = `
+	  <div class="saved-note">
+		  <span class="sv-note-title">
+			  <a href='/view/${noteData.noteID}'>${truncatedTitle(noteData.noteTitle)}</a>
+		  </span>
+	  </div>`;
+  document.querySelector(".saved-notes-container").insertAdjacentHTML('afterbegin', savedNotesHtml)
+}
+
 socket.on('note-upload', (noteData) => {
-  localStorage.setItem(noteData.noteID, JSON.stringify(noteData)) // Adding note data in the localStorage (BUG-1)
+  noteData.isAddNote = true
+  localStorage.setItem(noteData.noteID, JSON.stringify(noteData)) // Adding note data in the localStorage (BUG-1) *2
   addNote(noteData)
 })
 
 
 socket.on('feedback-given', (feedbackData) => {
   if (feedbackData.ownerUsername == Cookies.get('recordName')) {
-    feedbackData.isNote = true
+    feedbackData.isNoti = true
     localStorage.setItem(feedbackData.notiID, JSON.stringify(feedbackData)) // Adding notification data in the localStorage (BUG-1)
     addNoti(feedbackData)
 
@@ -129,41 +146,62 @@ if ((navigate.type === 'navigate') || (navigate.type == 'reload')) {
   let Datas = Object.values(localStorage) /* :2 */
   Datas.forEach(CardStr => {
     let data = JSON.parse(CardStr)
-    if (data.isNote == undefined) {
+    if (data.isAddNote) {
       let button = document.querySelector(`#save-btn-${data.noteID}`)
-      if (button === null) /* :4 */ addNote(data) /* :3 */
-    } else if (data.isNote) {
+      if (button === null) /* :4 */ {
+        addNote(data) /* :3 */
+      }
+    } else if (data.isNoti) {
       addNoti(data)
+    } else if(data.isSavedNote) {
+      addSaveNote(data)
+      let button = document.querySelector(`#save-btn-${data.noteID}`)
+      button.classList.add('saved')
+      button.disabled = true
+    } else {
+      if (typeof data[0] == 'object') {
+        addNote(data[0])
+        addSaveNote(data[1])
+        let button = document.querySelector(`#save-btn-${data[0].noteID}`)
+        button.classList.add('saved')
+        button.disabled = true
+      }
     }
   })
 }
-
-// Using the similar algorithm for dynamic saved notes
-const svNotesCharLimit = 38;
-let savedNotesHtml = "";
-
-savedNotes.forEach((savedNote) => {
-  // Truncate the title if it exceeds the character limit
-  let truncatedTitle =
-    savedNote.noteTitle.length > svNotesCharLimit
-      ? savedNote.noteTitle.slice(0, svNotesCharLimit) + "..."
-      : savedNote.noteTitle;
-
-  savedNotesHtml += `
-    <div class="saved-note">
-        <span class="sv-note-title">
-            ${truncatedTitle}
-        </span>
-    </div>`;
-});
-
-document.querySelector(".saved-notes-container").innerHTML = savedNotesHtml;
 
 function deleteNoti(id) {
   let notification = document.getElementById(id) // getting the exact notification which is clicked to remove by its unique ID
   notification.style.display = 'none' // Just removing the notification from the front-end
   localStorage.removeItem(id) // Removing from localStorage so that it can't be shown in back_forward
   socket.emit('delete-noti', id) // Sending an event to remove the notification from database
+}
+
+let saved_notes = []
+function saveNote(noteDocID) {
+  let button = document.querySelector(`#save-btn-${noteDocID}`)
+  button.classList.add('saved')
+  button.disabled = true
+  let savedNotes = JSON.parse(localStorage.getItem('savedNotes')) // A list of noteDocIDs which are saved
+  if (savedNotes == null || !savedNotes.includes(noteDocID)) {
+    let noteData = {
+      noteID: noteDocID,
+      noteTitle: document.querySelector(`#note-${noteDocID} .note-title a`).innerHTML,
+      isSavedNote: true
+    }
+    addSaveNote(noteData)
+    saved_notes.push(noteDocID)
+    localStorage.setItem('savedNotes', JSON.stringify(saved_notes))
+    let addedNote = JSON.parse(localStorage.getItem(noteDocID))
+    if(addedNote == null) {
+      localStorage.setItem(noteDocID, JSON.stringify(noteData)) // Adding note data in the localStorage (BUG-1) *1
+    } else {
+      let arr = [JSON.parse(localStorage.getItem(noteDocID))]
+      arr.push(noteData)
+      localStorage.setItem(noteDocID, JSON.stringify(arr)) // Adding note data in the localStorage (BUG-1) *1
+    }
+    socket.emit('save-note', Cookies.get('recordID').split(':')[1].replaceAll('"', ''), noteDocID)
+  }
 }
 
 const notificationPanel = document.querySelector('.notification-panel');
