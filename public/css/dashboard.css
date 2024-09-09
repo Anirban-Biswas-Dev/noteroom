@@ -617,6 +617,59 @@ div.notification-msg > .commenter-prfl:visited{
   border-color: #b0b0b0;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+/* Confetti and Pop up for new user sign up celebration */
+.popup {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);  /* Centers the element */
+  width: 300px;
+  padding: 20px;
+  background-color: white;
+  box-shadow: 0px 5px 20px rgba(255, 255, 255, 0.7);
+  border-radius: 8px;
+  text-align: center;
+  z-index: 1010;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(138, 138, 138, 0.5);
+  backdrop-filter: blur(5px);
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s, opacity 0.3s;
+  z-index: 1009;
+}
+
+.overlay.show {
+  visibility: visible;
+  opacity: 1;
+}
+
+.button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: var(--squid-ink);
+  border: none;
+  border-radius: 5px;
+  color: var(--neon-blue);
+  cursor: pointer;
+}
+
+canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1008; /* Ensures confetti is in front of the overlay */
+  pointer-events: none;
+}
 /******************************************************
  Keep the Mobile Version of the code possibliy here
  ****************************************************** */
@@ -1015,5 +1068,10 @@ div.notification-msg > .commenter-prfl:visited{
   .users-db-msg{
     font-size:1rem;
     font-weight: 600;
+  }
+}
+@media (max-width: 768px) {
+  .popup {
+      width: 90%;
   }
 }
