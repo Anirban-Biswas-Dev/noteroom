@@ -284,3 +284,96 @@ function createConfetti(button) {
 
   setTimeout(() => confettiContainer.remove(), 2000);
 }
+
+// Confetti for new user celebration
+const canvas = document.getElementById('confettiCanvas');
+    const ctx = canvas.getContext('2d');
+    let confetti = [];
+    let animationFrame;
+    let confettiBlown = false;
+    let hasStopped = false;  // New flag to track when confetti has stopped
+
+    // Set canvas size to match window
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    function createConfettiPiece() {
+        return {
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height - canvas.height,
+            width: Math.random() * 10 + 5,  // Rectangular width
+            height: Math.random() * 6 + 3,  // Rectangular height
+            color: gsap.utils.random(["#FF6F61", "#FFD700", "#4CAF50", "#42A5F5", "#FF4081", "#FFEB3B", "#7E57C2", "#F06292", "#FFA726", "#8BC34A"]),
+            rotation: Math.random() * Math.PI * 2,
+            speed: Math.random() * 3 + 2,
+            rotationSpeed: Math.random() * 0.02 + 0.01,
+            drift: Math.random() * 0.5 - 0.25,  // Adds slight drifting to left/right
+            fallSpeed: Math.random() * 2 + 3
+        };
+    }
+
+    function updateConfetti() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        let activeConfettiCount = 0;
+
+        confetti.forEach((piece, index) => {
+            piece.y += piece.fallSpeed;
+            piece.x += piece.drift;
+            piece.rotation += piece.rotationSpeed;
+
+            if (piece.y < canvas.height) {
+                activeConfettiCount++;
+            }
+
+            ctx.save();
+            ctx.translate(piece.x, piece.y);
+            ctx.rotate(piece.rotation);
+            ctx.fillStyle = piece.color;
+            ctx.fillRect(-piece.width / 2, -piece.height / 2, piece.width, piece.height);
+            ctx.restore();
+        });
+
+        // Continue animating if there's active confetti
+        if (activeConfettiCount > 0 || !hasStopped) {
+            animationFrame = requestAnimationFrame(updateConfetti);
+        } else {
+            // Once all confetti is down, stop the animation
+            stopConfetti();
+        }
+    }
+
+    function startConfetti() {
+        // Create all confetti pieces in one burst
+        confetti = Array.from({ length: 200 }, createConfettiPiece);
+        confettiBlown = true;
+        hasStopped = false;  // Reset stop flag
+        updateConfetti();
+    }
+
+    function stopConfetti() {
+        // When all pieces are off screen, stop the animation naturally
+        cancelAnimationFrame(animationFrame);
+        hasStopped = true;  // Set flag to stop future updates
+        confetti = [];
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function triggerConfetti() {
+        let overlay = document.getElementById('overlay');
+
+        // Show overlay
+        overlay.classList.add('show');
+
+        // Start confetti
+        startConfetti();
+
+        // Hide overlay after confetti has finished falling
+        setTimeout(() => {
+            overlay.classList.remove('show');
+        }, 3000);  // You can adjust the overlay timing to match the animation length
+    }

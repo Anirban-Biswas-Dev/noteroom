@@ -73,6 +73,9 @@ app.get('/settings', (req, res) => {
 app.get('/support', (req, res) => {
     res.render('support')
 })
+app.get('/confetti', (req, res) => {
+    res.render('confetti')
+})
 app.get('*', (req, res) => {
     res.status(404)
     res.render('404-error', { message: 'The page you are looking for is not found' }) 

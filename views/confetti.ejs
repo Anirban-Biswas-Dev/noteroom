@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confetti Popup</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .popup {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 5px 20px rgba(255, 255, 255, 0.7);
+            z-index: 1001;
+            position: relative;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(138, 138, 138, 0.5);
+            backdrop-filter: blur(5px);
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0s, opacity 0.3s;
+            z-index: 1000;
+        }
+
+        .overlay.show {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #42c2f1;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+        }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1002; /* Ensures confetti is in front of the overlay */
+            pointer-events: none;
+        }
+
+        @media (max-width: 768px) {
+            .popup {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div id="overlay" class="overlay"></div>
+
+<div class="popup" id="popup">
+    <h2>Congratulations!</h2>
+    <p>Click the button below to trigger the confetti.</p>
+    <button class="button" onclick="triggerConfetti()">Celebrate!</button>
+</div>
+
+<canvas id="confettiCanvas"></canvas>
+
+<!-- Include the GSAP library from a CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.10.4/gsap.min.js"></script>
+
+<script>
+    const canvas = document.getElementById('confettiCanvas');
+    const ctx = canvas.getContext('2d');
+    let confetti = [];
+    let animationFrame;
+    let confettiBlown = false;
+    let hasStopped = false;  // New flag to track when confetti has stopped
+
+    // Set canvas size to match window
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    function createConfettiPiece() {
+        return {
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height - canvas.height,
+            width: Math.random() * 10 + 5,  // Rectangular width
+            height: Math.random() * 6 + 3,  // Rectangular height
+            color: gsap.utils.random(["#FF6F61", "#FFD700", "#4CAF50", "#42A5F5", "#FF4081", "#FFEB3B", "#7E57C2", "#F06292", "#FFA726", "#8BC34A"]),
+            rotation: Math.random() * Math.PI * 2,
+            speed: Math.random() * 3 + 2,
+            rotationSpeed: Math.random() * 0.02 + 0.01,
+            drift: Math.random() * 0.5 - 0.25,  // Adds slight drifting to left/right
+            fallSpeed: Math.random() * 2 + 3
+        };
+    }
+
+    function updateConfetti() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        let activeConfettiCount = 0;
+
+        confetti.forEach((piece, index) => {
+            piece.y += piece.fallSpeed;
+            piece.x += piece.drift;
+            piece.rotation += piece.rotationSpeed;
+
+            if (piece.y < canvas.height) {
+                activeConfettiCount++;
+            }
+
+            ctx.save();
+            ctx.translate(piece.x, piece.y);
+            ctx.rotate(piece.rotation);
+            ctx.fillStyle = piece.color;
+            ctx.fillRect(-piece.width / 2, -piece.height / 2, piece.width, piece.height);
+            ctx.restore();
+        });
+
+        // Continue animating if there's active confetti
+        if (activeConfettiCount > 0 || !hasStopped) {
+            animationFrame = requestAnimationFrame(updateConfetti);
+        } else {
+            // Once all confetti is down, stop the animation
+            stopConfetti();
+        }
+    }
+
+    function startConfetti() {
+        // Create all confetti pieces in one burst
+        confetti = Array.from({ length: 200 }, createConfettiPiece);
+        confettiBlown = true;
+        hasStopped = false;  // Reset stop flag
+        updateConfetti();
+    }
+
+    function stopConfetti() {
+        // When all pieces are off screen, stop the animation naturally
+        cancelAnimationFrame(animationFrame);
+        hasStopped = true;  // Set flag to stop future updates
+        confetti = [];
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function triggerConfetti() {
+        let overlay = document.getElementById('overlay');
+
+        // Show overlay
+        overlay.classList.add('show');
+
+        // Start confetti
+        startConfetti();
+
+        // Hide overlay after confetti has finished falling
+        setTimeout(() => {
+            overlay.classList.remove('show');
+        }, 3000);  // You can adjust the overlay timing to match the animation length
+    }
+</script>
+
+</body>
+</html>
