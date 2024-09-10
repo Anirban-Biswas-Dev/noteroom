@@ -808,6 +808,11 @@ canvas {
 /* ****** Responsiveness ***** */
 
 /* Temporarily Hiding the notification panel */
+@media (min-width:481px) and (max-width:1025px) {
+  .notification-panel{
+      display: none   ;
+  }
+}
   @media (max-width: 1530px) {
   .notification-panel {
     width: 20%;

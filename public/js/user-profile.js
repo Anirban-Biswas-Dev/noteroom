@@ -15,8 +15,7 @@ function badgeStyling() {
     
     function add_label(subject) {
         badgeElement.innerHTML = `Top ${subject} voice`;
-        // badgeLogo.src = `\\images\\badges\\${subject.toLowerCase()}.png` // This will automatically add the right badge according to the subject
-        badgeLogo.src = `\\images\\badges\\no-badge.png`;
+        badgeLogo.src = `\\images\\badges\\${subject.toLowerCase()}.png` 
     }
     
     switch(userBadge) {
