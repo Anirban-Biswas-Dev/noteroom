@@ -17,93 +17,8 @@ body {
     flex-direction: column;
 }
 
-/* ********* Search Bar ********* */
-/* Search Bar Box */
-.search-bar-box {
-    background-color: #ebebeb;
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
-    position: fixed;
-    width: 100%;
-    max-width: 980px;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 1000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    outline: none;
-    padding: 20px;
-    box-sizing: border-box;
-}
-
-/* Search Bar */
-.search-bar {
-    box-sizing: border-box;
-    background: rgba(255, 255, 255, 0.18);
-    border: 2px solid #1E1E1E;
-    border-radius: 25px;
-    border-top-right-radius: 0px;
-    border-bottom-right-radius: 0px;
-    width: 768px;
-    height: 57px;
-    padding-left: 20px;
-    font-size: 24px;
-    font-size: 1.2rem;
-}
-
-.search-bar:focus {
-    outline: none;
-}
-
-/* Search Bar Button */
-.search-bar-box button {
-    cursor: pointer;
-    font-size: 1.8rem;
-    background: rgba(255, 255, 255, 0.18);
-    border: 2px solid #1E1E1E;
-    border-left: none;
-    border-top-right-radius: 25px;
-    border-bottom-right-radius: 25px;
-    height: 57px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0 20px;
-    width: 60px;
-}
-
-/* ***** Middle Section ****** */
-/* Middle Section */
-.middle-section {
-    position: relative;
-    width: 100%;
-    max-width: 980px;
-    margin: 0 auto;
-    padding-top: 80px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    overflow-y: auto;
-    overflow-x: hidden;
-}
-
-
-.middle-section::-webkit-scrollbar {
-    width: 0;
-    height: 0;
-}
-
-.middle-section::-webkit-scrollbar-track,
-.middle-section::-webkit-scrollbar-thumb {
-    display: none;
-}
-
-.middle-section h2 {
-    padding: 15px;
-    margin-top: 15px;
-    overflow: hidden;
+.middle-section{
+    padding-top: 15vh;
 }
 
 .first-box {
@@ -167,7 +82,7 @@ body {
     font-size: 2rem;
     padding: 5px 10px;
     cursor: pointer;
-    z-index: 10;
+    z-index: 999;
     transition: background-color 0.3s ease;
     background: var(--gray);
     border: 1px solid #07192D;
@@ -209,12 +124,26 @@ body {
 }
 
 .author-name {
+    width: 100%;
     font-size: 1.2rem;
     font-weight: 600;
     padding: 15px;
 }
+.author-name a {
+    text-decoration: none;
+    color: var(--squid-ink);
+}
+.author-name a:hover{
+    text-decoration: underline;
+}
+.author-name a:visited{
+    color: var(--squid-ink);
+}
 
 .note-engagement {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
     svg {
         padding: 15px;
         margin-left: 15px;
@@ -232,7 +161,7 @@ body {
     border-radius: 10px;
     padding: 10px 15px 10px 15px;
     width: 90%;
-    min-height: 50%;
+    min-height: fit-content;
     display: flex;
     flex-direction: column;
     margin-bottom: 20px;
@@ -262,6 +191,9 @@ body {
     margin-top: 30px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .feedback-section h2 {
@@ -276,6 +208,7 @@ body {
     display: flex;
     flex-direction: column;
     margin-bottom: 20px;
+    width: 100%;
 }
 
 .feedback-input textarea {
@@ -296,10 +229,10 @@ body {
 
 .btn-submit-feedback {
     align-self: flex-end;
-    background-color: #04DBF7;
+    background-color:var(--squid-ink);
     border: none;
     border-radius: 8px;
-    color: white;
+    color: var(--neon-blue);
     padding: 8px 16px;
     font-size: 14px;
     cursor: pointer;
@@ -314,6 +247,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 20px;
+    width: 100%;
 }
 
 .feedback {
@@ -324,6 +258,8 @@ body {
     border-radius: 8px;
     padding: 15px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    min-height: fit-content;
 }
 
 .feedback-header {
@@ -350,7 +286,15 @@ body {
     color: #333;
     margin-bottom: 5px;
 }
-
+.link_ {
+    text-decoration: none;
+}
+.link_:hover{
+    text-decoration: underline;
+}
+.link_:visited{
+    color: var(--squid-ink);
+}
 .feedback-date {
     font-size: 12px;
     color: #999;
@@ -403,5 +347,188 @@ body {
     .carousel-slide img {
         width: 100%;
         height: auto;
+    }
+}
+@media (max-width:360px) {
+    .middle-section{
+        padding-top: 10vh;
+        padding-bottom: 12vh
+    }
+    .first-box {
+        h2 {
+            font-weight: 500;
+            font-size: 1.8rem;
+        }
+    
+        span {
+            font-size: .95rem;
+            padding: 0px 0px 10px 0px;
+        }
+    }
+    .carousel-container{
+        min-width: 200px;
+        padding: 5px;
+        border: 1px solid #081C30;
+    }
+    .carousel-control{
+        font-size: 1.2rem;
+        background-color: rgba(255, 255, 255, .3);
+    }
+    .author-info img{
+        width: 15vw;
+        height: 15vw;
+    }
+    .author-name{
+        font-size: .8rem;
+        padding: 2vw;
+        height: fit-content;
+    }
+    .note-engagement svg{
+        padding: 2vw;
+        margin-left:0;
+        width: 20%;
+        height: auto;
+        min-width: 20px;
+        min-height: 20px;
+    }
+    .desc-box{
+        width: 95%;
+        border: 1px solid #000000;
+        padding: 5px 10px;
+        margin-bottom: 2vh;
+        background-color: #F4F4F4;
+        h3 {
+            font-size: 1rem;
+            padding: 5px 0px 5px 0px;
+        }
+    }
+    .desc-box p{
+        font-size: .9rem;
+    }
+    .feedback-section h2 {
+        font-size: 1.1rem;
+    }
+    .feedback-author, .link_{
+        font-size: .8rem;
+    }
+}
+@media (min-width: 361px) and (max-width: 480px) {
+    .middle-section {
+        padding-top: 10vh; 
+        padding-bottom: 15vh; 
+    }
+    .first-box h2 {
+        font-weight: 500;
+        font-size: 2rem; 
+    }
+    .first-box span {
+        font-size: 1rem; 
+        padding: 0px 0px 12px 0px; 
+    }
+    .carousel-container {
+        min-width: 240px; 
+        padding: 8px; 
+        border: 1px solid #081C30;
+    }
+    .carousel-control {
+        font-size: 1.4rem; 
+        background-color: rgba(255, 255, 255, .35); 
+    }
+    .author-info img {
+        width: 18vw; 
+        height: 18vw;
+    }
+    .author-name {
+        font-size: .9rem;
+        padding: 2.5vw;
+        height: fit-content;
+    }
+    .note-engagement svg {
+        padding: 2.5vw; 
+        margin-left: 0;
+        width: 25%; 
+        height: auto;
+        min-width: 24px; 
+        min-height: 24px;
+    }
+    .desc-box {
+        width: 98%; 
+        border: 1px solid #000000;
+        padding: 8px 12px; 
+        margin-bottom: 3vh;
+        background-color: #F4F4F4;
+    }
+    .desc-box h3 {
+        font-size: 1.2rem; 
+        padding: 6px 0px;
+    }
+    .desc-box p {
+        font-size: 1rem; 
+    }
+    .feedback-section h2 {
+        font-size: 1.3rem; 
+    }
+    .feedback-author, .link_ {
+        font-size: .9rem;
+    }
+}
+@media (min-width: 481px) and (max-width: 767px) {
+    .middle-section {
+        padding-top: 15vh; 
+        padding-bottom: 15vh;
+    }
+    .first-box h2 {
+        font-weight: 500;
+        font-size: 2.2rem; 
+    }
+    .first-box span {
+        font-size: 1.1rem; 
+        padding: 0px 0px 15px 0px;
+    }
+    .carousel-container {
+        min-width: 260px; 
+        padding: 10px; 
+        border: 1px solid #081C30;
+    }
+    .carousel-control {
+        font-size: 1.6rem; 
+        background-color: rgba(255, 255, 255, .4);
+    }
+    .author-info img {
+        width: 20vw; 
+        height: 20vw;
+    }
+    .author-name {
+        font-size: 1rem; 
+        padding: 3vw;
+        height: fit-content;
+    }
+    .note-engagement svg {
+        padding: 3vw;
+        margin-left: 0;
+        width: 28%; 
+        height: auto;
+        min-width: 28px; 
+        min-height: 28px;
+    }
+    .desc-box {
+        width: 100%; 
+        border: 1px solid #000000;
+        padding: 10px 15px; 
+        margin-bottom: 3.5vh; 
+        background-color: #F4F4F4;
+    }
+    .desc-box h3 {
+        font-size: 1.4rem; 
+        padding: 7px 0px;
+    }
+    .desc-box p {
+        font-size: 1.1rem; 
+    }
+    .feedback-section h2 {
+        font-size: 1.4rem; 
+    }
+    .feedback-author, .link_ {
+        font-size: 1rem; /
     }
 }
