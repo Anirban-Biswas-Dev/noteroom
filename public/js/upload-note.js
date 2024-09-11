@@ -20,9 +20,11 @@ document.querySelector('input#fileInput').addEventListener('change', function (e
     let previewImage = document.querySelector('img#noteImage'); // The image in the thumnail
     let discardThumbnailSetup = document.querySelector('.discard-btn'); // The discard button
     let addToStack = document.querySelector('.thumbnail-addstack-btn'); // The add-stack button
+    let bgOverlay = document.querySelector('.overlay')
 
     if (file) {
         thumbnailPopup.style.display = 'flex'
+        bgOverlay.style.display = 'flex';
 
         // ----- Image Viewing on the popup page -----
         let blobUrl = URL.createObjectURL(file) // Creating a temporary link to preview the image 
@@ -34,6 +36,7 @@ document.querySelector('input#fileInput').addEventListener('change', function (e
 
         discardThumbnailSetup.addEventListener('click', function () {
             thumbnailPopup.style.display = 'none';
+            bgOverlay.style.display = 'none';
         })
 
         addToStack.addEventListener('click', function (event) {
@@ -42,6 +45,7 @@ document.querySelector('input#fileInput').addEventListener('change', function (e
                 stackFiles.push(image.files[0]) // Adding File Object into the stack
                 image.value = '' // Clearing file input
                 thumbnailPopup.style.display = 'none'; // Closing the preview
+                bgOverlay.style.display = 'none';
                 console.log(stackFiles)
             }
         })
