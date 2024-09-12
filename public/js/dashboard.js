@@ -1,15 +1,6 @@
 const host = 'http://localhost:2000'
 const socket = io(host)
 
-/*
-*BUG-1: 
-!    After uploading any note or giving any feedback, the note is added in the dashboard and the feedback's notification is sent 
-!    to the owner respectively. When clicking the note which is added in real-time via websockets, the user is redirected to the 
-!    note but after coming back, the note vanishes because of the note's not being saved in the memory (but it is saved in db).
-!    But it comes back when reloading the dashborad fetching the data from db. Same goes for notifications
-*/
-
-
 function truncatedTitle(title) {
   const titleCharLimit = 30;
   let truncatedTitle =
@@ -31,8 +22,9 @@ function addNote(noteData) {
     ownerDisplayname: Note owner's displayname
   */
 
-  let noteCardsHtml = `<div class="feed-note-card" id="note-${noteData.noteID}">
-						<div class="thumbnail-container">
+  let noteCardsHtml = `
+  				<div class="feed-note-card" id="note-${noteData.noteID}">
+					<div class="thumbnail-container">
 						<img class="thumbnail" src="${noteData.thumbnail}"> 
 						<button class="save-note-btn" id="save-btn-${noteData.noteID}" onclick="saveNote('${noteData.noteID}')">
 							<i class="fa-regular fa-bookmark"></i>
@@ -60,13 +52,13 @@ function addNote(noteData) {
 					</div>            
 				</div>
 			</div> 
-	`; // same html structure as ejs file
+	`; 
   document.querySelector('.feed-container').insertAdjacentHTML('beforeend', noteCardsHtml);
 }
 
 function addNoti(feedbackData) {
   /*
-  feedbackData (an Object which has the below keys and their values):
+  feedbackData:
     ownerUsername: The username of the owner of the note of which the feedback is given
     notiID: Unique ID of the feedback notification
     noteDocID: Unique ID of the note, will be used to redirect the owner to note on which the feedback is given (view/<note-id>)
@@ -89,7 +81,7 @@ function addNoti(feedbackData) {
               ${feedbackData.commenterDisplayName}
               </a><a href='/view/${feedbackData.noteDocID}' class="notification-link-2"> has given feedback on your notes! Check it out.</a>
             </div>
-        </div>` // Same html strcuture as the ejs file
+        </div>`
   document.querySelector('.notifications-container').insertAdjacentHTML('afterbegin', notificationHtml);
 }
 
@@ -100,7 +92,7 @@ function addSaveNote(noteData) {
     noteDocID: The doc-id of the note to redirect user to the specific note (/view/note-doc-id)
   */
   let savedNotesHtml = `
-	  <div class="saved-note">
+	  <div class="saved-note" id="saved-note-${noteData.noteID}">
 		  <span class="sv-note-title">
 			  <a href='/view/${noteData.noteID}'>${truncatedTitle(noteData.noteTitle)}</a>
 		  </span>
@@ -108,100 +100,120 @@ function addSaveNote(noteData) {
   document.querySelector(".saved-notes-container").insertAdjacentHTML('afterbegin', savedNotesHtml)
 }
 
-socket.on('note-upload', (noteData) => {
-  noteData.isAddNote = true
-  localStorage.setItem(noteData.noteID, JSON.stringify(noteData)) // Adding note data in the localStorage (BUG-1) *2
-  addNote(noteData)
+function updateLocalStorage(key, noteID_noteObj, method) {
+	if(method == 'insert') {
+		let values = JSON.parse(localStorage.getItem(key))
+		values.push(noteID_noteObj)
+		localStorage.setItem(key, JSON.stringify(values))
+		console.log(JSON.parse(localStorage.getItem(key)))
+	} else if(method == 'remove') {
+		let values = JSON.parse(localStorage.getItem(key))
+		let noteData = values.find(item => item.noteID == noteID_noteObj)
+		let modifiedDocs = values.filter(item => item.noteID !== noteData.noteID)
+		localStorage.setItem(key, JSON.stringify(modifiedDocs))
+	}
+}
+
+function isExists(key, noteDocID) {
+	let values = JSON.parse(localStorage.getItem(key))
+	let noteData = values.find(item => item.noteID == noteDocID)
+	return !(noteData == undefined)
+}
+
+socket.on('note-upload' /* Event handler of the event triggered after uploading a note */, (noteData) => {
+	noteData.isAddNote = true //* Idenfing a note object that needs to be added after back_forward
+	updateLocalStorage('addedNotes', noteData, 'insert')
+	addNote(noteData)
 })
 
 
-socket.on('feedback-given', (feedbackData) => {
-  if (feedbackData.ownerUsername == Cookies.get('recordName')) {
-    feedbackData.isNoti = true
-    localStorage.setItem(feedbackData.notiID, JSON.stringify(feedbackData)) // Adding notification data in the localStorage (BUG-1)
-    addNoti(feedbackData)
+socket.on('feedback-given' , (feedbackData) => {
+	if (feedbackData.ownerUsername == Cookies.get('recordName')) {
+		feedbackData.isNoti = true //* Identifing a notification object
+		updateLocalStorage('notis', feedbackData, 'insert') // Adding notification data in the localStorage (BUG-1)
+		addNoti(feedbackData)
 
-    const nftShake = document.querySelector('.mobile-nft-btn')
-    nftShake.classList.add('shake')
-    setTimeout(() => {
-      nftShake.classList.remove('shake');
-    }, 300)
-    console.log(nftShake);
-  }
+		const nftShake = document.querySelector('.mobile-nft-btn')
+		nftShake.classList.add('shake')
+		setTimeout(() => {
+			nftShake.classList.remove('shake');
+		}, 300)
+		console.log(nftShake);
+	}
 })
-
-/* 
-*BUG-1 Resolved
-  After uploading the note, the note-data is saved in the localStorage of the browsers. When the student clicks on the note, he will be redirected to the note.
-  When coming back (not reloading; just back button), it raises a back_forward(:1) navigation and the bug occures. Capturing the back_forward navigation, the 
-  note-datas is fetched from the localStorage (:2) and shown each of them via addNote (:3). But in chrome, the bug doesn't occur, so the note is added twice (both
-  from the localStorage and the WebSockets one). So before adding the note from localStorage, it checks if there is any unique save button there (:4) cause the save button's
-  ID is unique based on the note's Doc ID. If there is no button, the note is added from the localStorage. Same method is used for notifications. 
-*/
-
-let [navigate] = performance.getEntriesByType('navigation')
-if ((navigate.type === 'navigate') || (navigate.type == 'reload')) {
-  localStorage.clear() // The localStorage is cleared when the page is relaoded or navigated for the first time
-} else if (navigate.type === 'back_forward') /* :1 */ {
-  let Datas = Object.values(localStorage) /* :2 */
-  Datas.forEach(CardStr => {
-    let data = JSON.parse(CardStr)
-    if (data.isAddNote) {
-      let button = document.querySelector(`#save-btn-${data.noteID}`)
-      if (button === null) /* :4 */ {
-        addNote(data) /* :3 */
-      }
-    } else if (data.isNoti) {
-      addNoti(data)
-    } else if(data.isSavedNote) {
-      addSaveNote(data)
-      let button = document.querySelector(`#save-btn-${data.noteID}`)
-      button.classList.add('saved')
-      button.disabled = true
-    } else {
-      if (typeof data[0] == 'object') {
-        addNote(data[0])
-        addSaveNote(data[1])
-        let button = document.querySelector(`#save-btn-${data[0].noteID}`)
-        button.classList.add('saved')
-        button.disabled = true
-      }
-    }
-  })
-}
-
-function deleteNoti(id) {
-  let notification = document.getElementById(id) // getting the exact notification which is clicked to remove by its unique ID
-  notification.style.display = 'none' // Just removing the notification from the front-end
-  localStorage.removeItem(id) // Removing from localStorage so that it can't be shown in back_forward
-  socket.emit('delete-noti', id) // Sending an event to remove the notification from database
-}
 
 let saved_notes = []
+let [navigate] = performance.getEntriesByType('navigation')
+if ((navigate.type === 'navigate') || (navigate.type == 'reload')) {
+
+	localStorage.clear()
+	document.querySelector('.saved-notes-container').querySelectorAll('span.saved-note-doc-id').forEach(noteDocID => {
+		let noteData = {
+			noteID: noteDocID.innerHTML,
+			noteTitle: document.querySelector(`#note-${noteDocID.innerHTML} .note-title a`).innerHTML,
+			isSavedNote: true 
+		}
+		saved_notes.push(noteData)
+	})
+	localStorage.setItem('savedNotes', JSON.stringify(saved_notes))
+	localStorage.setItem('notis', JSON.stringify([]))
+
+} else if (navigate.type === 'back_forward') {
+	let Datas = Object.values(localStorage)
+	Datas.forEach(CardStr => {
+		let data = JSON.parse(CardStr)
+		data.map(note => {
+			if(note.isAddNote) {
+				let existingNote = document.querySelector(`#note-${note.noteID}`)
+				if(existingNote === null) {
+					addNote(note)
+				}
+			} 
+			else if(note.isSavedNote) {
+				if(isExists('savedNotes', note.noteID)) {
+					let existingNote = document.querySelector(`#saved-note-${note.noteID}`)
+					if(existingNote === null) {
+						addSaveNote(note)
+						document.querySelector(`#save-btn-${note.noteID}`).classList.add('saved')
+					}
+				}	
+			} 
+			else if(note.isNoti) {
+				addNoti(note)
+			} 
+		})
+	})
+}
+
+
 function saveNote(noteDocID) {
-  let button = document.querySelector(`#save-btn-${noteDocID}`)
-  button.classList.add('saved')
-  button.disabled = true
-  let savedNotes = JSON.parse(localStorage.getItem('savedNotes')) // A list of noteDocIDs which are saved
-  if (savedNotes == null || !savedNotes.includes(noteDocID)) {
-    let noteData = {
-      noteID: noteDocID,
-      noteTitle: document.querySelector(`#note-${noteDocID} .note-title a`).innerHTML,
-      isSavedNote: true
-    }
-    addSaveNote(noteData)
-    saved_notes.push(noteDocID)
-    localStorage.setItem('savedNotes', JSON.stringify(saved_notes))
-    let addedNote = JSON.parse(localStorage.getItem(noteDocID))
-    if(addedNote == null) {
-      localStorage.setItem(noteDocID, JSON.stringify(noteData)) // Adding note data in the localStorage (BUG-1) *1
+    let button = document.querySelector(`#save-btn-${noteDocID}`);
+    let recordID = Cookies.get('recordID').split(':')[1].replaceAll('"', '');
+
+    if (!button.classList.contains('saved')) {
+        button.classList.add('saved');
+        let noteData = {
+            noteID: noteDocID,
+            noteTitle: document.querySelector(`#note-${noteDocID} .note-title a`).innerHTML,
+            isSavedNote: true 
+        };
+        updateLocalStorage('savedNotes', noteData, 'insert');
+        addSaveNote(noteData);
+        socket.emit('save-note', recordID, noteDocID);
+
     } else {
-      let arr = [JSON.parse(localStorage.getItem(noteDocID))]
-      arr.push(noteData)
-      localStorage.setItem(noteDocID, JSON.stringify(arr)) // Adding note data in the localStorage (BUG-1) *1
+        socket.emit('delete-saved-note', recordID, noteDocID);
+        button.classList.remove('saved');
+        updateLocalStorage('savedNotes', noteDocID, 'remove');
+        document.querySelector(`#saved-note-${noteDocID}`).remove(); 
     }
-    socket.emit('save-note', Cookies.get('recordID').split(':')[1].replaceAll('"', ''), noteDocID)
-  }
+}
+
+
+function deleteNoti(id) {
+	socket.emit('delete-noti', id) 
+	document.getElementById(id).remove() 
+	updateLocalStorage('notis', id, 'remove')
 }
 
 const notificationPanel = document.querySelector('.notification-panel');
@@ -287,93 +299,93 @@ function createConfetti(button) {
 
 // Confetti for new user celebration
 const canvas = document.getElementById('confettiCanvas');
-    const ctx = canvas.getContext('2d');
-    let confetti = [];
-    let animationFrame;
-    let confettiBlown = false;
-    let hasStopped = false;  // New flag to track when confetti has stopped
+const ctx = canvas.getContext('2d');
+let confetti = [];
+let animationFrame;
+let confettiBlown = false;
+let hasStopped = false;  // New flag to track when confetti has stopped
 
-    // Set canvas size to match window
-    function resizeCanvas() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-    }
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
+// Set canvas size to match window
+function resizeCanvas() {
+	canvas.width = window.innerWidth;
+	canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
 
-    function createConfettiPiece() {
-        return {
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height - canvas.height,
-            width: Math.random() * 10 + 5,  // Rectangular width
-            height: Math.random() * 6 + 3,  // Rectangular height
-            color: gsap.utils.random(["#FF6F61", "#FFD700", "#4CAF50", "#42A5F5", "#FF4081", "#FFEB3B", "#7E57C2", "#F06292", "#FFA726", "#8BC34A"]),
-            rotation: Math.random() * Math.PI * 2,
-            speed: Math.random() * 3 + 2,
-            rotationSpeed: Math.random() * 0.02 + 0.01,
-            drift: Math.random() * 0.5 - 0.25,  // Adds slight drifting to left/right
-            fallSpeed: Math.random() * 2 + 3
-        };
-    }
+function createConfettiPiece() {
+	return {
+		x: Math.random() * canvas.width,
+		y: Math.random() * canvas.height - canvas.height,
+		width: Math.random() * 10 + 5,  // Rectangular width
+		height: Math.random() * 6 + 3,  // Rectangular height
+		color: gsap.utils.random(["#FF6F61", "#FFD700", "#4CAF50", "#42A5F5", "#FF4081", "#FFEB3B", "#7E57C2", "#F06292", "#FFA726", "#8BC34A"]),
+		rotation: Math.random() * Math.PI * 2,
+		speed: Math.random() * 3 + 2,
+		rotationSpeed: Math.random() * 0.02 + 0.01,
+		drift: Math.random() * 0.5 - 0.25,  // Adds slight drifting to left/right
+		fallSpeed: Math.random() * 2 + 3
+	};
+}
 
-    function updateConfetti() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+function updateConfetti() {
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        let activeConfettiCount = 0;
+	let activeConfettiCount = 0;
 
-        confetti.forEach((piece, index) => {
-            piece.y += piece.fallSpeed;
-            piece.x += piece.drift;
-            piece.rotation += piece.rotationSpeed;
+	confetti.forEach((piece, index) => {
+		piece.y += piece.fallSpeed;
+		piece.x += piece.drift;
+		piece.rotation += piece.rotationSpeed;
 
-            if (piece.y < canvas.height) {
-                activeConfettiCount++;
-            }
+		if (piece.y < canvas.height) {
+			activeConfettiCount++;
+		}
 
-            ctx.save();
-            ctx.translate(piece.x, piece.y);
-            ctx.rotate(piece.rotation);
-            ctx.fillStyle = piece.color;
-            ctx.fillRect(-piece.width / 2, -piece.height / 2, piece.width, piece.height);
-            ctx.restore();
-        });
+		ctx.save();
+		ctx.translate(piece.x, piece.y);
+		ctx.rotate(piece.rotation);
+		ctx.fillStyle = piece.color;
+		ctx.fillRect(-piece.width / 2, -piece.height / 2, piece.width, piece.height);
+		ctx.restore();
+	});
 
-        // Continue animating if there's active confetti
-        if (activeConfettiCount > 0 || !hasStopped) {
-            animationFrame = requestAnimationFrame(updateConfetti);
-        } else {
-            // Once all confetti is down, stop the animation
-            stopConfetti();
-        }
-    }
+	// Continue animating if there's active confetti
+	if (activeConfettiCount > 0 || !hasStopped) {
+		animationFrame = requestAnimationFrame(updateConfetti);
+	} else {
+		// Once all confetti is down, stop the animation
+		stopConfetti();
+	}
+}
 
-    function startConfetti() {
-        // Create all confetti pieces in one burst
-        confetti = Array.from({ length: 200 }, createConfettiPiece);
-        confettiBlown = true;
-        hasStopped = false;  // Reset stop flag
-        updateConfetti();
-    }
+function startConfetti() {
+	// Create all confetti pieces in one burst
+	confetti = Array.from({ length: 200 }, createConfettiPiece);
+	confettiBlown = true;
+	hasStopped = false;  // Reset stop flag
+	updateConfetti();
+}
 
-    function stopConfetti() {
-        // When all pieces are off screen, stop the animation naturally
-        cancelAnimationFrame(animationFrame);
-        hasStopped = true;  // Set flag to stop future updates
-        confetti = [];
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-    }
+function stopConfetti() {
+	// When all pieces are off screen, stop the animation naturally
+	cancelAnimationFrame(animationFrame);
+	hasStopped = true;  // Set flag to stop future updates
+	confetti = [];
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
 
-    function triggerConfetti() {
-        let overlay = document.getElementById('overlay');
+function triggerConfetti() {
+	let overlay = document.getElementById('overlay');
 
-        // Show overlay
-        overlay.classList.add('show');
+	// Show overlay
+	overlay.classList.add('show');
 
-        // Start confetti
-        startConfetti();
+	// Start confetti
+	startConfetti();
 
-        // Hide overlay after confetti has finished falling
-        setTimeout(() => {
-            overlay.classList.remove('show');
-        }, 3000);  // You can adjust the overlay timing to match the animation length
-    }
+	// Hide overlay after confetti has finished falling
+	setTimeout(() => {
+		overlay.classList.remove('show');
+	}, 3000);  // You can adjust the overlay timing to match the animation length
+}
