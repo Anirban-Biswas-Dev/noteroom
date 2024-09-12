@@ -52,7 +52,7 @@ function addNote(noteData) {
 					</div>            
 				</div>
 			</div> 
-	`; // same html structure as ejs file
+	`; 
   document.querySelector('.feed-container').insertAdjacentHTML('beforeend', noteCardsHtml);
 }
 
@@ -81,7 +81,7 @@ function addNoti(feedbackData) {
               ${feedbackData.commenterDisplayName}
               </a><a href='/view/${feedbackData.noteDocID}' class="notification-link-2"> has given feedback on your notes! Check it out.</a>
             </div>
-        </div>` // Same html strcuture as the ejs file
+        </div>`
   document.querySelector('.notifications-container').insertAdjacentHTML('afterbegin', notificationHtml);
 }
 
@@ -100,23 +100,37 @@ function addSaveNote(noteData) {
   document.querySelector(".saved-notes-container").insertAdjacentHTML('afterbegin', savedNotesHtml)
 }
 
+function updateLocalStorage(key, noteID_noteObj, method) {
+	if(method == 'insert') {
+		let values = JSON.parse(localStorage.getItem(key))
+		values.push(noteID_noteObj)
+		localStorage.setItem(key, JSON.stringify(values))
+		console.log(JSON.parse(localStorage.getItem(key)))
+	} else if(method == 'remove') {
+		let values = JSON.parse(localStorage.getItem(key))
+		let noteData = values.find(item => item.noteID == noteID_noteObj)
+		let modifiedDocs = values.filter(item => item.noteID !== noteData.noteID)
+		localStorage.setItem(key, JSON.stringify(modifiedDocs))
+	}
+}
+
+function isExists(key, noteDocID) {
+	let values = JSON.parse(localStorage.getItem(key))
+	let noteData = values.find(item => item.noteID == noteDocID)
+	return !(noteData == undefined)
+}
+
 socket.on('note-upload' /* Event handler of the event triggered after uploading a note */, (noteData) => {
 	noteData.isAddNote = true //* Idenfing a note object that needs to be added after back_forward
-	localStorage.setItem(noteData.noteID, JSON.stringify(noteData)) // Adding note data in the localStorage (BUG-1) *2
+	updateLocalStorage('addedNotes', noteData, 'insert')
 	addNote(noteData)
 })
 
 
-socket.on('feedback-given' /* Event handler of the event triggered after giving a feedback on a note: notification system */ , (feedbackData) => {
-	/*
-	Process: This event will be handled by every user of noteroom. But will only be taken by the owner of the note whose note is commented.
-	While giving feedback, the owenr's username will be sent to all the users. This will be matched with the recordName cookie which helds
-	the value of every user's username while logging in. If the value is matched with the owner's username, then the notification will be 
-	shown. Otherwise dropped. //! This process will be changed to sending notification to the specific user via IDs rather than broadcast
-	*/
+socket.on('feedback-given' , (feedbackData) => {
 	if (feedbackData.ownerUsername == Cookies.get('recordName')) {
 		feedbackData.isNoti = true //* Identifing a notification object
-		localStorage.setItem(feedbackData.notiID, JSON.stringify(feedbackData)) // Adding notification data in the localStorage (BUG-1)
+		updateLocalStorage('notis', feedbackData, 'insert') // Adding notification data in the localStorage (BUG-1)
 		addNoti(feedbackData)
 
 		const nftShake = document.querySelector('.mobile-nft-btn')
@@ -128,144 +142,78 @@ socket.on('feedback-given' /* Event handler of the event triggered after giving 
 	}
 })
 
-/* 
-*BUG-1 Resolving Process
-	After uploading the note, the note-data is saved in the localStorage of the browsers. When the student clicks on the note, he will be redirected to the note.
-	When coming back (not reloading; just back button), it raises a back_forward(:1) navigation and the bug occures. Capturing the back_forward navigation, the 
-	note-data is fetched from the localStorage (:2) and shown each of them via addNote (:3). But in chrome, the bug doesn't occur, so the note is added twice (both
-	from the localStorage and the WebSockets one). So before adding the note from localStorage, it checks if there is any existing note there (:4). If there is no note, 
-	the note is added from the localStorage. Same method is used for notifications (:4), saving note (:5). 
-
-	In case of saving a note came via websockets: (How this works is described in the saveNote function docs). When back_forward navigation is captured, the first 
-	object in the localStorage which is the add-note object, gets appeneded in the feed (:ex1) and the second object which is the save-note object gets appended in 
-	the save panel (:ex2).
-*/
-
+let saved_notes = []
 let [navigate] = performance.getEntriesByType('navigation')
 if ((navigate.type === 'navigate') || (navigate.type == 'reload')) {
-	localStorage.clear() // The localStorage is cleared when the page is relaoded or navigated for the first time
-} else if (navigate.type === 'back_forward') /* :1 */ {
-	let Datas = Object.values(localStorage) // :2
+
+	localStorage.clear()
+	document.querySelector('.saved-notes-container').querySelectorAll('span.saved-note-doc-id').forEach(noteDocID => {
+		let noteData = {
+			noteID: noteDocID.innerHTML,
+			noteTitle: document.querySelector(`#note-${noteDocID.innerHTML} .note-title a`).innerHTML,
+			isSavedNote: true 
+		}
+		saved_notes.push(noteData)
+	})
+	localStorage.setItem('savedNotes', JSON.stringify(saved_notes))
+	localStorage.setItem('notis', JSON.stringify([]))
+
+} else if (navigate.type === 'back_forward') {
+	let Datas = Object.values(localStorage)
 	Datas.forEach(CardStr => {
 		let data = JSON.parse(CardStr)
-		if (data.isAddNote) {
-			let existingNote = document.querySelector(`#note-${data.noteID}`)
-			if (existingNote === null) /* :4 */ {
-				addNote(data) // :3
-			}
-		} else if (data.isNoti) {
-			addNoti(data) // :4
-		} else if(data.isSavedNote) {
-			let note = document.querySelector('.saved-notes-container').querySelector(`#saved-note-${data.noteID}`)
-			if (note == null) {
-				console.log(`Note added to the saved panel`)
-				addSaveNote(data) // :5
-				let button = document.querySelector(`#save-btn-${data.noteID}`)
-				button.classList.add('saved')
-			}
-		} else {
-			if (typeof data[0] == 'object') {
-				addNote(data[0]) // :ex1
-				addSaveNote(data[1]) //: ex2
-				let button = document.querySelector(`#save-btn-${data[0].noteID}`)
-				button.classList.add('saved')
-			}
-		}
+		data.map(note => {
+			if(note.isAddNote) {
+				let existingNote = document.querySelector(`#note-${note.noteID}`)
+				if(existingNote === null) {
+					addNote(note)
+				}
+			} 
+			else if(note.isSavedNote) {
+				if(isExists('savedNotes', note.noteID)) {
+					let existingNote = document.querySelector(`#saved-note-${note.noteID}`)
+					if(existingNote === null) {
+						addSaveNote(note)
+						document.querySelector(`#save-btn-${note.noteID}`).classList.add('saved')
+					}
+				}	
+			} 
+			else if(note.isNoti) {
+				addNoti(note)
+			} 
+		})
 	})
 }
 
-function deleteNoti(id) {
-	let notification = document.getElementById(id) // getting the exact notification which is clicked to remove by its unique ID
-	notification.style.display = 'none' // Just removing the notification from the front-end
-	localStorage.removeItem(id) // Removing from localStorage so that it can't be shown in back_forward
-	socket.emit('delete-noti', id) // Sending an event to remove the notification from database
-}
-
-let saved_notes = []
-document.querySelector('.saved-notes-container').querySelectorAll(`span.saved-note-doc-id`).forEach(note => {
-	let noteDocID = note.innerHTML
-	saved_notes.push(noteDocID)
-	localStorage.setItem('savedNotes', JSON.stringify(saved_notes))
-
-	let noteData = {
-		noteID: noteDocID,
-		noteTitle: document.querySelector(`#note-${noteDocID} .note-title a`).innerHTML,
-		isSavedNote: true
-	} 
-	localStorage.setItem(noteDocID, JSON.stringify(noteData))
-})
 
 function saveNote(noteDocID) {
-	/* 
-	Process:
-	--------
-	When the save button is clicked, first the class: saved is added to it so that it changes the mode to save (:1). Then it checks if this is the 
-	first note to be saved for this session by checking if there is a 'savedNotes' list in the local storage (:2) and if there is the noteDocID of 
-	that note (:3). If the noteDocID doesn't exist, then a new savedNote object is created (:4) and appened via addSaveNote (:5). Then the list 
-	saved_notes (a list of noteDocIDs which are saved in this session) is updated with the newly saved note(:6) and then the 'savedNotes' Then is 
-	gets updated in the local storage with the entries of saved_notes (:7). 
+    let button = document.querySelector(`#save-btn-${noteDocID}`);
+    let recordID = Cookies.get('recordID').split(':')[1].replaceAll('"', '');
 
-	Now there can be 2 scenerios:
-	1. The note which is saved came through websockets
-	2. The note which is saved came from database
+    if (!button.classList.contains('saved')) {
+        button.classList.add('saved');
+        let noteData = {
+            noteID: noteDocID,
+            noteTitle: document.querySelector(`#note-${noteDocID} .note-title a`).innerHTML,
+            isSavedNote: true 
+        };
+        updateLocalStorage('savedNotes', noteData, 'insert');
+        addSaveNote(noteData);
+        socket.emit('save-note', recordID, noteDocID);
 
-	For case 1: The note adding functionality is similer as saving notes. The data is first saved in the localStorage with the noteDocID. So, when the note
-	came via websockets, there will already be an entry with that noteDocID with isAddNote property set. So, when trying to save that note, the value of the
-	corrosponding noteDocID key is updated by using an array in this format: [object of add-note, object of save-note] (: case-1:1). Then it is saved in the 
-	localStorage with the key beign noteDocID (: case-1:2). So, now we get a note which needs to be added in the save panel and feed section when the browser 
-	detects back_forward navigation. 
-	
-	For case 2: When the note came from the database, there is no entry with that corrosponding noteDocID. So a new entry with the noteDocID is created with
-	the value being the save-note object (: case-2:1). So, when the browser detects back_forward navigation, it appends the note to the saved panel only
-	*/
+    } else {
+        socket.emit('delete-saved-note', recordID, noteDocID);
+        button.classList.remove('saved');
+        updateLocalStorage('savedNotes', noteDocID, 'remove');
+        document.querySelector(`#saved-note-${noteDocID}`).remove(); 
+    }
+}
 
-	let button = document.querySelector(`#save-btn-${noteDocID}`)
-	if (!button.classList.contains('saved')) {
-		button.classList.add('saved') // :1
-		let savedNotes = JSON.parse(localStorage.getItem('savedNotes')) // :2 - A list of noteDocIDs which are saved 
-		if (savedNotes == null || !savedNotes.includes(noteDocID)) /* :3 */ {
-			let noteData = {
-				noteID: noteDocID,
-				noteTitle: document.querySelector(`#note-${noteDocID} .note-title a`).innerHTML,
-				isSavedNote: true //* Idenfing a note that needs to added to saved section after back_forward
-			} // :4
-			addSaveNote(noteData) // :5
-			saved_notes.push(noteDocID) // :6
-			localStorage.setItem('savedNotes', JSON.stringify(saved_notes)) // :7
-	
-			let addedNote = JSON.parse(localStorage.getItem(noteDocID))
-			if(addedNote == null) /* case 2 */ {
-				localStorage.setItem(noteDocID, JSON.stringify(noteData)) // :case-2:1
-			} else /* case 1 */ {
-				let savedAndAddedNotesObject = [JSON.parse(localStorage.getItem(noteDocID))] // :case-1:1
-				savedAndAddedNotesObject.push(noteData)
-				localStorage.setItem(noteDocID, JSON.stringify(savedAndAddedNotesObject)) // :case-1:2
-			}
-			socket.emit('save-note', /*Cookies.get('recordID').split(':')[1].replaceAll('"', '')*/'66d86c47f738e833fb5537c2', noteDocID)
-		}
-	} else /* When the save is saved and the save button is clicked, then it will work as an unsave button */ {
-		// At first, the note-doc-id is removed from the savedNotes value from localStorage
-		saved_notes = saved_notes.filter(docID => docID != noteDocID)
-		localStorage.setItem('savedNotes', JSON.stringify(saved_notes))
 
-		// Second, the note saved note will be rempved from the save-panel: front-end
-		let savedNote = document.querySelector(`#saved-note-${noteDocID}`)
-		savedNote.remove()
-		button.classList.remove('saved')
-
-		// Thirdly, the note-data-object is removed from the localStorage
-		let savedNoteDataLocalStorage = JSON.parse(localStorage.getItem(noteDocID))
-		if(!Array.isArray(savedNoteDataLocalStorage)) {
-			if(savedNoteDataLocalStorage.isSavedNote) {
-				localStorage.removeItem(noteDocID)
-			}
-		} else {
-			localStorage.setItem(noteDocID, JSON.stringify(savedNoteDataLocalStorage[0]))
-		}
-
-		// Forthly, an event is triggered to remove the note-doc-id from the student's saved_notes field: back-end
-		socket.emit('delete-saved-note', /*Cookies.get('recordID').split(':')[1].replaceAll('"', '')*/ '66d86c47f738e833fb5537c2', noteDocID)
-	}
+function deleteNoti(id) {
+	socket.emit('delete-noti', id) 
+	document.getElementById(id).remove() 
+	updateLocalStorage('notis', id, 'remove')
 }
 
 const notificationPanel = document.querySelector('.notification-panel');
