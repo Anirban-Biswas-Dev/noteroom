@@ -8,8 +8,15 @@ function dashboardRouter(io) {
     async function addSaveNote(studentDocID, noteDocID) {
         await Students.updateOne(
             { _id: studentDocID },
-            { $push: { saved_notes: noteDocID } }, 
+            { $addToSet: { saved_notes: noteDocID } }, 
             { new: true }
+        )
+    }
+
+    async function deleteSavedNote(studentDocID, noteDocID) {
+        await Students.updateOne(
+            { _id: studentDocID },
+            { $pull: { saved_notes: noteDocID } }
         )
     }
 
@@ -57,6 +64,9 @@ function dashboardRouter(io) {
         socket.on('save-note', async (studentDocID, noteDocID) => {
             await addSaveNote(studentDocID, noteDocID)
         })
+        socket.on('delete-saved-note', async (studentDocID, noteDocID) => {
+            await deleteSavedNote(studentDocID, noteDocID)
+        })
     })
 
     router.get('/', async (req, res) => {
@@ -65,7 +75,6 @@ function dashboardRouter(io) {
             let notis = await getNotifications(req.cookies['recordName'])
             let allNotes = await getAllNotes()
             let savedNotes = await getSavedNotes(req.session.stdid)
-            // console.log(savedNotes)
             res.render('dashboard', { student: student, notis: notis, notes: allNotes, savedNotes: savedNotes })
         } else {
             res.redirect('login')
