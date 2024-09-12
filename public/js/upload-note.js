@@ -1,6 +1,12 @@
 const host = 'http://localhost:2000'
 const socket = io(host)
 
+/*
+!BUG-3: On uploading note: front-end
+    !When the discard button is clicked in the image preview, the window disappears and we can't select the same discarded image. The image preview is
+    !not even shown
+*/
+
 document.addEventListener('DOMContentLoaded', () => {
     let thumbnailPopup = document.querySelector('.thumbnail-pop-up');
 

@@ -8,14 +8,17 @@ function logout() {
 }
 
 function badgeStyling() {
-    // Get the current badge content
     let userBadge = document.querySelector('.top-voice-badge').textContent.trim();
     const badgeElement = document.querySelector('.top-voice-badge');
     const badgeLogo = document.querySelector('img.badge-logo')
     
     function add_label(subject) {
-        badgeElement.innerHTML = `Top ${subject} voice`;
-        badgeLogo.src = `\\images\\badges\\${subject.toLowerCase()}.png` 
+        if (!(subject == undefined)) {
+            badgeElement.innerHTML = `Top ${subject} voice`;
+            badgeLogo.src = `\\images\\badges\\${subject.toLowerCase()}.png` 
+        } else {
+            badgeLogo.src = `\\images\\badges\\no-badge.png` 
+        }
     }
     
     switch(userBadge) {
@@ -42,6 +45,7 @@ function badgeStyling() {
             break
         default:
             badgeElement.innerHTML = '<div class="no-badge">No badge</div>';
+            add_label()
             break
     }
 }
