@@ -6,7 +6,7 @@
 :root {
   --squid-ink: #06192d;
   --neon-blue: #04dbf6;
-  --gray: #ebebeb;
+  --gray-off: #d3d3d3;
 }
 
 body {
@@ -21,7 +21,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px;
+  padding: 2.5vh 2vw;
 }
 h1 {
   font-weight: 600;
@@ -84,55 +84,78 @@ h1 {
   box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.2);
 }
 
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 3.75em;
-  height: 2.125em;
+.parent-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 10%;
 }
 
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
+.toggle-container {
+  width: 90%;
+  min-width: fit-content;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.slider {
-  position: absolute;
+.toggle-checkbox {
+  display: none;
+}
+
+.toggle-label {
+  display: flex;
+  align-items: center;
+  width: 80px;
+  height: 40px;
+  background-color: var(--gray-off);
+  border-radius: 50px;
+  transition: background-color 0.4s ease;
   cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: var(--gray);
-  transition: 0.4s;
-  border-radius: 2.125em;
+  position: relative;
 }
 
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 1.625em;
-  width: 1.625em;
-  left: 0.25em;
-  bottom: 0.25em;
-  background-color: var(--neon-blue);
-  transition: 0.4s;
+.toggle-button {
+  width: 36px;
+  height: 36px;
+  background-color: var(--squid-ink);
   border-radius: 50%;
+  transition: all 0.4s ease;
+  position: absolute;
+  top: 2px;
+  left: 2px;
 }
 
-input:checked + .slider {
+.toggle-checkbox:checked + .toggle-label {
   background-color: var(--squid-ink);
 }
 
-input:focus + .slider {
-  box-shadow: 0 0 1px var(--gray);
+.toggle-checkbox:checked + .toggle-label .toggle-button {
+  transform: translateX(40px);
+  background-color: var(--neon-blue);
 }
 
-input:checked + .slider:before {
-  transform: translateX(1.625em); /* 26px equivalent */
-}
 
+@media (max-width: 360px) {
+  .parent-container{
+    width: 20%;
+  }
+  .toggle-label {
+    width: 60px;
+    height: 30px;
+  }
+
+  .toggle-button {
+    width: 26px;
+    height: 26px;
+    top: 2px;
+    left: 2px;
+  }
+
+  .toggle-checkbox:checked + .toggle-label .toggle-button {
+    transform: translateX(30px);
+  }
+}
 /* ****** Responsiveness Part ******* */
 @media (max-width: 480px) {
   .switch {
@@ -149,5 +172,120 @@ input:checked + .slider:before {
 
   input:checked + .slider:before {
     transform: translateX(1.5em);
+  }
+}
+@media (max-width:360px) {
+  .container h1 {
+    font-size: 1.6rem;
+  }
+  .section-header svg{
+    width: 50px;
+    height: auto;
+    min-width: 40px;
+    min-height: auto;
+  }
+  .section-title{
+    font-size: 1rem;
+    padding: 0px 2vw;
+  }
+  .msg-section{
+    font-size: .9rem;
+    font-weight: 400;
+  }
+  .section-btn svg {
+    width: 40px;
+    height: auto;
+    min-width: 30px;
+    min-height: auto;
+  }
+}
+@media (min-width: 361px) and (max-width: 480px) {
+  .container h1 {
+    font-size: 1.8rem; 
+  }
+  .section-header svg {
+    width: 60px; 
+    height: auto;
+    min-width: 50px;
+    min-height: auto;
+  }
+  .section-title {
+    font-size: 1.1rem; 
+    padding: 0px 3vw; 
+  }
+  .msg-section {
+    font-size: 1rem; 
+    font-weight: 400;
+  }
+  .section-btn svg {
+    width: 50px; 
+    height: auto;
+    min-width: 40px;
+    min-height: auto;
+  }
+}
+@media (min-width: 481px) and (max-width: 787px) {
+  .container h1 {
+    font-size: 2rem; 
+  }
+  .section-header svg {
+    width: 70px; 
+    height: auto;
+    min-width: 60px;
+    min-height: auto;
+  }
+  .section-title {
+    font-size: 1.2rem; 
+    padding: 0px 4vw; 
+  }
+  .msg-section {
+    font-size: 1.1rem; 
+    font-weight: 400;
+  }
+  .section-btn svg {
+    width: 60px; 
+    height: auto;
+    min-width: 50px;
+    min-height: auto;
+  }
+}
+
+@media (min-width: 361px) and (max-width: 480px) {
+  .parent-container{
+    width: 15%;
+  }
+  .toggle-label {
+    width: 70px;
+    height: 35px;
+  }
+
+  .toggle-button {
+    width: 31px;
+    height: 31px;
+    top: 2px;
+    left: 2px;
+  }
+
+  .toggle-checkbox:checked + .toggle-label .toggle-button {
+    transform: translateX(35px);
+  }
+}
+
+
+@media (min-width: 481px) and (max-width: 767px) {
+  .toggle-label {
+    width: 80px;
+    height: 40px;
+  }
+
+  .toggle-button {
+    width: 36px;
+    height: 36px;
+    top: 2px;
+    left: 2px;
+  }
+
+  .toggle-checkbox:checked + .toggle-label .toggle-button {
+    transform: translateX(40px);
   }
 }
