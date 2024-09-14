@@ -1,6 +1,6 @@
 const express = require('express')
 const path = require('path')
-require('dotenv').config({ path: path.join(__dirname, '.env') })
+require('dotenv').config({ path: path.join(__dirname, 'cred.env') })
 const app = express()
 const server = require('http').createServer(app)
 const io = require('socket.io')(server, { cors: { origin: '*' } })

@@ -16,6 +16,7 @@
     "express": "^4.19.2",
     "express-fileupload": "^1.5.1",
     "express-session": "^1.18.0",
+    "firebase-admin": "^12.5.0",
     "mongoose": "^8.5.1",
     "socket.io": "^4.7.5",
     "socket.io-client": "^4.7.5",
