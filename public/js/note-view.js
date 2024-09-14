@@ -59,38 +59,47 @@ prevButton.addEventListener("click", () => {
 // Initially show the first slide
 showSlide(currentIndex);
 
-document.querySelector('.post-feedback').addEventListener('click', async function () {
-	let feedback = document.querySelector('textarea[name="feedbackText"]').value // Feedback text
-	let ownerUsername = document.querySelector('span.studentusername').innerHTML // Note owner's username
-	let noteDocID = window.location.pathname.split('/')[2] // Note's document ID
-	let commenterDocID = Cookies.get('recordID').split(':')[1].replaceAll('"', '') // Commenter's document ID
+try {
+	document.querySelector('.post-feedback').addEventListener('click', async function () {
+		let feedback = document.querySelector('textarea[name="feedbackText"]').value // Feedback text
+		let ownerUsername = document.querySelector('span.studentusername').innerHTML // Note owner's username
+		let noteDocID = window.location.pathname.split('/')[2] // Note's document ID
+		let commenterDocID = Cookies.get('recordID').split(':')[1].replaceAll('"', '') // Commenter's document ID
+	
+		socket.emit('feedback', 
+			noteDocID, 
+			feedback, 
+			noteDocID, 
+			commenterDocID, 
+			ownerUsername
+		) 
+		//* sending room-name (unique noteDocID), feedback-text, noteid and commenter's doc-id, and note owner's username to the server 
+	
+		document.querySelector('textarea[name="feedbackText"]').value = ''
+	
+		alert('Feedback sent')
+	})
+} catch (error) {
+	console.log(error.message)
+}
 
-	socket.emit('feedback', 
-		noteDocID, 
-		feedback, 
-		noteDocID, 
-		commenterDocID, 
-		ownerUsername
-	) 
-	//* sending room-name (unique noteDocID), feedback-text, noteid and commenter's doc-id, and note owner's username to the server 
-
-	document.querySelector('textarea[name="feedbackText"]').value = ''
-
-	alert('Feedback sent')
-})
 // Share Note Pop Up
-const shareNoteBtn = document.querySelector('.share-icon')
+const shareNoteBtn = document.querySelector('svg.share-icon')
 const shareNoteModal = document.querySelector('.share-note-overlay')
 const closeNoteModalBtn = document.querySelector('.close-share-note-modal')
 
-shareNoteBtn.addEventListener('click', () => {shareNoteModal.style.display = 'flex';});
-console.log(shareNoteBtn, shareNoteModal);
-closeNoteModalBtn.addEventListener('click', () => {shareNoteModal.style.display = 'none'});
+shareNoteBtn.addEventListener('click', () => {
+	shareNoteModal.style.display = 'flex';
+});
+
+closeNoteModalBtn.addEventListener('click', () => {
+	shareNoteModal.style.display = 'none'
+});
+
 document.addEventListener('DOMContentLoaded', function() {
 
     const copyButton = document.querySelector('.copy-link-btn');
     const linkElement = document.querySelector('._link_');
-
 
     copyButton.addEventListener('click', async () => {
         try {

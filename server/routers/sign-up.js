@@ -1,7 +1,6 @@
 const express = require('express')
 const Students = require('../schemas/students')
-const fs = require('fs').promises //! for local usage, will be removed
-const path = require('path')
+const fileUpload = require('../controllers/image-upload')
 const router = express.Router()
 
 /* 
