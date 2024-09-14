@@ -78,3 +78,26 @@ document.querySelector('.post-feedback').addEventListener('click', async functio
 
 	alert('Feedback sent')
 })
+// Share Note Pop Up
+const shareNoteBtn = document.querySelector('.share-icon')
+const shareNoteModal = document.querySelector('.share-note-overlay')
+const closeNoteModalBtn = document.querySelector('.close-share-note-modal')
+
+shareNoteBtn.addEventListener('click', () => {shareNoteModal.style.display = 'flex';});
+console.log(shareNoteBtn, shareNoteModal);
+closeNoteModalBtn.addEventListener('click', () => {shareNoteModal.style.display = 'none'});
+document.addEventListener('DOMContentLoaded', function() {
+
+    const copyButton = document.querySelector('.copy-link-btn');
+    const linkElement = document.querySelector('._link_');
+
+
+    copyButton.addEventListener('click', async () => {
+        try {
+            await navigator.clipboard.writeText(linkElement.textContent);
+            alert('Link copied to clipboard!');
+        } catch (err) {
+            console.error('Failed to copy text: ', err);
+        }
+    });
+});
