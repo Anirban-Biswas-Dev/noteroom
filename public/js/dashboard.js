@@ -33,7 +33,7 @@ function addNote(noteData) {
 					</div>
 				<div class="note-details">
 					<div class="author-info">
-						<img src="/${noteData.profile_pic}" class="author-img">
+						<img src="${noteData.profile_pic}" class="author-img">
 						<div class="author-title-container">
 							<div class="note-title"><a href="/view/${noteData.noteID}" onclick='location.reload()'>${noteData.noteTitle}</a></div>
 							<div class="author"><a class="author-prfl-link" href="/user/${noteData.ownerID}">${noteData.ownerDisplayName}</a></div>
@@ -103,7 +103,13 @@ function addSaveNote(noteData) {
 function updateLocalStorage(key, noteID_noteObj, method) {
 	if(method == 'insert') {
 		let values = JSON.parse(localStorage.getItem(key))
-		values.push(noteID_noteObj)
+		if (values !== null) {
+			values.push(noteID_noteObj)
+		} else {
+			localStorage.setItem(key, JSON.stringify([]))
+			let values = JSON.parse(localStorage.getItem(key))
+			values.push(noteID_noteObj)
+		}
 		localStorage.setItem(key, JSON.stringify(values))
 		console.log(JSON.parse(localStorage.getItem(key)))
 	} else if(method == 'remove') {
