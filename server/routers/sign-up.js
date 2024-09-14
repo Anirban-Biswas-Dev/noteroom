@@ -1,7 +1,6 @@
 const express = require('express')
 const Students = require('../schemas/students')
-const fs = require('fs').promises //! for local usage, will be removed
-const path = require('path')
+const fileUpload = require('../controllers/image-upload')
 const router = express.Router()
 
 /* 
@@ -41,14 +40,16 @@ function signupRouter(io) {
                 group: req.body.group,
                 username: req.body.username
             } //* Getting all the data posted by the client except the profile picture
+
             let profile_pic = Object.values(req.files)[0] //* Getting the profiloe picture File Object
+
             let student = await addStudent(studentData)
             let studentDocID = student._id
-            let savePath = path.join(__dirname, `../../public/firebase/${studentDocID}`)
-            fs.mkdir(savePath, { recursive: true }) //* Creating a directory named after student's doc-id
-            await profile_pic.mv(path.join(savePath, profile_pic.name)) //* SAving the profile picture inside his student-folder
+            
+            let savePath = `${studentDocID.toString()}/${profile_pic.name}`
+            let profilePicUrl = fileUpload.upload(profile_pic, savePath)
 
-            Students.findByIdAndUpdate(studentDocID, { profile_pic: path.join(`firebase/${studentDocID}/`, profile_pic.name) }).then(() => {
+            Students.findByIdAndUpdate(studentDocID, { profile_pic: (await profilePicUrl).toString() }).then(() => {
                 res.send({ url: `/login` })
             }) //* Updating the student's record database to add the profile_pic image location so that it can be deirectly used by the front-end
 
@@ -58,7 +59,7 @@ function signupRouter(io) {
                 let duplicate_field = Object.keys(error.keyValue)[0] // Sending the first duplicated field name to the client-side to show an error
                 io.emit('duplicate-value', duplicate_field)
             } else {
-                res.send({ message: error.message })
+                next(error)
             }
         }
     })

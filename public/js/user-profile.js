@@ -17,7 +17,7 @@ function badgeStyling() {
             badgeElement.innerHTML = `Top ${subject} voice`;
             badgeLogo.src = `\\images\\badges\\${subject.toLowerCase()}.png` 
         } else {
-            badgeLogo.src = `\\images\\badges\\no-badge.png` 
+            badgeLogo.src = `https://storage.googleapis.com/noteroom-fb1a7.appspot.com/badges/no-badge.png` 
         }
     }
     
