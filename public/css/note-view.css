@@ -331,7 +331,7 @@ body {
     color: #04DBF7;
 }
 /* *** Pop up for sharing note ****** */
-.share-note-overlay{
+.share-note-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -339,14 +339,16 @@ body {
     height: 100%;
     display: none;
     align-items: center;
-    justify-content: center;
+    justify-content: center; 
     z-index: 1020;
-    margin: 0px;
+    margin: 0;
     background-color: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(2px);
-    -webkit-backdrop-filter: blur(2px);
+    opacity: 0; 
+    transition: opacity 0.3s ease-in-out;
 }
-.share-note-modal{
+
+.share-note-modal {
     width: 80%;
     min-width: 280px;
     height: fit-content;
@@ -357,10 +359,19 @@ body {
     padding: 15px;
     box-sizing: border-box;
     box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    transition: transform 0.3s ease; 
+    transform: scale(0.95); 
+    opacity: 0; 
+    transform-origin: center; 
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+
+.share-note-overlay.visible {
+    opacity: 1;
+}
+
+.share-note-overlay.visible .share-note-modal {
+    opacity: 1;
+    transform: scale(1); 
 }
 .modal-header{
     width: 100%;

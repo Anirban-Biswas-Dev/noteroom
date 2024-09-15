@@ -84,17 +84,24 @@ try {
 }
 
 // Share Note Pop Up
-const shareNoteBtn = document.querySelector('svg.share-icon')
-const shareNoteModal = document.querySelector('.share-note-overlay')
-const closeNoteModalBtn = document.querySelector('.close-share-note-modal')
+const shareNoteBtn = document.querySelector('svg.share-icon');
+const shareNoteModal = document.querySelector('.share-note-overlay');
+const closeNoteModalBtn = document.querySelector('.close-share-note-modal');
 
 shareNoteBtn.addEventListener('click', () => {
-	shareNoteModal.style.display = 'flex';
+    shareNoteModal.style.display = 'flex'; 
+    requestAnimationFrame(() => { 
+        shareNoteModal.classList.add('visible');
+    });
 });
 
 closeNoteModalBtn.addEventListener('click', () => {
-	shareNoteModal.style.display = 'none'
+    shareNoteModal.classList.remove('visible'); 
+    setTimeout(() => {
+        shareNoteModal.style.display = 'none'; 
+    }, 300); // Time corresponds to the CSS transition duration (300ms)
 });
+
 
 document.addEventListener('DOMContentLoaded', function() {
 

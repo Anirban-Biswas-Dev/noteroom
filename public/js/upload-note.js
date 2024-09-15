@@ -58,35 +58,53 @@ document.querySelector('input#fileInput').addEventListener('change', function (e
     }
 })
 
-function publish() { // The main publish function that will publish the note
+// Function to show loader
+function showLoader() {
+    document.querySelector('.loader-overlay').style.display = 'flex'; // Assuming you have a loader element in your HTML
+}
+
+// Function to hide loader
+function hideLoader() {
+    document.querySelector('.loader-overlay').style.display = 'none';
+}
+
+function publish() {
     try {
         if (stackFiles.length != 0) {
-            let noteSubject = document.querySelector('.note-subject').value
-            let noteTitle = document.querySelector('.note-title').value
-            let noteDescription = document.querySelector('.note-description').value
+            // Show the loader
+            showLoader();
 
-            let formData = new FormData()
+            let noteSubject = document.querySelector('.note-subject').value;
+            let noteTitle = document.querySelector('.note-title').value;
+            let noteDescription = document.querySelector('.note-description').value;
+
+            let formData = new FormData();
             stackFiles.forEach((file, index) => {
-                formData.append(`image-${index}`, file)
-            })
-            formData.append('noteSubject', noteSubject)
-            formData.append('noteTitle', noteTitle)
-            formData.append('noteDescription', noteDescription)
+                formData.append(`image-${index}`, file);
+            });
+            formData.append('noteSubject', noteSubject);
+            formData.append('noteTitle', noteTitle);
+            formData.append('noteDescription', noteDescription);
 
-            fetch('/upload', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => { return response.json() })
-            .then(data => {
-                if (data.error) {
-                    alert(data.error)
-                } else if (data.url) {
-                    window.location.href = data.url // Redirecting to another page depending on the server-side data
-                }
-            }) // Uploading the client-side data(File Objects, subject, title, description) to the server
+            // Simulating delay for testing (e.g., 3 seconds)
+            setTimeout(() => {
+                fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    hideLoader(); // Hide the loader after the process
+                    if (data.error) {
+                        alert(data.error);
+                    } else if (data.url) {
+                        window.location.href = data.url;
+                    }
+                });
+            }, 3000); // 3 seconds delay for testing the loader
         }
     } catch (error) {
-        alert(error.message)
+        hideLoader(); // Hide the loader in case of an error
+        alert(error.message);
     }
 }
