@@ -89,6 +89,7 @@
             <p>
                 <%= note.description %>
             </p>
+            <span class="note-id" style="display: none;"><%= note._id %></span> <!-- Anirban this is the note id.  -->
         </div>
         <div class="feedbacks-section">
             <h2>Feedbacks</h2>
@@ -117,6 +118,7 @@
                     %>
                     <div class="feedback">
                         <div class="feedback-header">
+                            <span class="feedback-id" style="display: none;"><%= feedback._id %></span> <!-- Anirban, this is the unique id of each feedback -->
                             <img src="<%= feedback.commenterDocID.profile_pic %>" alt="User Avatar" class="feedback-avatar">
                             <div class="feedback-author-info">
                                 <a class="link_" href='/user/<%= feedback.commenterDocID.studentID %>'><h4 class="feedback-author"><%= feedback.commenterDocID.displayname %></h4></a>
@@ -209,7 +211,7 @@
             <h4>Or copy Link</h4>
             <div class="page-link-section">
                 <div class="link-box">
-                    <p class="_link_">http://localhost:2000/view/66dbe2f97e96793db5e2f718</p>
+                    <p class="_link_"></p>
                     <button class="copy-link-btn"><i class="fa-regular fa-clone"></i></button>
                 </div>
             </div>

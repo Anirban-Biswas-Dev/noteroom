@@ -66,6 +66,7 @@ function noteViewRouter(io) {
             let feedbackNoti = await addFeedbackNotifications({
                 noteDocID: noteDocID, 
                 commenterDocID: commenterDocID, 
+                feedbackDocID: feedback._id,
                 ownerUsername: ownerUsername
             }) // Save the feedback notifications in database
 
@@ -75,7 +76,8 @@ function noteViewRouter(io) {
                 commenterStudentID /* Commenter's student-id: to create a direct link to the commenter's profile */: feedback.commenterDocID.studentID, 
                 commenterDisplayName /* The student's displayname who gave the feedback: the link will contain commenter's displayname */ : feedback.commenterDocID.displayname,
                 ownerUsername /* The student's username who ownes the note: varifing with recordName if the notification will be dropped or not */: ownerUsername,
-                notiID: /* The document ID of notification. This is used to remove specific notifications later */ feedbackNoti._id
+                notiID: /* The document ID of notification. This is used to remove specific notifications later */ feedbackNoti._id,
+                feedbackID /* This is the unique id of each feedback, used for redirection to that specific feedback*/ : feedback._id
             })
         })
     })

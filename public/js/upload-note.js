@@ -68,12 +68,9 @@ function hideLoader() {
     document.querySelector('.loader-overlay').style.display = 'none';
 }
 
-function publish() {
+async function publish() {
     try {
         if (stackFiles.length != 0) {
-            // Show the loader
-            showLoader();
-
             let noteSubject = document.querySelector('.note-subject').value;
             let noteTitle = document.querySelector('.note-title').value;
             let noteDescription = document.querySelector('.note-description').value;
@@ -86,22 +83,22 @@ function publish() {
             formData.append('noteTitle', noteTitle);
             formData.append('noteDescription', noteDescription);
 
-            // Simulating delay for testing (e.g., 3 seconds)
-            setTimeout(() => {
-                fetch('/upload', {
+            fetch('/upload', {
                     method: 'POST',
                     body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
+            }).then(response => {
+                return response.json()
+            }).then(data => {
+                if (data.error) {
+                    hideLoader()
+                    alert(data.error);
+                } else if (data.url) {
                     hideLoader(); // Hide the loader after the process
-                    if (data.error) {
-                        alert(data.error);
-                    } else if (data.url) {
-                        window.location.href = data.url;
-                    }
-                });
-            }, 3000); // 3 seconds delay for testing the loader
+                    window.location.href = data.url;
+                }
+            })
+
+            showLoader()
         }
     } catch (error) {
         hideLoader(); // Hide the loader in case of an error
