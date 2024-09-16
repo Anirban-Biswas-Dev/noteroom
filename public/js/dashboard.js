@@ -55,6 +55,7 @@ function addNote(noteData) {
 	`; 
   document.querySelector('.feed-container').insertAdjacentHTML('beforeend', noteCardsHtml);
 }
+let notificationCount = 0;
 
 function addNoti(feedbackData) {
   /*
@@ -83,8 +84,46 @@ function addNoti(feedbackData) {
             </div>
         </div>`
   document.querySelector('.notifications-container').insertAdjacentHTML('afterbegin', notificationHtml);
+  // Increment the notification count
+  notificationCount++;
+  
+  // Update the badge with the new count
+  updateNotificationBadge();
 }
-
+function updateNotificationBadge() {
+	const badge = document.getElementById('notification-count');
+	
+	if (badge) {
+	  // Update the text inside the badge
+	  badge.textContent = notificationCount;
+	  
+	  // Show the badge if there are notifications
+	  if (notificationCount > 0) {
+		badge.style.display = 'inline-block';
+	  } else {
+		badge.style.display = 'none';
+	  }
+	} else {
+	  console.error('Notification badge element not found');
+	}
+  }
+  
+  function deleteNoti(notiID) {
+	const notification = document.getElementById(notiID);
+	if (notification) {
+	  // Remove the notification element from the DOM
+	  notification.remove();
+	  
+	  // Decrement the notification count
+	  notificationCount--;
+	  
+	  // Update the badge with the new count
+	  updateNotificationBadge();
+	} else {
+	  console.error('Notification element not found for ID:', notiID);
+	}
+  }
+  
 function addSaveNote(noteData) {
   /*
   noteData:

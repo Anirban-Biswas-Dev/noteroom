@@ -69,8 +69,15 @@ body {
   width: 60px;
   min-width: 30px;
 }
-.mobile-nft-btn{
+.mbl-notification-elements{
+  position: relative;
   display: none;
+  width: fit-content;
+  min-width: 50px;
+  min-height: auto;
+  padding: 0px 0px;
+}
+.mobile-nft-btn{
   cursor: pointer;
   min-width: 40px;
   padding: 0px 10px 0px 10px;
@@ -96,6 +103,23 @@ body {
 
 .shake {
   animation: rotate-shake 0.5s; 
+}
+.badge {
+  position: absolute;
+  top: 2px;  /* Adjust this value to control vertical positioning */
+  right: 10px; /* Adjust this value to control horizontal positioning */
+  background-color: rgb(255, 61, 61);
+  color: white;
+  border-radius: 50%;
+  padding: 3px 3px;
+  font-size: 10px;
+  width: 12px;
+  height: 12px;
+  font-weight: bold;
+  line-height: 1;
+  min-width: 12px; /* Ensures the badge stays round even with small numbers */
+  text-align: center;
+  display: none;
 }
 
 /* ***** Middle Section ****** */
@@ -858,8 +882,8 @@ canvas {
   }
 }
 @media (max-width:480px) {
-  .mobile-nft-btn{
-    display: block;
+  .mbl-notification-elements{
+    display: inline-block;
   }
   .search-bar-box{
     padding: 10px;
