@@ -319,63 +319,48 @@ body {
 }
 
 .loader {
-    width: 50px;
-    height: 165px;
+    width: 60px;
+    height: 40px;
     position: relative;
+    display: inline-block;
+    --base-color: rgba(0, 0, 0, 0.8); 
   }
   .loader::before {
-    content: '';
-    position: absolute;
-    left: 50%;
+    content: '';  
+    left: 0;
     top: 0;
-    transform: translate(-50% , 0);
-    width: 16px;
-    height: 16px;
-    background: #FF3D00;
+    position: absolute;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
-    animation: bounce 2s linear infinite;
+    background-color: #FFF;
+    background-image: radial-gradient(circle 8px at 18px 18px, var(--base-color) 100%, transparent 0), radial-gradient(circle 4px at 18px 0px, var(--base-color) 100%, transparent 0), radial-gradient(circle 4px at 0px 18px, var(--base-color) 100%, transparent 0), radial-gradient(circle 4px at 36px 18px, var(--base-color) 100%, transparent 0), radial-gradient(circle 4px at 18px 36px, var(--base-color) 100%, transparent 0), radial-gradient(circle 4px at 30px 5px, var(--base-color) 100%, transparent 0), radial-gradient(circle 4px at 30px 5px, var(--base-color) 100%, transparent 0), radial-gradient(circle 4px at 30px 30px, var(--base-color) 100%, transparent 0), radial-gradient(circle 4px at 5px 30px, var(--base-color) 100%, transparent 0), radial-gradient(circle 4px at 5px 5px, var(--base-color) 100%, transparent 0);
+    background-repeat: no-repeat;
+    box-sizing: border-box;
+    animation: rotationBack 3s linear infinite;
   }
   .loader::after {
-    content: '';
+    content: '';  
+    left: 35px;
+    top: 15px;
     position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    margin: auto;
-    height: 48px;
-    width: 48px;
-    background: #fff;
-    border-radius: 4px;
-    animation: rotate 2s linear infinite;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: #FFF;
+    background-image: radial-gradient(circle 5px at 12px 12px, var(--base-color) 100%, transparent 0), radial-gradient(circle 2.5px at 12px 0px, var(--base-color) 100%, transparent 0), radial-gradient(circle 2.5px at 0px 12px, var(--base-color) 100%, transparent 0), radial-gradient(circle 2.5px at 24px 12px, var(--base-color) 100%, transparent 0), radial-gradient(circle 2.5px at 12px 24px, var(--base-color) 100%, transparent 0), radial-gradient(circle 2.5px at 20px 3px, var(--base-color) 100%, transparent 0), radial-gradient(circle 2.5px at 20px 3px, var(--base-color) 100%, transparent 0), radial-gradient(circle 2.5px at 20px 20px, var(--base-color) 100%, transparent 0), radial-gradient(circle 2.5px at 3px 20px, var(--base-color) 100%, transparent 0), radial-gradient(circle 2.5px at 3px 3px, var(--base-color) 100%, transparent 0);
+    background-repeat: no-repeat;
+    box-sizing: border-box;
+    animation: rotationBack 4s linear infinite reverse;
   }
-  
-  @keyframes bounce {
-    0% , 50% , 100%{
-      transform: translate(-50%, 0px);
-      height: 20px;
+  @keyframes rotationBack {
+    0% {
+      transform: rotate(0deg);
     }
-    20% {
-      transform: translate(-25%, 85px);
-      height: 28px;
+    100% {
+      transform: rotate(-360deg);
     }
-    25% {
-      transform: translate(-25%, 110px);
-      height: 12px;
-    }
-    70% {
-      transform: translate(-75%, 85px);
-      height: 28px;
-    }
-    75% {
-      transform: translate(-75%, 108px);
-      height: 12px;
-    }
-  }
-  @keyframes rotate {
-    0% , 50% , 100%{ transform: rotate(0deg)}
-    25% { transform: rotate(90deg)}
-    75%{ transform: rotate(-90deg)}
-  }
+  }  
     
 /* ******* Animations ******* */
 /* pop up animation */
