@@ -19,26 +19,22 @@ async function uploadImage(fileObject, fileName) {
         }
     });
 
-    stream.on('error', (err) => {
-        console.error('Error uploading file:', err);
-        throw new err
-    });
-
-    stream.on('finish', async () => {
-        await file.makePublic() //! Making the file public for now. Later I will build a automation system to renew private files
-    });
-
-    stream.end(fileObject.data) // Storing the actual file buffer to the firebase
-
-    let publicUrl = `https://storage.googleapis.com/noteroom-fb1a7.appspot.com/${fileName}`;
-    return publicUrl
+    return new Promise((resolve, reject) => {
+        stream.on('error', (err) => {
+            console.error('Error uploading file:', err);
+            reject(err)
+        });
+    
+        stream.on('finish', async () => {
+            await file.makePublic() //! Making the file public for now. Later I will build a automation system to renew private files
+            
+            let publicUrl = `https://storage.googleapis.com/noteroom-fb1a7.appspot.com/${fileName}`;
+            resolve(publicUrl)
+        });
+    
+        stream.end(fileObject.data) // Storing the actual file buffer to the firebase
+    })
 }
 
 module.exports.upload = uploadImage
 
-// bucket.getFiles().then(data => {
-//     let files = data[0]
-//     files.forEach(async file => {
-//         await file.makePublic()
-//     })
-// })

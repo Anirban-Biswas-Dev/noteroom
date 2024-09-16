@@ -1,6 +1,6 @@
 node_modules/
 /.vscode
-del.py
 test.js
-public/js/socket.io.min.js
+/public/js/socket.io.min.js
 /server/.env
+/public/locals
