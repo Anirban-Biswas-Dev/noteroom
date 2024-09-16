@@ -619,6 +619,7 @@ div.notification-msg > .commenter-prfl:visited{
 }
 /* Confetti and Pop up for new user sign up celebration */
 .popup {
+  display: none;
   position: absolute;
   top: 50%;
   left: 50%;
