@@ -19,6 +19,10 @@ const feedBackSchema = new mongoose.Schema({
         ref: 'students',
         required: true,
     },
+    feedbackDocID: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true
+    },
     ownerUsername: String, 
     createdAt: {
         type: Date,

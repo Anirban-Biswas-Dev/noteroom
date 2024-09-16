@@ -16,6 +16,7 @@ socket.on('add-feedback', (feedbackData) => {
 	}) // Human readable date format
 	let feedbackCard = `<div class="feedback">
 							<div class="feedback-header">
+                            	<span class="feedback-id" style="display: none;">${feedbackData._id}</span>
 								<img src="${feedbackData.commenterDocID.profile_pic}" alt="User Avatar" class="feedback-avatar">
 								<div class="feedback-author-info">
 									<a href='/user/${feedbackData.commenterDocID.studentID}'><h4 class="feedback-author">${feedbackData.commenterDocID.displayname}</h4></a>
@@ -88,8 +89,10 @@ const shareNoteBtn = document.querySelector('svg.share-icon');
 const shareNoteModal = document.querySelector('.share-note-overlay');
 const closeNoteModalBtn = document.querySelector('.close-share-note-modal');
 
+const linkElement = document.querySelector('._link_');
 shareNoteBtn.addEventListener('click', () => {
     shareNoteModal.style.display = 'flex'; 
+	linkElement.innerHTML = window.location.href
     requestAnimationFrame(() => { 
         shareNoteModal.classList.add('visible');
     });
@@ -106,7 +109,6 @@ closeNoteModalBtn.addEventListener('click', () => {
 document.addEventListener('DOMContentLoaded', function() {
 
     const copyButton = document.querySelector('.copy-link-btn');
-    const linkElement = document.querySelector('._link_');
 
     copyButton.addEventListener('click', async () => {
         try {

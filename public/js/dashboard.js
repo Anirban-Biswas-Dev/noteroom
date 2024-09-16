@@ -10,7 +10,6 @@ function truncatedTitle(title) {
   return truncatedTitle
 }
 
-
 function addNote(noteData) {
   /*
   noteData:
@@ -69,6 +68,7 @@ function addNoti(feedbackData) {
   */
   let notificationHtml = `
         <div class="notification" id="${feedbackData.notiID}">
+			<span class='feedback-id' style="display: none;">${feedbackData.feedbackID}</span>
             <div class="first-row">
               <a href='/view/${feedbackData.noteDocID}' class="notification-link">
                 <span class="notification-title">
@@ -142,15 +142,8 @@ function addSaveNote(noteData) {
 function updateLocalStorage(key, noteID_noteObj, method) {
 	if(method == 'insert') {
 		let values = JSON.parse(localStorage.getItem(key))
-		if (values !== null) {
-			values.push(noteID_noteObj)
-		} else {
-			localStorage.setItem(key, JSON.stringify([]))
-			let values = JSON.parse(localStorage.getItem(key))
-			values.push(noteID_noteObj)
-		}
+		values.push(noteID_noteObj)
 		localStorage.setItem(key, JSON.stringify(values))
-		console.log(JSON.parse(localStorage.getItem(key)))
 	} else if(method == 'remove') {
 		let values = JSON.parse(localStorage.getItem(key))
 		let noteData = values.find(item => item.noteID == noteID_noteObj)
@@ -202,6 +195,8 @@ if ((navigate.type === 'navigate') || (navigate.type == 'reload')) {
 	})
 	localStorage.setItem('savedNotes', JSON.stringify(saved_notes))
 	localStorage.setItem('notis', JSON.stringify([]))
+	localStorage.setItem('addedNotes', JSON.stringify([]))
+
 
 } else if (navigate.type === 'back_forward') {
 	let Datas = Object.values(localStorage)

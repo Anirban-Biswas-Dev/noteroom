@@ -159,26 +159,27 @@
       </svg>
     </p>
     <div class="notifications-container">
-      <% if(notis.length !=0) { %>
-      <% notis.forEach(noti => { %>
-      <% if(noti.docType=='feedback' ) { %>
-      <div class="notification" id="<%= noti._id %>">
-        <div class="first-row">
-          <a href='/view/<%= noti.noteDocID._id %>' class="notification-link">
-            <span class="notification-title">
-              <%= noti.noteDocID.title %>
-            </span>
-          </a>
-          <span class="remove-notification" onclick="deleteNoti('<%= noti._id %>')">&times;</span>
-        </div>
-        <div class="notification-msg">
-          <a href='/user/<%= noti.commenterDocID.studentID %>' class="commenter-prfl">
-            <%= noti.commenterDocID.displayname %>
-          </a><a href='/view/<%= noti.noteDocID._id %>' class="notification-link-2"> has given feedback on your notes! Check it out.</a>
-        </div>
-      </div>
-      <% } %>
-      <% }) %>
+      <% if(notis.length != 0) { %>
+        <% notis.forEach(noti => { %>
+          <% if(noti.docType == 'feedback' ) { %>
+          <div class="notification" id="<%= noti._id %>">
+			    <span class='feedback-id' style="display: none;"><%= noti.feedbackDocID %></span> <!-- Anirban this the unique feedback id linked to the notification -->
+            <div class="first-row">
+              <a href='/view/<%= noti.noteDocID._id %>' class="notification-link">
+                <span class="notification-title">
+                  <%= noti.noteDocID.title %>
+                </span>
+              </a>
+              <span class="remove-notification" onclick="deleteNoti('<%= noti._id %>')">&times;</span>
+            </div>
+            <div class="notification-msg">
+              <a href='/user/<%= noti.commenterDocID.studentID %>' class="commenter-prfl">
+                <%= noti.commenterDocID.displayname %>
+              </a><a href='/view/<%= noti.noteDocID._id %>' class="notification-link-2"> has given feedback on your notes! Check it out.</a>
+            </div>
+          </div>
+          <% } %>
+        <% }) %>
       <% } %>
     </div>
   </div>
