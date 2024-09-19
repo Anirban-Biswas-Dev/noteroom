@@ -42,7 +42,7 @@ function addNote(noteData) {
 						<svg class="download-icon" width="40" height="40" viewBox="0 0 43 43" fill="none" xmlns="http://www.w3.org/2000/svg">
 							<path d="M37.1541 26.5395V33.6165C37.1541 34.555 36.7813 35.455 36.1177 36.1186C35.4541 36.7822 34.5541 37.155 33.6156 37.155H8.84623C7.90776 37.155 7.00773 36.7822 6.34414 36.1186C5.68054 35.455 5.30774 34.555 5.30774 33.6165V26.5395M12.3847 17.6933L21.2309 26.5395M21.2309 26.5395L30.0771 17.6933M21.2309 26.5395V5.30859" stroke="#1E1E1E" stroke-width="2.29523" stroke-linecap="round" stroke-linejoin="round"/>
 						</svg>
-						<svg class="comment-icon" width="40" height="40" viewBox="0 0 36 37" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<svg onclick="window.location.href='/view/${noteData.noteID}/#feedbacks';" class="comment-icon" width="40" height="40" viewBox="0 0 36 37" fill="none" xmlns="http://www.w3.org/2000/svg">
 							<path d="M34.4051 23.9151C34.4051 24.8838 34.0257 25.8128 33.3505 26.4978C32.6753 27.1828 31.7595 27.5676 30.8045 27.5676H9.20113L2 34.8726V5.65252C2 4.68381 2.37934 3.75478 3.05458 3.0698C3.72982 2.38482 4.64564 2 5.60057 2H30.8045C31.7595 2 32.6753 2.38482 33.3505 3.0698C34.0257 3.75478 34.4051 4.68381 34.4051 5.65252V23.9151Z" stroke="#1E1E1E" stroke-width="2.40038" stroke-linecap="round" stroke-linejoin="round"/>
 						</svg>
 						<svg class="share-icon" width="40" height="40" viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -70,7 +70,7 @@ function addNoti(feedbackData) {
         <div class="notification" id="${feedbackData.notiID}">
 			<span class='feedback-id' style="display: none;">${feedbackData.feedbackID}</span>
             <div class="first-row">
-              <a href='/view/${feedbackData.noteDocID}' class="notification-link">
+              <a href='/view/${feedbackData.noteDocID}/#${feedbackData.feedbackID}' class="notification-link">
                 <span class="notification-title">
                 ${truncatedTitle(feedbackData.nfnTitle)}
                 </span>
@@ -133,7 +133,7 @@ function addSaveNote(noteData) {
   let savedNotesHtml = `
 	  <div class="saved-note" id="saved-note-${noteData.noteID}">
 		  <span class="sv-note-title">
-			  <a href='/view/${noteData.noteID}'>${truncatedTitle(noteData.noteTitle)}</a>
+			  <a class="sv-n-link" href='/view/${noteData.noteID}'>${truncatedTitle(noteData.noteTitle)}</a>
 		  </span>
 	  </div>`;
   document.querySelector(".saved-notes-container").insertAdjacentHTML('afterbegin', savedNotesHtml)
