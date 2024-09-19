@@ -14,7 +14,7 @@ socket.on('add-feedback', (feedbackData) => {
 			hour: '2-digit',
 			minute: '2-digit'
 	}) // Human readable date format
-	let feedbackCard = `<div class="feedback">
+	let feedbackCard = `<div class="feedback" id="${feedbackData._id}">
 							<div class="feedback-header">
                             	<span class="feedback-id" style="display: none;">${feedbackData._id}</span>
 								<img src="${feedbackData.commenterDocID.profile_pic}" alt="User Avatar" class="feedback-avatar">
@@ -119,3 +119,72 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+// Custom smooth scrolling function
+function smoothScrollTo(element, duration = 1000, offset = 100, callback = null) {
+    const targetPosition = element.getBoundingClientRect().top - offset; // Adjust position with offset
+    const startPosition = window.pageYOffset;
+    const distance = targetPosition;
+    let startTime = null;
+
+    function animationScroll(currentTime) {
+        if (startTime === null) startTime = currentTime;
+        const timeElapsed = currentTime - startTime;
+        const run = easeInOutQuad(timeElapsed, startPosition, distance, duration);
+        window.scrollTo(0, run);
+        if (timeElapsed < duration) {
+            requestAnimationFrame(animationScroll);
+        } else {
+            // If there is a callback (like highlight function), call it after scrolling
+            if (callback) callback();
+        }
+    }
+
+    function easeInOutQuad(t, b, c, d) {
+        t /= d / 2;
+        if (t < 1) return (c / 2) * t * t + b;
+        t--;
+        return (-c / 2) * (t * (t - 2) - 1) + b;
+    }
+
+    requestAnimationFrame(animationScroll);
+}
+
+function highlightSection(element) {
+    const highlightColor = '#F0F0F0'; // Light yellow or any desired highlight color
+    const originalColor = getComputedStyle(element).backgroundColor; // Get the element's original background color
+
+    element.style.transition = 'background-color 0.3s ease';
+
+    // First blink (light yellow)
+    element.style.backgroundColor = highlightColor;
+
+    setTimeout(() => {
+        // Second blink (back to original)
+        element.style.backgroundColor = originalColor;
+
+        setTimeout(() => {
+            // Final highlight (light yellow)
+            element.style.backgroundColor = highlightColor;
+
+            setTimeout(() => {
+                // Return to the original color
+                element.style.backgroundColor = originalColor;
+            }, 300); // Duration of the final highlight
+        }, 300); // Duration of the second blink
+    }, 300); // Duration of the first blink
+}
+
+
+
+// Main function to check for hash and apply smooth scroll + highlight
+document.addEventListener("DOMContentLoaded", function () {
+    const hash = window.location.hash;
+    if (hash) {
+        const section = document.querySelector(hash); // Select element with matching ID
+        if (section) {
+            smoothScrollTo(section, 1000, 100, () => highlightSection(section)); // Smooth scroll and then highlight
+        }
+    }
+});
+
