@@ -200,3 +200,38 @@ p.msg {
         padding: 10px; /* Smaller padding for better fit */
     }
 }
+@media (max-width:480px) {
+    h1 {
+        font-size: 1.5rem;
+    }
+    p.msg{
+        font-size: .8rem;
+        font-weight: 400;
+    }
+    .support-form input,
+    .support-form textarea{
+        font-size: .7rem;
+        padding: 8px;
+        border-radius: 10px;
+    }
+    .support-form button.submit-btn{
+        min-width: 100px;
+        font-size: 1rem;
+        padding: 10px;
+        font-weight: 600;
+        margin-top: 1vh;
+    }
+    .contact-preference{
+        font-size: .7rem;
+    }
+    .popup h2{
+        padding: 8px 0px;
+        font-size: 1.2rem;
+    }
+    .popup .home-btn{
+        font-size: .8rem;
+    }
+    .popup p{
+        font-size: .8rem;
+    }
+}
