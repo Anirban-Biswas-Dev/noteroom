@@ -88,3 +88,91 @@ a {
 }
 
 }
+@media (max-width:250px) {
+    .login-container {
+        padding: 10px;
+    }
+    .login-container img{
+        margin-bottom: 1vw;
+        max-width: 60px;
+    }
+    .login-container h2 {
+        font-size: 1.2em;
+        margin-bottom: 5vh;
+    }
+    .login-container input {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 5vh;
+        font-size: .8rem;
+    }
+    .password-container .toggle-password {
+        position: absolute;
+        right: 10px;
+        cursor: pointer;
+        font-size: 0.8em;
+        padding-bottom: 30px;
+    } 
+    .login-container button {
+        width: 50%;
+        padding: 10px;
+        font-size: 1em;
+        margin-bottom: 1vh;
+        margin-top: 1vh;
+    }
+    .login-container a {
+        font-size: .8rem;
+    }
+    .login-container p{
+        color: #FFFFFF;
+        font-size: 1rem;
+    a {
+        font-size: .9rem;
+        font-weight: 500;
+    }
+    }
+}
+@media (max-width:360px) and (min-width:251px) {
+    .login-container {
+        padding: 15px;
+    }
+    .login-container img {
+        margin-bottom: 2vw;
+        max-width: 80px;
+    }
+    .login-container h2 {
+        font-size: 1.4em;
+        margin-bottom: 4vh;
+    }
+    .login-container input {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 4vh;
+        font-size: .85rem;
+    }
+    .password-container .toggle-password {
+        position: absolute;
+        right: 15px;
+        cursor: pointer;
+        font-size: 0.9em;
+        padding-bottom: 30px;
+    }
+    .login-container button {
+        width: 55%;
+        padding: 12px;
+        font-size: 1.1em;
+        margin-bottom: 2vh;
+        margin-top: 1vh;
+    }
+    .login-container a {
+        font-size: .85rem;
+    }
+    .login-container p {
+        color: #FFFFFF;
+        font-size: 1.1rem;
+    }
+    .login-container p a {
+        font-size: .9rem;
+        font-weight: 500;
+    }
+}
