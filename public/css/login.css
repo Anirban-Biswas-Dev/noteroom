@@ -86,7 +86,7 @@ body {
 a {
     text-decoration: none;
 }
-
+/* Slight Changes with the dimension consistency. For best responsiveness rather going for 0 to 360px, I'm splitting it up into two parts: 0 to 250px and 251px to 360px */
 }
 @media (max-width:250px) {
     .login-container {

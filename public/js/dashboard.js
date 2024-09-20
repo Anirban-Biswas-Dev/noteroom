@@ -80,7 +80,7 @@ function addNoti(feedbackData) {
             <div class="notification-msg">
               <a href='/user/${feedbackData.commenterStudentID}' class="commenter-prfl">
               ${feedbackData.commenterDisplayName}
-              </a><a href='/view/${feedbackData.noteDocID}' class="notification-link-2"> has given feedback on your notes! Check it out.</a>
+              </a><a href='/view/${feedbackData.noteDocID}/#${feedbackData.feedbackID}' class="notification-link-2"> has given feedback on your notes! Check it out.</a>
             </div>
         </div>`
   document.querySelector('.notifications-container').insertAdjacentHTML('afterbegin', notificationHtml);

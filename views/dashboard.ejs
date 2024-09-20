@@ -175,7 +175,7 @@
             <div class="notification-msg">
               <a href='/user/<%= noti.commenterDocID.studentID %>' class="commenter-prfl">
                 <%= noti.commenterDocID.displayname %>
-              </a><a href='/view/<%= noti.noteDocID._id %>' class="notification-link-2"> has given feedback on your notes! Check it out.</a>
+              </a><a href='/view/<%= noti.noteDocID._id %>/#<%= noti.feedbackDocID %>' class="notification-link-2"> has given feedback on your notes! Check it out.</a>
             </div>
           </div>
           <% } %>
