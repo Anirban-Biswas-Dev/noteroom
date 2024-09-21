@@ -331,7 +331,7 @@ body {
     transform: translate(-50% , 0);
     width: 16px;
     height: 16px;
-    background: #FF3D00;
+    background: var(--neon-blue);
     border-radius: 50%;
     animation: bounce 2s linear infinite;
   }

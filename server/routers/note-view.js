@@ -3,6 +3,7 @@ const router = express.Router()
 const Notes = require('../schemas/notes')
 const Students = require('../schemas/students')
 const feedBackNotifs = require('../schemas/notifications').feedBackNotifs
+const imgManage = require('../controllers/image-upload')
 const Feedbacks = require('../schemas/feedbacks')
 
 /*
@@ -109,6 +110,19 @@ function noteViewRouter(io) {
             }
         } else {
             res.redirect('/login')
+        }
+    })
+
+    router.post('/:noteID/download', async (req, res, next) => {
+        let noteTitle = req.body['noteTitle']
+        let noteLinks = JSON.parse(req.body['links'])
+        
+        let isDone = await imgManage.download(noteLinks, noteTitle)
+        if(isDone) {
+            res.status(200).send({ message: 'download completed', status: 200 })
+            console.log('All done')
+        } else {
+            res.status(500).send({ message: 'something when wrong', status: 500 })
         }
     })
 

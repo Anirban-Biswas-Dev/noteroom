@@ -23,6 +23,7 @@
     
     <!-- **********  Search Bar ************* -->
     <div class="search-bar-box">
+        <h1 style="display: none;" class="status">Downloading</h1> <!-- This is the status dummy popup thingy -->
         <input type="text" class="search-bar" placeholder="Search Notes">
         <button>
             <i class="fa-solid fa-magnifying-glass"></i>
@@ -45,7 +46,7 @@
             <div class="carousel-wrapper">
                 <% note.content.forEach(note => {  %>
                     <div class="carousel-slide">
-                         <img src="<%= note %>">
+                         <img src="<%= note %>" class="image-links">
                     </div>
                 <% }) %>
             </div>

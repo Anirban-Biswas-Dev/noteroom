@@ -1,6 +1,6 @@
 const express = require('express')
 const Students = require('../schemas/students')
-const fileUpload = require('../controllers/image-upload')
+const imgManage = require('../controllers/image-upload')
 const router = express.Router()
 
 /* 
@@ -47,7 +47,7 @@ function signupRouter(io) {
             let studentDocID = student._id
             
             let savePath = `${studentDocID.toString()}/${profile_pic.name}`
-            let profilePicUrl = fileUpload.upload(profile_pic, savePath)
+            let profilePicUrl = imgManage.upload(profile_pic, savePath)
 
             Students.findByIdAndUpdate(studentDocID, { profile_pic: (await profilePicUrl).toString() }).then(() => {
                 res.send({ url: `/login` })
