@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload Note</title>
     <link rel="stylesheet" href="/css/main-pages.css">
+    <link rel="stylesheet" href="/css/dashboard.css" />
     <link rel="stylesheet" href="/css/upload-note.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,12 +16,7 @@
 <body>
     
     <!-- **********  Search Bar ************* -->
-    <div class="search-bar-box">
-        <input type="text" class="search-bar" placeholder="Search Notes">
-        <button>
-            <i class="fa-solid fa-magnifying-glass"></i>
-        </button>
-    </div>
+    <%- include('side-panel', { block: 'search-bar' }) %>
     <!-- ****** Middle Section ****** -->
     <div class="middle-section">
         <h2>Upload</h2>
