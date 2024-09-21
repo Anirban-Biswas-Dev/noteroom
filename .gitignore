@@ -1,6 +1,3 @@
 node_modules/
 /.vscode
-test.js
-/public/js/socket.io.min.js
 /server/.env
-/public/locals
