@@ -218,18 +218,42 @@
     width: 100%;
     margin: 2vh 0px;
 }
-
-.uploaded-notes-section h2 {
-    font-size: 1.8rem;
-    margin-bottom: 20px;
+.toggle-header-uploaded-notes{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    min-width: 200px;
+    padding: 20px;
+}
+.toggle-header-uploaded-notes h2 {
+    font-size: 1.5rem;
     text-align: center;
     font-weight: 500;
     line-height: 42px;
     letter-spacing: -0.06em;
+    width: auto;
+    max-width: 100%;
+    min-width: fit-content;
+    border-bottom: 2px solid var(--squid-ink);
+    cursor: pointer;
+    padding: 5px 10px;
+    transition: font-size 0.2s ease, font-weight 0.2s ease, padding 0.3s ease;
+}
+.active-section{
+    font-size: 1.7rem !important;
+    font-weight: 550;
+    border-bottom: 4px solid var(--squid-ink) !important; 
+    padding: 5px 25px !important;
+    transition: font-size 0.2s ease, font-weight 0.2s ease, padding 0.3s ease;
 }
 
 /* Grid Container for Notes */
-.notes-container {
+/* Default off for saved notes */
+.not-show{
+    display: none;
+}
+.visible-container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Ensure proper column fit */
     gap: 20px; 
@@ -240,8 +264,9 @@
 }
 
 /* Individual Note Card */
-.note-card {
+.note-card{
     width: 80%;
+    max-width: 250px;
     height: 250px;
     background-color: #f9f9f9;
     border: 1px solid #ddd;
@@ -313,24 +338,24 @@
 /* ****** Responsiveness ***** */
 /* Responsive adjustments only for my notes section */
 @media (max-width: 1200px) {
-    .notes-container {
+    .visible-container {
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Adjust based on screen size */
     }
 }
 
 @media (max-width: 900px) {
-    .notes-container {
+    .visible-container{
         grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Smaller screens */
     }
 }
 
 @media (max-width: 600px) {
-    .notes-container {
+    .visible-container {
         grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); /* Very small screens */
     }
 }
 @media (max-width: 360px) {
-    .notes-container {
+    .visible-container{
         grid-template-columns: 1fr; 
         justify-items: center; 
     }
@@ -414,9 +439,16 @@
         min-width: 95%;
         height: fit-content;
     }
-    .uploaded-notes-section h2 {
-        font-size: 1.5rem;
-        margin-bottom:2vh;
+    .toggle-header-uploaded-notes{
+        padding: 2px;
+    }
+    .toggle-header-uploaded-notes h2 {
+        font-size: 1rem;
+        padding: 1px 3px;
+    }
+    .active-section {
+        font-size: 1.2rem !important;
+        padding: 3px 5px !important;
     }
 }
 @media (min-width: 361px) and (max-width: 480px) {
@@ -498,9 +530,16 @@
         min-width: 97%;
         height: fit-content;
     }
-    .uploaded-notes-section h2 {
-        font-size: 1.6rem; 
-        margin-bottom: 2.2vh;
+    .toggle-header-uploaded-notes{
+        padding: 10px;
+    }
+    .toggle-header-uploaded-notes h2 {
+        font-size: 1.3rem;
+        padding: 5px 10px;
+    }
+    .active-section {
+        font-size: 1.5rem !important;
+        padding: 5px 20px !important;
     }
 }
 @media (min-width: 481px) and (max-width: 767px) {
@@ -578,8 +617,15 @@
         min-width: 98%;
         height: fit-content;
     }
-    .uploaded-notes-section h2 {
-        font-size: 1.7rem; /* Larger header size */
-        margin-bottom: 2.5vh;
+    .toggle-header-uploaded-notes{
+        padding: 15px;
+    }
+    .toggle-header-uploaded-notes h2 {
+        font-size: 1.4rem;
+        padding: 5px 12px;
+    }
+    .active-section {
+        font-size: 1.6rem !important;
+        padding: 5px 22px !important;
     }
 }

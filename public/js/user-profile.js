@@ -51,3 +51,27 @@ function badgeStyling() {
 }
 
 badgeStyling();
+
+// ********** Nav Bar for User Notes And Saved Notes *********
+const userNotes = document.querySelector('.notes-container');
+const userSavedNotes = document.querySelector('.sv-notes-container');
+const userNotesBtn = document.querySelector('.user-notes');
+const userSavedNotesBtn = document.querySelector('.student-saved-notes');
+
+const toggleSections = (activeBtn, inactiveBtn, showSection, hideSection) => {
+    activeBtn.classList.add('active-section');
+    inactiveBtn.classList.remove('active-section');
+    showSection.classList.add('visible-container');
+    showSection.classList.remove('not-show');
+    hideSection.classList.add('not-show');
+    hideSection.classList.remove('visible-container');
+};
+
+userSavedNotesBtn.addEventListener('click', () => {
+    toggleSections(userSavedNotesBtn, userNotesBtn, userSavedNotes, userNotes);
+});
+
+userNotesBtn.addEventListener('click', () => {
+    toggleSections(userNotesBtn, userSavedNotesBtn, userNotes, userSavedNotes);
+});
+
