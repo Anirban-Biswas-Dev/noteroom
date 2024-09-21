@@ -242,6 +242,7 @@
 /* Individual Note Card */
 .note-card {
     width: 80%;
+    max-width: 250px;
     height: 250px;
     background-color: #f9f9f9;
     border: 1px solid #ddd;
