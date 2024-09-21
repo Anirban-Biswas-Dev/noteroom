@@ -21,14 +21,8 @@
 
 <body>
     
-    <!-- **********  Search Bar ************* -->
-    <div class="search-bar-box">
-        <h1 style="display: none;" class="status">Downloading</h1> <!-- This is the status dummy popup thingy -->
-        <input type="text" class="search-bar" placeholder="Search Notes">
-        <button>
-            <i class="fa-solid fa-magnifying-glass"></i>
-        </button>
-    </div>
+    <h1 style="display: none;" class="status">Downloading</h1> <!-- This is the status dummy popup thingy -->
+    <%- include('side-panel', { block: 'search-bar' }) %>
     <div class="middle-section">
         <div class="first-box">
             <h2 class="section-title">
