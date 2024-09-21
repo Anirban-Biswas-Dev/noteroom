@@ -1,7 +1,7 @@
 const express = require('express')
 const Notes = require('../schemas/notes')
 const Students = require('../schemas/students')
-const fileUpload = require('../controllers/image-upload')
+const imgManage = require('../controllers/image-upload')
 const router = express.Router()
 
 /*
@@ -63,7 +63,7 @@ function uploadRouter(io) {
             let allFilePaths = [] //* These are the raw file paths that will be directly used in the note-view
 
             for(const file of allFiles) {
-                let publicUrl = (await fileUpload.upload(file, `${req.cookies['recordID']}/${noteDocId.toString()}/${file.name}`)).toString()
+                let publicUrl = (await imgManage.upload(file, `${req.cookies['recordID']}/${noteDocId.toString()}/${file.name}`)).toString()
                 allFilePaths.push(publicUrl)
             } 
 
