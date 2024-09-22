@@ -1,5 +1,5 @@
 <% if (block === 'left-panel') { %>
-    <div class="left-panel"></div>
+    <div class="left-panel">
         <div class="left-panel-header">
           <span class="users-db-msg">
             <%= student.displayname.split(' ')[0] %>'s NoteRoom</span>
@@ -114,7 +114,7 @@
         </svg>
     
         <!-- Badge for notification count -->
-        <span class="badge" id="notification-count">0</span>
+        <span class="badge-nft" id="notification-count">0</span>
         </div>
         <a href='/user/<%= student.studentID %>'><img src="<%= student.profile_pic %>" class="mbl-profile-pic" /></a>
     </div>
