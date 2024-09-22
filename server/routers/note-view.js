@@ -3,8 +3,10 @@ const router = express.Router()
 const Notes = require('../schemas/notes')
 const Students = require('../schemas/students')
 const feedBackNotifs = require('../schemas/notifications').feedBackNotifs
+const allNotifs = require('../schemas/notifications').Notifs
 const imgManage = require('../controllers/image-upload')
 const Feedbacks = require('../schemas/feedbacks')
+const { getSavedNotes, getNotifications } = require('./controller')
 
 /*
 Variables: (commenter / owner)
@@ -34,7 +36,7 @@ function noteViewRouter(io) {
             return notes
         }
     }
-
+    
     async function addFeedback(feedbackObj) {
         let feedback = await Feedbacks.create(feedbackObj)
         let feedbackStudents = await Feedbacks.findById(feedback._id)
@@ -88,15 +90,17 @@ function noteViewRouter(io) {
             let noteDocID = req.params.noteID
             let mynote = true //* Varifing if a note is mine or not: corrently using for not allowing users to give feedbacks to their own uploaded notes
             if (noteDocID) {
-                getNote(noteDocID).then(information => {
+                getNote(noteDocID).then(async information => {
                     let note = information['note']
                     let owner = information['owner']
                     let feedbacks = information['feedbacks']
+                    let savedNotes = await getSavedNotes(Students, Notes, req.session.stdid)
+                    let notis = await getNotifications(allNotifs, req.cookies['recordName'])
                     if (note.ownerDocID == req.cookies['recordID']) {
-                        res.render('note-view', { note: note, mynote: mynote, owner: owner, feedbacks: feedbacks, student: owner }) // Specific notes: visiting my notes
+                        res.render('note-view', { note: note, mynote: mynote, owner: owner, feedbacks: feedbacks, root: owner, savedNotes: savedNotes, notis: notis }) // Specific notes: visiting my notes
                     } else {
                         mynote = false
-                        res.render('note-view', { note: note, mynote: mynote, owner: owner, feedbacks: feedbacks, student: owner }) // Specific notes: visiting others notes
+                        res.render('note-view', { note: note, mynote: mynote, owner: owner, feedbacks: feedbacks, root: owner, savedNotes: savedNotes, notis: notis }) // Specific notes: visiting others notes
                     }
                 }).catch(err => {
                     next(err)
