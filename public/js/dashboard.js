@@ -124,20 +124,28 @@ function updateNotificationBadge() {
 	}
   }
   
-function addSaveNote(noteData) {
-  /*
-  noteData:
-    noteTitle: The title of the note
-    noteDocID: The doc-id of the note to redirect user to the specific note (/view/note-doc-id)
-  */
-  let savedNotesHtml = `
-	  <div class="saved-note" id="saved-note-${noteData.noteID}">
-		  <span class="sv-note-title">
-			  <a class="sv-n-link" href='/view/${noteData.noteID}'>${truncatedTitle(noteData.noteTitle)}</a>
-		  </span>
+  function addSaveNote(noteData) {
+	let savedNotesContainer = document.querySelector(".saved-notes-container");
+  
+	// Moshiur you'll see that the ejs doesn't have the hide class as this. But this is imp for visiblity
+	let savedNotesHtml = `
+	  <div class="saved-note hide" id="saved-note-${noteData.noteID}">
+		<span class="sv-note-title">
+		  <a class="sv-n-link" href='/view/${noteData.noteID}'>${truncatedTitle(noteData.noteTitle)}</a>
+		</span>
 	  </div>`;
-  document.querySelector(".saved-notes-container").insertAdjacentHTML('afterbegin', savedNotesHtml)
-}
+	savedNotesContainer.insertAdjacentHTML('afterbegin', savedNotesHtml);
+  
+	const newNote = document.getElementById(`saved-note-${noteData.noteID}`);
+  
+	// Remove the hide class and add the transition class after a short delay
+	setTimeout(() => {
+	  if (newNote) {
+		newNote.classList.remove('hide'); 
+		newNote.classList.add('show-sv-in-LP');
+	  }
+	}, 50);
+  }
 
 function updateLocalStorage(key, noteID_noteObj, method) {
 	if(method == 'insert') {

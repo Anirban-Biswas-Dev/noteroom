@@ -402,7 +402,42 @@ div.notification-msg > .commenter-prfl:visited{
   width: 0;
   height: 0;
 }
+.no-saved-notes-message{
+  padding: 10px 5px; 
+  font-size: 0.9rem; 
+  color: #ffffffdc;
+  P {
+    padding: 5px 0PX;
+  }
+}
+.anim-bg {
+  position: relative;
+  overflow: hidden;
+  color: rgb(0, 0, 0);
+  font-weight: 600;
+  padding: 0px;
+}
 
+.anim-bg::before {
+  content: "";
+  position: absolute;
+  width: 0%;
+  height: 100%;
+  background: hsla(0, 0%, 100%, 0.9);
+  z-index: -1;
+  transition: width 1s ease-in-out;
+  animation: expand 2s forwards; 
+}
+
+@keyframes expand {
+  0% {
+    width: 0%;
+     
+  }
+  100% {
+    width: 100%;
+  }
+}
 .saved-note {
   display: flex;
   align-items: center;
@@ -416,12 +451,25 @@ div.notification-msg > .commenter-prfl:visited{
   font-size: 0.9rem;
   line-height: 18px;
   color: var(--squid-ink);
-  border-radius: 8px;
-  transition: box-shadow 0.2s ease, border-color 0.2s ease,
-    background-color 0.2s ease;
+  border-radius: 8px; 
   margin-bottom: 11px;
+  transition: opacity 0.4s ease, transform 0.4s ease, box-shadow 0.2s ease, border-color 0.2s ease,
+  background-color 0.2s ease;  
+
 }
 
+.hide {
+  opacity: 0;  
+  visibility: hidden;  
+  transform: translateY(20px); 
+}
+
+/* Class to show notes with a fade-in effect */
+.saved-note.show-sv-in-LP {
+  opacity: 1; 
+  visibility: visible; 
+  transform: translateY(0);  
+}
 .saved-note:hover {
   box-shadow: 0px 6px 12px rgb(255, 255, 255);
   border-color: var(--neon-blue);

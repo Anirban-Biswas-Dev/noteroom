@@ -34,22 +34,26 @@
         <span class="sv-header">Saved Notes</span>
         <!-- dynamic content loading here -->
         <div class="saved-notes-container">
-          <% if(savedNotes.length != 0) { %>
-            <% savedNotes.forEach(note => { %>
-            <div class="saved-note" id="saved-note-<%= note._id %>">
-              <span class="saved-note-doc-id" style="display: none;"><%= note._id %></span>
-              <span class="sv-note-title">
-                <a class="sv-n-link" href='/view/<%= note._id %>'><%= note.title %></a>
-              </span>
-            </div>
-            <% }) %>
-          <% } %>
+            <% if (savedNotes && savedNotes.length === 0) { %>
+                <div class="no-saved-notes-message">
+                  <p>It looks like you haven't saved any notes yet.</p>
+                  <p>Start saving <span class="anim-bg">important notes</span> to easily access them later!</p>
+                </div>
+              <% } else { %>
+                <% savedNotes.forEach(note => { %>
+                  <div class="saved-note" id="saved-note-<%= note._id %>">
+                    <span class="saved-note-doc-id" style="display: none;"><%= note._id %></span>
+                    <span class="sv-note-title">
+                      <a class="sv-n-link" href='/view/<%= note._id %>'><%= note.title %></a>
+                    </span>
+                  </div>
+                <% }) %>
+              <% } %>
         </div>
         <button class="right-panel-btn">Help & Support</button>
         <button class="right-panel-btn">User Guide</button>
         <button class="right-panel-btn">About</button>
     </div>
-    
 <% } else if (block === 'right-panel') { %>
     <div class="notification-panel">
         <div class="notification-panel-header">
