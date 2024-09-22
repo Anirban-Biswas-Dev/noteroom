@@ -1,11 +1,11 @@
 <% if (block === 'left-panel') { %>
-    <div class="left-panel"></div>
+    <div class="left-panel">
         <div class="left-panel-header">
           <span class="users-db-msg">
-            <%= student.displayname.split(' ')[0] %>'s NoteRoom</span>
+            <%= root.displayname.split(' ')[0] %>'s NoteRoom</span>
           <img src="https://storage.googleapis.com/noteroom-fb1a7.appspot.com/badges/draft-logo-of-noteroom.png" alt="NoteRoom Logo" />
         </div>
-        <button class="btn-home">
+        <button class="btn-home" onclick="window.location.href = '/dashboard'">
           <svg width="28" height="28" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
             <rect width="24.4687" height="24.4687" fill="url(#pattern0_1185_1183)" />
             <defs>
@@ -34,14 +34,16 @@
         <span class="sv-header">Saved Notes</span>
         <!-- dynamic content loading here -->
         <div class="saved-notes-container">
-          <% savedNotes.forEach(note => { %>
-          <div class="saved-note" id="saved-note-<%= note._id %>">
-            <span class="saved-note-doc-id" style="display: none;"><%= note._id %></span>
-            <span class="sv-note-title">
-              <a class="sv-n-link" href='/view/<%= note._id %>'><%= note.title %></a>
-            </span>
-          </div>
-          <% }) %>
+          <% if(savedNotes.length != 0) { %>
+            <% savedNotes.forEach(note => { %>
+            <div class="saved-note" id="saved-note-<%= note._id %>">
+              <span class="saved-note-doc-id" style="display: none;"><%= note._id %></span>
+              <span class="sv-note-title">
+                <a class="sv-n-link" href='/view/<%= note._id %>'><%= note.title %></a>
+              </span>
+            </div>
+            <% }) %>
+          <% } %>
         </div>
         <button class="right-panel-btn">Help & Support</button>
         <button class="right-panel-btn">User Guide</button>
@@ -62,7 +64,7 @@
             <image id="image0_1223_1186" width="100" height="100" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAAAXNSR0IArs4c6QAABNJJREFUeAHtncuLFEccx79rV/UuSlwf/4D4AAkaun41u4sv3IPGi3hbEvAegklMwESFHKInPYkIXlUQER8I4v8QyE0FUcjjkIeYhyaEKPgO1WPNMuMyr+6a6qr+NQwFM9O/qvp8+lc10z1TDfDGBJgAE2ACTIAJMAEmwASYABNgAv0TGNdrIOgrJHQ2fwj9JSamVvcfgN9ZEoF3U0h9ClI9h6TX7Y/8uZOAliVVxmF6EFgEQdfbJXRKodcQ2TUAi3rE4pcLE5B6X08Z81nzUeH6OEAPAon+qW8hifqhRzR+uRABM2HPH/0dc8cCw5Z570S2qlCdvHMXAkJvHViIaGzpEpFfKkRANGaHEDJbqE7euQsBFtIFzqhfGs/WQdKJgTPE7GP25a0MAnoSUn0GoW4PIaJ90hd0E5I+BWaWltGymsWYWYpUHYWkvwuLePtT2SOkdATY8k7NoA7Z3VR9iFTddyCiM2N+Q0ofDNnKOuy2cTlkdsm5iLcz5iKgJ+tAuP8+jtNaCLrnQUYzaxL6Hqle33+DY36n1DOQ9MibjFbGqIeQqhEz6t59k41pSPWPfxmt0y7mQ4Tu3fAY32HOMUn1oEIy7KT/B8yFr3ptsxMQdKuCMppSzHcWzE7Ux4mk05WV0ZpT9Kl6CGmesX1VfSH0CkJtj1zKXFLKaZDWUdyajO34X26ZD10xXwZOaW8AmdEuNeJv82MQdCc4IebEZpTbMNcyRjU09arHzHvRbVKdCy47rKiEzkTmYy6BVH8GK0Sqv4C5JB4pItscrgz7SU7PRCREHwhfCH0RjxCpLkQg5HxMQr6LQMi38QgZxSVZ+4nIVSno13iESPovggz5NyYhLyMQ8jImIe3nh1wNK67jRmPENahRxWch9ktZRUoWUhERNgNZCAtxcwzYIyz00g0dD1FDF2Hb7wGdmypth0Iv3dDxEDV0Ebb9HtC5qdJ2KPTSDR0PUUMXYdvvAZ2bKm2HQi/d0PEQNXQRtv0e0Lmp0nYo9NINHQ9RQxdh2+8BnZsqbYdCL93Q8RA1dBG2/R7QuanSdij00g0dD1FDF2Hb7wGdmypth0Iv3dDxEDV0Ebb9HtC5qdJ2KPTSDR0PUUMXYdvvAZ2bKm2HQi/d0Bl11OmVEfxIrvm7MkyvHDW9cuuT2RQGWda16hkk9C8IdFHNMUj9OSQ9jSY7WgeLet5cAC2Yv0vrSQh9JT4RHT9JSrMbwKYV5Q4pZUczyxsl2Y/Ry5jPlp9h/q5XyU3q/XEOUR2Z0ZJhn1fPYPpeqU3QwfpkhRXRUZp7l1Rjy5ZBqse1F2IYVGLtRtHYyTLeZItQO/wniaBdLMQK0e/7F4J8yHrCUqoyZJlDQqhDtRdSnUn9TZJK+gSSfq+fGLOQp/q4AkPVQk2YS/Lb1pmlVuvwyG/RF9OiNAs55eeYABNgAoETaM5HlyGpyKOmS4i7cN9csL/gahDZlIum1TSmXlzsfJl6Ary3pKbwHHVb0NWhv+OYC2a8lUwg1Rsh1YvBpagXSBsbSm4Nh8sJCPp6YCFCH2Z67giMIdXH+5aSqmMAxtw1hyM3CYyrPV3vWSXUXSS0m3GNlIC50wJty3+Sk9BZmNWnBX2DfFlwPr80UhVcGRNgAkyACTABJsAEmAATYAJBE/gfawhHLlMvr4MAAAAASUVORK5CYII=" />
             </defs>
         </svg>
-        <a href='/user/<%= student.studentID %>'><img src="<%= student.profile_pic %>" class="profile-pic" /></a>
+        <a href='/user/<%= root.studentID %>'><img src="<%= root.profile_pic %>" class="profile-pic" /></a>
         <i class="fa-solid fa-gear settings-icon" onclick="window.location.href = '/settings'"></i>
         </div>
         <p class="sub-header">
@@ -114,8 +116,8 @@
         </svg>
     
         <!-- Badge for notification count -->
-        <span class="badge" id="notification-count">0</span>
+        <span class="badge-nft" id="notification-count">0</span>
         </div>
-        <a href='/user/<%= student.studentID %>'><img src="<%= student.profile_pic %>" class="mbl-profile-pic" /></a>
+        <a href='/user/<%= root.studentID %>'><img src="<%= root.profile_pic %>" class="mbl-profile-pic" /></a>
     </div>
 <% } %>

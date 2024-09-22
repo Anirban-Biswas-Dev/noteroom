@@ -16,7 +16,6 @@
   box-sizing: border-box;
 }
 
-/* Search Bar */
 .search-bar {
   max-width: 980px;
   min-width: 100px;
@@ -35,7 +34,6 @@
   outline: none;
 }
 
-/* Search Bar Button */
 .search-bar-box button {
   cursor: pointer;
   font-size: 1.8rem;
@@ -51,43 +49,59 @@
   width: 60px;
   min-width: 30px;
 }
-.mobile-nft-btn {
+.mbl-notification-elements{
+  position: relative;
   display: none;
+  width: fit-content;
+  min-width: 50px;
+  min-height: auto;
+  padding: 0px 0px;
+}
+.mobile-nft-btn{
   cursor: pointer;
   min-width: 40px;
   padding: 0px 10px 0px 10px;
-  padding: 0px 2vw;
+  padding:0px 2vw;
   transition: transform 0.2s ease, opacity 0.2s ease, background-color 0.2s ease;
 }
 
 .mobile-nft-btn:hover {
-  transform: scale(1.1);
-  opacity: 0.8;
+  transform: scale(1.1); 
+  opacity: 0.8; 
 }
 
 .mobile-nft-btn:active {
-  transform: scale(0.95);
+  transform: scale(0.95); 
   background-color: #f0f0f0;
 }
 
 @keyframes rotate-shake {
-  0%,
-  100% {
-    transform: rotate(0deg);
-  }
-  20%,
-  60% {
-    transform: rotate(-10deg);
-  }
-  40%,
-  80% {
-    transform: rotate(10deg);
-  }
+  0%, 100% { transform: rotate(0deg); }
+  20%, 60% { transform: rotate(-10deg); }
+  40%, 80% { transform: rotate(10deg); }
 }
 
 .shake {
-  animation: rotate-shake 0.5s;
+  animation: rotate-shake 0.5s; 
 }
+.badge-nft {
+  position: absolute;
+  top: 2px;  
+  right: 10px; 
+  background-color: rgb(255, 61, 61);
+  color: white;
+  border-radius: 50%;
+  padding: 3px 3px;
+  font-size: 10px;
+  width: 12px;
+  height: 12px;
+  font-weight: bold;
+  line-height: 1;
+  min-width: 12px; 
+  text-align: center;
+  display: none;
+}
+
 .middle-section {
   position: relative;
   width: 100%;
@@ -113,7 +127,7 @@
 .middle-section::-webkit-scrollbar-thumb {
   display: none;
 }
-/* ******* Notification panel****** */
+
 .notification-panel {
   position: fixed;
   top: 0;
@@ -130,7 +144,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease; 
 }
 .notification-panel::-webkit-scrollbar {
   width: 0;
@@ -142,12 +156,12 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 1002;
+  background-color: rgba(0, 0, 0, 0.5); 
+  z-index: 1002; 
   display: none;
   transition: opacity 0.3s ease;
   backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px); 
 }
 .notification-panel-header {
   width: 100%;
@@ -164,7 +178,7 @@
   border-radius: 50px;
   object-fit: contain;
 }
-.btn-hide-nft {
+.btn-hide-nft{
   display: none;
   min-width: 40px;
 }
@@ -223,7 +237,7 @@
   font-size: 1.05rem;
   transition: color 0.3s ease;
 }
-div.first-row > .notification-link {
+div.first-row > .notification-link{
   display: block;
   text-decoration: none;
   color: inherit;
@@ -249,19 +263,19 @@ div.notification-msg > .notification-link-2 {
   font-weight: 400;
   padding: 0 0 5px 0;
 }
-div.notification-msg > .commenter-prfl {
+div.notification-msg > .commenter-prfl{
+  color: var(--squid-ink);
   text-decoration: none;
 }
-div.notification-msg > .commenter-prfl:hover {
+div.notification-msg > .commenter-prfl:hover{
   text-decoration: underline;
 }
-div.notification-msg > .commenter-prfl:visited {
+div.notification-msg > .commenter-prfl:visited{
   color: var(--squid-ink);
 }
-
 /* Left Panel */
 .left-panel {
-  position: fixed;
+  position: fixed; 
   top: 0px;
   left: 0;
   width: 22%;
@@ -413,6 +427,16 @@ div.notification-msg > .commenter-prfl:visited {
   border-color: var(--neon-blue);
   background-color: #ffffff;
 }
+.sv-n-link{
+  color: var(--squid-ink);
+  text-decoration: none;
+}
+.sv-n-link:hover{
+  text-decoration: none;
+}
+.sv-n-link:visited{
+  color: var(--squid-ink);
+}
 .right-panel-btn {
   box-sizing: border-box;
   width: 60%;
@@ -433,10 +457,64 @@ div.notification-msg > .commenter-prfl:visited {
   border-color: #b0b0b0;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+/* Confetti and Pop up for new user sign up celebration */
+.popup {
+  display: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);  /* Centers the element */
+  width: 300px;
+  padding: 20px;
+  background-color: white;
+  box-shadow: 0px 5px 20px rgba(255, 255, 255, 0.7);
+  border-radius: 8px;
+  text-align: center;
+  z-index: 1010;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(138, 138, 138, 0.5);
+  backdrop-filter: blur(5px);
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s, opacity 0.3s;
+  z-index: 1009;
+}
+
+.overlay.show {
+  visibility: visible;
+  opacity: 1;
+}
+
+.button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: var(--squid-ink);
+  border: none;
+  border-radius: 5px;
+  color: var(--neon-blue);
+  cursor: pointer;
+}
+
+canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1008; /* Ensures confetti is in front of the overlay */
+  pointer-events: none;
+}
 /******************************************************
  Keep the Mobile Version of the code possibliy here
  ****************************************************** */
-.mbl-profile-pic {
+.mbl-profile-pic{
   box-sizing: border-box;
   width: 40px;
   height: 40px;
@@ -456,20 +534,19 @@ div.notification-msg > .commenter-prfl:visited {
   height: fit-content;
   bottom: 0px;
   background: var(--squid-ink);
-  overflow-x: hidden;
+  overflow-x: hidden; 
   box-shadow: 0px -20px 40px rgba(0, 0, 0, 0.2);
 }
 
 .mbl-ctrl-panel svg {
   height: auto;
-  min-width: 8vw; /* Proportional width for consistent scaling */
-  max-width: 12vw; /* To prevent icons from growing too large */
+  min-width: 8vw;  /* Proportional width for consistent scaling */
+  max-width: 12vw;  /* To prevent icons from growing too large */
   padding: 0px 2vw; /* Relative padding to ensure uniform spacing */
   transition: transform 0.3s ease, color 0.3s ease;
 }
 
-.mbl-ctrl-panel svg:hover,
-.mbl-ctrl-panel svg:active {
+.mbl-ctrl-panel svg:hover, .mbl-ctrl-panel svg:active {
   transform: scale(1.1);
   cursor: pointer;
 }
@@ -480,18 +557,17 @@ div.notification-msg > .commenter-prfl:visited {
   transition: transform 0.4s ease, box-shadow 0.4s ease;
   border-radius: 50%;
   min-width: 12vw;
-  min-height: 12vw;
+  min-height: 12vw; 
   padding: 2vw;
 }
 
-.mbl-upload-btn:hover,
-.mbl-upload-btn:active {
+.mbl-upload-btn:hover, .mbl-upload-btn:active {
   transform: scale(1.2);
-  box-shadow: 0px 0px 30px 10px rgba(255, 255, 255, 0.19);
+  box-shadow: 0px 0px 30px 10px rgba(255, 255, 255, 0.19); 
 }
 
 .mbl-upload-btn::before {
-  content: "";
+  content: '';
   position: absolute;
   top: -15%;
   left: -15%;
@@ -562,12 +638,10 @@ div.notification-msg > .commenter-prfl:visited {
   margin-right: 2vw;
 }
 @keyframes blink-effect {
-  0%,
-  90% {
+  0%, 90% {
     opacity: 0;
   }
-  95%,
-  100% {
+  95%, 100% {
     opacity: 1;
   }
 }
@@ -610,7 +684,8 @@ div.notification-msg > .commenter-prfl:visited {
   .search-bar {
     max-width: 500px;
   }
-  .thumbnail {
+  /* Only relevant for dashboard, don't use this class on other pages */
+  .thumbnail { 
     object-fit: cover;
     height: 280px;
   }
@@ -618,25 +693,25 @@ div.notification-msg > .commenter-prfl:visited {
     width: 95%;
   }
 }
-@media (max-width: 480px) {
-  .mobile-nft-btn {
-    display: block;
+@media (max-width:480px) {
+  .mbl-notification-elements{
+    display: inline-block;
   }
-  .search-bar-box {
+  .search-bar-box{
     padding: 10px;
     background-color: white;
   }
-  .search-bar {
+  .search-bar{
     height: 40px;
-    font-size: 0.9rem;
+    font-size: .9rem;
     max-width: 200px;
   }
-  .search-bar-box button {
+  .search-bar-box button{
     height: 40px;
     width: 30px;
     font-size: 1.2rem;
   }
-  .mbl-profile-pic {
+  .mbl-profile-pic{
     display: block;
   }
 }
@@ -755,5 +830,10 @@ div.notification-msg > .commenter-prfl:visited {
 @media (min-width:481px) and (max-width:1025px) {
   .notification-panel{
       display: none   ;
+  }
+}
+@media (max-width: 768px) {
+  .popup {
+      width: 90%;
   }
 }

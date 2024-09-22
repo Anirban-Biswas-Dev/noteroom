@@ -2,6 +2,7 @@ const express = require('express')
 const Students = require('../schemas/students')
 const Notes = require('../schemas/notes')
 const allNotifs = require('../schemas/notifications').Notifs
+const { getSavedNotes, getNotifications } = require('./controller')
 const router = express.Router()
 
 function dashboardRouter(io) {
@@ -25,35 +26,8 @@ function dashboardRouter(io) {
         return student
     }
 
-    async function getNotifications(ownerUsername) {
-        let allNotifications = await allNotifs.find()
-        let populatedNotifications = []
-        allNotifications.map(doc => {
-            if (doc['docType'] === 'feedback') {
-                if(doc.ownerUsername == ownerUsername) {
-                    populatedNotifications.push(doc.populate([
-                        { path: 'noteDocID', select: 'title' },
-                        { path: 'commenterDocID', select: 'displayname studentID' }
-                    ]))
-                }
-            } else {
-                populatedNotifications.push(doc)
-            }
-        })
-
-        let data = await Promise.all(populatedNotifications)
-        return data
-    }
-
     async function getAllNotes() {
         let notes = await Notes.find({}, { ownerDocID: 1, title: 1, content: 1 }).populate('ownerDocID', 'profile_pic displayname studentID')
-        return notes
-    }
-
-    async function getSavedNotes(studentID) {
-        let student = await Students.findOne({ studentID: studentID }, { saved_notes: 1 } )
-        let saved_notes_ids = student['saved_notes']
-        let notes = await Notes.find({ _id: { $in: saved_notes_ids } }, { title: 1 })
         return notes
     }
 
@@ -71,11 +45,11 @@ function dashboardRouter(io) {
 
     router.get('/', async (req, res) => {
         if(req.session.stdid) {
-            let student = await getStudent(req.session.stdid)
-            let notis = await getNotifications(req.cookies['recordName'])
+            let root = await getStudent(req.session.stdid)
+            let notis = await getNotifications(allNotifs, req.cookies['recordName'])
             let allNotes = await getAllNotes()
-            let savedNotes = await getSavedNotes(req.session.stdid)
-            res.render('dashboard', { student: student, notis: notis, notes: allNotes, savedNotes: savedNotes })
+            let savedNotes = await getSavedNotes(Students, Notes, req.session.stdid)
+            res.render('dashboard', { root: root, notis: notis, notes: allNotes, savedNotes: savedNotes })
         } else {
             res.redirect('login')
         }
