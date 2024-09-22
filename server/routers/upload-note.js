@@ -29,8 +29,8 @@ function uploadRouter(io) {
 
     router.get('/', async (req, res) => {
         if(req.session.stdid) {
-            let studentID = await getStudentInfo(req.cookies.recordID)
-            res.render('upload-note', { student: studentID })
+            let student = await getStudentInfo(req.cookies.recordID)
+            res.render('upload-note', { root: student })
         } else {
             res.redirect('/login')
         }
