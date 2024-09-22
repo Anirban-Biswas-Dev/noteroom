@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const Students = require('../schemas/students')
+const allNotifs = require('../schemas/notifications').Notifs
 const Notes = require('../schemas/notes')
 
 function userRouter(io) {
@@ -32,33 +33,52 @@ function userRouter(io) {
         } else {
             notes = 0
         }
-        return notes
+        return new Promise(resolve => {
+            resolve(notes)
+        })
     }
 
-    router.get('/:stdid?', (req, res, next) => {
+    async function getNotifications(ownerUsername) {
+        let allNotifications = await allNotifs.find()
+        let populatedNotifications = []
+        allNotifications.map(doc => {
+            if (doc['docType'] === 'feedback') {
+                if(doc.ownerUsername == ownerUsername) {
+                    populatedNotifications.push(doc.populate([
+                        { path: 'noteDocID', select: 'title' },
+                        { path: 'commenterDocID', select: 'displayname studentID' }
+                    ]))
+                }
+            } else {
+                populatedNotifications.push(doc)
+            }
+        })
+
+        let data = await Promise.all(populatedNotifications)
+        return data
+    }
+
+    router.get('/:stdid?', async (req, res, next) => {
         if (req.params.stdid) {
             let visiting = false
             if (req.session.stdid) {
                 if (req.session.stdid == req.params.stdid) {
-                    extract(req.params.stdid).then(data => {
+                    extract(req.params.stdid).then(async data => {
                         let student = data['student']
                         let notes = data['notes']
-                        // Fetching saved notes here
-                        getSavedNotes(req.params.stdid).then(savedNotes => {
-                            res.render('user-profile', { student: student, notes: notes, savedNotes: savedNotes, visiting: visiting })
-                        })
+                        let notis = await getNotifications(req.cookies['recordName'])
+                        let savedNotes = await getSavedNotes(req.params.stdid)
+                        res.render('user-profile', { student: student, notes: notes, savedNotes: savedNotes, visiting: visiting, notis: notis })
                     }).catch(err => {
                         next(err)
                     })
                 } else {
-                    extract(req.params.stdid).then(data => {
+                    extract(req.params.stdid).then(async data => {
                         let student = data['student']
                         let notes = data['notes']
                         visiting = true
-                        // Fetching saved notes here
-                        getSavedNotes(req.params.stdid).then(savedNotes => {
-                            res.render('user-profile', { student: student, notes: notes, savedNotes: savedNotes, visiting: visiting })
-                        })
+                        let savedNotes = await getSavedNotes(req.params.stdid)
+                        res.render('user-profile', { student: student, notes: notes, savedNotes: savedNotes, visiting: visiting, notis: notis })
                     }).catch(err => {
                         req.studentID = req.params.stdid
                         const error = new Error('No students found')

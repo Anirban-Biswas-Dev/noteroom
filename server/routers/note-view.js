@@ -93,10 +93,10 @@ function noteViewRouter(io) {
                     let owner = information['owner']
                     let feedbacks = information['feedbacks']
                     if (note.ownerDocID == req.cookies['recordID']) {
-                        res.render('note-view', { note: note, mynote: mynote, owner: owner, feedbacks: feedbacks }) // Specific notes: visiting my notes
+                        res.render('note-view', { note: note, mynote: mynote, owner: owner, feedbacks: feedbacks, student: owner }) // Specific notes: visiting my notes
                     } else {
                         mynote = false
-                        res.render('note-view', { note: note, mynote: mynote, owner: owner, feedbacks: feedbacks }) // Specific notes: visiting others notes
+                        res.render('note-view', { note: note, mynote: mynote, owner: owner, feedbacks: feedbacks, student: owner }) // Specific notes: visiting others notes
                     }
                 }).catch(err => {
                     next(err)
