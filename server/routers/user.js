@@ -33,20 +33,6 @@ function userRouter(io) {
         })
     }
 
-    // async function getSavedNotesProfile(studentID) {
-    //     let student = await Students.findOne({ studentID: studentID }, { saved_notes: 1 })
-    //     let saved_notes_ids = student['saved_notes']
-    //     let notes;
-    //     if (saved_notes_ids.length != 0) {
-    //         notes = await Notes.find({ _id: { $in: saved_notes_ids } })
-    //     } else {
-    //         notes = []
-    //     }
-    //     return new Promise(resolve => {
-    //         resolve(notes)
-    //     })
-    // }
-
     router.get('/:stdid?', async (req, res, next) => {
         if (req.params.stdid) {
             if (req.session.stdid) {
