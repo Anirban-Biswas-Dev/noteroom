@@ -9,6 +9,8 @@ const session = require('express-session')
 const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
 const fileUpload = require('express-fileupload')
+const archiver = require('archiver')
+const cors = require('cors')
 
 const loginRouter = require('./routers/login')
 const userRouter = require('./routers/user')
@@ -30,6 +32,7 @@ const port = process.env.PORT
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, '../views'))
 
+app.use(cors())
 app.use(express.static(path.join(__dirname, '../public'))) // Middleware for using static files. All are stored in "/public" folder
 app.use(bodyParser.urlencoded({
     extended: true
@@ -43,7 +46,6 @@ app.use(session({
 app.use(cookieParser()) // Middleware for working with cookies
 app.use(fileUpload()) // Middleware for working with files
 app.use('/login', loginRouter(io))  
-
 app.use('/user', userRouter(io))
 app.use('/sign-up', signupRouter(io))
 app.use('/upload', uploadRouter(io))
@@ -76,13 +78,41 @@ app.get('/support', (req, res) => {
 app.get('/confetti', (req, res) => {
     res.render('confetti')
 })
+
+app.post('/download', async (req, res) => {
+    let noteLinks = req.body.links.split(',')
+    let noteTitle = req.body.noteTitle
+    
+    res.setHeader('Content-Type', 'application/zip');
+    res.setHeader('Content-Disposition', `attachment; filename=${noteTitle}.zip`);
+
+    const archive = archiver('zip', { zlib: { level: 9 } });
+    archive.pipe(res);
+
+    for (let imageUrl of noteLinks) {
+        try {
+            const response = await fetch(imageUrl);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch ${imageUrl}: ${response.statusText}`);
+            }
+
+            let arrayBuffer = await response.arrayBuffer()
+            let buffer = Buffer.from(arrayBuffer)
+
+            let fileName = path.basename(new URL(imageUrl).pathname);
+            archive.append(buffer, { name: fileName });
+        } catch (err) {
+            console.error(`Error fetching image: ${err.message}`);
+            return;
+        }
+    }
+    archive.finalize();
+})
+
 app.get('*', (req, res) => {
     res.status(404)
     res.render('404-error', { message: 'The page you are looking for is not found' }) 
 }) // 404 if any url requested by the user is not found
-
-io.on('connection', function(socket) {
-})
 
 server.listen(port, () => {
     console.log(`Server is listening on localhost:${port}`);

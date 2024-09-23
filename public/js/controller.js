@@ -1,32 +1,38 @@
-function download() {
-    // let noteDetailes = new FormData()
-    // let noteID = document.querySelector('.note-id').innerHTML
-    // noteDetailes.append('noteTitle', `${document.querySelector('.section-title').innerHTML.trim()}_${noteID}`)
+async function download(noteTitle, links) {
+    start() // start of animation
+
+    try {
+        let noteDetailes = new FormData()
+        noteDetailes.append('noteTitle', noteTitle)
+        noteDetailes.append('links', links)
     
-    // let links = []
-    // document.querySelectorAll('.image-links').forEach(image => {
-    //     links.push(image.src)
-    // })
-    // noteDetailes.append('links', JSON.stringify(links)) 
-
-    // fetch(`${noteID}/download`, {
-    //     method: 'POST',
-    //     body: noteDetailes
-    // }).then(response => { return response.json() })
-    //   .then(data => {
-    //     if(data.status === 200) {
-    //         alert(data.message) /* If you want to see the data object, go the routers/note-view.js 122,125 */
-    //         document.querySelector('.status').style.display = 'none' /* Hiding the download-pending popup */
-    //     } else {
-    //         alert(data.message)
-    //     }
-    // })
-    //   .catch(err => { alert(err.message) })
-
-    // document.querySelector('.status').style.display = 'flex' /* Triggering a download-pending popup */
-    alert('Download feature is under development')
+        let response = await fetch('/download', {
+            method: 'POST',
+            body: noteDetailes
+        })
+        
+        let blob = await response.blob()
+        const url = URL.createObjectURL(blob)
+        const link = document.createElement('a')
+    
+        link.href = url
+        link.setAttribute('download', `${noteTitle}.zip`)
+    
+        document.body.appendChild(link)
+        link.click()
+        link.remove()
+    
+        URL.revokeObjectURL(url)    
+    } catch (error) {
+        console.error(error)
+    } finally {
+        finish() // end of animation
+    }
 }
 
-function share() {
-    alert('Under development')
+function start() {
+    document.querySelector('.note-engagement').style.backgroundColor = 'red'
+}
+function finish() {
+    document.querySelector('.note-engagement').style.backgroundColor = 'white'
 }

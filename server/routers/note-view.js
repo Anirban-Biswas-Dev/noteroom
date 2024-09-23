@@ -116,19 +116,6 @@ function noteViewRouter(io) {
         }
     })
 
-    router.post('/:noteID/download', async (req, res, next) => {
-        let noteTitle = req.body['noteTitle']
-        let noteLinks = JSON.parse(req.body['links'])
-        
-        let isDone = await imgManage.download(noteLinks, noteTitle)
-        if(isDone) {
-            res.status(200).send({ message: 'download completed', status: 200 })
-            console.log('All done')
-        } else {
-            res.status(500).send({ message: 'something when wrong', status: 500 })
-        }
-    })
-
     return router
 }
 
