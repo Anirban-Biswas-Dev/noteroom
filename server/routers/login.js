@@ -30,11 +30,11 @@ function loginRouter(io) {
         }
     })
 
-    router.post('/', (req, res) => {
+    router.post('/', async (req, res) => {
         let studentID = req.body.studentID
         let password = req.body.password
-
-        extract(studentID).then(student => {
+        try {
+            let student = await extract(studentID)
             if (password === student['studentPass']) {
                 req.session.stdid = studentID // setting the session with the student ID
                 res.cookie('recordID', student['recordID']) // setting a cookie with a value of the document ID of the user
@@ -43,9 +43,9 @@ function loginRouter(io) {
             } else {
                 io.emit('wrong-cred')
             }
-        }).catch(err => {
+        } catch (error) {
             io.emit('no-studentid')
-        })
+        }
     })
     
     return router

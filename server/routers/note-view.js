@@ -27,7 +27,6 @@ function noteViewRouter(io) {
             let owner = await Students.findById(note.ownerDocID, { displayname: 1, studentID: 1, profile_pic: 1, username: 1 }) 
             let feedbacks = await Feedbacks.find({ noteDocID: note._id })
                 .populate('commenterDocID', 'displayname studentID profile_pic') 
-             //* Populating the commenter-doc-id with some basic info.
 
             return { note: note, owner: owner, feedbacks: feedbacks }
 
