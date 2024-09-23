@@ -24,6 +24,7 @@
     <h1 style="display: none;" class="status">Downloading</h1> <!-- This is the status dummy popup thingy -->
 
     <%- include('side-panel', { block: 'search-bar' }) %>
+    <span class="note-id" style="display: none;"><%= note._id %></span> <!-- Anirban this is the note id.  -->
     <div class="middle-section">
         <div class="first-box">
             <h2 class="section-title">
@@ -61,7 +62,7 @@
             </div>
             <div class="note-engagement">
                 <svg class="download-icon" width="40" height="40" viewBox="0 0 43 43" fill="none"
-                    xmlns="http://www.w3.org/2000/svg" onclick="download()">
+                    xmlns="http://www.w3.org/2000/svg" onclick="download('<%= note.title %>', '<%= note.content %>')">
                     <path
                         d="M37.1541 26.5395V33.6165C37.1541 34.555 36.7813 35.455 36.1177 36.1186C35.4541 36.7822 34.5541 37.155 33.6156 37.155H8.84623C7.90776 37.155 7.00773 36.7822 6.34414 36.1186C5.68054 35.455 5.30774 34.555 5.30774 33.6165V26.5395M12.3847 17.6933L21.2309 26.5395M21.2309 26.5395L30.0771 17.6933M21.2309 26.5395V5.30859"
                         stroke="#1E1E1E" stroke-width="2.29523" stroke-linecap="round" stroke-linejoin="round" />
@@ -85,7 +86,6 @@
             <p>
                 <%= note.description %>
             </p>
-            <span class="note-id" style="display: none;"><%= note._id %></span> <!-- Anirban this is the note id.  -->
         </div>
         <div class="feedbacks-section" id="feedbacks">
             <h2>Feedbacks</h2>
