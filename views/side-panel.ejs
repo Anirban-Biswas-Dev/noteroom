@@ -79,14 +79,26 @@
         </p>
         <div class="notifications-container">
         <% if(notis.length != 0) { %>
+            <%
+            function formatDate(date) {
+              const formattedDate = date.toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit'
+              });
+              return formattedDate
+            } 
+            %>
             <% notis.forEach(noti => { %>
             <% if(noti.docType == 'feedback' ) { %>
             <div class="notification" id="<%= noti._id %>">
-                    <span class='feedback-id' style="display: none;"><%= noti.feedbackDocID %></span> <!-- Anirban this the unique feedback id linked to the notification -->
+                <span class='feedback-id' style="display: none;"><%= noti.feedbackDocID %></span> <!-- Anirban this the unique feedback id linked to the notification -->
                 <div class="first-row">
                 <a href='/view/<%= noti.noteDocID._id %>/#<%= noti.feedbackDocID %>' class="notification-link">
                     <span class="notification-title">
-                    <%= noti.noteDocID.title %>
+                    <%= noti.noteDocID.title %><span style="display: none;"><%= formatDate(new Date(noti.createdAt)) %></span>
                     </span>
                 </a>
                 <span class="remove-notification" onclick="deleteNoti('<%= noti._id %>')">&times;</span>
