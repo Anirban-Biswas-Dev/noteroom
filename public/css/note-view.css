@@ -488,38 +488,47 @@ body {
     background-color: rgba(0, 0, 0, 0.8);
     backdrop-filter: blur(2px);
 }
-.loader {
-    width: 40px;
-    height: 30px;
-    --c:no-repeat linear-gradient(#000 0 0);
-    background:
-      var(--c) 0    100%/8px 30px,
-      var(--c) 50%  100%/8px 20px,
-      var(--c) 100% 100%/8px 10px;
+.loader{
+    font-size: 48px;
+    color: var(--neon-blue);
+    display: inline-block;
+    font-weight: 400;
     position: relative;
-    clip-path: inset(-100% 0);
   }
   .loader:before{
-    content: "";
+    content: '';
+    animation: 5s print linear alternate infinite;
+  }
+  .loader:after{
+    content: '';
     position: absolute;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #000;
-    left: -16px;
-    top: 0;
-    animation: 
-      l5-1 2s   linear infinite,
-      l5-2 0.5s cubic-bezier(0,200,.8,200) infinite;
+    right: -4px;
+    top: 50%;
+    transform: translatey(-45%);
+    width: 2px;
+    height: 1.3em;
+    background: currentColor;
+    opacity: 0.8;
+    animation: 1s blink steps(2) infinite;
   }
-  @keyframes l5-1 {
-    0%   {left:-16px;transform:translateY(-8px)}
-    100% {left:calc(100% + 8px);transform:translateY(22px)}
+  
+  @keyframes blink {
+    0%  { visibility: hidden;}
+    100%  { visibility: visible;}
   }
-  @keyframes l5-2 {
-    100% {top:-0.1px}
+  @keyframes print {
+    0% { content: 'D'}
+    10% { content: 'Do'}
+    20% { content: 'Dow'}
+    30% { content: 'Down'}
+    40% { content: 'Downl'}
+    50% { content: 'Downlo'}
+    60% { content: 'Downloa'}
+    70% { content: 'Download'}
+    80% { content: 'Downloadi'}
+    90% { content: 'Downloadin'}
+    100% { content: 'Downloading'}
   }
-
 /* Carousel Responsiveness */
 @media (max-width: 768px) {
     .carousel-control.prev {
@@ -596,6 +605,9 @@ body {
     }
     .feedback-author, .link_{
         font-size: .8rem;
+    }
+    .loader{
+        font-size: 24px;
     }
 }
 @media (min-width: 361px) and (max-width: 480px) {
