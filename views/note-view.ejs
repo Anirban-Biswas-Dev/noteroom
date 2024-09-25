@@ -3,6 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta property="og:title" content="<%= note.title %>">
+    <meta property="og:description" content="<%= note.description.slice(0, 30) %>">
+    <meta property="og:image" content="<%= note.content[0] %>">
+    <meta property="og:type" content="website">
     <link rel="stylesheet" href="/css/main-pages.css" />
     <link rel="stylesheet" href="/css/note-view.css" />
     <link rel="stylesheet" href="/css/loaders.css" />
@@ -38,6 +42,7 @@
       <div class="carousel-container">
         <!-- The notes images will be taken from the backend as an array and will be added dynamically using a loop or by mapping -->
         <div class="carousel-wrapper">
+          <span class="note-thumbnail" style="display: none;"><%= note.content[0] %></span>
           <% note.content.forEach(note => { %>
           <div class="carousel-slide">
             <img src="<%= note %>" class="image-links" />

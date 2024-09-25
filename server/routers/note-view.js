@@ -84,13 +84,13 @@ function noteViewRouter(io) {
     })
 
     router.get('/:noteID?', async (req, res, next) => {
+        let noteDocID = req.params.noteID
+        let information = await getNote(noteDocID)
+        let [note, owner, feedbacks] = [information['note'], information['owner'], information['feedbacks']]
         if (req.session.stdid) {
-            let noteDocID = req.params.noteID
-            let mynote = true //* Varifing if a note is mine or not: corrently using for not allowing users to give feedbacks to their own uploaded notes
+            let mynote = true //* Varifing if a note is mine or not: corrently using for not allowing users to give feedbacks based on some situations (self-notes and viewing notes without being logged in)
             if (noteDocID) {
                 try {
-                    let information = await getNote(noteDocID)
-                    let [note, owner, feedbacks] = [information['note'], information['owner'], information['feedbacks']]
                     let savedNotes = await getSavedNotes(Students, Notes, req.session.stdid)
                     let notis = await getNotifications(allNotifs, req.cookies['recordName'])
                     if (note.ownerDocID == req.cookies['recordID']) {
@@ -111,7 +111,7 @@ function noteViewRouter(io) {
                 }
             }
         } else {
-            res.redirect('/login')
+            res.render('note-view', { note: note, mynote: true, owner: owner, feedbacks: feedbacks, root: owner }) // Specific notes: visiting notes without being logged in
         }
     })
 
