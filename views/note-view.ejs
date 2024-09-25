@@ -20,9 +20,6 @@
 </head>
 
 <body>
-
-    <h1 style="display: none;" class="status">Downloading</h1> <!-- This is the status dummy popup thingy -->
-
     <%- include('side-panel', { block: 'search-bar' }) %>
     <span class="note-id" style="display: none;"><%= note._id %></span> <!-- Anirban this is the note id.  -->
     <div class="middle-section">
@@ -215,7 +212,9 @@
             </div>
         </div>
     </div>
-    
+    <div class="loader-overlay status">
+        <div class="loader"></div>
+    </div>
     <script src="/js/note-view.js"></script>
     <script src="/js/controller.js"></script>
 </body>
