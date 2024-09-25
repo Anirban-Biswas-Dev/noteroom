@@ -1,10 +1,10 @@
-async function download(noteTitle, links) {
+async function download(noteID, noteTitle) { 
     start() // start of animation
 
     try {
         let noteDetailes = new FormData()
+        noteDetailes.append('noteID', noteID)
         noteDetailes.append('noteTitle', noteTitle)
-        noteDetailes.append('links', links)
     
         let response = await fetch('/download', {
             method: 'POST',
