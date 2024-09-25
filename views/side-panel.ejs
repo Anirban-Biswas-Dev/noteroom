@@ -136,4 +136,44 @@
         </div>
         <a href='/user/<%= root.studentID %>'><img src="<%= root.profile_pic %>" class="mbl-profile-pic" /></a>
     </div>
+<% } else if (block === 'share-note') { %>
+    <div class="share-note-overlay">
+      <div class="share-note-modal">
+        <div class="modal-header">
+          <h3>Share on</h3>
+          <span class="close-share-note-modal">&times;</span>
+        </div>
+        <div class="platforms-section">
+          <div class="plf-box">
+            <i class="fa-brands fa-facebook"></i>
+            <span class="plf-label">Facebook</span>
+          </div>
+          <div class="plf-box">
+            <i class="fa-brands fa-facebook-messenger"></i>
+            <span class="plf-label">Messenger</span>
+          </div>
+          <div class="plf-box">
+            <i class="fa-brands fa-whatsapp"></i>
+            <span class="plf-label">WhatsApp</span>
+          </div>
+          <div class="plf-box">
+            <i class="fa-brands fa-instagram"></i>
+            <span class="plf-label">Instagram</span>
+          </div>
+        </div>
+        <h4>Or copy Link</h4>
+        <div class="page-link-section">
+          <div class="link-box">
+            <p class="_link_"></p>
+            <button class="copy-link-btn" onclick="copyLink()" >
+              <i class="fa-regular fa-clone"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+<% } else if (block === 'downloading-loader') { %>
+    <div class="loader-overlay status">
+      <span class="loader"></span>
+    </div>
 <% } %>
