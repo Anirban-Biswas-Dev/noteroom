@@ -24,7 +24,7 @@ function addNote(noteData) {
   let noteCardsHtml = `
   				<div class="feed-note-card" id="note-${noteData.noteID}">
 					<div class="thumbnail-container">
-						<img class="thumbnail" src="${noteData.thumbnail}"> 
+						<img class="thumbnail" src="${noteData.thumbnail}" onclick="window.location.href='/view/${noteData.noteID}'" > 
 						<button class="save-note-btn" id="save-btn-${noteData.noteID}" onclick="saveNote('${noteData.noteID}')">
 							<i class="fa-regular fa-bookmark"></i>
 							<i class="fa-solid fa-bookmark saved"></i>
