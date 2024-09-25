@@ -185,6 +185,11 @@ socket.on('feedback-given' , (feedbackData) => {
 			nftShake.classList.remove('shake');
 		}, 300)
 		console.log(nftShake);
+
+		// sound played on new notification
+		const audio = document.getElementById('notification-sound');
+		audio.currentTime = 0;
+		audio.play();
 	}
 })
 
