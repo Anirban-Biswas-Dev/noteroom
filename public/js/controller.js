@@ -31,8 +31,8 @@ async function download(noteTitle, links) {
 }
 
 function start() {
-    document.querySelector('.note-engagement').style.backgroundColor = 'red'
+    document.querySelector('.status').style.display = 'flex'
 }
 function finish() {
-    document.querySelector('.note-engagement').style.backgroundColor = 'white'
+    document.querySelector('.status').style.display = 'none'
 }
