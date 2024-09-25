@@ -66,10 +66,24 @@ function setupShareModal() {
 
 function copyLink() {
     const linkElement = document.querySelector('._link_');
+    const successfulLinkMsg = document.querySelector('.successful-copy');
 
     navigator.clipboard.writeText(linkElement.textContent)
         .then(() => {
-            alert('Link copied to clipboard!');
+            
+                successfulLinkMsg.style.display = 'flex';
+                
+                requestAnimationFrame(() => {
+                    successfulLinkMsg.classList.add('s-c-effect');
+                });
+    
+                setTimeout(() => {
+                    successfulLinkMsg.classList.remove('s-c-effect');
+                    setTimeout(() => {
+                        successfulLinkMsg.style.display = 'none';
+                    }, 400); 
+                }, 2000);
+            
         })
         .catch(err => {
             console.error('Failed to copy text: ', err);
