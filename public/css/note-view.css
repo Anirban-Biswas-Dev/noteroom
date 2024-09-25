@@ -474,6 +474,20 @@ body {
 .copy-link-btn:focus {
     outline: none; 
 }
+.loader-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    align-items: center;
+    justify-content: center; 
+    z-index: 1020;
+    margin: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(2px);
+}
 
 /* Carousel Responsiveness */
 @media (max-width: 768px) {
