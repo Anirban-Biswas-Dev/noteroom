@@ -20,8 +20,9 @@ const uploadRouter = require('./routers/upload-note')
 const noteViewRouter = require('./routers/note-view')
 const dashboardRouter = require('./routers/dashboard')
 
+const Notes = require('./schemas/notes')
+
 const url = process.env.MONGO_URI
-// const url = 'mongodb://localhost:27017/information'
 mongoose.connect(url).then(() => {
     console.log(`Connected to database information`);
 }) 
@@ -83,8 +84,10 @@ app.get('/about-us', (req, res) => {
 })
 
 app.post('/download', async (req, res) => {
-    let noteLinks = req.body.links.split(',')
+    let noteID = req.body.noteID
     let noteTitle = req.body.noteTitle
+
+    const noteLinks = (await Notes.findById(noteID, { content: 1 })).content
     
     res.setHeader('Content-Type', 'application/zip');
     res.setHeader('Content-Disposition', `attachment; filename=${noteTitle}.zip`);

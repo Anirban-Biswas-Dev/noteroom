@@ -1,10 +1,10 @@
-async function download(noteTitle, links) {
+async function download(noteID, noteTitle) { 
     start() // start of animation
 
     try {
         let noteDetailes = new FormData()
+        noteDetailes.append('noteID', noteID)
         noteDetailes.append('noteTitle', noteTitle)
-        noteDetailes.append('links', links)
     
         let response = await fetch('/download', {
             method: 'POST',
@@ -39,10 +39,10 @@ function finish() {
 
 // Share Note Modal
 
-function setupShareModal() {
+const linkElement = document.querySelector('._link_');
+function setupShareModal(noteID) {
     const shareNoteModal = document.querySelector('.share-note-overlay');
     const closeNoteModalBtn = document.querySelector('.close-share-note-modal');
-    const linkElement = document.querySelector('._link_');
 
     if (!shareNoteModal || !closeNoteModalBtn || !linkElement) {
         console.error('One or more required elements are not found');
@@ -51,7 +51,7 @@ function setupShareModal() {
 
     // Open the modal and populate the link (immediate execution)
     shareNoteModal.style.display = 'flex'; 
-    linkElement.innerHTML = `${window.location.origin}${window.location.pathname}`;
+    linkElement.innerHTML = `${window.location.origin}/view/${noteID}`;
     requestAnimationFrame(() => { 
         shareNoteModal.classList.add('visible');
     });
@@ -88,4 +88,18 @@ function copyLink() {
         .catch(err => {
             console.error('Failed to copy text: ', err);
         });
+}
+
+function share(platform) {
+    const linkElement = document.querySelector('._link_').innerHTML;
+
+    switch(platform) {
+        case "facebook":
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(linkElement + '/shared')}`, '_blank')
+            break
+        case "whatsapp":
+            let message = `Check out this note on NoteRoom: ${linkElement}`
+            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`, '_blank')
+            break
+    }
 }
