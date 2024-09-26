@@ -1,10 +1,10 @@
-async function download(noteTitle, links) {
+async function download(noteID, noteTitle) { 
     start() // start of animation
 
     try {
         let noteDetailes = new FormData()
+        noteDetailes.append('noteID', noteID)
         noteDetailes.append('noteTitle', noteTitle)
-        noteDetailes.append('links', links)
     
         let response = await fetch('/download', {
             method: 'POST',
@@ -39,10 +39,10 @@ function finish() {
 
 // Share Note Modal
 
+const linkElement = document.querySelector('._link_');
 function setupShareModal() {
     const shareNoteModal = document.querySelector('.share-note-overlay');
     const closeNoteModalBtn = document.querySelector('.close-share-note-modal');
-    const linkElement = document.querySelector('._link_');
 
     if (!shareNoteModal || !closeNoteModalBtn || !linkElement) {
         console.error('One or more required elements are not found');
@@ -74,4 +74,20 @@ function copyLink() {
         .catch(err => {
             console.error('Failed to copy text: ', err);
         });
+}
+
+function share(platform) {
+    function sharePage(baseContent) {
+        window.open(baseContent, '_blank')
+    }
+
+    switch(platform) {
+        case "facebook":
+            sharePage(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(linkElement.innerHTML)}`)
+            break
+        case "whatsapp":
+            let message = `Check out this note: ${document.querySelector('h2.section-title').innerHTML} - ${linkElement.innerHTML}`
+            sharePage(`https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`)
+            break
+    }
 }

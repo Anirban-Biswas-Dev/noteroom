@@ -3,6 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta property="og:title" content="<%= note.title %>">
+    <meta property="og:description" content="<%= note.description.slice(0, 30) %>">
+    <meta property="og:image" content="<%= note.content[0] %>">
+    <meta property="og:type" content="website">
     <link rel="stylesheet" href="/css/main-pages.css" />
     <link rel="stylesheet" href="/css/note-view.css" />
     <link rel="stylesheet" href="/css/loaders.css" />
@@ -38,6 +42,7 @@
       <div class="carousel-container">
         <!-- The notes images will be taken from the backend as an array and will be added dynamically using a loop or by mapping -->
         <div class="carousel-wrapper">
+          <span class="note-thumbnail" style="display: none;"><%= note.content[0] %></span>
           <% note.content.forEach(note => { %>
           <div class="carousel-slide">
             <img src="<%= note %>" class="image-links" />
@@ -72,7 +77,7 @@
             viewBox="0 0 43 43"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
-            onclick="download('<%= note.title %>', '<%= note.content %>')"
+            onclick="download('<%= note._id %>', '<%= note.title %>')"
           >
             <path
               d="M37.1541 26.5395V33.6165C37.1541 34.555 36.7813 35.455 36.1177 36.1186C35.4541 36.7822 34.5541 37.155 33.6156 37.155H8.84623C7.90776 37.155 7.00773 36.7822 6.34414 36.1186C5.68054 35.455 5.30774 34.555 5.30774 33.6165V26.5395M12.3847 17.6933L21.2309 26.5395M21.2309 26.5395L30.0771 17.6933M21.2309 26.5395V5.30859"
