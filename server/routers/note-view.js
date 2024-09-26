@@ -115,6 +115,18 @@ function noteViewRouter(io) {
         }
     })
 
+    router.get('/:noteID/shared', async (req, res, next) => {
+        let headers = req.headers['user-agent']
+        let noteDocID = req.params.noteID
+        let note = (await getNote(noteDocID)).note
+
+        if(headers.includes('facebook')) {
+            res.render('shared', { note: note, req: req })
+        } else {
+            res.redirect(`/view/${noteDocID}`)
+        }
+    })
+
     return router
 }
 

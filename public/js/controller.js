@@ -40,7 +40,7 @@ function finish() {
 // Share Note Modal
 
 const linkElement = document.querySelector('._link_');
-function setupShareModal() {
+function setupShareModal(noteID) {
     const shareNoteModal = document.querySelector('.share-note-overlay');
     const closeNoteModalBtn = document.querySelector('.close-share-note-modal');
 
@@ -51,7 +51,7 @@ function setupShareModal() {
 
     // Open the modal and populate the link (immediate execution)
     shareNoteModal.style.display = 'flex'; 
-    linkElement.innerHTML = `${window.location.origin}${window.location.pathname}`;
+    linkElement.innerHTML = `${window.location.origin}/view/${noteID}`;
     requestAnimationFrame(() => { 
         shareNoteModal.classList.add('visible');
     });
@@ -65,8 +65,6 @@ function setupShareModal() {
 }
 
 function copyLink() {
-    const linkElement = document.querySelector('._link_');
-
     navigator.clipboard.writeText(linkElement.textContent)
         .then(() => {
             alert('Link copied to clipboard!');
@@ -77,17 +75,15 @@ function copyLink() {
 }
 
 function share(platform) {
-    function sharePage(baseContent) {
-        window.open(baseContent, '_blank')
-    }
+    const linkElement = document.querySelector('._link_').innerHTML;
 
     switch(platform) {
         case "facebook":
-            sharePage(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(linkElement.innerHTML)}`)
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(linkElement + '/shared')}`, '_blank')
             break
         case "whatsapp":
-            let message = `Check out this note: ${document.querySelector('h2.section-title').innerHTML} - ${linkElement.innerHTML}`
-            sharePage(`https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`)
+            let message = `Check out this note on NoteRoom: ${linkElement}`
+            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`, '_blank')
             break
     }
 }
