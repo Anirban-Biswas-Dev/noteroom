@@ -18,7 +18,7 @@ header{
     height: 60px;
     align-items: center;
     justify-content: center;
-    background-color: transparent;
+    background-color: white;
 }
 header i {
     position: absolute; 
@@ -91,7 +91,6 @@ header h1 {
     grid-template-columns: repeat(3, 1fr); /* Three equal columns */
     gap: 20px; /* Space between columns */
     padding: 20px; /* Add some padding around the section */
-    background-color: pink;
 }
 .founders-card{
     padding: 10px;
@@ -125,6 +124,7 @@ header h1 {
     font-weight: 350;
     font-size: .8rem;
     line-height: 18px;
+    height: 150px;
 }
 .social-prfls{
     width: 50%;
@@ -145,12 +145,67 @@ header h1 {
 .social-prfls i:active{
     transform: scale(0.9);
 }
+.development-info{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+.development-info h2{
+    padding: 50px;
+}
+.first-container, .second-container, .third-container, .fourth-container{
+    height: 35vh;
+    max-height: 600px;
+    background-color: var(--squid-ink);
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    margin: 10vh 0px;
+    padding: 20px 0px;
+}
+.second-container, .fourth-container{
+    flex-direction: row-reverse;
+}
+.container-img{
+    width: 30%;
+    height: auto;
+    object-fit: contain;
+    margin: 0px 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+.desc-box{
+    padding: 20px;
+    width: 40%;
+    color: white;
+    font-weight: 400;
+    font-size: .9rem;
+    line-height: 30px;
+}
+.info-box{
+    width: 40%;
+    padding: 20px;
+}
+.info-box h3{
+    font-size: 1.2rem;
+    line-height: 38px;
+    color: #FFFFFF;
+    padding: 10px 0px;
+}
+.desc-box-2{
+    width: 80%;
+    color: white;
+    font-weight: 400;
+    font-size: .9rem;
+    line-height: 30px;
+}
+
 
 
 
 
 @media (max-width: 768px) {
-    .founders-section {
+    .founders {
         grid-template-columns: 1fr; /* Change to single column */
     }
 }

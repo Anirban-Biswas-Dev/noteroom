@@ -1,4 +1,4 @@
-const founders = [
+export const founders = [
     {
         name: 'Anirban Biswas Arnob',
         imgSrc: '\Anirban Caricature - NoteRoom.png',
@@ -17,7 +17,7 @@ const founders = [
         imgSrc: '\Moshiur Caricature - NoteRoom.png',
         college: 'Gov.t Chattogram College',
         role: 'Backend Boss',
-        description: '',
+        description: 'Moshiur is our go-to person when the code breaks—and by "go-to," we mean the one everyone calls when panic sets in. With a calm and collected approach, he fixes problems in seconds, often while cracking a dad joke. Known for his cool demeanor in coding chaos, he’s probably debugged more lines of code than most people have had hot dinners. In his spare time, he’s dreaming up ways to automate everything or dominating in Call of Duty. If it moves, he’ll find a way to make it more efficient—some of us are starting to think he might actually be part machine.',
         socialLinks: {
             facebook: '',
             instagram: '',
@@ -26,11 +26,11 @@ const founders = [
         }
     },
     {
-        name: 'Founder Three',
-        imgSrc: '',
-        college: '',
-        role: '',
-        description: '',
+        name: 'Devajit Mutsuddy Rohit',
+        imgSrc: '\Devajit NoteRoom Caricature.jpg',
+        college: 'Gov.t City College, Chattogram',
+        role: 'The Design Diva',
+        description: "Devajit is our creative genius who can turn even the craziest sketches into stunning designs. He speaks fluent hex code, wields Figma like a pro, and gets lost in fonts and color palettes for hours. He’s famous for producing countless “final” versions of design files—just don’t ask how many “final, final” ones there are! He’s constantly obsessing over whether that shade of blue is really blue enough. Perfection is his thing—and the results speak for themselves.",
         socialLinks: {
             facebook: '',
             instagram: '',
