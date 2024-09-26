@@ -95,9 +95,40 @@
 .plf-box i:active{
     transform: scale(0.9);
 }
-.share-note-modal h4 {
+.copy-link-title{
     width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.copy-link-title h4 {
+    width: fit-content;
     padding: 10px 0px;
+}
+.successful-copy{
+    border: solid 1px #1D8102;
+    background-color: #F2F8F0;
+    padding: 5px;
+    display: none;
+    justify-content: space-evenly;
+    align-items: center;
+    opacity: 0;    
+    transform: translateY(10px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.s-c-effect{
+    opacity: 1;  
+    transform: translateY(0);  
+}
+.successful-copy span{
+    font-size: .65rem;
+    padding: 2px 5px;
+}
+.successful-copy svg {
+    width: 18px;
+    height: auto;
+    min-width: 15px;
+    padding: 0px ;
 }
 .page-link-section{
     width: 100%;

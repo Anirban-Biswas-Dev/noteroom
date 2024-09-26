@@ -79,6 +79,9 @@ app.get('/support', (req, res) => {
 app.get('/confetti', (req, res) => {
     res.render('confetti')
 })
+app.get('/about-us', (req, res) => {
+    res.render('about-us')
+})
 
 app.post('/download', async (req, res) => {
     let noteID = req.body.noteID
