@@ -48,6 +48,18 @@
   justify-content: center;
   width: 60px;
   min-width: 30px;
+  transition: transform 0.2s ease;
+
+}
+.fa-magnifying-glass{
+  transition: color 0.2s ease;
+}
+.fa-magnifying-glass:hover{
+  color: rgba(0, 0, 0, 0.7);
+}
+.fa-magnifying-glass:active, .search-bar-box button:active {
+  transform: scale(0.95);
+  color: black; 
 }
 .mbl-notification-elements{
   position: relative;

@@ -147,12 +147,17 @@ body {
     svg {
         padding: 15px;
         margin-left: 15px;
+        transform: scale(0.9);
+        transition: transform 0.2s ease-in-out;
     }
 }
 
 .note-engagement svg:hover {
-    background-color: #ebebebba;
-    border-radius: 50%;
+    transform: scale(1);
+    cursor: pointer;
+}
+.note-engagement svg:active{
+    transform: scale(0.8);
 }
 
 .desc-box {
