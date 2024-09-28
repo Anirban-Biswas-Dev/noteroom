@@ -1,32 +1,105 @@
-function download() {
-    // let noteDetailes = new FormData()
-    // let noteID = document.querySelector('.note-id').innerHTML
-    // noteDetailes.append('noteTitle', `${document.querySelector('.section-title').innerHTML.trim()}_${noteID}`)
+async function download(noteID, noteTitle) { 
+    start() // start of animation
+
+    try {
+        let noteDetailes = new FormData()
+        noteDetailes.append('noteID', noteID)
+        noteDetailes.append('noteTitle', noteTitle)
     
-    // let links = []
-    // document.querySelectorAll('.image-links').forEach(image => {
-    //     links.push(image.src)
-    // })
-    // noteDetailes.append('links', JSON.stringify(links)) 
-
-    // fetch(`${noteID}/download`, {
-    //     method: 'POST',
-    //     body: noteDetailes
-    // }).then(response => { return response.json() })
-    //   .then(data => {
-    //     if(data.status === 200) {
-    //         alert(data.message) /* If you want to see the data object, go the routers/note-view.js 122,125 */
-    //         document.querySelector('.status').style.display = 'none' /* Hiding the download-pending popup */
-    //     } else {
-    //         alert(data.message)
-    //     }
-    // })
-    //   .catch(err => { alert(err.message) })
-
-    // document.querySelector('.status').style.display = 'flex' /* Triggering a download-pending popup */
-    alert('Download feature is under development')
+        let response = await fetch('/download', {
+            method: 'POST',
+            body: noteDetailes
+        })
+        
+        let blob = await response.blob()
+        const url = URL.createObjectURL(blob)
+        const link = document.createElement('a')
+    
+        link.href = url
+        link.setAttribute('download', `${noteTitle}.zip`)
+    
+        document.body.appendChild(link)
+        link.click()
+        link.remove()
+    
+        URL.revokeObjectURL(url)    
+    } catch (error) {
+        console.error(error)
+    } finally {
+        finish() // end of animation
+    }
 }
 
-function share() {
-    alert('Under development')
+function start() {
+    document.querySelector('.status').style.display = 'flex'
+}
+function finish() {
+    document.querySelector('.status').style.display = 'none'
+}
+
+// Share Note Modal
+
+const linkElement = document.querySelector('._link_');
+function setupShareModal(noteID) {
+    const shareNoteModal = document.querySelector('.share-note-overlay');
+    const closeNoteModalBtn = document.querySelector('.close-share-note-modal');
+
+    if (!shareNoteModal || !closeNoteModalBtn || !linkElement) {
+        console.error('One or more required elements are not found');
+        return;
+    }
+
+    // Open the modal and populate the link (immediate execution)
+    shareNoteModal.style.display = 'flex'; 
+    linkElement.innerHTML = `${window.location.origin}/view/${noteID}`;
+    requestAnimationFrame(() => { 
+        shareNoteModal.classList.add('visible');
+    });
+
+    closeNoteModalBtn.addEventListener('click', () => {
+        shareNoteModal.classList.remove('visible');
+        setTimeout(() => {
+            shareNoteModal.style.display = 'none'; 
+        }, 300); // Matches CSS transition duration
+    });
+}
+
+function copyLink() {
+    const linkElement = document.querySelector('._link_');
+    const successfulLinkMsg = document.querySelector('.successful-copy');
+
+    navigator.clipboard.writeText(linkElement.textContent)
+        .then(() => {
+            
+                successfulLinkMsg.style.display = 'flex';
+                
+                requestAnimationFrame(() => {
+                    successfulLinkMsg.classList.add('s-c-effect');
+                });
+    
+                setTimeout(() => {
+                    successfulLinkMsg.classList.remove('s-c-effect');
+                    setTimeout(() => {
+                        successfulLinkMsg.style.display = 'none';
+                    }, 400); 
+                }, 2000);
+            
+        })
+        .catch(err => {
+            console.error('Failed to copy text: ', err);
+        });
+}
+
+function share(platform) {
+    const linkElement = document.querySelector('._link_').innerHTML;
+
+    switch(platform) {
+        case "facebook":
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(linkElement + '/shared')}`, '_blank')
+            break
+        case "whatsapp":
+            let message = `Check out this note on NoteRoom: ${linkElement}`
+            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`, '_blank')
+            break
+    }
 }

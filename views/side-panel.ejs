@@ -79,14 +79,26 @@
         </p>
         <div class="notifications-container">
         <% if(notis.length != 0) { %>
+            <%
+            function formatDate(date) {
+              const formattedDate = date.toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit'
+              });
+              return formattedDate
+            } 
+            %>
             <% notis.forEach(noti => { %>
             <% if(noti.docType == 'feedback' ) { %>
             <div class="notification" id="<%= noti._id %>">
-                    <span class='feedback-id' style="display: none;"><%= noti.feedbackDocID %></span> <!-- Anirban this the unique feedback id linked to the notification -->
+                <span class='feedback-id' style="display: none;"><%= noti.feedbackDocID %></span> <!-- Anirban this the unique feedback id linked to the notification -->
                 <div class="first-row">
                 <a href='/view/<%= noti.noteDocID._id %>/#<%= noti.feedbackDocID %>' class="notification-link">
                     <span class="notification-title">
-                    <%= noti.noteDocID.title %>
+                    <%= noti.noteDocID.title %><span style="display: none;"><%= formatDate(new Date(noti.createdAt)) %></span>
                     </span>
                 </a>
                 <span class="remove-notification" onclick="deleteNoti('<%= noti._id %>')">&times;</span>
@@ -123,5 +135,57 @@
         <span class="badge-nft" id="notification-count">0</span>
         </div>
         <a href='/user/<%= root.studentID %>'><img src="<%= root.profile_pic %>" class="mbl-profile-pic" /></a>
+    </div>
+<% } else if (block === 'share-note') { %>
+    <div class="share-note-overlay">
+      <div class="share-note-modal">
+        <div class="modal-header">
+          <h3>Share on</h3>
+          <span class="close-share-note-modal">&times;</span>
+        </div>
+        <div class="platforms-section">
+          <div class="plf-box">
+            <i class="fa-brands fa-facebook" onclick="share('facebook')"></i>
+            <span class="plf-label">Facebook</span>
+          </div>
+          <div class="plf-box">
+            <i class="fa-brands fa-facebook-messenger"></i>
+            <span class="plf-label">Messenger</span>
+          </div>
+          <div class="plf-box">
+            <i class="fa-brands fa-whatsapp" onclick="share('whatsapp')"></i>
+            <span class="plf-label">WhatsApp</span>
+          </div>
+        </div>
+        <div class="copy-link-title">
+          <h4>Or copy Link</h4>
+          <div class="successful-copy">
+            <svg width="20" height="20" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <g clip-path="url(#clip0_1844_2149)">
+              <path d="M14.0001 0C6.28041 0 0 6.28031 0 13.9999C0 21.7195 6.28041 27.9998 14.0001 27.9998C21.7197 27.9998 28 21.7195 28 13.9999C28 6.28031 21.7197 0 14.0001 0ZM14.0001 25.7047C7.5459 25.7047 2.29507 20.4541 2.29507 13.9999C2.29507 7.54581 7.5459 2.29507 14.0001 2.29507C20.4542 2.29507 25.7049 7.54581 25.7049 13.9999C25.7049 20.4541 20.4542 25.7047 14.0001 25.7047Z" fill="#1D8102"/>
+              <path d="M20.0564 8.62512L11.744 16.9376L7.94357 13.1371C7.49539 12.689 6.76887 12.689 6.32069 13.1371C5.8726 13.5853 5.8726 14.3118 6.32069 14.76L10.9326 19.3719C11.1567 19.5959 11.4503 19.708 11.744 19.708C12.0377 19.708 12.3314 19.5959 12.5555 19.3719L21.6793 10.2481C22.1274 9.79992 22.1274 9.07339 21.6793 8.62521C21.2311 8.17703 20.5045 8.17703 20.0564 8.62512Z" fill="#1D8102"/>
+              </g>
+              <defs>
+              <clipPath id="clip0_1844_2149">
+              <rect width="28" height="28" fill="white"/>
+              </clipPath>
+              </defs>
+              </svg>              
+            <span>Link Copied!</span>
+          </div>
+        </div>
+        <div class="page-link-section">
+          <div class="link-box">
+            <p class="_link_"></p>
+            <button class="copy-link-btn" onclick="copyLink()" >
+              <i class="fa-regular fa-clone"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+<% } else if (block === 'downloading-loader') { %>
+    <div class="loader-overlay status">
+      <span class="loader"></span>
     </div>
 <% } %>

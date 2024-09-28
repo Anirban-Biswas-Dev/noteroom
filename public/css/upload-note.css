@@ -1,12 +1,12 @@
 * {
-    font-family: 'Inter';
+    font-family: 'Inter', 'Hind Siliguri', sans-serif;
     margin: 0;
     padding: 0;
 }
 :root{
     --squid-ink:#06192D;
     --neon-blue: #04DBF6;
-    --gray:#ebebeb;
+    --light-gray:#F8F8F8;
 }
 
 body {
@@ -118,7 +118,7 @@ body {
 }
 .note-subject{
     box-sizing: border-box;
-    background: var(--gray);
+    background: var(--light-gray);
     border-radius: 10px;
     width: 45%;
     height: 40px;
@@ -141,7 +141,7 @@ body {
 
 .note-title{
     box-sizing: border-box;
-    background: var(--gray);
+    background: var(--light-gray);
     border-radius: 10px;
     height: 40px;
     font-size: 1rem;
@@ -164,7 +164,7 @@ body {
     font-size: 16px; 
     border: 1px solid; 
     border-radius: 10px;
-    background: var(--gray); 
+    background: var(--light-gray); 
 }
 .note-description:focus {
     outline: none;

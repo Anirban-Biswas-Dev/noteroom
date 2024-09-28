@@ -1,7 +1,7 @@
 :root{
     --squid-ink:#06192D;
     --neon-blue: #04DBF6;
-    --gray:#ebebeb;
+    --light-gray:#F8F8F8;
 }
 * {
     margin: 0;
@@ -15,7 +15,7 @@ body, h1, h2, h3, p, ul {
 }
 
 body {
-    background-color: var(--gray);
+    background-color: var(--light-gray);
     line-height: 1.6;
 }
 header{

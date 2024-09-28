@@ -23,13 +23,29 @@ body {
   align-items: center;
   padding: 2.5vh 2vw;
 }
-h1 {
-  font-weight: 600;
-  font-size: 2rem;
-  color: #07192d;
-  padding: 10px;
-  margin-top: 2vh;
+header {
+  box-sizing: border-box;
+  padding: 30px 10px;
+  display: flex;
+  z-index: 50;
+  top: 0;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
 }
+
+header i {
+  position: absolute;
+  left: 30px;
+  font-size: 1.8rem;
+}
+
+header h1 {
+  text-align: center;
+  font-weight: 600;
+}
+
 .section {
   width: 100%;
   padding-bottom: 3vh;
@@ -70,18 +86,21 @@ h1 {
   font-size: 1rem;
   border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+  transition: color 0.2s ease;
 }
 
 .section-btn:hover {
-  background-color: #f2f2f2;
   color: #000;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .section-btn:focus {
   outline: none;
-  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.2);
+}
+.section-btn svg{
+  transition: transform 0.3s ease;
+}
+.section-btn svg:hover{
+  transform: translateX(5px);
 }
 
 .parent-container {

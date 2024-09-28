@@ -6,7 +6,7 @@ async function getSavedNotes(Students, Notes, studentID) {
 }
 
 async function getNotifications(allNotifs, ownerUsername) {
-    let allNotifications = await allNotifs.find()
+    let allNotifications = await allNotifs.find().sort({ createdAt: -1 })
     let populatedNotifications = []
     allNotifications.map(doc => {
         if (doc['docType'] === 'feedback') {
