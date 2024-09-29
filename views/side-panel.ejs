@@ -115,6 +115,7 @@
         </div>
     </div>
 <% } else if (block === 'search-bar') { %>
+  <div class="search-container">
     <div class="search-bar-box">
         <input type="text" class="search-bar" placeholder="Search Notes" />
         <button>
@@ -136,6 +137,41 @@
         </div>
         <a href='/user/<%= root.studentID %>'><img src="<%= root.profile_pic %>" class="mbl-profile-pic" /></a>
     </div>
+    <div class="results-container">
+      <div class="search-results">
+        <div class="results-card">
+          <p class="result-note-title">Introduction to Calculus</p>
+          <i class="fa-solid fa-arrow-up"></i>
+        </div>
+        
+        <div class="results-card">
+          <p class="result-note-title">Organic Chemistry Basics</p>
+          <i class="fa-solid fa-arrow-up"></i>
+        </div>
+        
+        <div class="results-card">
+          <p class="result-note-title">World History - The Renaissance</p>
+          <i class="fa-solid fa-arrow-up"></i>
+        </div>
+        
+        <div class="results-card">
+          <p class="result-note-title">Economics: Supply and Demand</p>
+          <i class="fa-solid fa-arrow-up"></i>
+        </div>
+        
+        <div class="results-card">
+          <p class="result-note-title">Computer Science - Algorithms 101</p>
+          <i class="fa-solid fa-arrow-up"></i>
+        </div>
+        
+        <div class="results-card">
+          <p class="result-note-title">Biology: Cell Structure</p>
+          <i class="fa-solid fa-arrow-up"></i>
+        </div>
+        
+      </div>
+    </div>
+  </div>
 <% } else if (block === 'share-note') { %>
     <div class="share-note-overlay">
       <div class="share-note-modal">
