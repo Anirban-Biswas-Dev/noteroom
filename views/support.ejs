@@ -25,7 +25,7 @@
             <input type="text" class="contact-details" placeholder="Whatsapp No. (Preferred) or Email" required>
             <small class="contact-preference">For faster support, please provide your WhatsApp number.</small>
             <input type="number" class="college-id" placeholder="College ID" required>
-            <textarea placeholder="Tell us more about the problem you're facing or the suggestion you have" oninput="autoResize(this)" required></textarea>
+            <textarea placeholder="Tell us more about the problem you're facing or the suggestion you have" oninput="autoResize(this)" class="message" required></textarea>
             <button type="submit" class="submit-btn">Submit</button>
         </form>
     </div>
@@ -36,29 +36,6 @@
         <p>We'll be in touch shortly. We appreciate your time and effort.</p>
         <button class="home-btn" onclick="goHome()">Go to Home</button>
     </div>
-    
-
-    <script>
-        function showPopup(event) {
-            event.preventDefault();
-            document.querySelector('.popup').style.display = 'flex';
-            document.querySelector('.overlay').style.display = 'flex';
-        }
-
-            function closePopup() {
-        document.querySelector('.popup').style.display = 'none';
-        document.querySelector('.overlay').style.display = 'none';
-    }
-
-    function goHome() {
-        window.location.href = '/dashboard';
-}
-
-
-        function autoResize(textarea) {
-            textarea.style.height = 'auto'; 
-            textarea.style.height = textarea.scrollHeight + 'px'; 
-        }
-    </script>
+    <script src="/js/support.js"></script>
 </body>
 </html>

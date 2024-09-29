@@ -39,7 +39,7 @@ function addNote(noteData) {
 						</div>
 					</div>
 					<div class="note-engagement">
-						<svg class="download-icon" width="40" height="40" viewBox="0 0 43 43" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<svg class="download-icon" width="40" height="40" viewBox="0 0 43 43" fill="none" xmlns="http://www.w3.org/2000/svg" onclick="download(${noteData.noteID}, ${noteData.noteTitle})">
 							<path d="M37.1541 26.5395V33.6165C37.1541 34.555 36.7813 35.455 36.1177 36.1186C35.4541 36.7822 34.5541 37.155 33.6156 37.155H8.84623C7.90776 37.155 7.00773 36.7822 6.34414 36.1186C5.68054 35.455 5.30774 34.555 5.30774 33.6165V26.5395M12.3847 17.6933L21.2309 26.5395M21.2309 26.5395L30.0771 17.6933M21.2309 26.5395V5.30859" stroke="#1E1E1E" stroke-width="2.29523" stroke-linecap="round" stroke-linejoin="round"/>
 						</svg>
 						<svg onclick="window.location.href='/view/${noteData.noteID}/#feedbacks';" class="comment-icon" width="40" height="40" viewBox="0 0 36 37" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -166,6 +166,11 @@ function isExists(key, noteDocID) {
 	return !(noteData == undefined)
 }
 
+function getLocalStorageContentLength(key) {
+	let values = JSON.parse(localStorage.getItem(key))
+	return values.length
+}
+
 socket.on('note-upload' /* Event handler of the event triggered after uploading a note */, (noteData) => {
 	noteData.isAddNote = true //* Idenfing a note object that needs to be added after back_forward
 	updateLocalStorage('addedNotes', noteData, 'insert')
@@ -223,6 +228,7 @@ if ((navigate.type === 'navigate') || (navigate.type == 'reload')) {
 				}
 			} 
 			else if(note.isSavedNote) {
+				document.querySelector('.no-saved-notes-message').style.display = 'none'
 				if(isExists('savedNotes', note.noteID)) {
 					let existingNote = document.querySelector(`#saved-note-${note.noteID}`)
 					if(existingNote === null) {
@@ -253,12 +259,26 @@ function saveNote(noteDocID) {
         updateLocalStorage('savedNotes', noteData, 'insert');
         addSaveNote(noteData);
         socket.emit('save-note', recordID, noteDocID);
+		document.querySelector('.no-saved-notes-message').style.display = 'none'
 
     } else {
         socket.emit('delete-saved-note', recordID, noteDocID);
         button.classList.remove('saved');
         updateLocalStorage('savedNotes', noteDocID, 'remove');
         document.querySelector(`#saved-note-${noteDocID}`).remove(); 
+		if(getLocalStorageContentLength('savedNotes') == 0) {
+			let noSavedNotesMsg = document.querySelector('.no-saved-notes-message')
+			if(noSavedNotesMsg) {
+				noSavedNotesMsg.style.display = 'block'
+			} else {
+				document.querySelector('.saved-notes-container').insertAdjacentHTML('beforeend', `
+					<div class="no-saved-notes-message">
+                  		<p>It looks like you haven't saved any notes yet.</p>
+                  		<p>Start saving <span class="anim-bg">important notes</span> to easily access them later!</p>
+                	</div>
+				`)
+			}
+		}
     }
 }
 
