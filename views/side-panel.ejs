@@ -118,7 +118,7 @@
   <div class="search-container">
     <div class="search-bar-box">
         <input type="text" class="search-bar" placeholder="Search Notes" />
-        <button>
+        <button class="search-btn">
         <i class="fa-solid fa-magnifying-glass"></i>
         </button>
         <div class="mbl-notification-elements">
@@ -137,38 +137,9 @@
         </div>
         <a href='/user/<%= root.studentID %>'><img src="<%= root.profile_pic %>" class="mbl-profile-pic" /></a>
     </div>
-    <div class="results-container">
+    <div class="results-container" style="display: none;">
       <div class="search-results">
-        <div class="results-card">
-          <p class="result-note-title">Introduction to Calculus</p>
-          <i class="fa-solid fa-arrow-up"></i>
-        </div>
-        
-        <div class="results-card">
-          <p class="result-note-title">Organic Chemistry Basics</p>
-          <i class="fa-solid fa-arrow-up"></i>
-        </div>
-        
-        <div class="results-card">
-          <p class="result-note-title">World History - The Renaissance</p>
-          <i class="fa-solid fa-arrow-up"></i>
-        </div>
-        
-        <div class="results-card">
-          <p class="result-note-title">Economics: Supply and Demand</p>
-          <i class="fa-solid fa-arrow-up"></i>
-        </div>
-        
-        <div class="results-card">
-          <p class="result-note-title">Computer Science - Algorithms 101</p>
-          <i class="fa-solid fa-arrow-up"></i>
-        </div>
-        
-        <div class="results-card">
-          <p class="result-note-title">Biology: Cell Structure</p>
-          <i class="fa-solid fa-arrow-up"></i>
-        </div>
-        
+        <p class="status" style="display: none;">Fetching notes...</p>
       </div>
     </div>
   </div>
