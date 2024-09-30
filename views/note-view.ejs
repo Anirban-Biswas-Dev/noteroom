@@ -27,6 +27,7 @@
   </head>
 
   <body>
+    <%- include('side-panel', { block: 'left-panel' }) %>
     <%- include('side-panel', { block: 'search-bar' }) %>
     <span class="note-id" style="display: none"><%= note._id %></span>
     <!-- Anirban this is the note id.  -->
@@ -186,6 +187,7 @@
         </div>
       </div>
     </div>
+    <%- include('side-panel', { block: 'right-panel' }) %>
     <div class="mbl-ctrl-panel">
       <svg
         class="mbl-btn-home"
