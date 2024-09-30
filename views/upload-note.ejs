@@ -18,7 +18,7 @@
 </head>
 <body>
     
-    <!-- **********  Search Bar ************* -->
+    <%- include('side-panel', { block: 'left-panel' }) %>
     <%- include('side-panel', { block: 'search-bar' }) %>
     <!-- ****** Middle Section ****** -->
     <div class="middle-section">
@@ -85,6 +85,7 @@
             <button class="thumbnail-addstack-btn">Add to Stack</button>
         </div>
      </div>
+    <%- include('side-panel', { block: 'right-panel' }) %>
      
       <!-- Mobile Bottom Control Bar -->
        <div class="mbl-ctrl-panel">

@@ -2,6 +2,8 @@ const express = require('express')
 const Notes = require('../schemas/notes')
 const Students = require('../schemas/students')
 const imgManage = require('../controllers/image-upload')
+const allNotifs = require('../schemas/notifications').Notifs
+const { getSavedNotes, getNotifications } = require('./controller')
 const router = express.Router()
 
 /*
@@ -30,7 +32,9 @@ function uploadRouter(io) {
     router.get('/', async (req, res) => {
         if(req.session.stdid) {
             let student = await getStudentInfo(req.cookies.recordID)
-            res.render('upload-note', { root: student })
+            let savedNotes = await getSavedNotes(Students, Notes, req.session.stdid)
+            let notis = await getNotifications(allNotifs, req.cookies['recordName'])
+            res.render('upload-note', { root: student, savedNotes: savedNotes, notis: notis })
         } else {
             res.redirect('/login')
         }
