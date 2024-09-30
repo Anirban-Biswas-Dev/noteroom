@@ -1,12 +1,12 @@
 * {
-    font-family: 'Inter';
+    font-family: 'Inter', 'Hind Siliguri', sans-serif;
     margin: 0;
     padding: 0;
 }
 :root {
     --squid-ink: #06192d;
     --neon-blue: #04dbf6;
-    --gray: #ebebeb;
+    --light-gray: #F8F8F8;
   }  
 
 /* Middle Section */
@@ -285,10 +285,10 @@
 
 .note-card img {
     width: 100%;
-    height: auto;
-    object-fit: contain;
-    border-radius: 8px;
-    margin-bottom: 10px;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 3px;
+    max-height: 180px;
 }
 
 .note-card h3 {
@@ -299,6 +299,7 @@
 .note-card p {
     font-size: 14px;
     color: #555;
+    padding-bottom: 10px;
 }
 
 .note-card a {

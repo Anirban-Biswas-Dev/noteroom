@@ -4,7 +4,6 @@ const Notes = require('../schemas/notes')
 const Students = require('../schemas/students')
 const feedBackNotifs = require('../schemas/notifications').feedBackNotifs
 const allNotifs = require('../schemas/notifications').Notifs
-const imgManage = require('../controllers/image-upload')
 const Feedbacks = require('../schemas/feedbacks')
 const { getSavedNotes, getNotifications } = require('./controller')
 
@@ -26,8 +25,7 @@ function noteViewRouter(io) {
             let note = await Notes.findById(noteDocID, { title: 1, subject: 1, description: 1, ownerDocID: 1, content: 1 })
             let owner = await Students.findById(note.ownerDocID, { displayname: 1, studentID: 1, profile_pic: 1, username: 1 }) 
             let feedbacks = await Feedbacks.find({ noteDocID: note._id })
-                .populate('commenterDocID', 'displayname studentID profile_pic') 
-             //* Populating the commenter-doc-id with some basic info.
+                .populate('commenterDocID', 'displayname studentID profile_pic').sort({ createdAt: -1 }) 
 
             return { note: note, owner: owner, feedbacks: feedbacks }
 
@@ -85,15 +83,14 @@ function noteViewRouter(io) {
         })
     })
 
-    router.get('/:noteID?', (req, res, next) => {
+    router.get('/:noteID?', async (req, res, next) => {
+        let noteDocID = req.params.noteID
+        let information = await getNote(noteDocID)
+        let [note, owner, feedbacks] = [information['note'], information['owner'], information['feedbacks']]
         if (req.session.stdid) {
-            let noteDocID = req.params.noteID
-            let mynote = true //* Varifing if a note is mine or not: corrently using for not allowing users to give feedbacks to their own uploaded notes
+            let mynote = true //* Varifing if a note is mine or not: corrently using for not allowing users to give feedbacks based on some situations (self-notes and viewing notes without being logged in)
             if (noteDocID) {
-                getNote(noteDocID).then(async information => {
-                    let note = information['note']
-                    let owner = information['owner']
-                    let feedbacks = information['feedbacks']
+                try {
                     let savedNotes = await getSavedNotes(Students, Notes, req.session.stdid)
                     let notis = await getNotifications(allNotifs, req.cookies['recordName'])
                     if (note.ownerDocID == req.cookies['recordID']) {
@@ -102,31 +99,31 @@ function noteViewRouter(io) {
                         mynote = false
                         res.render('note-view', { note: note, mynote: mynote, owner: owner, feedbacks: feedbacks, root: owner, savedNotes: savedNotes, notis: notis }) // Specific notes: visiting others notes
                     }
-                }).catch(err => {
-                    next(err)
-                })
+                } catch (error) {
+                    next(error)
+                }
             } else {
-                getNote().then(notes => {
-                    res.render('notes-repo', { notes: notes }) //! Notes repository. Created for testing purposes, will be deleted soon
-                }).catch(err => {
-                    next(err)
-                })
+                try {
+                    let notes = await getNote()
+                    res.render('notes-repo', { notes: notes }) //! Notes repository. Created for testing purposes, will be deleted soon    
+                } catch (error) {
+                    next(error)
+                }
             }
         } else {
-            res.redirect('/login')
+            res.render('note-view', { note: note, mynote: true, owner: owner, feedbacks: feedbacks, root: owner }) // Specific notes: visiting notes without being logged in
         }
     })
 
-    router.post('/:noteID/download', async (req, res, next) => {
-        let noteTitle = req.body['noteTitle']
-        let noteLinks = JSON.parse(req.body['links'])
-        
-        let isDone = await imgManage.download(noteLinks, noteTitle)
-        if(isDone) {
-            res.status(200).send({ message: 'download completed', status: 200 })
-            console.log('All done')
+    router.get('/:noteID/shared', async (req, res, next) => {
+        let headers = req.headers['user-agent']
+        let noteDocID = req.params.noteID
+        let note = (await getNote(noteDocID)).note
+
+        if(headers.includes('facebook')) {
+            res.render('shared', { note: note, req: req })
         } else {
-            res.status(500).send({ message: 'something when wrong', status: 500 })
+            res.redirect(`/view/${noteDocID}`)
         }
     })
 

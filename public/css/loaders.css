@@ -1,0 +1,87 @@
+.loader-overlay {
+    position: fixed;
+    display: none;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    align-items: center;
+    justify-content: center; 
+    z-index: 1020;
+    margin: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(2px);
+}
+.loader {
+  font-size: 48px;
+  color: var(--neon-blue);
+  display: inline-block;
+  font-weight: 400;
+  position: relative;
+}
+.loader:before {
+  content: "";
+  animation: 5s print linear alternate infinite;
+}
+.loader:after {
+  content: "";
+  position: absolute;
+  right: -4px;
+  top: 50%;
+  transform: translatey(-45%);
+  width: 2px;
+  height: 1.3em;
+  background: currentColor;
+  opacity: 0.8;
+  animation: 1s blink steps(2) infinite;
+}
+
+@keyframes blink {
+  0% {
+    visibility: hidden;
+  }
+  100% {
+    visibility: visible;
+  }
+}
+@keyframes print {
+  0% {
+    content: "D";
+  }
+  10% {
+    content: "Do";
+  }
+  20% {
+    content: "Dow";
+  }
+  30% {
+    content: "Down";
+  }
+  40% {
+    content: "Downl";
+  }
+  50% {
+    content: "Downlo";
+  }
+  60% {
+    content: "Downloa";
+  }
+  70% {
+    content: "Download";
+  }
+  80% {
+    content: "Downloadi";
+  }
+  90% {
+    content: "Downloadin";
+  }
+  100% {
+    content: "Downloading";
+  }
+}
+@media  (max-width:360px) {
+    .loader{
+        font-size: 24px;
+    }
+}

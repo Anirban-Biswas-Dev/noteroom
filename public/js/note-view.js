@@ -84,72 +84,41 @@ try {
 	console.log(error.message)
 }
 
-function download() {
-    // let noteDetailes = new FormData()
-    // let noteID = document.querySelector('.note-id').innerHTML
-    // noteDetailes.append('noteTitle', `${document.querySelector('.section-title').innerHTML.trim()}_${noteID}`)
-    
-    // let links = []
-    // document.querySelectorAll('.image-links').forEach(image => {
-    //     links.push(image.src)
-    // })
-    // noteDetailes.append('links', JSON.stringify(links)) 
-
-    // fetch(`${noteID}/download`, {
-    //     method: 'POST',
-    //     body: noteDetailes
-    // }).then(response => { return response.json() })
-    //   .then(data => {
-    //     if(data.status === 200) {
-    //         alert(data.message) /* If you want to see the data object, go the routers/note-view.js 122,125 */
-    //         document.querySelector('.status').style.display = 'none' /* Hiding the download-pending popup */
-    //     } else {
-    //         alert(data.message)
-    //     }
-    // })
-    //   .catch(err => { alert(err.message) })
-
-    // document.querySelector('.status').style.display = 'flex' /* Triggering a download-pending popup */
-    alert('Download feature is under development')
-}
-document.querySelector('.download-icon').addEventListener('click', download)
-
-
 // Share Note Pop Up
-const shareNoteBtn = document.querySelector('svg.share-icon');
-const shareNoteModal = document.querySelector('.share-note-overlay');
-const closeNoteModalBtn = document.querySelector('.close-share-note-modal');
+// const shareNoteBtn = document.querySelector('svg.share-icon');
+// const shareNoteModal = document.querySelector('.share-note-overlay');
+// const closeNoteModalBtn = document.querySelector('.close-share-note-modal');
 
-const linkElement = document.querySelector('._link_');
-shareNoteBtn.addEventListener('click', () => {
-    shareNoteModal.style.display = 'flex'; 
-	linkElement.innerHTML = `${window.location.origin}${window.location.pathname}`
-    requestAnimationFrame(() => { 
-        shareNoteModal.classList.add('visible');
-    });
-});
+// const linkElement = document.querySelector('._link_');
+// shareNoteBtn.addEventListener('click', () => {
+//     shareNoteModal.style.display = 'flex'; 
+// 	linkElement.innerHTML = `${window.location.origin}${window.location.pathname}`
+//     requestAnimationFrame(() => { 
+//         shareNoteModal.classList.add('visible');
+//     });
+// });
 
-closeNoteModalBtn.addEventListener('click', () => {
-    shareNoteModal.classList.remove('visible'); 
-    setTimeout(() => {
-        shareNoteModal.style.display = 'none'; 
-    }, 300); // Time corresponds to the CSS transition duration (300ms)
-});
+// closeNoteModalBtn.addEventListener('click', () => {
+//     shareNoteModal.classList.remove('visible'); 
+//     setTimeout(() => {
+//         shareNoteModal.style.display = 'none'; 
+//     }, 300); // Time corresponds to the CSS transition duration (300ms)
+// });
 
 
-document.addEventListener('DOMContentLoaded', function() {
+// document.addEventListener('DOMContentLoaded', function() {
 
-    const copyButton = document.querySelector('.copy-link-btn');
+//     const copyButton = document.querySelector('.copy-link-btn');
 
-    copyButton.addEventListener('click', async () => {
-        try {
-            await navigator.clipboard.writeText(linkElement.textContent);
-            alert('Link copied to clipboard!');
-        } catch (err) {
-            console.error('Failed to copy text: ', err);
-        }
-    });
-});
+//     copyButton.addEventListener('click', async () => {
+//         try {
+//             await navigator.clipboard.writeText(linkElement.textContent);
+//             alert('Link copied to clipboard!');
+//         } catch (err) {
+//             console.error('Failed to copy text: ', err);
+//         }
+//     });
+// });
 
 // Custom smooth scrolling function
 function smoothScrollTo(element, duration = 1000, offset = 100, callback = null) {

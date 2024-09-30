@@ -1,5 +1,5 @@
 * {
-    font-family: 'Inter';
+    font-family: 'Inter', 'Hind Siliguri', sans-serif;
     margin: 0;
     padding: 0;
 }
@@ -7,7 +7,7 @@
 :root {
     --squid-ink: #06192D;
     --neon-blue: #04DBF6;
-    --gray: #ebebeb;
+    --light-gray: #F8F8F8;
 }
 
 body {
@@ -84,7 +84,7 @@ body {
     cursor: pointer;
     z-index: 999;
     transition: background-color 0.3s ease;
-    background: var(--gray);
+    background: var(--light-gray);
     border: 1px solid #07192D;
     border-radius: 8px;
 }
@@ -147,12 +147,17 @@ body {
     svg {
         padding: 15px;
         margin-left: 15px;
+        transform: scale(0.9);
+        transition: transform 0.2s ease-in-out;
     }
 }
 
 .note-engagement svg:hover {
-    background-color: #ebebebba;
-    border-radius: 50%;
+    transform: scale(1);
+    cursor: pointer;
+}
+.note-engagement svg:active{
+    transform: scale(0.8);
 }
 
 .desc-box {
@@ -329,150 +334,6 @@ body {
 }
 .feedback-actions .btn-like:hover {
     color: #04DBF7;
-}
-/* *** Pop up for sharing note ****** */
-.share-note-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: none;
-    align-items: center;
-    justify-content: center; 
-    z-index: 1020;
-    margin: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(2px);
-    opacity: 0; 
-    transition: opacity 0.3s ease-in-out;
-}
-
-.share-note-modal {
-    width: 80%;
-    min-width: 280px;
-    height: fit-content;
-    max-width: 450px;
-    max-height: 400px;
-    background-color: white;
-    border-radius: 15px;
-    padding: 15px;
-    box-sizing: border-box;
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
-    transform: scale(0.95); 
-    opacity: 0; 
-    transform-origin: center; 
-    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
-}
-
-.share-note-overlay.visible {
-    opacity: 1;
-}
-
-.share-note-overlay.visible .share-note-modal {
-    opacity: 1;
-    transform: scale(1); 
-}
-.modal-header{
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-.modal-header h3 {
-    font-size: 1.8rem;
-    font-weight: 600;
-}
-.modal-header span{
-    font-size: 2.2rem;
-    padding: 5px;
-    font-weight: 500;
-    transition: transform 0.2s ease, color 0.2s ease;
-}
-.modal-header span:hover {
-    transform: scale(1.1); 
-    color: #ff4d4d;         
-}
-.modal-header span:active {
-    transform: scale(0.9);  
-    color: #ff0000;         
-}
-.platforms-section{
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-evenly;
-    padding: 2vh 0;
-}
-.plf-box{
-    width: 22%;
-    height: fit-content;
-    padding: 5px;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    cursor: pointer;
-}
-.plf-box i {
-    font-size: 2.5rem;
-    padding: 10px 5px;
-    transition: opacity 0.2s ease, transform 0.2s ease;
-}
-.plf-label {
-    font-size: .8rem;
-}
-.plf-box i:hover {
-    opacity: 0.6; 
-}
-.plf-box i:active{
-    transform: scale(0.9);
-}
-.share-note-modal h4 {
-    width: 100%;
-    padding: 10px 0px;
-}
-.page-link-section{
-    width: 100%;
-    padding: 5px 0px;
-}
-.link-box{
-    width: 100%;
-    padding: 5px 10px 5px 5px;
-    box-sizing: border-box;
-    background-color: #F5F5F5;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-.link-box p{
-    width: 70%;
-    overflow-x: scroll;
-    padding: 10px 0px;
-}
-.link-box p::-webkit-scrollbar {
-    width: 0;
-    height: 0;
-}
-.copy-link-btn {
-    padding: 5px;
-    border-radius: 50%;
-    border: none;
-    width: 30px;
-    height: 30px;
-    font-weight: 600;
-    font-size: 1.2rem;
-    background-color: transparent;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-}
-
-.copy-link-btn:hover {
-    background-color: #e0e0e0; 
-}
-
-.copy-link-btn:focus {
-    outline: none; 
 }
 
 /* Carousel Responsiveness */
@@ -673,36 +534,4 @@ body {
         font-size: 1rem; /
     }
 }
-@media (max-width:360px) {
-    .share-note-modal {
-        padding: 4vw;
-        width: 90%;
-    }
-    .plf-label {
-        font-size: 0.7rem;
-        opacity: .8;
-    }
-    .modal-header span {
-        font-size: 1.6rem;
-    }
 
-    .plf-box i {
-        font-size: 1.8rem;
-    }
-}
-@media (min-width: 361px) and (max-width: 480px) {
-    .share-note-modal {
-        padding: 4vw;
-        width: 80%;
-    }
-    .modal-header h3 {
-        font-size: 1.5rem;
-    }
-    .plf-label {
-        font-size: 0.75rem;
-        opacity: .9;
-    }
-    .plf-box i {
-        font-size: 2rem;
-    }
-}
