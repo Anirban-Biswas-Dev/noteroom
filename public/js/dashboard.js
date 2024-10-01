@@ -24,7 +24,7 @@ function addNote(noteData) {
   let noteCardsHtml = `
   				<div class="feed-note-card" id="note-${noteData.noteID}">
 					<div class="thumbnail-container">
-						<img class="thumbnail" src="${noteData.thumbnail}" onclick="window.location.href='/view/${noteData.noteID}'" > 
+						<img class="thumbnail" src='loading.jpg' data-src="${noteData.thumbnail}" onclick="window.location.href='/view/${noteData.noteID}'" > 
 						<button class="save-note-btn" id="save-btn-${noteData.noteID}" onclick="saveNote('${noteData.noteID}')">
 							<i class="fa-regular fa-bookmark"></i>
 							<i class="fa-solid fa-bookmark saved"></i>
@@ -288,6 +288,25 @@ function deleteNoti(id) {
 	document.getElementById(id).remove() 
 	updateLocalStorage('notis', id, 'remove')
 }
+
+const images = document.querySelectorAll('.thumbnail');
+const observer = new IntersectionObserver(entries => {
+	entries.forEach(entry => {
+		if(entry.isIntersecting) {
+			let image = entry.target
+			let imageURL = image.getAttribute('data-src')
+			image.src = imageURL
+			image.removeAttribute('data-src')
+			
+			observer.unobserve(entry.target)
+		}	
+	})
+}, {
+	threshold: 0.25
+})
+images.forEach(image => {
+	observer.observe(image)
+})
 
 const notificationPanel = document.querySelector('.notification-panel');
 const notificationButton = document.querySelector('.mobile-nft-btn');
