@@ -282,7 +282,6 @@ function saveNote(noteDocID) {
     }
 }
 
-
 function deleteNoti(id) {
 	socket.emit('delete-noti', id) 
 	document.getElementById(id).remove() 
@@ -295,14 +294,20 @@ const observer = new IntersectionObserver(entries => {
 		if(entry.isIntersecting) {
 			let image = entry.target
 			let imageURL = image.getAttribute('data-src')
-			image.src = imageURL
-			image.removeAttribute('data-src')
-			
-			observer.unobserve(entry.target)
+
+			image.onload = function() {
+				image.parentElement.querySelector('.status').style.display = 'none' // End of animation, don't find the start. The animation should start auto while the page loaded. So, create the animation and then hide it here
+			}
+
+			setTimeout(() => {
+				image.src = imageURL
+				image.removeAttribute('data-src')
+				observer.unobserve(entry.target)
+			}, 2000) // demo time delay
 		}	
 	})
 }, {
-	threshold: 0.25
+	rootMargin: '400px'
 })
 images.forEach(image => {
 	observer.observe(image)
