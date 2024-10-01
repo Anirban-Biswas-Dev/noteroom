@@ -94,7 +94,7 @@ function noteViewRouter(io) {
         let root = await getStudentInfo(req.session.stdid)
         let [note, owner, feedbacks] = [information['note'], information['owner'], information['feedbacks']]
         if (req.session.stdid) {
-            let mynote = true //* Varifing if a note is mine or not: corrently using for not allowing users to give feedbacks based on some situations (self-notes and viewing notes without being logged in)
+            let mynote = 1 //* Varifing if a note is mine or not: corrently using for not allowing users to give feedbacks based on some situations (self-notes and viewing notes without being logged in)
             if (noteDocID) {
                 try {
                     let savedNotes = await getSavedNotes(Students, Notes, req.session.stdid)
@@ -102,7 +102,7 @@ function noteViewRouter(io) {
                     if (note.ownerDocID == req.cookies['recordID']) {
                         res.render('note-view', { note: note, mynote: mynote, owner: owner, feedbacks: feedbacks, root: root, savedNotes: savedNotes, notis: notis }) // Specific notes: visiting my notes
                     } else {
-                        mynote = false
+                        mynote = 0
                         res.render('note-view', { note: note, mynote: mynote, owner: owner, feedbacks: feedbacks, root: root, savedNotes: savedNotes, notis: notis }) // Specific notes: visiting others notes
                     }
                 } catch (error) {
@@ -117,7 +117,7 @@ function noteViewRouter(io) {
                 }
             }
         } else {
-            res.render('note-view', { note: note, mynote: true, owner: owner, feedbacks: feedbacks, root: owner }) // Specific notes: visiting notes without being logged in
+            res.render('note-view', { note: note, mynote: 3, owner: owner, feedbacks: feedbacks, root: owner }) // Specific notes: visiting notes without being logged in
         }
     })
 

@@ -84,6 +84,15 @@ try {
 	console.log(error.message)
 }
 
+let kickUser = document.querySelector('.kick')
+if(kickUser) {
+	setTimeout(() => {
+		alert('You are kicked out of noteroom cause you are not a user of it, cry about it or signup')
+		kickUser.click()
+	}, 3000)
+}
+
+
 // Share Note Pop Up
 // const shareNoteBtn = document.querySelector('svg.share-icon');
 // const shareNoteModal = document.querySelector('.share-note-overlay');
