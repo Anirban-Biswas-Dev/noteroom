@@ -42,6 +42,7 @@
 			<% notes.forEach(note => { %>
 				<div class="feed-note-card" id="note-<%= note._id %>">
 					<div class="thumbnail-container">
+					<span class="status">Fetching...</span> <!-- This is a sample loader -->
 					<img class="thumbnail" src="loading.jpg" data-src="<%= note.content[0] %>" onclick="window.location.href='/view/<%= note._id %>'"/>
 					<% if(savedNotesIDs.includes(note._id.toString())) { %>
 						<button class="save-note-btn saved" id="save-btn-<%= note._id %>" onclick="saveNote('<%= note._id %>')">
