@@ -159,5 +159,5 @@ searchInput.addEventListener('keydown', (event) => {
 
 // Design this Arnob
 searchInput.addEventListener('focus', function() {
-    resultsContainer.style.display = 'flex'
+    resultsContainer.style.display = 'flex';
 })
