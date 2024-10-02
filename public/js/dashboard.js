@@ -296,7 +296,8 @@ const observer = new IntersectionObserver(entries => {
 			let imageURL = image.getAttribute('data-src')
 
 			image.onload = function() {
-				image.parentElement.querySelector('.status').style.display = 'none' // End of animation, don't find the start. The animation should start auto while the page loaded. So, create the animation and then hide it here
+				image.parentElement.querySelector('.thumbnail-loading').style.display = 'none' // End of animation, don't find the start. The animation should start auto while the page loaded. So, create the animation and then hide it here
+				image.style.display = 'block';
 			}
 
 			setTimeout(() => {
