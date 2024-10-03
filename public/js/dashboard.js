@@ -288,30 +288,29 @@ function deleteNoti(id) {
 	updateLocalStorage('notis', id, 'remove')
 }
 
-const images = document.querySelectorAll('.thumbnail');
+const noteCards = document.querySelectorAll('.feed-note-card');
 const observer = new IntersectionObserver(entries => {
 	entries.forEach(entry => {
 		if(entry.isIntersecting) {
-			let image = entry.target
+			let image = entry.target.querySelector('.thumbnail-container .thumbnail')
 			let imageURL = image.getAttribute('data-src')
 
 			image.onload = function() {
 				image.parentElement.querySelector('.thumbnail-loading').style.display = 'none' // End of animation, don't find the start. The animation should start auto while the page loaded. So, create the animation and then hide it here
-				image.style.display = 'block';
+				image.style.display = 'flex'
 			}
-
 			setTimeout(() => {
 				image.src = imageURL
 				image.removeAttribute('data-src')
 				observer.unobserve(entry.target)
-			}, 2000) // demo time delay
+			}, 2000)
 		}	
 	})
 }, {
-	rootMargin: '400px'
+	rootMargin: "300px"
 })
-images.forEach(image => {
-	observer.observe(image)
+noteCards.forEach(card => {
+	observer.observe(card)
 })
 
 const notificationPanel = document.querySelector('.notification-panel');

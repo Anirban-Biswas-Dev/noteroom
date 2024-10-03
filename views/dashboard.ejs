@@ -42,32 +42,30 @@
 			<% notes.forEach(note => { %>
 				<div class="feed-note-card" id="note-<%= note._id %>">
 					<div class="thumbnail-container">
-					<div class="thumbnail-loading">
-                      <svg
-              className="w-10 h-10"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 18"
-          >
-              <path 
-                  d="M18 0H2a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2Zm-5.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm4.376 10.481A1 1 0 0 1 16 15H4a1 1 0 0 1-.895-1.447l3.5-7A1 1 0 0 1 7.468 6a.965.965 0 0 1 .9.5l2.775 4.757 1.546-1.887a1 1 0 0 1 1.618.1l2.541 4a1 1 0 0 1 .028 1.011Z" 
-                  style="fill: hsl(0, 0%, 80%);" 
-              />
-          </svg>
-          </div> <!-- This is a sample loader -->
-					<img class="thumbnail" src="loading.jpg" data-src="<%= note.content[0] %>" onclick="window.location.href='/view/<%= note._id %>'"/>
-					<% if(savedNotesIDs.includes(note._id.toString())) { %>
-						<button class="save-note-btn saved" id="save-btn-<%= note._id %>" onclick="saveNote('<%= note._id %>')">
-							<i class="fa-regular fa-bookmark"></i>
-							<i class="fa-solid fa-bookmark saved"></i>
-						</button>
-					<% } else { %>
-						<button class="save-note-btn" id="save-btn-<%= note._id %>" onclick="saveNote('<%= note._id %>')">
-							<i class="fa-regular fa-bookmark"></i>
-							<i class="fa-solid fa-bookmark saved"></i>
-						</button>
-					<% } %>
+						<div class="thumbnail-loading">
+							<svg className="w-10 h-10" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 18">
+								<path 
+									d="M18 0H2a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2Zm-5.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm4.376 10.481A1 1 0 0 1 16 15H4a1 1 0 0 1-.895-1.447l3.5-7A1 1 0 0 1 7.468 6a.965.965 0 0 1 .9.5l2.775 4.757 1.546-1.887a1 1 0 0 1 1.618.1l2.541 4a1 1 0 0 1 .028 1.011Z" 
+									style="fill: hsl(0, 0%, 80%);" 
+								/>
+							</svg>
+						</div> 
+
+						<img class="thumbnail" data-src="<%= note.content[0] %>" onclick="window.location.href='/view/<%= note._id %>'"/>
+
+						<% if(savedNotesIDs.includes(note._id.toString())) { %>
+							<button class="save-note-btn saved" id="save-btn-<%= note._id %>" onclick="saveNote('<%= note._id %>')">
+								<i class="fa-regular fa-bookmark"></i>
+								<i class="fa-solid fa-bookmark saved"></i>
+							</button>
+						<% } else { %>
+							<button class="save-note-btn" id="save-btn-<%= note._id %>" onclick="saveNote('<%= note._id %>')">
+								<i class="fa-regular fa-bookmark"></i>
+								<i class="fa-solid fa-bookmark saved"></i>
+							</button>
+						<% } %>
 					</div>
+
 					<div class="note-details">
 					<div class="author-info">
 						<img src="<%= note.ownerDocID.profile_pic %>" class="author-img"/>
