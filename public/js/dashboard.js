@@ -24,7 +24,7 @@ function addNote(noteData) {
   let noteCardsHtml = `
   				<div class="feed-note-card" id="note-${noteData.noteID}">
 					<div class="thumbnail-container">
-						<img class="thumbnail" src="${noteData.thumbnail}" onclick="window.location.href='/view/${noteData.noteID}'" > 
+						<img class="thumbnail" src='loading.jpg' data-src="${noteData.thumbnail}" onclick="window.location.href='/view/${noteData.noteID}'" > 
 						<button class="save-note-btn" id="save-btn-${noteData.noteID}" onclick="saveNote('${noteData.noteID}')">
 							<i class="fa-regular fa-bookmark"></i>
 							<i class="fa-solid fa-bookmark saved"></i>
@@ -282,12 +282,36 @@ function saveNote(noteDocID) {
     }
 }
 
-
 function deleteNoti(id) {
 	socket.emit('delete-noti', id) 
 	document.getElementById(id).remove() 
 	updateLocalStorage('notis', id, 'remove')
 }
+
+const noteCards = document.querySelectorAll('.feed-note-card');
+const observer = new IntersectionObserver(entries => {
+	entries.forEach(entry => {
+		if(entry.isIntersecting) {
+			let image = entry.target.querySelector('.thumbnail-container .thumbnail')
+			let imageURL = image.getAttribute('data-src')
+
+			image.onload = function() {
+				image.parentElement.querySelector('.thumbnail-loading').style.display = 'none' // End of animation, don't find the start. The animation should start auto while the page loaded. So, create the animation and then hide it here
+				image.style.display = 'flex'
+			}
+			setTimeout(() => {
+				image.src = imageURL
+				image.removeAttribute('data-src')
+				observer.unobserve(entry.target)
+			}, 2000)
+		}	
+	})
+}, {
+	rootMargin: "300px"
+})
+noteCards.forEach(card => {
+	observer.observe(card)
+})
 
 const notificationPanel = document.querySelector('.notification-panel');
 const notificationButton = document.querySelector('.mobile-nft-btn');

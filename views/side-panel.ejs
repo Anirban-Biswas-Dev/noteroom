@@ -115,9 +115,10 @@
         </div>
     </div>
 <% } else if (block === 'search-bar') { %>
+  <div class="search-container">
     <div class="search-bar-box">
         <input type="text" class="search-bar" placeholder="Search Notes" />
-        <button>
+        <button class="search-btn">
         <i class="fa-solid fa-magnifying-glass"></i>
         </button>
         <div class="mbl-notification-elements">
@@ -136,6 +137,14 @@
         </div>
         <a href='/user/<%= root.studentID %>'><img src="<%= root.profile_pic %>" class="mbl-profile-pic" /></a>
     </div>
+    <div class="results-container" style="display: none;">
+      <div class="search-results">
+        <div class="status">
+          <div class="search-results-loader"></div>
+        </div>
+      </div>
+    </div>
+  </div>
 <% } else if (block === 'share-note') { %>
     <div class="share-note-overlay">
       <div class="share-note-modal">

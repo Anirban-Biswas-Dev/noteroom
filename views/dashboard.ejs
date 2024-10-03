@@ -1,290 +1,287 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="/css/main-pages.css" />
-    <link rel="stylesheet" href="/css/dashboard.css" />
-    <link rel="stylesheet" href="/css/loaders.css" />
-    <link rel="stylesheet" href="/css/share-note.css" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
-      rel="stylesheet"
-    />
-    <link 
-      href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" 
-      rel="stylesheet"
-    >
-    <script
-      src="https://kit.fontawesome.com/be4b1d4185.js"
-      crossorigin="anonymous"
-    ></script>
-    <script src="https://cdn.socket.io/socket.io-3.0.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
-    <title>Dashboard</title>
-  </head>
+	<!DOCTYPE html>
+	<html lang="en">
+	<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<link rel="stylesheet" href="/css/main-pages.css" />
+	<link rel="stylesheet" href="/css/dashboard.css" />
+	<link rel="stylesheet" href="/css/loaders.css" />
+	<link rel="stylesheet" href="/css/share-note.css" />
+	<link rel="preconnect" href="https://fonts.googleapis.com" />
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+	<link
+		href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+		rel="stylesheet"
+	/>
+	<link 
+		href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" 
+		rel="stylesheet"
+	>
+	<script
+		src="https://kit.fontawesome.com/be4b1d4185.js"
+		crossorigin="anonymous"
+	></script>
+	<script src="https://cdn.socket.io/socket.io-3.0.1.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
+	<title>Dashboard</title>
+	</head>
 
-  <body>
-    <%- include('side-panel', { block: 'left-panel' }) %> 
-    <%- include('side-panel', { block: 'search-bar' }) %>
+	<body>
+	<%- include('side-panel', { block: 'left-panel' }) %> 
+	<%- include('side-panel', { block: 'search-bar' }) %>
 
-    <div class="middle-section">
-      <!--* The main feed back container where all the notes will be shown dynamically -->
-      <div class="feed-container">
-        <% if(notes.length != 0) { %> <% let savedNotesIDs = []
-        savedNotes.forEach(note => { savedNotesIDs.push(note._id.toString()) })
-        %> <% notes.forEach(note => { %>
-        <div class="feed-note-card" id="note-<%= note._id %>">
-          <div class="thumbnail-container">
-            <img
-              class="thumbnail"
-              src="<%= note.content[0] %>"
-              onclick="window.location.href='/view/<%= note._id %>'"
-            />
-            <% if(savedNotesIDs.includes(note._id.toString())) { %>
-            <button
-              class="save-note-btn saved"
-              id="save-btn-<%= note._id %>"
-              onclick="saveNote('<%= note._id %>')"
-            >
-              <i class="fa-regular fa-bookmark"></i>
-              <i class="fa-solid fa-bookmark saved"></i>
-            </button>
-            <% } else { %>
-            <button
-              class="save-note-btn"
-              id="save-btn-<%= note._id %>"
-              onclick="saveNote('<%= note._id %>')"
-            >
-              <i class="fa-regular fa-bookmark"></i>
-              <i class="fa-solid fa-bookmark saved"></i>
-            </button>
-            <% } %>
-          </div>
-          <div class="note-details">
-            <div class="author-info">
-              <img
-                src="<%= note.ownerDocID.profile_pic %>"
-                class="author-img"
-              />
-              <div class="author-title-container">
-                <div class="note-title">
-                  <a href="/view/<%= note._id %>"><%= note.title %></a>
-                </div>
-                <div class="author">
-                  <a
-                    class="author-prfl-link"
-                    href="/user/<%= note.ownerDocID.studentID %>"
-                    ><%= note.ownerDocID.displayname %></a
-                  >
-                </div>
-              </div>
-            </div>
-            <div class="note-engagement">
-              <svg
-                class="download-icon"
-                width="40"
-                height="40"
-                viewBox="0 0 43 43"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                onclick="download('<%= note._id %>', '<%= note.title %>')"
-              >
-                <path
-                  d="M37.1541 26.5395V33.6165C37.1541 34.555 36.7813 35.455 36.1177 36.1186C35.4541 36.7822 34.5541 37.155 33.6156 37.155H8.84623C7.90776 37.155 7.00773 36.7822 6.34414 36.1186C5.68054 35.455 5.30774 34.555 5.30774 33.6165V26.5395M12.3847 17.6933L21.2309 26.5395M21.2309 26.5395L30.0771 17.6933M21.2309 26.5395V5.30859"
-                  stroke="#1E1E1E"
-                  stroke-width="2.29523"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-              <svg
-                onclick="window.location.href='/view/<%= note._id %>/#feedbacks';"
-                class="comment-icon"
-                width="40"
-                height="40"
-                viewBox="0 0 36 37"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M34.4051 23.9151C34.4051 24.8838 34.0257 25.8128 33.3505 26.4978C32.6753 27.1828 31.7595 27.5676 30.8045 27.5676H9.20113L2 34.8726V5.65252C2 4.68381 2.37934 3.75478 3.05458 3.0698C3.72982 2.38482 4.64564 2 5.60057 2H30.8045C31.7595 2 32.6753 2.38482 33.3505 3.0698C34.0257 3.75478 34.4051 4.68381 34.4051 5.65252V23.9151Z"
-                  stroke="#1E1E1E"
-                  stroke-width="2.40038"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-              <svg
-                class="share-icon"
-                width="40"
-                height="40"
-                viewBox="0 0 46 46"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                onclick="setupShareModal('<%= note._id %>')"
-              >
-                <path
-                  d="M30.6079 32.5223L27.8819 29.8441L36.6816 21.0444L27.8819 12.2446L30.6079 9.56641L42.0858 21.0444L30.6079 32.5223ZM3.82599 36.3483V28.6963C3.82599 26.05 4.7506 23.8023 6.59983 21.953C8.48094 20.0719 10.7446 19.1314 13.391 19.1314H25.2037L18.3169 12.2446L21.0429 9.56641L32.5209 21.0444L21.0429 32.5223L18.3169 29.8441L25.2037 22.9574H13.391C11.7968 22.9574 10.4418 23.5153 9.32584 24.6312C8.20993 25.7471 7.65197 27.1022 7.65197 28.6963V36.3483H3.82599Z"
-                  fill="#1D1B20"
-                />
-              </svg>
-            </div>
-          </div>
-        </div>
-        <% }) %> <% } %>
-      </div>
-    </div>
+	<div class="middle-section">
+		<!--* The main feed back container where all the notes will be shown dynamically -->
+		<div class="feed-container">
+		<% if(notes.length != 0) { %> 
+			<% let savedNotesIDs = []
+			savedNotes.forEach(note => { 
+				savedNotesIDs.push(note._id.toString()) 
+			})
+			%> 
+			<% notes.forEach(note => { %>
+				<div class="feed-note-card" id="note-<%= note._id %>">
+					<div class="thumbnail-container">
+						<div class="thumbnail-loading">
+							<svg className="w-10 h-10" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 18">
+								<path 
+									d="M18 0H2a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2Zm-5.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm4.376 10.481A1 1 0 0 1 16 15H4a1 1 0 0 1-.895-1.447l3.5-7A1 1 0 0 1 7.468 6a.965.965 0 0 1 .9.5l2.775 4.757 1.546-1.887a1 1 0 0 1 1.618.1l2.541 4a1 1 0 0 1 .028 1.011Z" 
+									style="fill: hsl(0, 0%, 80%);" 
+								/>
+							</svg>
+						</div> 
 
-    <%- include('side-panel', { block: 'right-panel' }) %>
+						<img class="thumbnail" data-src="<%= note.content[0] %>" onclick="window.location.href='/view/<%= note._id %>'"/>
 
-    <!-- Mobile Bottom Control Bar -->
-    <div class="mbl-ctrl-panel">
-      <svg
-        class="mbl-btn-home"
-        width="30"
-        height="31"
-        viewBox="0 0 26 27"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        xmlns:xlink="http://www.w3.org/1999/xlink"
-      >
-        <rect y="0.5" width="26" height="26" fill="url(#pattern0_1165_1254)" />
-        <defs>
-          <pattern
-            id="pattern0_1165_1254"
-            patternContentUnits="objectBoundingBox"
-            width="1"
-            height="1"
-          >
-            <use xlink:href="#image0_1165_1254" transform="scale(0.01)" />
-          </pattern>
-          <image
-            id="image0_1165_1254"
-            width="100"
-            height="100"
-            xlink:href="data:image/png;base64,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"
-          />
-        </defs>
-      </svg>
-      <svg
-        class="mbl-saved-notes-page"
-        width="23"
-        height="23"
-        viewBox="0 0 23 23"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        xmlns:xlink="http://www.w3.org/1999/xlink"
-      >
-        <rect width="23" height="23" fill="url(#pattern0_1165_1255)" />
-        <defs>
-          <pattern
-            id="pattern0_1165_1255"
-            patternContentUnits="objectBoundingBox"
-            width="1"
-            height="1"
-          >
-            <use xlink:href="#image0_1165_1255" transform="scale(0.01)" />
-          </pattern>
-          <image
-            id="image0_1165_1255"
-            width="100"
-            height="100"
-            xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAAAXNSR0IArs4c6QAABEVJREFUeAHtnc9uEzEQxlfNSuWPWqTCgTPwRAjxIEXwbPAIIC49hLa7RRxacW9pnUg9LFpKpdpZ+7Mz6x1H+ZAQOOPxfPP9djZR0zZVxT90gA7QATpAB+gAHaADdIAO0IHSHTjqntaN+bRzuvxet+a6bhfd9vw1t3V786U6vXpRBKbds+WbujHN9gAYvth2GnOkD6WfjNacbjuM+/7VofS3qXsx/PduclSh3D1nDI9wDKAi7rkCEb4e1aBIn8AFXhSR6gNy9/jNj+rX9ctJhYYF4cmZVGyGYrj/iaFgQWEoGTya9Mi4/ieEEifID2VS9zIUi+9/IijxgoahZPBo0iPT+p8ASpqgVSiTujdQDOkfSLEeQvmr8cxQVguumh7aY3WnsAhp62NIEsofjmeEMlwwHgpqOHcc6Uf1Ub4/ngmKv2AcFNRw7jjSj+qj/HA8A5RwQQwFNZw7jvSj+igfx0eGgguGoaCGc8eRflQf5cfFR4QSV9APBTWcO470o/ooPz4+EpT4gsNQUMO540g/qo/yk+LN4jOqB+NJBQfeRYQFMm9A+lF5lJ8WN7eoHoynFVydElgg8wakH5VH+alxVA/GUwu6+2GBzBtcPe4alXf3S9eoHoyrC4AKwxuQ/nB2VaH81DiqB+OpBd39sEDmDa4ed43Ku/ula1QPxtUFQIXhDUh/OJsTgvxJjhOI89I32cGREwikMCBSvghoalyqR/wqQyxA+YBUw9F+cTuoAIpXbbcvFqF1wM/uGeovNS5uJbWgu3/WmLdiEUoHzFrzzu1Huha3IhXQf19wdXz1XCxk6gPmlwezxrTy/u0vJ4nbGEnQxaw17zfi9tV2+/1k5IDRe1kKkC36WRJ7ItwLmkCcl+GuQVOvCYRAwiM79RVZWj1OCCeEExKaSk4IJ4QTwgkpbAoIhEB4WwpNQSjGJ/XCpodACIS3s024ZZ33X9KuTro98chOfcBJt9e/yTbWL98Ryw/RjoydV/PLA7EQ7QPmlwd1u7iI7Nn7doO4DamAf5MhVlHGAf2bbFI/xJ2IBWzibcrn2gjf9OA7OvpxMZDoSpuxUd0PdQGFcVL3Q10AgdgOEEhhfhAIgdgOFLZSv0DVBRCI7QCBFOYHgRCI7UBhK/ULVF0AgdgOEEhhfhAIgdgOFLZSv0DVBRCI7QCBFOYHgRCI7UBhK/ULVF0AgdgOEEhhfhAIgdgOFLZSv0DVBRCI7QCBFOaHD4gt0/+r8Nx9m75W90NdQGEE1f1QF0AgtgMEUpgfdWv++KDEPG63s/mrmJ79e8yV2IFt/+hV10C/2fgnx2bN4pt7XvK6bsxHiQjmPgRlDpMBrCT0H999Zk5o7ENj1/m/Oa7Ou8cr/q7zwG67fE0o60C4zzHHj5rlq3W89+f87p7UZ+bDrF18lX6C9HZMm7n+79XhaJPhp8MIHaADdIAO0AE6QAfoAB2gA3Qg2YG/b/pA8o8yTgcAAAAASUVORK5CYII="
-          />
-        </defs>
-      </svg>
-      <svg
-        class="mbl-upload-btn"
-        width="50"
-        height="50"
-        viewBox="0 0 39 39"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        xmlns:xlink="http://www.w3.org/1999/xlink"
-      >
-        <rect width="39" height="39" fill="url(#pattern0_1165_1256)" />
-        <defs>
-          <pattern
-            id="pattern0_1165_1256"
-            patternContentUnits="objectBoundingBox"
-            width="1"
-            height="1"
-          >
-            <use xlink:href="#image0_1165_1256" transform="scale(0.01)" />
-          </pattern>
-          <image
-            id="image0_1165_1256"
-            width="100"
-            height="100"
-            xlink:href="data:image/png;base64,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"
-          />
-        </defs>
-      </svg>
-      <!-- SVG should be our primary icon format unless cdn icons like fontawesome is too imp. Waiting for UI designer to give final icons for the next two -->
-      <svg
-        class="search-prfls-mbl-btn"
-        width="37"
-        height="36"
-        viewBox="0 0 37 36"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path d="M30.5 29.5L35 34" stroke="#04DBF7" stroke-width="3" />
-        <circle cx="16" cy="7" r="7" fill="#04DBF7" />
-        <circle cx="26" cy="25" r="6.5" stroke="#04DBF7" stroke-width="3" />
-        <path
-          d="M3.00002 22.0017C6.65927 17.4275 14.4981 17.036 15.999 18.0188C17.5 19.0017 17.5 19.5017 15.999 24.0188C14.4981 28.536 19 30 15.999 30.0188C12.9981 30.0377 0.999054 30.0188 0.999054 30.0188C0.999054 30.0188 0.0726075 25.6611 3.00002 22.0017Z"
-          fill="#04DBF7"
-        />
-      </svg>
-      <svg
-        class="mbl-settings-icon"
-        width="40"
-        height="41"
-        viewBox="0 0 34 35"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        xmlns:xlink="http://www.w3.org/1999/xlink"
-      >
-        <rect y="0.5" width="34" height="34" fill="url(#pattern0_1165_1258)" />
-        <defs>
-          <pattern
-            id="pattern0_1165_1258"
-            patternContentUnits="objectBoundingBox"
-            width="1"
-            height="1"
-          >
-            <use xlink:href="#image0_1165_1258" transform="scale(0.01)" />
-          </pattern>
-          <image
-            id="image0_1165_1258"
-            width="100"
-            height="100"
-            xlink:href="data:image/png;base64,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"
-          />
-        </defs>
-      </svg>
-    </div>
-    <div class="background-overlay"></div>
-    <div id="overlay" class="overlay"></div>
+						<% if(savedNotesIDs.includes(note._id.toString())) { %>
+							<button class="save-note-btn saved" id="save-btn-<%= note._id %>" onclick="saveNote('<%= note._id %>')">
+								<i class="fa-regular fa-bookmark"></i>
+								<i class="fa-solid fa-bookmark saved"></i>
+							</button>
+						<% } else { %>
+							<button class="save-note-btn" id="save-btn-<%= note._id %>" onclick="saveNote('<%= note._id %>')">
+								<i class="fa-regular fa-bookmark"></i>
+								<i class="fa-solid fa-bookmark saved"></i>
+							</button>
+						<% } %>
+					</div>
 
-    <div class="popup" id="popup">
-      <h2>Congratulations!</h2>
-      <p>Click the button below to trigger the confetti.</p>
-      <button class="button" onclick="triggerConfetti()">Celebrate!</button>
-    </div>
-    <%- include('side-panel', { block: 'share-note' }) %>
-    <%- include('side-panel', { block: 'downloading-loader' }) %>
+					<div class="note-details">
+					<div class="author-info">
+						<img src="<%= note.ownerDocID.profile_pic %>" class="author-img"/>
+						<div class="author-title-container">
+						<div class="note-title">
+							<a href="/view/<%= note._id %>"><%= note.title %></a>
+						</div>
+						<div class="author">
+							<a class="author-prfl-link" href="/user/<%= note.ownerDocID.studentID %>"><%= note.ownerDocID.displayname %></a>
+						</div>
+						</div>
+					</div>
+					<div class="note-engagement">
+						<svg
+							class="download-icon"
+							width="40"
+							height="40"
+							viewBox="0 0 43 43"
+							fill="none"
+							xmlns="http://www.w3.org/2000/svg"
+							onclick="download('<%= note._id %>', '<%= note.title %>')"
+						>
+						<path
+							d="M37.1541 26.5395V33.6165C37.1541 34.555 36.7813 35.455 36.1177 36.1186C35.4541 36.7822 34.5541 37.155 33.6156 37.155H8.84623C7.90776 37.155 7.00773 36.7822 6.34414 36.1186C5.68054 35.455 5.30774 34.555 5.30774 33.6165V26.5395M12.3847 17.6933L21.2309 26.5395M21.2309 26.5395L30.0771 17.6933M21.2309 26.5395V5.30859"
+							stroke="#1E1E1E"
+							stroke-width="2.29523"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+						/>
+						</svg>
+						<svg
+							onclick="window.location.href='/view/<%= note._id %>/#feedbacks';"
+							class="comment-icon"
+							width="40"
+							height="40"
+							viewBox="0 0 36 37"
+							fill="none"
+							xmlns="http://www.w3.org/2000/svg"
+						>
+						<path
+							d="M34.4051 23.9151C34.4051 24.8838 34.0257 25.8128 33.3505 26.4978C32.6753 27.1828 31.7595 27.5676 30.8045 27.5676H9.20113L2 34.8726V5.65252C2 4.68381 2.37934 3.75478 3.05458 3.0698C3.72982 2.38482 4.64564 2 5.60057 2H30.8045C31.7595 2 32.6753 2.38482 33.3505 3.0698C34.0257 3.75478 34.4051 4.68381 34.4051 5.65252V23.9151Z"
+							stroke="#1E1E1E"
+							stroke-width="2.40038"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+						/>
+						</svg>
+						<svg
+							class="share-icon"
+							width="40"
+							height="40"
+							viewBox="0 0 46 46"
+							fill="none"
+							xmlns="http://www.w3.org/2000/svg"
+							onclick="setupShareModal('<%= note._id %>')"
+						>
+						<path
+							d="M30.6079 32.5223L27.8819 29.8441L36.6816 21.0444L27.8819 12.2446L30.6079 9.56641L42.0858 21.0444L30.6079 32.5223ZM3.82599 36.3483V28.6963C3.82599 26.05 4.7506 23.8023 6.59983 21.953C8.48094 20.0719 10.7446 19.1314 13.391 19.1314H25.2037L18.3169 12.2446L21.0429 9.56641L32.5209 21.0444L21.0429 32.5223L18.3169 29.8441L25.2037 22.9574H13.391C11.7968 22.9574 10.4418 23.5153 9.32584 24.6312C8.20993 25.7471 7.65197 27.1022 7.65197 28.6963V36.3483H3.82599Z"
+							fill="#1D1B20"
+						/>
+						</svg>
+					</div>
+					</div>
+				</div>
+		<% }) %> 
+		<% } %>
+		</div>
+	</div>
 
-    <canvas id="confettiCanvas"></canvas>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.10.4/gsap.min.js"></script>
-    <!-- Audio for Notification -->
-    <audio id="notification-sound" src="notification-ping-sound.mp3" preload="auto"></audio>
+	<%- include('side-panel', { block: 'right-panel' }) %>
 
-    <script src="/js/dashboard.js"></script>
-    <script src="/js/controller.js"></script>
-  </body>
-</html>
+	<!-- Mobile Bottom Control Bar -->
+	<div class="mbl-ctrl-panel">
+		<svg
+		class="mbl-btn-home"
+		width="30"
+		height="31"
+		viewBox="0 0 26 27"
+		fill="none"
+		xmlns="http://www.w3.org/2000/svg"
+		xmlns:xlink="http://www.w3.org/1999/xlink"
+		>
+		<rect y="0.5" width="26" height="26" fill="url(#pattern0_1165_1254)" />
+		<defs>
+			<pattern
+			id="pattern0_1165_1254"
+			patternContentUnits="objectBoundingBox"
+			width="1"
+			height="1"
+			>
+			<use xlink:href="#image0_1165_1254" transform="scale(0.01)" />
+			</pattern>
+			<image
+			id="image0_1165_1254"
+			width="100"
+			height="100"
+			xlink:href="data:image/png;base64,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"
+			/>
+		</defs>
+		</svg>
+		<svg
+		class="mbl-saved-notes-page"
+		width="23"
+		height="23"
+		viewBox="0 0 23 23"
+		fill="none"
+		xmlns="http://www.w3.org/2000/svg"
+		xmlns:xlink="http://www.w3.org/1999/xlink"
+		>
+		<rect width="23" height="23" fill="url(#pattern0_1165_1255)" />
+		<defs>
+			<pattern
+			id="pattern0_1165_1255"
+			patternContentUnits="objectBoundingBox"
+			width="1"
+			height="1"
+			>
+			<use xlink:href="#image0_1165_1255" transform="scale(0.01)" />
+			</pattern>
+			<image
+			id="image0_1165_1255"
+			width="100"
+			height="100"
+			xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAAAXNSR0IArs4c6QAABEVJREFUeAHtnc9uEzEQxlfNSuWPWqTCgTPwRAjxIEXwbPAIIC49hLa7RRxacW9pnUg9LFpKpdpZ+7Mz6x1H+ZAQOOPxfPP9djZR0zZVxT90gA7QATpAB+gAHaADdIAO0IHSHTjqntaN+bRzuvxet+a6bhfd9vw1t3V786U6vXpRBKbds+WbujHN9gAYvth2GnOkD6WfjNacbjuM+/7VofS3qXsx/PduclSh3D1nDI9wDKAi7rkCEb4e1aBIn8AFXhSR6gNy9/jNj+rX9ctJhYYF4cmZVGyGYrj/iaFgQWEoGTya9Mi4/ieEEifID2VS9zIUi+9/IijxgoahZPBo0iPT+p8ASpqgVSiTujdQDOkfSLEeQvmr8cxQVguumh7aY3WnsAhp62NIEsofjmeEMlwwHgpqOHcc6Uf1Ub4/ngmKv2AcFNRw7jjSj+qj/HA8A5RwQQwFNZw7jvSj+igfx0eGgguGoaCGc8eRflQf5cfFR4QSV9APBTWcO470o/ooPz4+EpT4gsNQUMO540g/qo/yk+LN4jOqB+NJBQfeRYQFMm9A+lF5lJ8WN7eoHoynFVydElgg8wakH5VH+alxVA/GUwu6+2GBzBtcPe4alXf3S9eoHoyrC4AKwxuQ/nB2VaH81DiqB+OpBd39sEDmDa4ed43Ku/ula1QPxtUFQIXhDUh/OJsTgvxJjhOI89I32cGREwikMCBSvghoalyqR/wqQyxA+YBUw9F+cTuoAIpXbbcvFqF1wM/uGeovNS5uJbWgu3/WmLdiEUoHzFrzzu1Huha3IhXQf19wdXz1XCxk6gPmlwezxrTy/u0vJ4nbGEnQxaw17zfi9tV2+/1k5IDRe1kKkC36WRJ7ItwLmkCcl+GuQVOvCYRAwiM79RVZWj1OCCeEExKaSk4IJ4QTwgkpbAoIhEB4WwpNQSjGJ/XCpodACIS3s024ZZ33X9KuTro98chOfcBJt9e/yTbWL98Ryw/RjoydV/PLA7EQ7QPmlwd1u7iI7Nn7doO4DamAf5MhVlHGAf2bbFI/xJ2IBWzibcrn2gjf9OA7OvpxMZDoSpuxUd0PdQGFcVL3Q10AgdgOEEhhfhAIgdgOFLZSv0DVBRCI7QCBFOYHgRCI7UBhK/ULVF0AgdgOEEhhfhAIgdgOFLZSv0DVBRCI7QCBFOYHgRCI7UBhK/ULVF0AgdgOEEhhfhAIgdgOFLZSv0DVBRCI7QCBFOaHD4gt0/+r8Nx9m75W90NdQGEE1f1QF0AgtgMEUpgfdWv++KDEPG63s/mrmJ79e8yV2IFt/+hV10C/2fgnx2bN4pt7XvK6bsxHiQjmPgRlDpMBrCT0H999Zk5o7ENj1/m/Oa7Ou8cr/q7zwG67fE0o60C4zzHHj5rlq3W89+f87p7UZ+bDrF18lX6C9HZMm7n+79XhaJPhp8MIHaADdIAO0AE6QAfoAB2gA3Qg2YG/b/pA8o8yTgcAAAAASUVORK5CYII="
+			/>
+		</defs>
+		</svg>
+		<svg
+		class="mbl-upload-btn"
+		width="50"
+		height="50"
+		viewBox="0 0 39 39"
+		fill="none"
+		xmlns="http://www.w3.org/2000/svg"
+		xmlns:xlink="http://www.w3.org/1999/xlink"
+		>
+		<rect width="39" height="39" fill="url(#pattern0_1165_1256)" />
+		<defs>
+			<pattern
+			id="pattern0_1165_1256"
+			patternContentUnits="objectBoundingBox"
+			width="1"
+			height="1"
+			>
+			<use xlink:href="#image0_1165_1256" transform="scale(0.01)" />
+			</pattern>
+			<image
+			id="image0_1165_1256"
+			width="100"
+			height="100"
+			xlink:href="data:image/png;base64,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"
+			/>
+		</defs>
+		</svg>
+		<!-- SVG should be our primary icon format unless cdn icons like fontawesome is too imp. Waiting for UI designer to give final icons for the next two -->
+		<svg
+		class="search-prfls-mbl-btn"
+		width="37"
+		height="36"
+		viewBox="0 0 37 36"
+		fill="none"
+		xmlns="http://www.w3.org/2000/svg"
+		>
+		<path d="M30.5 29.5L35 34" stroke="#04DBF7" stroke-width="3" />
+		<circle cx="16" cy="7" r="7" fill="#04DBF7" />
+		<circle cx="26" cy="25" r="6.5" stroke="#04DBF7" stroke-width="3" />
+		<path
+			d="M3.00002 22.0017C6.65927 17.4275 14.4981 17.036 15.999 18.0188C17.5 19.0017 17.5 19.5017 15.999 24.0188C14.4981 28.536 19 30 15.999 30.0188C12.9981 30.0377 0.999054 30.0188 0.999054 30.0188C0.999054 30.0188 0.0726075 25.6611 3.00002 22.0017Z"
+			fill="#04DBF7"
+		/>
+		</svg>
+		<svg
+		class="mbl-settings-icon"
+		width="40"
+		height="41"
+		viewBox="0 0 34 35"
+		fill="none"
+		xmlns="http://www.w3.org/2000/svg"
+		xmlns:xlink="http://www.w3.org/1999/xlink"
+		>
+		<rect y="0.5" width="34" height="34" fill="url(#pattern0_1165_1258)" />
+		<defs>
+			<pattern
+			id="pattern0_1165_1258"
+			patternContentUnits="objectBoundingBox"
+			width="1"
+			height="1"
+			>
+			<use xlink:href="#image0_1165_1258" transform="scale(0.01)" />
+			</pattern>
+			<image
+			id="image0_1165_1258"
+			width="100"
+			height="100"
+			xlink:href="data:image/png;base64,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"
+			/>
+		</defs>
+		</svg>
+	</div>
+	<div class="background-overlay"></div>
+	<div id="overlay" class="overlay"></div>
+
+	<div class="popup" id="popup">
+		<h2>Congratulations!</h2>
+		<p>Click the button below to trigger the confetti.</p>
+		<button class="button" onclick="triggerConfetti()">Celebrate!</button>
+	</div>
+	<%- include('side-panel', { block: 'share-note' }) %>
+	<%- include('side-panel', { block: 'downloading-loader' }) %>
+
+	<canvas id="confettiCanvas"></canvas>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.10.4/gsap.min.js"></script>
+	<!-- Audio for Notification -->
+	<audio id="notification-sound" src="notification-ping-sound.mp3" preload="auto"></audio>
+
+	<script src="/js/dashboard.js"></script>
+	<script src="/js/controller.js"></script>
+	</body>
+	</html>

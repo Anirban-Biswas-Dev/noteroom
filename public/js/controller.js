@@ -103,3 +103,61 @@ function share(platform) {
             break
     }
 }
+
+async function searchNotes() {
+    let searchedResults = document.querySelector('.search-results')
+    let existingNotes = searchedResults.querySelectorAll('div.results-card')
+    let status = document.querySelector('.status')
+
+    if(existingNotes) {
+        existingNotes.forEach(note => {
+            note.remove()
+        })
+    }
+    let searchTerm = document.querySelector('.search-bar').value
+    if(searchTerm.length > 0) {
+        status.style.display = 'flex' // Start of loading
+        let response = await fetch(`/search?q=${encodeURIComponent(searchTerm)}`)
+        let notes = await response.json()
+        status.style.display = 'none' // End of loading
+        if(notes.length > 0) {
+            document.querySelector('.status').style.display = 'none'
+            notes.forEach(note => {
+                searchedResults.insertAdjacentHTML('afterbegin', `
+                    <a href="/view/${note._id}" style="text-decoration: none;">
+                        <div class="results-card" id="note-${note._id}">
+                            <p class="result-note-title">${note.title}</p>
+                            <i class="fa-solid fa-arrow-up"></i>
+                        </div>
+                    </a>
+                `)
+            })
+        } else {
+            searchedResults.insertAdjacentHTML('afterbegin', `
+                <div class="results-card">
+                    <p class="result-note-title">We didn't find any note related to your search</p>
+                    <i class="fa-solid fa-arrow-up"></i>
+                </div>
+            `)
+        }
+    }
+}
+
+let searchBtn = document.querySelector('.search-btn')
+searchBtn.addEventListener('click', searchNotes)
+
+
+let searchInput = document.querySelector('.search-bar')
+let resultsContainer = document.querySelector('.results-container')
+
+// Press enter and the search will happen
+searchInput.addEventListener('keydown', (event) => {
+    if(event.key === 'Enter') {
+        searchBtn.click()
+    }
+})
+
+// Design this Arnob
+searchInput.addEventListener('focus', function() {
+    resultsContainer.style.display = 'flex';
+})

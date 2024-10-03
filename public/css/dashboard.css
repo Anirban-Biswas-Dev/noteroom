@@ -42,12 +42,61 @@ body {
   border: 1px solid #081c30;
   border-radius: 8px;
   object-fit: cover;
+  display: none;
 }
 
 .thumbnail-container {
   position: relative;
   display: inline-block;
 }
+.thumbnail-loading {
+  width: 100%;
+  height: 360px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+  animation: hintloading 1s linear infinite alternate;
+  -webkit-animation: hintloading 1s linear infinite alternate;
+  svg{
+    width: 20%;
+    max-width: 40px;
+    height: auto;
+    opacity: .5;
+  }
+}
+
+@keyframes hintloading {
+  0% {
+    background-color: hsl(0, 0%, 90%); /* Light gray */
+  }
+  
+  50% {
+    background-color: hsl(0, 0%, 95%); /* Almost white (very light gray) */
+  }
+  
+  100% {
+    background-color: hsl(0, 0%, 90%); /* Back to light gray */
+  }
+}
+
+@-webkit-keyframes hintloading {
+  0% {
+    background-color: hsl(0, 0%, 90%);
+  }
+  
+  50% {
+    background-color: hsl(0, 0%, 95%); /* Almost white */
+
+  }
+  
+  100% {
+    background-color: hsl(0, 0%, 90%);
+  }
+}
+
+
+
 
 .save-note-btn {
   position: absolute;

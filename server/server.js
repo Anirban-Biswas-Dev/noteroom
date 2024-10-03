@@ -115,6 +115,13 @@ app.post('/download', async (req, res) => {
     archive.finalize();
 })
 
+app.get('/search', async (req, res, next) => {
+    let searchTerm = req.query.q
+    const regex = new RegExp(searchTerm.split(' ').map(word => `(${word})`).join('.*'), 'i');
+    let notes = await Notes.find({ title: { $regex: regex } }, { title: 1 })
+    res.json(notes)
+})
+
 app.get('*', (req, res) => {
     res.status(404)
     res.render('404-error', { message: 'The page you are looking for is not found' }) 

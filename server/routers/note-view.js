@@ -50,6 +50,11 @@ function noteViewRouter(io) {
         return feednoti
     }
 
+    async function getStudentInfo(studentID) {
+        let student = await Students.findOne({ studentID: studentID }, { displayname: 1, studentID: 1, profile_pic: 1 })
+        return student
+    }
+
     io.on('connection', (socket) => {
         socket.on('join-room', room => {
             socket.join(room)
@@ -86,18 +91,19 @@ function noteViewRouter(io) {
     router.get('/:noteID?', async (req, res, next) => {
         let noteDocID = req.params.noteID
         let information = await getNote(noteDocID)
+        let root = await getStudentInfo(req.session.stdid)
         let [note, owner, feedbacks] = [information['note'], information['owner'], information['feedbacks']]
         if (req.session.stdid) {
-            let mynote = true //* Varifing if a note is mine or not: corrently using for not allowing users to give feedbacks based on some situations (self-notes and viewing notes without being logged in)
+            let mynote = 1 //* Varifing if a note is mine or not: corrently using for not allowing users to give feedbacks based on some situations (self-notes and viewing notes without being logged in)
             if (noteDocID) {
                 try {
                     let savedNotes = await getSavedNotes(Students, Notes, req.session.stdid)
                     let notis = await getNotifications(allNotifs, req.cookies['recordName'])
                     if (note.ownerDocID == req.cookies['recordID']) {
-                        res.render('note-view', { note: note, mynote: mynote, owner: owner, feedbacks: feedbacks, root: owner, savedNotes: savedNotes, notis: notis }) // Specific notes: visiting my notes
+                        res.render('note-view', { note: note, mynote: mynote, owner: owner, feedbacks: feedbacks, root: root, savedNotes: savedNotes, notis: notis }) // Specific notes: visiting my notes
                     } else {
-                        mynote = false
-                        res.render('note-view', { note: note, mynote: mynote, owner: owner, feedbacks: feedbacks, root: owner, savedNotes: savedNotes, notis: notis }) // Specific notes: visiting others notes
+                        mynote = 0
+                        res.render('note-view', { note: note, mynote: mynote, owner: owner, feedbacks: feedbacks, root: root, savedNotes: savedNotes, notis: notis }) // Specific notes: visiting others notes
                     }
                 } catch (error) {
                     next(error)
@@ -111,7 +117,7 @@ function noteViewRouter(io) {
                 }
             }
         } else {
-            res.render('note-view', { note: note, mynote: true, owner: owner, feedbacks: feedbacks, root: owner }) // Specific notes: visiting notes without being logged in
+            res.render('note-view', { note: note, mynote: 3, owner: owner, feedbacks: feedbacks, root: owner }) // Specific notes: visiting notes without being logged in
         }
     })
 
