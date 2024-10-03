@@ -50,8 +50,8 @@
 
             <!-- Step 2: College Information -->
             <div class="step" id="step-2">
-                <input type="text" name="studentID" placeholder="Student ID" class="input-field">
-                <input type="text" name="rollnumber" placeholder="Roll Number" class="input-field">
+                <input type="text" name="studentID" placeholder="ID (5-digit roll e.g. 10422)" class="input-field">
+                <input type="text" name="rollnumber" placeholder="Class Roll (e.g. 422)" class="input-field">
                 <select name="collegesection" class="input-field">
                     <option value="">College Section</option>
                     <option value="A">A</option>
@@ -60,10 +60,14 @@
                     <option value="D">D</option>
                     <option value="E">E</option>
                 </select>
-                <input type="text" name="collegeyear" placeholder="College Year" class="input-field">
-                <textarea name="bio" placeholder="Bio (Optional)" class="input-field"></textarea>
-                <button type="button" class="back-button">Back</button>
+                <select name="collegeyear" class="input-field">
+                    <option value="">Select College Year</option>
+                    <option value="1st">1st Year👶</option>
+                    <option value="2nd">2nd Year😎</option>
+                  </select>
+                <textarea name="bio" placeholder="Tell the world something about you" class="input-field"></textarea>
                 <button type="button" class="next-button">Next</button>
+                <button type="button" class="back-button">Back</button>
             </div>
 
             <!-- Step 3: Academic Preferences -->
