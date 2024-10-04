@@ -21,6 +21,8 @@ const noteViewRouter = require('./routers/note-view')
 const dashboardRouter = require('./routers/dashboard')
 
 const Notes = require('./schemas/notes')
+const Students = require('./schemas/students')
+// const { getSavedNotes } = require('./routers/controller')
 
 const url = process.env.MONGO_URI
 mongoose.connect(url).then(() => {
@@ -120,6 +122,30 @@ app.get('/search', async (req, res, next) => {
     const regex = new RegExp(searchTerm.split(' ').map(word => `(${word})`).join('.*'), 'i');
     let notes = await Notes.find({ title: { $regex: regex } }, { title: 1 })
     res.json(notes)
+})
+
+app.get('/getnote', async (req, res, next) => {
+    let type = req.query.type
+    async function getSavedNotes(studentDocID) {
+        let student = await Students.findById(studentDocID, { saved_notes: 1 } )
+        let saved_notes_ids = student['saved_notes']
+        let notes = await Notes.find({ _id: { $in: saved_notes_ids } }, { title: 1 })
+        return notes
+    }
+    if(type === 'save') {
+        let studentDocID = req.query.studentDocID
+        let savedNotes = await getSavedNotes(studentDocID)
+        res.json(savedNotes)
+    } else if(type === 'seg') {
+        let {page, count} = req.query
+        let skip = (page - 1) * count
+        let notes = await Notes.find({}).skip(skip).limit(count).populate('ownerDocID', 'profile_pic displayname studentID')
+        if(notes.length != 0) {
+            res.json(notes)
+        } else {
+            res.json([])
+        }
+    }
 })
 
 app.get('*', (req, res) => {

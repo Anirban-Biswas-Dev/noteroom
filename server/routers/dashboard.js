@@ -27,7 +27,9 @@ function dashboardRouter(io) {
     }
 
     async function getAllNotes() {
-        let notes = await Notes.find({}, { ownerDocID: 1, title: 1, content: 1 }).populate('ownerDocID', 'profile_pic displayname studentID')
+        let notes = await Notes.find({}, { ownerDocID: 1, title: 1, content: 1 })
+            .limit(3)
+            .populate('ownerDocID', 'profile_pic displayname studentID')
         return notes
     }
 
