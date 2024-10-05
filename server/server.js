@@ -95,7 +95,11 @@ app.post('/download', async (req, res) => {
     const noteLinks = (await Notes.findById(noteID, { content: 1 })).content
     
     res.setHeader('Content-Type', 'application/zip');
-    res.setHeader('Content-Disposition', `attachment; filename=${noteTitle}.zip`);
+
+    const sanitizeFilename = (filename) => {
+        return filename.replace(/[^a-zA-Z0-9\.\-\_]/g, '_'); // Replace any invalid characters with an underscore
+    }
+    res.setHeader('Content-Disposition', `attachment; filename=${sanitizeFilename(noteTitle)}.zip`);
 
     const archive = archiver('zip', { zlib: { level: 9 } });
     archive.pipe(res);
