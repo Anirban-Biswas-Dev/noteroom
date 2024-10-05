@@ -20,6 +20,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 let file = null
 let stackFiles = [] //* All the stacked File Objects will be stored here
+let stackImgNum = 0; // Stack size number will be stored here
+let stackImgNumMsg = '';
+const stackNumBox = document.querySelector('.stack-number-container');
+const uploadSuccessful = document.querySelector('.success-upload-msg');
 document.querySelector('input#fileInput').addEventListener('change', function (event) {
     file = event.target.files[0]
     let thumbnailPopup = document.querySelector('.thumbnail-pop-up'); // The hidden thumbnail
@@ -53,6 +57,37 @@ document.querySelector('input#fileInput').addEventListener('change', function (e
                 thumbnailPopup.style.display = 'none'; // Closing the preview
                 bgOverlay.style.display = 'none';
                 console.log(stackFiles)
+            function updateStackStatus () {
+                    stackImgNum = stackFiles.length; 
+                    let message = stackImgNum === 1 ? '1 Image Added' : `${stackImgNum} Images Added`;
+                    document.querySelector('.stack-number').textContent = message;
+                    if (stackImgNum >= 1 && stackImgNum <= 5) {
+                        stackNumBox.style.backgroundColor = '#DEEDFF';
+                        stackNumBox.style.borderColor = '#2D61D8'; 
+                    } else if (stackImgNum >= 6) {
+                        stackNumBox.style.backgroundColor = '#F2F8F0'; 
+                        stackNumBox.style.borderColor = '#529F3D'; 
+                    };
+            }; 
+            // function to show the temp msg on successful upload
+            function showSuEffect() {
+                uploadSuccessful.style.display = 'flex';
+                
+                requestAnimationFrame(() => {
+                    uploadSuccessful.classList.add('s-u-effect');
+                });
+            
+                setTimeout(() => {
+                    uploadSuccessful.classList.remove('s-u-effect');
+                    
+                    setTimeout(() => {
+                        uploadSuccessful.style.display = 'none';
+                    }, 400); 
+                }, 2000); 
+            }
+            updateStackStatus()
+            showSuEffect();
+                
             }
         })
     }
