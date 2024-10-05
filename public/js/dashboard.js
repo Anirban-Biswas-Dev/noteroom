@@ -24,7 +24,15 @@ function addNote(noteData) {
   let noteCardsHtml = `
   				<div class="feed-note-card" id="note-${noteData.noteID}">
 					<div class="thumbnail-container">
-						<img class="thumbnail" src='loading.jpg' data-src="${noteData.thumbnail}" onclick="window.location.href='/view/${noteData.noteID}'" > 
+						<div class="thumbnail-loading">
+							<svg className="w-10 h-10" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 18">
+								<path 
+									d="M18 0H2a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2Zm-5.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm4.376 10.481A1 1 0 0 1 16 15H4a1 1 0 0 1-.895-1.447l3.5-7A1 1 0 0 1 7.468 6a.965.965 0 0 1 .9.5l2.775 4.757 1.546-1.887a1 1 0 0 1 1.618.1l2.541 4a1 1 0 0 1 .028 1.011Z" 
+									style="fill: hsl(0, 0%, 80%);" 
+								/>
+							</svg>
+						</div>
+						<img class="thumbnail" data-src="${noteData.thumbnail}" onclick="window.location.href='/view/${noteData.noteID}'" > 
 						<button class="save-note-btn" id="save-btn-${noteData.noteID}" onclick="saveNote('${noteData.noteID}')">
 							<i class="fa-regular fa-bookmark"></i>
 							<i class="fa-solid fa-bookmark saved"></i>
@@ -53,6 +61,9 @@ function addNote(noteData) {
 			</div> 
 	`; 
   document.querySelector('.feed-container').insertAdjacentHTML('beforeend', noteCardsHtml);
+  let newNoteCard = document.querySelector('.feed-note-card:last-child')
+  observer.observe(newNoteCard)
+  document.querySelector('.fetch-loading').style.display = 'flex'
 }
 let notificationCount = 0;
 
@@ -203,18 +214,24 @@ let [navigate] = performance.getEntriesByType('navigation')
 if ((navigate.type === 'navigate') || (navigate.type == 'reload')) {
 
 	localStorage.clear()
-	document.querySelector('.saved-notes-container').querySelectorAll('span.saved-note-doc-id').forEach(noteDocID => {
-		let noteData = {
-			noteID: noteDocID.innerHTML,
-			noteTitle: document.querySelector(`#note-${noteDocID.innerHTML} .note-title a`).innerHTML,
-			isSavedNote: true 
-		}
-		saved_notes.push(noteData)
-	})
-	localStorage.setItem('savedNotes', JSON.stringify(saved_notes))
-	localStorage.setItem('notis', JSON.stringify([]))
-	localStorage.setItem('addedNotes', JSON.stringify([]))
 
+	let studentDocID = Cookies.get('recordID').split(':')[1].replaceAll('"', '')
+	fetch(`/getNote?type=save&studentDocID=${studentDocID}`)
+		.then(response => response.json() )
+		.then(notes => {
+			notes.forEach(note => {
+				let noteData = {
+					noteID: note._id,
+					noteTitle: note.title,
+					isSavedNote: true 
+				}	
+				saved_notes.push(noteData)
+			})
+			localStorage.setItem('savedNotes', JSON.stringify(saved_notes))
+			localStorage.setItem('notis', JSON.stringify([]))
+			localStorage.setItem('addedNotes', JSON.stringify([]))
+		})
+		.catch(error => console.log(error.message))
 
 } else if (navigate.type === 'back_forward') {
 	let Datas = Object.values(localStorage)
@@ -228,7 +245,10 @@ if ((navigate.type === 'navigate') || (navigate.type == 'reload')) {
 				}
 			} 
 			else if(note.isSavedNote) {
-				document.querySelector('.no-saved-notes-message').style.display = 'none'
+				let noSavedNoteMessage = document.querySelector('.no-saved-notes-message')
+				if(noSavedNoteMessage) {
+					noSavedNoteMessage.style.display = 'none'
+				}
 				if(isExists('savedNotes', note.noteID)) {
 					let existingNote = document.querySelector(`#saved-note-${note.noteID}`)
 					if(existingNote === null) {
@@ -299,11 +319,10 @@ const observer = new IntersectionObserver(entries => {
 				image.parentElement.querySelector('.thumbnail-loading').style.display = 'none' // End of animation, don't find the start. The animation should start auto while the page loaded. So, create the animation and then hide it here
 				image.style.display = 'flex'
 			}
-			setTimeout(() => {
-				image.src = imageURL
-				image.removeAttribute('data-src')
-				observer.unobserve(entry.target)
-			}, 2000)
+
+			image.src = imageURL
+			image.removeAttribute('data-src')
+			observer.unobserve(entry.target)
 		}	
 	})
 }, {
@@ -312,6 +331,54 @@ const observer = new IntersectionObserver(entries => {
 noteCards.forEach(card => {
 	observer.observe(card)
 })
+
+let page = 2
+async function _add(count) {
+	let notesList = [];
+
+    try {
+        let response = await fetch(`/getnote?type=seg&page=${page}&count=${count}`);
+        let notes = await response.json();
+
+        if (notes.length !== 0) {
+            notes.forEach(note => {
+                let noteData = {
+                    thumbnail: note.content[0],
+                    noteID: note._id,
+                    profile_pic: note.ownerDocID.profile_pic,
+                    noteTitle: note.title,
+                    ownerID: note.ownerDocID.studentID,
+                    ownerDisplayName: note.ownerDocID.displayname
+                };
+                notesList.push(noteData);
+            });
+            page = page + 1; // Increment the page after processing the notes
+        }
+    } catch (error) {
+        console.log(error.message);
+    }
+    return notesList;
+}
+const lastNoteObserver = new IntersectionObserver(async entries => {
+	let lastNote = entries[0]
+	if(lastNote.isIntersecting) {
+		document.querySelector('.fetch-loading').style.display = 'flex'
+		let noteList = await _add(3)
+		if(noteList.length != 0) {
+			noteList.forEach(note => {
+				addNote(note)
+			})
+			lastNoteObserver.unobserve(lastNote.target)
+			lastNoteObserver.observe(document.querySelector('.feed-note-card:last-child'))
+		} else {
+			document.querySelector('.finish').style.display = 'flex'
+  			document.querySelector('.fetch-loading').style.display = 'none'
+		}
+	}
+}, { 
+	threshold: 1
+})
+lastNoteObserver.observe(document.querySelector('.feed-note-card:last-child'))
 
 const notificationPanel = document.querySelector('.notification-panel');
 const notificationButton = document.querySelector('.mobile-nft-btn');
