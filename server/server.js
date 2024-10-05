@@ -82,6 +82,9 @@ app.get('/confetti', (req, res) => {
 app.get('/about-us', (req, res) => {
     res.render('about-us')
 })
+app.get('/privacy-policy', (req, res) => {
+    res.render('privacy-policy')
+})
 
 app.post('/download', async (req, res) => {
     let noteID = req.body.noteID

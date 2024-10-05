@@ -1,3 +1,9 @@
+:root {
+    --squid-ink: #06192d;
+    --neon-blue: #04dbf6;
+    --light-gray: #F8F8F8;
+  }
+
 body {
     font-family: 'Inter', Helvetica, sans-serif;
     display: flex;
@@ -5,19 +11,24 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
+    width: 100vw;
+    padding: 0;
     margin: 0;
-    background: linear-gradient(301deg, #04DBF7 34.2%, #FFFFFF 95.62%);
+    background: linear-gradient(301deg, var(--neon-blue) 34.2%, #FFFFFF 95.62%);
 
 }
 
 a {
     text-decoration: none;
+    color: var(--squid-ink);
 }
 
 .signup-container {
     padding: 20px;
     text-align: center;
-    width: 300px;
+    width: 90%;
+    min-width: 200px;
+    max-width: 300px;
 }
 
 .signup-container img {
@@ -35,7 +46,7 @@ a {
 
 .message-container p {
     font-size: 1.1em;
-    color: #07192D;
+    color: var(--squid-ink);
     font-weight: bold;
 }
 
@@ -51,7 +62,7 @@ a {
 .progress-bar {
     width: 0;
     height: 100%;
-    background-color: #07192D;
+    background-color: var(--squid-ink);
     border-radius: 8px;
     transition: width 0.3s ease;
 }
@@ -84,7 +95,7 @@ a {
     justify-content: center;
     align-items: center;
     margin: 0 auto 10px;
-    border: 1px solid #07192D;
+    border: 1px solid var(--squid-ink);
     font-size: 1.5rem;
 }
 
@@ -94,7 +105,7 @@ a {
 
 .instructions {
     font-size: 0.9em;
-    color: #07192D;
+    color: var(--squid-ink);
 }
 .profile-pic-preview-placeholder{
     width: 100%;
@@ -181,6 +192,7 @@ a {
     padding: 10px;
     margin-bottom: 20px;
     border: 1px solid #ccc;
+    background-color: var(--light-gray);
     border-radius: 12px;
     box-sizing: border-box;
     font-size: 1em;
@@ -202,7 +214,7 @@ textarea{
 
 .privacy-policy label {
     font-size: 0.9em;
-    color: #07192D;
+    color: var(--squid-ink);
 }
 
 .privacy-policy a {
@@ -214,13 +226,13 @@ textarea{
 .signup-container button {
     width: 50%;
     padding: 10px;
-    background-color: #07192D;
+    background-color: var(--squid-ink);
     color: #04DBF7;
     text-transform: uppercase;
     font-weight: 600;
     line-height: 27px;
     letter-spacing:1px;
-    border: none;
+    border: 2px solid var(--squid-ink);
     border-radius: 30px;
     cursor: pointer;
     font-size: 1em;
@@ -234,16 +246,20 @@ textarea{
     transform: scale(1.05); 
 }
 
-.back-button {
+button.back-button {
     margin-right: 5px;
+    color:var(--squid-ink);
+    background-color: transparent;
+    transition: color 0.3s ease, border 0.2s ease, background-color 0.3s ease, transform 0.2s ease;
 }
 
-.back-button:hover {
+button.back-button:hover {
     background-color: rgba(0, 0, 0, 0.75);
+    color: var(--neon-blue);
 }
 
 .next-button, .submit-button {
-    background-color: #07192D;
+    background-color: var(--squid-ink);
 }
 
 .submit-button {
@@ -253,4 +269,44 @@ textarea{
     color: rgba(255, 0, 0, 0.835);
     border-radius: 15px;
     padding: 15px;
+}
+@media (max-width:360px) {
+    body{
+        height: 100%;
+    }
+    .signup-container{
+        padding: 10px;
+    }
+    .signup-container h2{
+        font-size: 1.3em;
+    }
+    .message-container{
+        margin-bottom: 10px;
+    }
+    .message-container p{
+        font-size: .9rem;
+    }
+    .instructions{
+        font-size: 0.8rem;
+    }
+}
+@media (min-width:361px) and (max-width:480px) {
+    body{
+        height: 100%;
+    }
+    .signup-container{
+        padding: 10px;
+    }
+    .signup-container h2{
+        font-size: 1.3em;
+    }
+    .message-container{
+        margin-bottom: 10px;
+    }
+    .message-container p{
+        font-size: .9rem;
+    }
+    .instructions{
+        font-size: 0.8rem;
+    }
 }

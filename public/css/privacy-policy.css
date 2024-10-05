@@ -2,126 +2,192 @@
     --squid-ink:#06192D;
     --neon-blue: #04DBF6;
     --light-gray:#F8F8F8;
+    --base-font-size: 16px;
 }
+
 * {
     margin: 0;
     padding: 0;
-}
-body, h1, h2, h3, p, ul {
-    margin: 0;
-    padding: 0;
-    font-family: 'Inter';
-    color:var(--squid-ink);
+    font-family: 'Inter', sans-serif;
+    box-sizing: border-box;
 }
 
 body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    color: var(--squid-ink);
     background-color: var(--light-gray);
     line-height: 1.6;
+    font-size: var(--base-font-size);
 }
+
 header{
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: var(--neon-blue);
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
+    padding: 30px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    backdrop-filter: blur(5px);
+    position: sticky;
+    top: 0;
+    z-index: 50;
 }
 
-.container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #fff;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+header i {
+    position: absolute;
+    left: 30px;
+    font-size: 1.8rem;
+    padding: 10px;
+    color: var(--squid-ink);
+    transition: transform 0.2s ease-in-out;
 }
 
-header {
-    background-color:var(--squid-ink);
-    color: #fff;
-    padding: 20px 0;
-    text-align: center;
-    margin-bottom: 20px;
+header i:hover{
+    cursor: pointer;
+    transform: translateX(-5px);
 }
 
 header h1 {
-    font-size: 2.5em;
-}
-
-header p {
-    font-size: 1.2em;
-}
-
-main h2 {
-    font-size: 2em;
-    margin-top: 20px;
-    margin-bottom: 10px;
-    color: var(--squid-ink);
-}
-
-main h3 {
-    font-size: 1.5em;
-    margin-top: 15px;
-    margin-bottom: 10px;
-    color: var(--squid-ink);
-}
-
-main p {
-    margin-bottom: 15px;
-    font-size: 1.1em;
-}
-
-main ul {
-    margin-left: 20px;
-    margin-bottom: 20px;
-}
-
-main ul li {
-    margin-bottom: 10px;
-}
-
-footer {
-    background-color: var(--squid-ink);
-    color: #fff;
     text-align: center;
-    padding: 15px 0;
-    margin-top: 30px;
-    .container{
-        background-color: var(--neon-blue);
-    }
+    font-weight: 600;
+    color: var(--squid-ink);
+    font-size: 1.6rem;
 }
 
-footer p {
-    font-size: 0.9em;
+.container{
+    width: 90%;
+    max-width: 1000px;
+    min-width: 250px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
-a {
-    color: var(--neon-blue) ;
+.container h2{
+    margin: 20px 0px;
+    line-height: 1.4;
+    color: var(--squid-ink);
+    font-size: 1.5rem;
+    font-weight: 500;
+}
+
+.container p {
+    margin-bottom: 20px;
+    font-size: 1rem;
+    line-height: 1.7;
+    letter-spacing: 0.02em;
+    color: var(--squid-ink);
+}
+
+.container ul {
+    margin: 10px 0 20px 20px;
+    padding-left: 20px;
+}
+
+.container li {
+    margin-bottom: 10px;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--squid-ink);
+}
+
+.container a{
     text-decoration: none;
+    color: var(--neon-blue);
+    font-weight: 500;
 }
 
-a:hover {
+.container a:hover {
     text-decoration: underline;
 }
 
-@media (max-width: 768px) {
-    header, .container, footer {
+footer {
+    margin-top: 20px;
+    font-size: 0.9rem;
+    color: var(--squid-ink);
+    text-align: center;
+}
+
+@media screen and (max-width: 480px) {
+    body {
+        padding: 10px;
+        font-size: 14px;
+    }
+    header{
+        min-width: 250px;
+    }
+    header h1 {
+        font-size: 1.4rem;
+        text-align: right;
+        width: 75%;
+    }
+
+    header i {
+        left: 5px;
+        font-size: 1.6rem;
+    }
+
+    .container {
+        width: 100%;
         padding: 15px;
     }
 
+    .container h2 {
+        font-size: 1.3rem;
+    }
+
+    .container p, .container li {
+        font-size: 0.9rem;
+    }
+
+    .container a {
+        font-size: 0.9rem;
+    }
+
+    footer {
+        font-size: 0.8rem;
+    }
+}
+@media screen and (min-width: 481px) and (max-width: 768px) {
+    body {
+        padding: 15px;
+        font-size: 15px;
+    }
+
     header h1 {
-        font-size: 2em;
+        font-size: 1.5rem;
     }
 
-    main h2 {
-        font-size: 1.7em;
+    header i {
+        left: 20px;
+        font-size: 1.7rem;
     }
 
-    main h3 {
-        font-size: 1.3em;
+    .container {
+        width: 95%;
+        padding: 20px;
     }
 
-    main p {
-        font-size: 1em;
+    .container h2 {
+        font-size: 1.4rem;
+    }
+
+    .container p, .container li {
+        font-size: 1rem;
+    }
+
+    footer {
+        font-size: 0.85rem;
+    }
+}
+@media (max-width:360px) {
+    header i{
+        font-size: 1.2rem;
+    }
+    header h1{
+        font-size: 1.2rem;
     }
 }
