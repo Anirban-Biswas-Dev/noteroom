@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/support.css">
+    <link rel="stylesheet" href="/css/header-footer.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -17,8 +18,11 @@
     <title>Support & Feedback</title>
 </head>
 <body>
-    <div class="container">
+    <header>
+      <i class="fa-solid fa-arrow-left" onclick="goPrevPage()" ></i>
         <h1>We'd love to hear from you!</h1>
+    </header>
+    <div class="container">
         <p class="msg">Provide your valuable feedback on how we can improve NoteRoom and share your experience with us.</p> 
         <form action="" class="support-form" onsubmit="showPopup(event)">
             <input type="text" class="user-name" placeholder="Name" required>
@@ -37,5 +41,6 @@
         <button class="home-btn" onclick="goHome()">Go to Home</button>
     </div>
     <script src="/js/support.js"></script>
+    <script src="/js/utils.js"></script>
 </body>
 </html>

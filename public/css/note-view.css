@@ -534,4 +534,8 @@ body {
         font-size: 1rem; /
     }
 }
-
+@media (min-width:1486px) and (max-width:1750px) {
+     .middle-section{
+        width: 50%;
+     }
+}

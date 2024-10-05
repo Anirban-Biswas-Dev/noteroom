@@ -23,28 +23,6 @@ body {
   align-items: center;
   padding: 2.5vh 2vw;
 }
-header {
-  box-sizing: border-box;
-  padding: 30px 10px;
-  display: flex;
-  z-index: 50;
-  top: 0;
-  width: 100%;
-  align-items: center;
-  justify-content: center;
-  background-color: transparent;
-}
-
-header i {
-  position: absolute;
-  left: 30px;
-  font-size: 1.8rem;
-}
-
-header h1 {
-  text-align: center;
-  font-weight: 600;
-}
 
 .section {
   width: 100%;
@@ -194,9 +172,6 @@ header h1 {
   }
 }
 @media (max-width:360px) {
-  .container h1 {
-    font-size: 1.6rem;
-  }
   .section-header svg{
     width: 50px;
     height: auto;
@@ -219,9 +194,6 @@ header h1 {
   }
 }
 @media (min-width: 361px) and (max-width: 480px) {
-  .container h1 {
-    font-size: 1.8rem; 
-  }
   .section-header svg {
     width: 60px; 
     height: auto;
@@ -244,9 +216,7 @@ header h1 {
   }
 }
 @media (min-width: 481px) and (max-width: 787px) {
-  .container h1 {
-    font-size: 2rem; 
-  }
+
   .section-header svg {
     width: 70px; 
     height: auto;
