@@ -9,31 +9,6 @@
   --light-gray: #F8F8F8;
 }
 
-/* HERO SECTION */
-/* HEADER STYLING */
-header {
-  display: flex;
-  position: sticky;
-  z-index: 50;
-  top: 0;
-  width: 100%;
-  height: 60px;
-  align-items: center;
-  justify-content: center;
-  background-color: transparent;
-}
-
-header i {
-  position: absolute;
-  left: 30px;
-  font-size: 1.8rem;
-}
-
-header h1 {
-  text-align: center;
-  font-weight: 600;
-}
-
 .hero-section {
   width: 100%;
   height: 100vh; /* Full viewport height */

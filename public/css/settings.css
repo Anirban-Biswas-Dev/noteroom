@@ -23,28 +23,6 @@ body {
   align-items: center;
   padding: 2.5vh 2vw;
 }
-header {
-  box-sizing: border-box;
-  padding: 30px 10px;
-  display: flex;
-  z-index: 50;
-  top: 0;
-  width: 100%;
-  align-items: center;
-  justify-content: center;
-  background-color: transparent;
-}
-
-header i {
-  position: absolute;
-  left: 30px;
-  font-size: 1.8rem;
-}
-
-header h1 {
-  text-align: center;
-  font-weight: 600;
-}
 
 .section {
   width: 100%;
