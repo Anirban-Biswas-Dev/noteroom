@@ -172,9 +172,6 @@ body {
   }
 }
 @media (max-width:360px) {
-  .container h1 {
-    font-size: 1.6rem;
-  }
   .section-header svg{
     width: 50px;
     height: auto;
@@ -197,9 +194,6 @@ body {
   }
 }
 @media (min-width: 361px) and (max-width: 480px) {
-  .container h1 {
-    font-size: 1.8rem; 
-  }
   .section-header svg {
     width: 60px; 
     height: auto;
@@ -222,9 +216,7 @@ body {
   }
 }
 @media (min-width: 481px) and (max-width: 787px) {
-  .container h1 {
-    font-size: 2rem; 
-  }
+
   .section-header svg {
     width: 70px; 
     height: auto;
