@@ -161,3 +161,21 @@ searchInput.addEventListener('keydown', (event) => {
 searchInput.addEventListener('focus', function() {
     resultsContainer.style.display = 'flex';
 })
+
+const notificationPanel = document.querySelector('.notification-panel');
+const notificationButton = document.querySelector('.mobile-nft-btn');
+const backgroundOverlay = document.querySelector('.background-overlay');
+const hideNotificationPanel = document.querySelector('.btn-hide-nft');
+
+notificationButton.addEventListener('click', () => {
+  notificationPanel.classList.toggle('show');
+  backgroundOverlay.classList.toggle('show-overlay');
+});
+backgroundOverlay.addEventListener('click', () => {
+  notificationPanel.classList.remove('show');
+  backgroundOverlay.classList.remove('show-overlay');
+});
+hideNotificationPanel.addEventListener('click', () => {
+  notificationPanel.classList.remove('show');
+  backgroundOverlay.classList.remove('show-overlay');
+})

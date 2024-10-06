@@ -25,19 +25,11 @@
     <title>Find Other People in NoteRoom</title>
 </head>
 <body>
-    <!-- <div class="container">
-        <div class="input-group mb-3">
-            <span class="input-group-text" id="basic-addon1">ID</span>
-            <input type="text" class="form-control" placeholder="Student's ID" aria-label="Student's ID"
-                aria-describedby="button-addon2">
-            <button class="btn btn-secondary" type="button" id="button-addon2" onclick="find()">Search</button>
-        </div>
-    </div> -->
     <div class="middle-section">
         <div class="prfl-search-container">
             <fieldset class="field-container">
                 <input type="text" placeholder="Search other people..." class="field" />
-                <i class="fa-solid fa-magnifying-glass"></i>
+                <i class="fa-solid fa-magnifying-glass search" onclick="search()"></i>
             </fieldset>
         </div>
         <!-- Here are two section - 1. random profiles 2. search results. When there is a search query, remove the random one -->
@@ -48,65 +40,29 @@
                     Recent
                 </h3>
                 <div class="random-prfls">
-                    <div class="random-prfl">
-                        <img src="\NoteRoom Caricature Cartoonic  - Anirban.jpg.png" alt="Profile Pic" class="prfl-pic">
-                        <span class="prfl-name">Anirban Biswas</span>
-                        <span class="prfl-desc">Do you know what it means by “Energy of a shell”?</span>
-                        <img src="https://storage.googleapis.com/noteroom-fb1a7.appspot.com/badges/no-badge.png" alt="" class="user-badge">
-                        <span class="not-show-prfl">&times;</span>
-                    </div>
-                    <div class="random-prfl">
-                        <img src="\NoteRoom Caricature Cartoonic  - Anirban.jpg.png" alt="Profile Pic" class="prfl-pic">
-                        <span class="prfl-name">Anirban Biswas</span>
-                        <span class="prfl-desc">Do you know what it means by “Energy of a shell”?</span>
-                        <img src="https://storage.googleapis.com/noteroom-fb1a7.appspot.com/badges/no-badge.png" alt="" class="user-badge">
-                        <span class="not-show-prfl">&times;</span>
-                    </div>
-                    <div class="random-prfl">
-                        <img src="\NoteRoom Caricature Cartoonic  - Anirban.jpg.png" alt="Profile Pic" class="prfl-pic">
-                        <span class="prfl-name">Anirban Biswas</span>
-                        <span class="prfl-desc">Do you know what it means by “Energy of a shell”?</span>
-                        <img src="https://storage.googleapis.com/noteroom-fb1a7.appspot.com/badges/no-badge.png" alt="" class="user-badge">
-                        <span class="not-show-prfl">&times;</span>
-                    </div>
+                    <% students.forEach(student => { %>
+                        <div class="random-prfl" id="random-<%= student._id %>">
+                            <img src="<%= student.profile_pic %>" alt="Profile Pic" class="prfl-pic">
+                            <span class="prfl-name" onclick="window.location.href = '/user/<%= student.studentID %>'"><%= student.displayname %></span>
+                            <span class="prfl-desc"><%= student.bio %></span>
+                            <span class="badge" style="display: none;"><%= student.badge %></span>
+                            <img src="" alt="" class="user-badge">
+                            <span class="not-show-prfl" onclick="deleteProfile('<%= student._id %>')">&times;</span>
+                        </div>
+                    <% }) %>
                 </div>
             </div>
-            <div class="search-result-prfls-container">
+            <div class="search-result-prfls-container" style="display: none;">
                 <h3 class="section-label">
                     Search Results
                 </h3>
                 <div class="results-prfls">
-                    <div class="results-prfl">
-                        <img src="\NoteRoom Caricature Cartoonic  - Anirban.jpg.png" alt="Profile Pic" class="prfl-pic">
-                        <span class="prfl-name">Anirban Biswas</span>
-                        <span class="prfl-desc">Do you know what it means by “Energy of a shell”?</span>
-                        <img src="https://storage.googleapis.com/noteroom-fb1a7.appspot.com/badges/no-badge.png" alt="" class="user-badge">
-                    </div>
-                    <div class="results-prfl">
-                        <img src="\NoteRoom Caricature Cartoonic  - Anirban.jpg.png" alt="Profile Pic" class="prfl-pic">
-                        <span class="prfl-name">Anirban Biswas</span>
-                        <span class="prfl-desc">Do you know what it means by “Energy of a shell”?</span>
-                        <img src="https://storage.googleapis.com/noteroom-fb1a7.appspot.com/badges/no-badge.png" alt="" class="user-badge">
-                    </div>
-                    <div class="results-prfl">
-                        <img src="\NoteRoom Caricature Cartoonic  - Anirban.jpg.png" alt="Profile Pic" class="prfl-pic">
-                        <span class="prfl-name">Anirban Biswas</span>
-                        <span class="prfl-desc">Do you know what it means by “Energy of a shell”?</span>
-                        <img src="https://storage.googleapis.com/noteroom-fb1a7.appspot.com/badges/no-badge.png" alt="" class="user-badge">
-                    </div>
+                    <p class="status" style="display: none;"></p>
+                </div>
             </div>
          </div>
     </div>
-    
-
-
-
-
-    <script>
-        function find() {
-            window.location.href = `user/${document.querySelector('.form-control').value}`
-        }
-    </script>
+    <script src="/js/search-profile.js"></script>
 </body>
 
 </html> 

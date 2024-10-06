@@ -380,23 +380,23 @@ const lastNoteObserver = new IntersectionObserver(async entries => {
 })
 lastNoteObserver.observe(document.querySelector('.feed-note-card:last-child'))
 
-const notificationPanel = document.querySelector('.notification-panel');
-const notificationButton = document.querySelector('.mobile-nft-btn');
-const backgroundOverlay = document.querySelector('.background-overlay');
-const hideNotificationPanel = document.querySelector('.btn-hide-nft');
+// const notificationPanel = document.querySelector('.notification-panel');
+// const notificationButton = document.querySelector('.mobile-nft-btn');
+// const backgroundOverlay = document.querySelector('.background-overlay');
+// const hideNotificationPanel = document.querySelector('.btn-hide-nft');
 
-notificationButton.addEventListener('click', () => {
-  notificationPanel.classList.toggle('show');
-  backgroundOverlay.classList.toggle('show-overlay');
-});
-backgroundOverlay.addEventListener('click', () => {
-  notificationPanel.classList.remove('show');
-  backgroundOverlay.classList.remove('show-overlay');
-});
-hideNotificationPanel.addEventListener('click', () => {
-  notificationPanel.classList.remove('show');
-  backgroundOverlay.classList.remove('show-overlay');
-})
+// notificationButton.addEventListener('click', () => {
+//   notificationPanel.classList.toggle('show');
+//   backgroundOverlay.classList.toggle('show-overlay');
+// });
+// backgroundOverlay.addEventListener('click', () => {
+//   notificationPanel.classList.remove('show');
+//   backgroundOverlay.classList.remove('show-overlay');
+// });
+// hideNotificationPanel.addEventListener('click', () => {
+//   notificationPanel.classList.remove('show');
+//   backgroundOverlay.classList.remove('show-overlay');
+// })
 // Saved notes functionality for adding visual effect when saved. 
 
 document.addEventListener('DOMContentLoaded', () => {

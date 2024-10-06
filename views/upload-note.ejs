@@ -108,10 +108,11 @@
     <%- include('side-panel', { block: 'right-panel' }) %>
      
       <!-- Mobile Bottom Control Bar -->
-      <%- include('side-panel', { block: 'mbl-ctrl-panel' }) %>
-       <div class="loader-overlay">
+    <%- include('side-panel', { block: 'mbl-ctrl-panel' }) %>
+	<div class="background-overlay"></div>
+    <div class="loader-overlay">
         <span class="loader"></span>
-       </div>
+    </div>
        
     <script src="/js/upload-note.js"></script>
     <script src="/js/controller.js"></script>
