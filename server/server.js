@@ -19,6 +19,7 @@ const errorHandler = require('./errorhandlers/errors')
 const uploadRouter = require('./routers/upload-note')
 const noteViewRouter = require('./routers/note-view')
 const dashboardRouter = require('./routers/dashboard')
+const serachProfileRouter = require('./routers/search-profile')
 
 const Notes = require('./schemas/notes')
 const Students = require('./schemas/students')
@@ -54,6 +55,7 @@ app.use('/sign-up', signupRouter(io))
 app.use('/upload', uploadRouter(io))
 app.use('/view', noteViewRouter(io))
 app.use('/dashboard', dashboardRouter(io))
+app.use('/search-profile', serachProfileRouter(io))
 app.use(errorHandler) // Middleware for handling errors
 
 app.get('/logout', (req, res) => {
@@ -66,12 +68,6 @@ app.get('/', (req, res) => {
     res.redirect('/login')
 })
 
-app.get('/search-profile', (req, res) => {
-    res.render('search-profile')
-})
-app.get('/dashboard', (req, res) => {
-    res.render('dashboard')
-})
 app.get('/settings', (req, res) => {
     res.render('settings')
 })

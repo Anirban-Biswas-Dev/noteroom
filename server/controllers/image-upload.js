@@ -71,5 +71,12 @@ async function downloadImage(publicURLs, destination) {
     })
 }
 
+// bucket.getFiles().then(files => {
+//     let files_ = files[0]
+//     files_.forEach(file => {
+//         file.makePublic()
+//     })
+// })
+
 module.exports.upload = uploadImage
 module.exports.download = downloadImage
