@@ -118,7 +118,7 @@ const observers = {
 				}	
 			})
 		}, {
-			rootMargin: "300px"
+			rootMargin: "500px"
 		})
 		return _observer
 	},
@@ -131,9 +131,11 @@ const observers = {
 				let noteList = await add_note(3)
 				if(noteList.length != 0) {
 					noteList.forEach(note => {
-						manageNotes.addNote(note)
-						if(savedNotes.includes(note.noteID)) {
-							document.querySelector(`#save-btn-${note.noteID}`).classList.add('saved')
+						if(!document.querySelector(`#note-${note.noteID}`)) {
+							manageNotes.addNote(note)
+							if(savedNotes.includes(note.noteID)) {
+								document.querySelector(`#save-btn-${note.noteID}`).classList.add('saved')
+							}
 						}
 					})
 					_observer.unobserve(lastNote.target)

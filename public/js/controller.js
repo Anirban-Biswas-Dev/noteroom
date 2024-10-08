@@ -213,6 +213,7 @@ function truncatedTitle(title) {
     return truncatedTitle
 }
 
+let notificationCount = 0;
 function addNoti(feedbackData) {
     let notificationHtml = `
           <div class="notification" id="noti-${feedbackData.notiID}">
@@ -232,6 +233,22 @@ function addNoti(feedbackData) {
               </div>
           </div>`
     document.querySelector('.notifications-container').insertAdjacentHTML('afterbegin', notificationHtml);
+
+    notificationCount++;
+    updateNotificationBadge();
+}
+function updateNotificationBadge() {
+    const badge = document.getElementById('notification-count');
+    if (badge) {
+        badge.textContent = notificationCount;
+        if (notificationCount > 0) {
+            badge.style.display = 'inline-block';
+        } else {
+            badge.style.display = 'none';
+        }
+    } else {
+        console.error('Notification badge element not found');
+    }
 }
 
 conSock.on('feedback-given' , (feedbackData) => {
