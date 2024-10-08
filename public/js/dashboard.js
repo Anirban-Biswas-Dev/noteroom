@@ -37,8 +37,8 @@ async function add_note(count) {
 
 
 
-let savedNotes = manageStorage.getContent('savedNotes').map(item => item.noteID) // List of saved notes' ids
 //* Observer's object
+let savedNotes = []
 const observers = {
 	observer: function() {
 		/*
@@ -146,6 +146,7 @@ if ((navigate.type === 'navigate') || (navigate.type == 'reload')) {
 					isSavedNote: true 
 				}	
 				saved_notes.push(noteData)
+				savedNotes.push(noteData.noteID)
 			})
 			localStorage.setItem('savedNotes', JSON.stringify(saved_notes)) // 1.1
 			localStorage.setItem('notis', JSON.stringify([])) // 1,2
