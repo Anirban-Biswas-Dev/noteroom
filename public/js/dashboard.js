@@ -114,10 +114,10 @@ const observers = {
 /*
 * Navigation capture and real time loading
 # Process:
-~	=>. when the page gets reload, first the saved notes data is fetched and added in LS|key=savedNotes (1.1). it helps to add save class
+~	=> when the page gets reload, first the saved notes data is fetched and added in LS|key=savedNotes (1.1). it helps to add save class
 ~		in the saved notes buttons. also empty lists are added in LS|key=addedNotes and LS|key=notis (1.2)
 
-~	=>. when a back_forward is captured, means when the user comes to dashboard without reloading and only using back-button, all the
+~	=> when a back_forward is captured, means when the user comes to dashboard without reloading and only using back-button, all the
 ~		data from LS is fetched. there are 3 types of data, all are list of objects form
 ~			1. addedNotes: notes which are uploaded by other users (without reloading, not the one from the database) => isAddNote=true
 ~			2. savedNotes: notes saved by the user => isSaveNote=true
@@ -189,7 +189,7 @@ if ((navigate.type === 'navigate') || (navigate.type == 'reload')) {
 
 
 
-//* saving/delete a note
+//* save/delete a note
 function saveNote(noteDocID) {
 	/*
 	# Process:

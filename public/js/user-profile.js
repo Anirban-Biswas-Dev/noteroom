@@ -1,13 +1,6 @@
 const host = window.location.origin
 const socket = io(host)
 
-let baseURL = 'https://storage.googleapis.com/noteroom-fb1a7.appspot.com/badges/'
-let imageObject = {
-    'No Badge': `${baseURL}no-badge.png`,
-    'Biology': `${baseURL}biology.png`,
-    'English': `${baseURL}english.png`
-}
-
 socket.emit('connection')
 
 function logout() {
@@ -24,7 +17,7 @@ function badgeStyling() {
             badgeElement.innerHTML = `Top ${subject} voice`;
             badgeLogo.src = imageObject[subject]
         } else {
-            badgeLogo.src = `https://storage.googleapis.com/noteroom-fb1a7.appspot.com/badges/no-badge.png` 
+            badgeLogo.src = imageObject['No Badge']
         }
     }
     
