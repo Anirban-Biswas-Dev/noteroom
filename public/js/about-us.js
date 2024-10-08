@@ -23,17 +23,3 @@ founders.forEach((founder) => {
 
 founderContainer.innerHTML = founderCardsHtml;
 
-function changeImage() {
-    const imgElement = document.getElementById('heroImage');
-    if (window.innerWidth <= 768) {
-        imgElement.src = '\NoteRoom Deck Mobile.png';  // Set small image
-    } else {
-        imgElement.src = '\NoteRoom Deck Cover.jpg';  // Default large image
-    }
-}
-
-// Run on window resize
-window.addEventListener('resize', changeImage);
-
-// Run on page load
-changeImage();
