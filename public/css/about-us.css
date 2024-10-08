@@ -2,27 +2,52 @@
   font-family: "Inter";
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 :root {
   --squid-ink: #06192d;
   --neon-blue: #04dbf6;
-  --light-gray: #F8F8F8;
+  --light-gray: #f8f8f8;
 }
-
 .hero-section {
   width: 100%;
-  height: 100vh; /* Full viewport height */
-  overflow: hidden;
-  position: relative;
+  height: 90vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0px 20px;
+  align-items: center;
+  background-image: url("\\NoteRoom Hero Section Img.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: center;
 }
-
-.hero-section img {
-  width: 100%; /* Full width */
-  height: 100%; /* Full height */
-  object-fit: contain; /* Ensures entire image is visible */
-  object-position: center center; /* Centers the image horizontally and vertically */
-  max-width: 1920px; /* Set max width for responsiveness */
-  max-height: 1080px; /* Prevent stretching on large screens */
+.hero-content {
+  width: 35%;
+  max-width: 800px;
+  background-color: rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(5px);
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 7px 29px 0px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: auto;
+  padding: 20px;
+}
+.hero-logo {
+  width: 80px;
+  padding: 10px 0px;
+  height: auto;
+}
+.tagline {
+  color: white;
+  width: 100%;
+  font-size: 3rem;
+  font-weight: bold;
+  text-shadow: 2px 2px 15px #00000080;
+  text-align: center;
 }
 
 .founders-section {
@@ -33,6 +58,8 @@
   justify-content: center;
 }
 .founders-section h2 {
+  background-color: black;
+  color: #fff;
   width: 100%;
   text-align: center;
   padding: 20px;
@@ -44,9 +71,11 @@
   grid-template-columns: repeat(3, 1fr); /* Three equal columns */
   gap: 20px; /* Space between columns */
   padding: 20px; /* Add some padding around the section */
+  justify-content: center;
 }
 .founders-card {
   padding: 10px;
+  max-width: 400px;
 }
 .founders-card img {
   width: 90%;
@@ -61,7 +90,7 @@
   font-size: 1rem;
 }
 .f-clg {
-  width: 80%;
+  width: 90%;
   text-align: right;
   padding: 2px 0px;
   font-weight: 600;
@@ -77,7 +106,6 @@
   font-weight: 350;
   font-size: 0.8rem;
   line-height: 18px;
-  height: 150px;
 }
 .social-prfls {
   width: 50%;
@@ -164,71 +192,6 @@
   flex-direction: column;
   align-items: center;
 }
-.footer-wave-svg {
-  background-color: transparent;
-  display: block;
-  height: 30px;
-  position: relative;
-  top: -1px;
-  width: 100%;
-}
-.footer-wave-path {
-  fill: white;
-}
-.footer-content {
-  width: 90%;
-  max-width: 1200px;
-  min-width: 200px;
-  display: flex;
-  align-items: center;
-  justify-content: space-evenly;
-  padding: 20px;
-}
-.clm {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 10;
-}
-.clm img {
-  padding: 10px 0px;
-  width: 80px;
-  height: 80px;
-  object-fit: contain;
-}
-.clm a {
-  padding: 10px;
-  text-decoration: none;
-  font: 500;
-  color: white;
-  font-size: 0.9rem;
-}
-.login-opt {
-  padding: 10px;
-  color: white;
-  font-weight: 500;
-  font-size: 0.9rem;
-  text-decoration: none;
-}
-.login-opt:hover,
-.clm a:hover {
-  text-decoration: underline;
-}
-.clm h3{
-    padding: 20px 5px;
-}
-.sign-up{
-    background-color: var(--neon-blue);
-    padding: 10px;
-    font-weight: 600;
-    border-radius: 15px;
-    width: 100%;
-    box-sizing: border-box;
-    transition: opacity .2s ease;
-}
-.sign-up:hover{
-    opacity: .9;
-}
 .footer-copyright {
   background-color: black;
   color: #fff;
@@ -263,10 +226,10 @@
 .privacy-policy-link:hover {
   text-decoration: underline;
 }
-@media (max-width:360px) {
-    .footer-content{
-        flex-direction: column;
-    }
+@media (max-width: 360px) {
+  .footer-content {
+    flex-direction: column;
+  }
 }
 @media (min-width: 760px) {
   .footer-wave-svg {
@@ -279,37 +242,331 @@
     grid-template-columns: 1fr; /* Change to single column */
   }
 }
-
-@media (min-width: 1366px) {
-  .hero-section {
-    display: flex;
-    justify-content: center; /* Horizontally center the image */
-    align-items: center; /* Vertically center the image */
+@media (max-width: 360px) {
+  .hero-content {
+    width: 80%;
   }
-
-  .hero-section img {
-    width: auto; /* Allow image to scale naturally */
-    height: auto;
-    max-height: 100vh; /* Ensure the image doesn't exceed the viewport height */
+  .hero-logo {
+    width: 50px;
+  }
+  .tagline {
+    font-size: 2rem;
+  }
+  .founders-section h2 {
+    font-size: 1.2rem;
+    text-shadow: 2px 2px 15px #ffffff80;
+  }
+  .founders {
+    width: 95%;
+  }
+  .founders-card {
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .founders-card img {
+    width: 100%;
+    max-width: 300px;
+  }
+  .f-clg {
+    width: 100%;
+  }
+  .f-role {
+    width: 100%;
+  }
+  .f-desc {
+    font-size: 0.7rem;
+  }
+  .development-info h2 {
+    padding: 10px;
+  }
+  .first-container,
+  .second-container,
+  .third-container,
+  .fourth-container .second-container,
+  .fourth-container {
+    flex-direction: column;
+    height: fit-content;
+    max-height: none;
+    padding: 10px 5px;
+    margin: 2vh 0;
+  }
+  .container-img {
+    width: 100%;
+  }
+  .desc-box,
+  .info-box,
+  .desc-box-2 {
+    width: 90%;
+    padding: 10px;
+    font-size: 0.8rem;
+    line-height: 25px;
+  }
+  .info-box h3 {
+    font-size: 1.1rem;
+  }
+  .desc-box-2 {
+    width: 100%;
+    padding: 0;
   }
 }
-
-/* Specific adjustments for extra-large screens */
-@media (min-width: 1920px) {
-  .hero-section {
-    display: flex;
-    justify-content: center; /* Ensure horizontal centering */
-    align-items: center; /* Ensure vertical centering */
+@media (min-width: 361px) and (max-width: 480px) {
+  .hero-content {
+    width: 90%;
+    padding: 15px;
   }
 
-  .hero-section img {
-    width: auto;
-    height: auto;
-    max-height: 100vh; /* Maintain the image within the viewport */
+  .hero-logo {
+    width: 60px;
+  }
+
+  .tagline {
+    font-size: 2.2rem;
+  }
+
+  .founders-section h2 {
+    font-size: 1.2rem;
+    text-shadow: 2px 2px 12px #ffffff80;
+  }
+
+  .founders {
+    width: 90%; /* Reduce width to fit better */
+  }
+
+  .founders-card {
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .founders-card img {
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .f-clg,
+  .f-role {
+    width: 100%;
+  }
+
+  .f-desc {
+    font-size: 0.8rem;
+  }
+
+  .development-info h2 {
+    padding: 12px;
+  }
+
+  .first-container,
+  .second-container,
+  .third-container,
+  .fourth-container {
+    flex-direction: column;
+    height: fit-content;
+    max-height: none;
+    padding: 12px 6px;
+    margin: 2vh 0;
+  }
+
+  .container-img {
+    width: 100%;
+  }
+
+  .desc-box,
+  .info-box,
+  .desc-box-2 {
+    width: 90%;
+    padding: 12px;
+    font-size: 0.85rem;
+    line-height: 26px;
+  }
+
+  .info-box h3 {
+    font-size: 1.2rem;
+  }
+
+  .desc-box-2 {
+    width: 100%;
+    padding: 0;
   }
 }
-@media (min-width: 768px) and (max-width: 1366px) {
-  .hero-section img {
-    object-fit: contain; /* Contain on laptops to prevent image cutting */
+@media (min-width: 481px) and (max-width: 768px) {
+  .hero-content {
+    width: 75%;
+    padding: 10px;
+  }
+
+  .hero-logo {
+    width: 80px;
+  }
+
+  .tagline {
+    font-size: 2.5rem;
+  }
+
+  .founders-section h2 {
+    font-size: 1.5rem;
+    text-shadow: 2px 2px 10px #ffffff60;
+  }
+
+  .founders {
+    width: 85%;
+  }
+
+  .founders-card {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .founders-card img {
+    width: 100%;
+    max-width: 350px;
+  }
+
+  .f-clg,
+  .f-role {
+    width: 100%;
+  }
+
+  .f-desc {
+    font-size: 0.9rem;
+  }
+
+  .development-info h2 {
+    padding: 15px;
+  }
+
+  .first-container,
+  .second-container,
+  .third-container,
+  .fourth-container {
+    flex-direction: column;
+    height: fit-content;
+    max-height: none;
+    padding: 15px 10px;
+    margin: 3vh 0;
+  }
+
+  .container-img {
+    width: 85%;
+  }
+
+  .desc-box,
+  .info-box,
+  .desc-box-2 {
+    width: 90%;
+    padding: 15px;
+    font-size: 1rem;
+    line-height: 28px;
+  }
+
+  .info-box h3 {
+    font-size: 1.3rem;
+  }
+
+  .desc-box-2 {
+    width: 100%;
+    padding: 0;
+  }
+}
+@media (min-width: 769px) and (max-width: 1024px) {
+  .hero-content {
+    width: 50%;
+    padding: 25px;
+  }
+
+  .hero-logo {
+    width: 100px;
+  }
+
+  .tagline {
+    font-size: 3.5rem;
+  }
+
+  .founders-section h2 {
+    font-size: 1.6rem;
+  }
+
+  .founders {
+    width: 80%;
+  }
+
+  .founders-card {
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .founders-card img {
+    width: 80%;
+    max-width: 400px;
+  }
+
+  .f-clg,
+  .f-role {
+    width: 100%;
+  }
+
+  .f-desc {
+    font-size: 1rem;
+  }
+
+  .development-info h2 {
+    padding: 20px;
+  }
+
+  .first-container,
+  .second-container,
+  .third-container,
+  .fourth-container {
+    flex-direction: column;
+    height: fit-content;
+    max-height: none;
+    padding: 20px 15px;
+    margin: 4vh 0;
+  }
+
+  .container-img {
+    width: 100%;
+  }
+
+  .desc-box,
+  .info-box,
+  .desc-box-2 {
+    width: 90%;
+    padding: 20px;
+    font-size: 1.1rem;
+    line-height: 30px;
+  }
+
+  .info-box h3 {
+    font-size: 1.6rem;
+  }
+
+  .desc-box-2 {
+    width: 100%;
+    padding: 0;
+  }
+}
+@media (min-width: 1025px) and (max-width: 1780px) {
+  .first-container,
+  .second-container,
+  .third-container,
+  .fourth-container .second-container,
+  .fourth-container {
+    height: fit-content;
+    max-width: none;
+    margin: 5vh 0;
+    padding: 25px 10px;
+  }
+
+  .desc-box,
+  .info-box {
+    width: 60%;
   }
 }
