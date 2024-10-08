@@ -1,3 +1,7 @@
+const conHost = window.location.origin
+const conSock = io(conHost)
+
+//* Download: Dashboard + Note View
 async function download(noteID, noteTitle) { 
     start() // start of animation
 
@@ -29,7 +33,6 @@ async function download(noteID, noteTitle) {
         finish() // end of animation
     }
 }
-
 function start() {
     document.querySelector('.status').style.display = 'flex'
 }
@@ -37,8 +40,7 @@ function finish() {
     document.querySelector('.status').style.display = 'none'
 }
 
-// Share Note Modal
-
+//* Share Model: Dashboard + Note View
 const linkElement = document.querySelector('._link_');
 function setupShareModal(noteID) {
     const shareNoteModal = document.querySelector('.share-note-overlay');
@@ -63,7 +65,6 @@ function setupShareModal(noteID) {
         }, 300); // Matches CSS transition duration
     });
 }
-
 function copyLink() {
     const linkElement = document.querySelector('._link_');
     const successfulLinkMsg = document.querySelector('.successful-copy');
@@ -89,7 +90,6 @@ function copyLink() {
             console.error('Failed to copy text: ', err);
         });
 }
-
 function share(platform) {
     const linkElement = document.querySelector('._link_').innerHTML;
 
@@ -104,6 +104,7 @@ function share(platform) {
     }
 }
 
+//* Search Notes: All Pages
 async function searchNotes() {
     let searchedResults = document.querySelector('.search-results')
     let existingNotes = searchedResults.querySelectorAll('div.results-card')
@@ -121,7 +122,7 @@ async function searchNotes() {
         let notes = await response.json()
         status.style.display = 'none' // End of loading
         if(notes.length > 0) {
-            document.querySelector('.status').style.display = 'none'
+            status.style.display = 'none'
             notes.forEach(note => {
                 searchedResults.insertAdjacentHTML('afterbegin', `
                     <a href="/view/${note._id}" style="text-decoration: none;">
@@ -134,34 +135,121 @@ async function searchNotes() {
             })
         } else {
             searchedResults.insertAdjacentHTML('afterbegin', `
-                <div class="results-card">
-                    <p class="result-note-title">We didn't find any note related to your search</p>
-                    <i class="fa-solid fa-arrow-up"></i>
+                <div class='results-card'>
+                    <p>We didn't find any note related to your search</p>
                 </div>
             `)
         }
     }
 }
-
 let searchBtn = document.querySelector('.search-btn')
 searchBtn.addEventListener('click', searchNotes)
-
 
 let searchInput = document.querySelector('.search-bar')
 let resultsContainer = document.querySelector('.results-container')
 
-// Press enter and the search will happen
+searchInput.addEventListener('focus', function() {
+    resultsContainer.style.display = 'flex';
+})
+
 searchInput.addEventListener('keydown', (event) => {
     if(event.key === 'Enter') {
         searchBtn.click()
     }
 })
 
-// Design this Arnob
-searchInput.addEventListener('focus', function() {
-    resultsContainer.style.display = 'flex';
+const manageStorage = {
+    add: function(key, object) {
+        localStorage.setItem(key, JSON.stringify(object))
+    },
+    update: function(key, id=undefined, method, object=undefined, type=undefined) {
+        if(method === 'insert') {
+            let values = JSON.parse(localStorage.getItem(key))
+            if((object !== undefined) && (id === undefined)) {
+                values.push(object)
+                this.add(key, values)
+            }
+        } else if(method === 'remove') {
+            if(object === undefined) {
+                let values = JSON.parse(localStorage.getItem(key))
+                let modifiedDocs;
+                if(type == undefined) {
+                    modifiedDocs = values.filter(item => item.notiID != id) // after remove
+                } else if(type == 'note') {
+                    modifiedDocs = values.filter(item => item.noteID != id) // after remove
+                }
+                this.add(key, modifiedDocs)
+            }
+        } 
+    },
+    isExists: function(key, noteID) {
+        let values = JSON.parse(localStorage.getItem(key))
+        let noteData = values.find(item => item.noteID == noteID)
+	    return !(noteData == undefined)
+    },
+    getContentLength: function(key) {
+        let values = JSON.parse(localStorage.getItem(key))
+	    return values.length
+    },
+    getContent: function(key) {
+        let values = JSON.parse(localStorage.getItem(key))
+        return values
+    }
+}
+
+function deleteNoti(id) {
+    conSock.emit('delete-noti', id) 
+	document.querySelector(`#noti-${id}`).remove() 
+	manageStorage.update('notis', id, 'remove')
+}
+
+//* Adding notifications: All pages
+function truncatedTitle(title) {
+    const titleCharLimit = 30;
+    let truncatedTitle =
+      title.length > titleCharLimit
+        ? title.slice(0, titleCharLimit) + "..."
+        : title;
+    return truncatedTitle
+}
+
+function addNoti(feedbackData) {
+    let notificationHtml = `
+          <div class="notification" id="noti-${feedbackData.notiID}">
+              <span class='feedback-id' style="display: none;">${feedbackData.feedbackID}</span>
+              <div class="first-row">
+                <a href='/view/${feedbackData.noteID}/#${feedbackData.feedbackID}' class="notification-link">
+                  <span class="notification-title">
+                  ${truncatedTitle(feedbackData.nfnTitle)}
+                  </span>
+                </a>  
+                <span class="remove-notification" onclick="deleteNoti('${feedbackData.notiID}')">&times;</span>
+              </div>
+              <div class="notification-msg">
+                <a href='/user/${feedbackData.commenterStudentID}' class="commenter-prfl">
+                ${feedbackData.commenterDisplayName}
+                </a><a href='/view/${feedbackData.noteID}/#${feedbackData.feedbackID}' class="notification-link-2"> has given feedback on your notes! Check it out.</a>
+              </div>
+          </div>`
+    document.querySelector('.notifications-container').insertAdjacentHTML('afterbegin', notificationHtml);
+}
+
+conSock.on('feedback-given' , (feedbackData) => {
+	if (feedbackData.ownerUsername == Cookies.get('recordName')) {
+		feedbackData.isNoti = true //* Identifing a notification object
+		manageStorage.update('notis', undefined, 'insert', feedbackData) // Adding notification data in the localStorage (BUG-1)
+		addNoti(feedbackData)
+
+		const nftShake = document.querySelector('.mobile-nft-btn')
+		nftShake.classList.add('shake')
+		setTimeout(() => {
+			nftShake.classList.remove('shake');
+		}, 300)
+	}
 })
 
+
+//* Mobile notification panel
 const notificationPanel = document.querySelector('.notification-panel');
 const notificationButton = document.querySelector('.mobile-nft-btn');
 const backgroundOverlay = document.querySelector('.background-overlay');
