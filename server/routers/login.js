@@ -3,7 +3,7 @@ const Students = require('../schemas/students')
 const router = express.Router()
 
 /* 
-Cookies:
+# Cookies:
     => stdid: session cookie generated with studentID
     => recordID: student's studentDocID
     => recordName: student's username

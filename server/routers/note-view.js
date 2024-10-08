@@ -20,7 +20,7 @@ Variables: (commenter / owner)
 
 function noteViewRouter(io) {
     async function getNote(noteDocID) {
-        // If the noteDocID is given in the url, the specific note will be shown. Otherwise all the notes will be shown //! note repo: will be deleted soon
+        // If the noteDocID is given in the url, the specific note will be shown. 
         if (noteDocID) {
             let note = await Notes.findById(noteDocID, { title: 1, subject: 1, description: 1, ownerDocID: 1, content: 1 })
             let owner = await Students.findById(note.ownerDocID, { displayname: 1, studentID: 1, profile_pic: 1, username: 1 }) 
@@ -28,10 +28,6 @@ function noteViewRouter(io) {
                 .populate('commenterDocID', 'displayname studentID profile_pic').sort({ createdAt: -1 }) 
 
             return { note: note, owner: owner, feedbacks: feedbacks }
-
-        } else {
-            let notes = await Notes.find({}, { title: 1, subject: 1, description: 1 }) //! note repo: will be removed soon
-            return notes
         }
     }
     
@@ -105,13 +101,6 @@ function noteViewRouter(io) {
                         mynote = 0
                         res.render('note-view', { note: note, mynote: mynote, owner: owner, feedbacks: feedbacks, root: root, savedNotes: savedNotes, notis: notis }) // Specific notes: visiting others notes
                     }
-                } catch (error) {
-                    next(error)
-                }
-            } else {
-                try {
-                    let notes = await getNote()
-                    res.render('notes-repo', { notes: notes }) //! Notes repository. Created for testing purposes, will be deleted soon    
                 } catch (error) {
                     next(error)
                 }

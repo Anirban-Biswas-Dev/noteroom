@@ -49,7 +49,7 @@ document.querySelector('input#fileInput').addEventListener('change', function (e
             bgOverlay.style.display = 'none';
         })
 
-        addToStack.addEventListener('click', function (event) {
+        addToStack.addEventListener('click', function () {
             let image = document.querySelector('input#fileInput')
             if (image.files[0] != undefined) {
                 stackFiles.push(image.files[0]) // Adding File Object into the stack

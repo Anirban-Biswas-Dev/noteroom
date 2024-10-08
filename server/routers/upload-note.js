@@ -73,7 +73,7 @@ function uploadRouter(io) {
             } 
 
             Notes.findByIdAndUpdate(noteDocId, { $set: { content: allFilePaths } }).then(() => {
-                res.send({ url: '/view' })
+                res.send({ url: '/dashboard' })
             }) //* After adding everything into the note-db except content (image links), this will update the content field with the image links
 
             let owner = await getStudentInfo(req.cookies['recordID']) //* Getting the user information based on the recordID cookie, basically the owner of the note
