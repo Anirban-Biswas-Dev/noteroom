@@ -1,344 +1,19 @@
 const host = window.location.origin
 const socket = io(host)
 
-function truncatedTitle(title) {
-  const titleCharLimit = 30;
-  let truncatedTitle =
-    title.length > titleCharLimit
-      ? title.slice(0, titleCharLimit) + "..."
-      : title;
-  return truncatedTitle
-}
 
-function addNote(noteData) {
-  /*
-  noteData:
-    thumbnail: The first image of the image-stack, will be used for preview at dashboard
-    noteID: Unique id for each note to redirect users to the specific note (view/<note-id>)
-    profile_pic: The profile picture of the owner of the note
-    noteTitle: Title of the note
-    ownerID: Note owner's student ID, will be used to redirect users to the note-owner (user/<owner-ID>)
-    ownerDisplayname: Note owner's displayname
-  */
-
-  let noteCardsHtml = `
-  				<div class="feed-note-card" id="note-${noteData.noteID}">
-					<div class="thumbnail-container">
-						<div class="thumbnail-loading">
-							<svg className="w-10 h-10" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 18">
-								<path 
-									d="M18 0H2a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2Zm-5.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm4.376 10.481A1 1 0 0 1 16 15H4a1 1 0 0 1-.895-1.447l3.5-7A1 1 0 0 1 7.468 6a.965.965 0 0 1 .9.5l2.775 4.757 1.546-1.887a1 1 0 0 1 1.618.1l2.541 4a1 1 0 0 1 .028 1.011Z" 
-									style="fill: hsl(0, 0%, 80%);" 
-								/>
-							</svg>
-						</div>
-						<img class="thumbnail" data-src="${noteData.thumbnail}" onclick="window.location.href='/view/${noteData.noteID}'" > 
-						<button class="save-note-btn" id="save-btn-${noteData.noteID}" onclick="saveNote('${noteData.noteID}')">
-							<i class="fa-regular fa-bookmark"></i>
-							<i class="fa-solid fa-bookmark saved"></i>
-						</button>
-					</div>
-				<div class="note-details">
-					<div class="author-info">
-						<img src="${noteData.profile_pic}" class="author-img">
-						<div class="author-title-container">
-							<div class="note-title"><a href="/view/${noteData.noteID}" onclick='location.reload()'>${noteData.noteTitle}</a></div>
-							<div class="author"><a class="author-prfl-link" href="/user/${noteData.ownerID}">${noteData.ownerDisplayName}</a></div>
-						</div>
-					</div>
-					<div class="note-engagement">
-						<svg class="download-icon" width="40" height="40" viewBox="0 0 43 43" fill="none" xmlns="http://www.w3.org/2000/svg" onclick="download(${noteData.noteID}, ${noteData.noteTitle})">
-							<path d="M37.1541 26.5395V33.6165C37.1541 34.555 36.7813 35.455 36.1177 36.1186C35.4541 36.7822 34.5541 37.155 33.6156 37.155H8.84623C7.90776 37.155 7.00773 36.7822 6.34414 36.1186C5.68054 35.455 5.30774 34.555 5.30774 33.6165V26.5395M12.3847 17.6933L21.2309 26.5395M21.2309 26.5395L30.0771 17.6933M21.2309 26.5395V5.30859" stroke="#1E1E1E" stroke-width="2.29523" stroke-linecap="round" stroke-linejoin="round"/>
-						</svg>
-						<svg onclick="window.location.href='/view/${noteData.noteID}/#feedbacks';" class="comment-icon" width="40" height="40" viewBox="0 0 36 37" fill="none" xmlns="http://www.w3.org/2000/svg">
-							<path d="M34.4051 23.9151C34.4051 24.8838 34.0257 25.8128 33.3505 26.4978C32.6753 27.1828 31.7595 27.5676 30.8045 27.5676H9.20113L2 34.8726V5.65252C2 4.68381 2.37934 3.75478 3.05458 3.0698C3.72982 2.38482 4.64564 2 5.60057 2H30.8045C31.7595 2 32.6753 2.38482 33.3505 3.0698C34.0257 3.75478 34.4051 4.68381 34.4051 5.65252V23.9151Z" stroke="#1E1E1E" stroke-width="2.40038" stroke-linecap="round" stroke-linejoin="round"/>
-						</svg>
-						<svg class="share-icon" width="40" height="40" viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg" onclick="setupShareModal(${noteData.noteID})">
-							<path d="M30.6079 32.5223L27.8819 29.8441L36.6816 21.0444L27.8819 12.2446L30.6079 9.56641L42.0858 21.0444L30.6079 32.5223ZM3.82599 36.3483V28.6963C3.82599 26.05 4.7506 23.8023 6.59983 21.953C8.48094 20.0719 10.7446 19.1314 13.391 19.1314H25.2037L18.3169 12.2446L21.0429 9.56641L32.5209 21.0444L21.0429 32.5223L18.3169 29.8441L25.2037 22.9574H13.391C11.7968 22.9574 10.4418 23.5153 9.32584 24.6312C8.20993 25.7471 7.65197 27.1022 7.65197 28.6963V36.3483H3.82599Z" fill="#1D1B20"/>
-						</svg>
-					</div>            
-				</div>
-			</div> 
-	`; 
-  document.querySelector('.feed-container').insertAdjacentHTML('beforeend', noteCardsHtml);
-  let newNoteCard = document.querySelector('.feed-note-card:last-child')
-  observer.observe(newNoteCard)
-  document.querySelector('.fetch-loading').style.display = 'flex'
-}
-let notificationCount = 0;
-
-function addNoti(feedbackData) {
-  /*
-  feedbackData:
-    ownerUsername: The username of the owner of the note of which the feedback is given
-    notiID: Unique ID of the feedback notification
-    noteDocID: Unique ID of the note, will be used to redirect the owner to note on which the feedback is given (view/<note-id>)
-    nfnTitle: This is actually the title of the note, will be used for notification title
-    commenterStudentID: The student ID of the student who gave the feedback, will be used for redirecting the owner to the commenter's profile (user/<commenter-student-id>)
-    commenterDisplayname: The displayname of the commenter
-  */
-  let notificationHtml = `
-        <div class="notification" id="${feedbackData.notiID}">
-			<span class='feedback-id' style="display: none;">${feedbackData.feedbackID}</span>
-            <div class="first-row">
-              <a href='/view/${feedbackData.noteDocID}/#${feedbackData.feedbackID}' class="notification-link">
-                <span class="notification-title">
-                ${truncatedTitle(feedbackData.nfnTitle)}
-                </span>
-              </a>  
-              <span class="remove-notification" onclick="deleteNoti('${feedbackData.notiID}')">&times;</span>
-            </div>
-            <div class="notification-msg">
-              <a href='/user/${feedbackData.commenterStudentID}' class="commenter-prfl">
-              ${feedbackData.commenterDisplayName}
-              </a><a href='/view/${feedbackData.noteDocID}/#${feedbackData.feedbackID}' class="notification-link-2"> has given feedback on your notes! Check it out.</a>
-            </div>
-        </div>`
-  document.querySelector('.notifications-container').insertAdjacentHTML('afterbegin', notificationHtml);
-  // Increment the notification count
-  notificationCount++;
-  
-  // Update the badge with the new count
-  updateNotificationBadge();
-}
-function updateNotificationBadge() {
-	const badge = document.getElementById('notification-count');
-	
-	if (badge) {
-	  // Update the text inside the badge
-	  badge.textContent = notificationCount;
-	  
-	  // Show the badge if there are notifications
-	  if (notificationCount > 0) {
-		badge.style.display = 'inline-block';
-	  } else {
-		badge.style.display = 'none';
-	  }
-	} else {
-	  console.error('Notification badge element not found');
-	}
-  }
-  
-  function deleteNoti(notiID) {
-	const notification = document.getElementById(notiID);
-	if (notification) {
-	  // Remove the notification element from the DOM
-	  notification.remove();
-	  
-	  // Decrement the notification count
-	  notificationCount--;
-	  
-	  // Update the badge with the new count
-	  updateNotificationBadge();
-	} else {
-	  console.error('Notification element not found for ID:', notiID);
-	}
-  }
-  
-  function addSaveNote(noteData) {
-	let savedNotesContainer = document.querySelector(".saved-notes-container");
-  
-	// Moshiur you'll see that the ejs doesn't have the hide class as this. But this is imp for visiblity
-	let savedNotesHtml = `
-	  <div class="saved-note hide" id="saved-note-${noteData.noteID}">
-		<span class="sv-note-title">
-		  <a class="sv-n-link" href='/view/${noteData.noteID}'>${truncatedTitle(noteData.noteTitle)}</a>
-		</span>
-	  </div>`;
-	savedNotesContainer.insertAdjacentHTML('afterbegin', savedNotesHtml);
-  
-	const newNote = document.getElementById(`saved-note-${noteData.noteID}`);
-  
-	// Remove the hide class and add the transition class after a short delay
-	setTimeout(() => {
-	  if (newNote) {
-		newNote.classList.remove('hide'); 
-		newNote.classList.add('show-sv-in-LP');
-	  }
-	}, 50);
-  }
-
-function updateLocalStorage(key, noteID_noteObj, method) {
-	if(method == 'insert') {
-		let values = JSON.parse(localStorage.getItem(key))
-		values.push(noteID_noteObj)
-		localStorage.setItem(key, JSON.stringify(values))
-	} else if(method == 'remove') {
-		let values = JSON.parse(localStorage.getItem(key))
-		let noteData = values.find(item => item.noteID == noteID_noteObj)
-		let modifiedDocs = values.filter(item => item.noteID !== noteData.noteID)
-		localStorage.setItem(key, JSON.stringify(modifiedDocs))
-	}
-}
-
-function isExists(key, noteDocID) {
-	let values = JSON.parse(localStorage.getItem(key))
-	let noteData = values.find(item => item.noteID == noteDocID)
-	return !(noteData == undefined)
-}
-
-function getLocalStorageContentLength(key) {
-	let values = JSON.parse(localStorage.getItem(key))
-	return values.length
-}
-
-socket.on('note-upload' /* Event handler of the event triggered after uploading a note */, (noteData) => {
-	noteData.isAddNote = true //* Idenfing a note object that needs to be added after back_forward
-	updateLocalStorage('addedNotes', noteData, 'insert')
-	addNote(noteData)
-})
-
-
-socket.on('feedback-given' , (feedbackData) => {
-	if (feedbackData.ownerUsername == Cookies.get('recordName')) {
-		feedbackData.isNoti = true //* Identifing a notification object
-		updateLocalStorage('notis', feedbackData, 'insert') // Adding notification data in the localStorage (BUG-1)
-		addNoti(feedbackData)
-
-		const nftShake = document.querySelector('.mobile-nft-btn')
-		nftShake.classList.add('shake')
-		setTimeout(() => {
-			nftShake.classList.remove('shake');
-		}, 300)
-		console.log(nftShake);
-
-		// sound played on new notification
-		const audio = document.getElementById('notification-sound');
-		audio.currentTime = 0;
-		audio.play();
-	}
-})
-
-let saved_notes = []
-let [navigate] = performance.getEntriesByType('navigation')
-if ((navigate.type === 'navigate') || (navigate.type == 'reload')) {
-
-	localStorage.clear()
-
-	let studentDocID = Cookies.get('recordID').split(':')[1].replaceAll('"', '')
-	fetch(`/getNote?type=save&studentDocID=${studentDocID}`)
-		.then(response => response.json() )
-		.then(notes => {
-			notes.forEach(note => {
-				let noteData = {
-					noteID: note._id,
-					noteTitle: note.title,
-					isSavedNote: true 
-				}	
-				saved_notes.push(noteData)
-			})
-			localStorage.setItem('savedNotes', JSON.stringify(saved_notes))
-			localStorage.setItem('notis', JSON.stringify([]))
-			localStorage.setItem('addedNotes', JSON.stringify([]))
-		})
-		.catch(error => console.log(error.message))
-
-} else if (navigate.type === 'back_forward') {
-	let Datas = Object.values(localStorage)
-	Datas.forEach(CardStr => {
-		let data = JSON.parse(CardStr)
-		data.map(note => {
-			if(note.isAddNote) {
-				let existingNote = document.querySelector(`#note-${note.noteID}`)
-				if(existingNote === null) {
-					addNote(note)
-				}
-			} 
-			else if(note.isSavedNote) {
-				let noSavedNoteMessage = document.querySelector('.no-saved-notes-message')
-				if(noSavedNoteMessage) {
-					noSavedNoteMessage.style.display = 'none'
-				}
-				if(isExists('savedNotes', note.noteID)) {
-					let existingNote = document.querySelector(`#saved-note-${note.noteID}`)
-					if(existingNote === null) {
-						addSaveNote(note)
-						document.querySelector(`#save-btn-${note.noteID}`).classList.add('saved')
-					}
-				}	
-			} 
-			else if(note.isNoti) {
-				addNoti(note)
-			} 
-		})
-	})
-}
-
-
-function saveNote(noteDocID) {
-    let button = document.querySelector(`#save-btn-${noteDocID}`);
-    let recordID = Cookies.get('recordID').split(':')[1].replaceAll('"', '');
-
-    if (!button.classList.contains('saved')) {
-        button.classList.add('saved');
-        let noteData = {
-            noteID: noteDocID,
-            noteTitle: document.querySelector(`#note-${noteDocID} .note-title a`).innerHTML,
-            isSavedNote: true 
-        };
-        updateLocalStorage('savedNotes', noteData, 'insert');
-        addSaveNote(noteData);
-        socket.emit('save-note', recordID, noteDocID);
-		document.querySelector('.no-saved-notes-message').style.display = 'none'
-
-    } else {
-        socket.emit('delete-saved-note', recordID, noteDocID);
-        button.classList.remove('saved');
-        updateLocalStorage('savedNotes', noteDocID, 'remove');
-        document.querySelector(`#saved-note-${noteDocID}`).remove(); 
-		if(getLocalStorageContentLength('savedNotes') == 0) {
-			let noSavedNotesMsg = document.querySelector('.no-saved-notes-message')
-			if(noSavedNotesMsg) {
-				noSavedNotesMsg.style.display = 'block'
-			} else {
-				document.querySelector('.saved-notes-container').insertAdjacentHTML('beforeend', `
-					<div class="no-saved-notes-message">
-                  		<p>It looks like you haven't saved any notes yet.</p>
-                  		<p>Start saving <span class="anim-bg">important notes</span> to easily access them later!</p>
-                	</div>
-				`)
-			}
-		}
-    }
-}
-
-function deleteNoti(id) {
-	socket.emit('delete-noti', id) 
-	document.getElementById(id).remove() 
-	updateLocalStorage('notis', id, 'remove')
-}
-
-const noteCards = document.querySelectorAll('.feed-note-card');
-const observer = new IntersectionObserver(entries => {
-	entries.forEach(entry => {
-		if(entry.isIntersecting) {
-			let image = entry.target.querySelector('.thumbnail-container .thumbnail')
-			let imageURL = image.getAttribute('data-src')
-
-			image.onload = function() {
-				image.parentElement.querySelector('.thumbnail-loading').style.display = 'none' // End of animation, don't find the start. The animation should start auto while the page loaded. So, create the animation and then hide it here
-				image.style.display = 'flex'
-			}
-
-			image.src = imageURL
-			image.removeAttribute('data-src')
-			observer.unobserve(entry.target)
-		}	
-	})
-}, {
-	rootMargin: "300px"
-})
-noteCards.forEach(card => {
-	observer.observe(card)
-})
-
+//* Function to get paginated notes
 let page = 2
-async function _add(count) {
+async function add_note(count) {
+	/*
+	# Process:
+	~	a fetch request is sent with desired page number and number of notes (1). if there are any notes left, it is retuned as a list (2).
+	~	the data is then prepared and pused in a list (3) which is then returned (4). lastly, the page number gets increased.
+	*/
 	let notesList = [];
-
     try {
-        let response = await fetch(`/getnote?type=seg&page=${page}&count=${count}`);
-        let notes = await response.json();
+        let response = await fetch(`/getnote?type=seg&page=${page}&count=${count}`); // 1
+        let notes = await response.json(); // 2
 
         if (notes.length !== 0) {
             notes.forEach(note => {
@@ -350,54 +25,243 @@ async function _add(count) {
                     ownerID: note.ownerDocID.studentID,
                     ownerDisplayName: note.ownerDocID.displayname
                 };
-                notesList.push(noteData);
+                notesList.push(noteData); // 3
             });
             page = page + 1; // Increment the page after processing the notes
         }
     } catch (error) {
         console.log(error.message);
     }
-    return notesList;
+    return notesList; // 4
 }
-const lastNoteObserver = new IntersectionObserver(async entries => {
-	let lastNote = entries[0]
-	if(lastNote.isIntersecting) {
-		document.querySelector('.fetch-loading').style.display = 'flex'
-		let noteList = await _add(3)
-		if(noteList.length != 0) {
-			noteList.forEach(note => {
-				addNote(note)
+
+
+
+let savedNotes = manageStorage.getContent('savedNotes').map(item => item.noteID) // List of saved notes' ids
+//* Observer's object
+const observers = {
+	observer: function() {
+		/*
+		# Process:
+		~	the thumbnail lazy loading observer. when a note is added in the dashboard, the thumbnail's image element keeps its thumbnail
+		~ 	source in data-src attribute. when the note is at least 300px ahead (2) from the current viewport, the image is then loaded (1)
+		~	until then, the skeleton loader runs. 
+		*/
+
+		const _observer = new IntersectionObserver(entries => {
+			entries.forEach(entry => {
+				if(entry.isIntersecting) {
+					let image = entry.target.querySelector('.thumbnail-container .thumbnail')
+					let imageURL = image.getAttribute('data-src')
+		
+					image.onload = function() {
+						image.parentElement.querySelector('.thumbnail-loading').style.display = 'none' // skeleton loader
+						image.style.display = 'flex'
+					}
+					
+					image.src = imageURL // 1
+					image.removeAttribute('data-src')
+					_observer.unobserve(entry.target)
+				}	
 			})
-			lastNoteObserver.unobserve(lastNote.target)
-			lastNoteObserver.observe(document.querySelector('.feed-note-card:last-child'))
-		} else {
-			document.querySelector('.finish').style.display = 'flex'
-  			document.querySelector('.fetch-loading').style.display = 'none'
-		}
+		}, {
+			rootMargin: "300px" // 2
+		})
+		return _observer
+	},
+
+	lastNoteObserver: function() {
+		/*
+		# Process:
+		~ 	after the page is loaded, first 3 notes are added. their thumbnail loads lazily with lazy-load observer. when the last note is in 
+		~	viewport with 100% of appearance, then the next image page in fetched. (1 page = 3 notes:list) (1). if that page actually contains 1 or
+		~	more than 1 notes, then they are added in the dashboard (2). also, if they are also marked as saved, the save class is added in the save
+		~	button (3). 
+		~	then the last note observer unobserves the last note (4) and look forward to find the next page's last note if exists (5). it helps to 
+		~	keep an	scrolling flow until all the notes are shown 
+		*/
+
+		const _observer = new IntersectionObserver(async entries => {
+			let lastNote = entries[0]
+			if(lastNote.isIntersecting) {
+				document.querySelector('.fetch-loading').style.display = 'flex'
+				let noteList = await add_note(3) // 1
+				if(noteList.length != 0) {
+					noteList.forEach(note => {
+						if(!document.querySelector(`#note-${note.noteID}`)) {
+							manageNotes.addNote(note) // 2
+							if(savedNotes.includes(note.noteID)) {
+								document.querySelector(`#save-btn-${note.noteID}`).classList.add('saved') // 3
+							}
+						}
+					})
+					_observer.unobserve(lastNote.target) // 4
+					_observer.observe(document.querySelector('.feed-note-card:last-child')) // 5
+				} else {
+					document.querySelector('.finish').style.display = 'flex'
+					document.querySelector('.fetch-loading').style.display = 'none'
+				}
+			}
+		}, { 
+			threshold: 1
+		})
+		return _observer
 	}
-}, { 
-	threshold: 1
+}
+
+
+
+/*
+* Navigation capture and real time loading
+# Process:
+~	=>. when the page gets reload, first the saved notes data is fetched and added in LS|key=savedNotes (1.1). it helps to add save class
+~		in the saved notes buttons. also empty lists are added in LS|key=addedNotes and LS|key=notis (1.2)
+
+~	=>. when a back_forward is captured, means when the user comes to dashboard without reloading and only using back-button, all the
+~		data from LS is fetched. there are 3 types of data, all are list of objects form
+~			1. addedNotes: notes which are uploaded by other users (without reloading, not the one from the database) => isAddNote=true
+~			2. savedNotes: notes saved by the user => isSaveNote=true
+~			3. notis: notifications got at real time (without reloading, not the one from the database) => isNoti=true
+
+~		mapping through them, if isAddNote=true, the note gets added in the dashboard (if there is no note with that id, usefull for chrome) (2.1).
+
+~		if isSavedNote=true, first the no-notes-message is removed (2.2), then it gets added in the left-panel (if not already added) (2.3) and lastly
+~		the save class is added in the save button (2.4).
+
+~		if isNoti=true, the noti. object is added in the right-panel. (2.5)
+*/
+let saved_notes = []
+let [navigate] = performance.getEntriesByType('navigation')
+if ((navigate.type === 'navigate') || (navigate.type == 'reload')) {
+	localStorage.clear()
+
+	let studentDocID = Cookies.get('recordID').split(':')[1].replaceAll('"', '')
+	fetch(`/getNote?type=save&studentDocID=${studentDocID}`) // 1.1
+		.then(response => response.json() )
+		.then(notes => {
+			notes.forEach(note => {
+				let noteData = {
+					noteID: note._id,
+					noteTitle: note.title,
+					isSavedNote: true 
+				}	
+				saved_notes.push(noteData)
+			})
+			localStorage.setItem('savedNotes', JSON.stringify(saved_notes)) // 1.1
+			localStorage.setItem('notis', JSON.stringify([])) // 1,2
+			localStorage.setItem('addedNotes', JSON.stringify([])) // 1.2
+		})
+		.catch(error => console.log(error.message))
+
+} else if (navigate.type === 'back_forward') {
+	let Datas = Object.values(localStorage)
+	Datas.forEach(CardStr => {
+		let data = JSON.parse(CardStr)
+		data.map(note => {
+			if(note.isAddNote) { // 2.1
+				let existingNote = document.querySelector(`#note-${note.noteID}`)
+				if(existingNote === null) {
+					manageNotes.addNote(note)
+				}
+			} 
+			else if(note.isSavedNote) {
+				let noSavedNoteMessage = document.querySelector('.no-saved-notes-message')
+				if(noSavedNoteMessage) {
+					noSavedNoteMessage.style.display = 'none' // 2.2
+				}
+				if(manageStorage.isExists('savedNotes', note.noteID)) {
+					let existingNote = document.querySelector(`#saved-note-${note.noteID}`)
+					if(existingNote === null) {
+						manageNotes.addSaveNote(note) // 2.3
+						let saveBtn = document.querySelector(`#save-btn-${note.noteID}`)
+						if(saveBtn) {
+							saveBtn.classList.add('saved') // 2.4
+						}
+					}
+				}	
+			} 
+			else if(note.isNoti) {
+				manageNotes.addNoti(note) // 2.5
+			} 
+		})
+	})
+}
+
+
+
+//* saving/delete a note
+function saveNote(noteDocID) {
+	/*
+	# Process:
+	~	the noteID is sent when clicking the save button. first if the note is already saved or not is checked. this is checked by if the button has a class 
+	~	save or not (1). if has, the button acts like a save button, otherwise works like a delete button. 
+	~	after clicking save button, save class is added, then the prepared saved note object is added in LS|key=savedNotes, then adding to front-end, sending 
+	~	WS event to save the data in database. and lastly, if there are any no-saved-note msg, it gets removed.
+
+	~	clicking the delete button, WS event is raised to delete the data from db, removing save class from button, removing data from LS, and then removing
+	~	element from front-end. then if the LS|key=savedNotes has 0 contents, the no-saved-notes msg is shown (created if not exists)
+	*/
+
+    let button = document.querySelector(`#save-btn-${noteDocID}`);
+    let recordID = Cookies.get('recordID').split(':')[1].replaceAll('"', '');
+	let noSavedNotesMsg = document.querySelector('.no-saved-notes-message')
+
+    if (!button.classList.contains('saved')) { // 1
+        button.classList.add('saved'); // adding saved class
+        let noteData = {
+            noteID: noteDocID,
+            noteTitle: document.querySelector(`#note-${noteDocID} .note-title a`).innerHTML,
+            isSavedNote: true 
+        };
+
+        manageStorage.update('savedNotes', undefined, 'insert', noteData); // adding to localstorage
+        manageNotes.addSaveNote(noteData); // adding to document
+        socket.emit('save-note', recordID, noteDocID); // adding to database
+		if(noSavedNotesMsg) {
+			noSavedNotesMsg.style.display = 'none' // removing no-saved-notes msg
+		}
+
+    } else {
+        socket.emit('delete-saved-note', recordID, noteDocID); // removing from db
+        button.classList.remove('saved'); // removing saved class
+        manageStorage.update('savedNotes', noteDocID, 'remove', undefined, 'note'); // removing from localstorage
+        document.querySelector(`#saved-note-${noteDocID}`).remove(); // removing from frontend
+
+		if(manageStorage.getContentLength('savedNotes') == 0) {
+			if(noSavedNotesMsg) {
+				noSavedNotesMsg.style.display = 'block' // showing no no-notes-saved if there are no saved notes left
+			} else {
+				document.querySelector('.saved-notes-container').insertAdjacentHTML('beforeend', `
+					<div class="no-saved-notes-message">
+                  		<p>It looks like you haven't saved any notes yet.</p>
+                  		<p>Start saving <span class="anim-bg">important notes</span> to easily access them later!</p>
+                	</div>
+				`) // creating no-saved-notes if there isn't any
+			}
+		}
+    }
+}
+
+
+//* Triggering all the observers
+document.querySelectorAll('.feed-note-card').forEach(card => {
+	observers.observer().observe(card)
 })
-lastNoteObserver.observe(document.querySelector('.feed-note-card:last-child'))
+observers.lastNoteObserver().observe(document.querySelector('.feed-note-card:last-child'))
 
-// const notificationPanel = document.querySelector('.notification-panel');
-// const notificationButton = document.querySelector('.mobile-nft-btn');
-// const backgroundOverlay = document.querySelector('.background-overlay');
-// const hideNotificationPanel = document.querySelector('.btn-hide-nft');
 
-// notificationButton.addEventListener('click', () => {
-//   notificationPanel.classList.toggle('show');
-//   backgroundOverlay.classList.toggle('show-overlay');
-// });
-// backgroundOverlay.addEventListener('click', () => {
-//   notificationPanel.classList.remove('show');
-//   backgroundOverlay.classList.remove('show-overlay');
-// });
-// hideNotificationPanel.addEventListener('click', () => {
-//   notificationPanel.classList.remove('show');
-//   backgroundOverlay.classList.remove('show-overlay');
-// })
-// Saved notes functionality for adding visual effect when saved. 
+//* Note upload WS event
+socket.on('note-upload', (noteData) => {
+	/*
+	# Process: when a note is uploaded, this event is handled by every online user
+	~	first the data is added as isAddNote in LS|key=addedNotes. then it is added in the dashboard.
+	*/
+	noteData.isAddNote = true 
+	manageStorage.update('addedNotes', undefined, 'insert', noteData)
+	manageNotes.addNote(noteData)
+})
+
+
 
 document.addEventListener('DOMContentLoaded', () => {
   const buttons = document.querySelectorAll('.save-note-btn');
