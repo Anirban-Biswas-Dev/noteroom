@@ -1,4 +1,189 @@
-async function download(noteID, noteTitle) { 
+const conHost = window.location.origin
+const conSock = io(conHost)
+
+//* Description or Bio truncater function
+function truncatedTitle(title) {
+    const titleCharLimit = 30;
+    let truncatedTitle =
+      title.length > titleCharLimit
+        ? title.slice(0, titleCharLimit) + "..."
+        : title;
+    return truncatedTitle
+}
+
+
+
+//* Local Storage manager object
+const manageStorage = {
+    /* 
+    # Functions:
+        => add: adds a stringified object in the localStorage under a given key
+        => getContent: returns a list of objects under a key
+        => update: updates an entry under a key, either insert an object in a list or remove an object from that list
+            # process: key is must
+        ~       insert: id has to be undefined cause everytime an object will be inserted. so, object can't be undefined. 
+        ~               method=insert. after getting the content under that key, the object will be pushed and updated in LS.
+        ~               type is not needed
+        ~       remove: method=remove, object has to be undefined cause object removal is dependent on id(noteID or notiID). 
+        ~               so, id can't be undefined. if type=undefined then id will refer notiID which is default. if type=note 
+        ~               then id will refer noteID. after getting type and id, the object with that id will be filtered out 
+        ~               and pused, updated in LS
+        => isExists: checks if an object exists in a list under a key or not. The object is identified ONLY BY ITS NOTEID 
+        => getContentLength: returns the amount of objects in a list under a key
+    */
+
+    add: function(key, object) {
+        localStorage.setItem(key, JSON.stringify(object))
+    },
+    getContent: function(key) {
+        let values = JSON.parse(localStorage.getItem(key))
+        return values
+    },
+    update: function(key, id=undefined, method, object=undefined, type=undefined) {
+        if(method === 'insert') {
+            let values = this.getContent(key)
+            if((object !== undefined) && (id === undefined)) {
+                values.push(object)
+                this.add(key, values)
+            }
+        } else if(method === 'remove') {
+            if(object === undefined) {
+                let values = this.getContent(key)
+                let modifiedDocs;
+                if(type == undefined) {
+                    modifiedDocs = values.filter(item => item.notiID != id) // after remove
+                } else if(type == 'note') {
+                    modifiedDocs = values.filter(item => item.noteID != id) // after remove
+                }
+                this.add(key, modifiedDocs)
+            }
+        } 
+    },
+    isExists: function(key, noteID) {
+        let values = this.getContent(key)
+        let noteData = values.find(item => item.noteID == noteID)
+	    return !(noteData == undefined)
+    },
+    getContentLength: function(key) {
+        return this.getContent(key).length
+    }
+}
+
+
+
+//* The main dynamic content loading manager object
+const manageNotes = {
+    /* 
+    # Functions:
+        => addNote: adds note in the dashboard
+            # process:
+        ~       notes are added with this function in 2 scenerios. One is after back_forward and another is lazy loading.
+        ~       first the note will be added (1) and then the lazy loading oserver will be triggered for that specific note. (2)
+    
+        => addSaveNote: adds note in the left-panel
+        => addNoti: adds a notification in the right-panel
+    */
+
+	addNote: function(noteData) { 
+		let noteCardsHtml = `
+					<div class="feed-note-card" id="note-${noteData.noteID}">
+						  <div class="thumbnail-container">
+							  <div class="thumbnail-loading">
+								  <svg className="w-10 h-10" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 18">
+									  <path 
+										  d="M18 0H2a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2Zm-5.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm4.376 10.481A1 1 0 0 1 16 15H4a1 1 0 0 1-.895-1.447l3.5-7A1 1 0 0 1 7.468 6a.965.965 0 0 1 .9.5l2.775 4.757 1.546-1.887a1 1 0 0 1 1.618.1l2.541 4a1 1 0 0 1 .028 1.011Z" 
+										  style="fill: hsl(0, 0%, 80%);" 
+									  />
+								  </svg>
+							  </div>
+							  <img class="thumbnail" data-src="${noteData.thumbnail}" onclick="window.location.href='/view/${noteData.noteID}'" > 
+							  <button class="save-note-btn" id="save-btn-${noteData.noteID}" onclick="saveNote('${noteData.noteID}')">
+								  <i class="fa-regular fa-bookmark"></i>
+								  <i class="fa-solid fa-bookmark saved"></i>
+							  </button>
+						  </div>
+					  <div class="note-details">
+						  <div class="author-info">
+							  <img src="${noteData.profile_pic}" class="author-img">
+							  <div class="author-title-container">
+								  <div class="note-title"><a href="/view/${noteData.noteID}" onclick='location.reload()'>${noteData.noteTitle}</a></div>
+								  <div class="author"><a class="author-prfl-link" href="/user/${noteData.ownerID}">${noteData.ownerDisplayName}</a></div>
+							  </div>
+						  </div>
+						  <div class="note-engagement">
+							  <svg class="download-icon" width="40" height="40" viewBox="0 0 43 43" fill="none" xmlns="http://www.w3.org/2000/svg" onclick="download('${noteData.noteID}', '${noteData.noteTitle}')">
+								  <path d="M37.1541 26.5395V33.6165C37.1541 34.555 36.7813 35.455 36.1177 36.1186C35.4541 36.7822 34.5541 37.155 33.6156 37.155H8.84623C7.90776 37.155 7.00773 36.7822 6.34414 36.1186C5.68054 35.455 5.30774 34.555 5.30774 33.6165V26.5395M12.3847 17.6933L21.2309 26.5395M21.2309 26.5395L30.0771 17.6933M21.2309 26.5395V5.30859" stroke="#1E1E1E" stroke-width="2.29523" stroke-linecap="round" stroke-linejoin="round"/>
+							  </svg>
+							  <svg onclick="window.location.href='/view/${noteData.noteID}/#feedbacks';" class="comment-icon" width="40" height="40" viewBox="0 0 36 37" fill="none" xmlns="http://www.w3.org/2000/svg">
+								  <path d="M34.4051 23.9151C34.4051 24.8838 34.0257 25.8128 33.3505 26.4978C32.6753 27.1828 31.7595 27.5676 30.8045 27.5676H9.20113L2 34.8726V5.65252C2 4.68381 2.37934 3.75478 3.05458 3.0698C3.72982 2.38482 4.64564 2 5.60057 2H30.8045C31.7595 2 32.6753 2.38482 33.3505 3.0698C34.0257 3.75478 34.4051 4.68381 34.4051 5.65252V23.9151Z" stroke="#1E1E1E" stroke-width="2.40038" stroke-linecap="round" stroke-linejoin="round"/>
+							  </svg>
+							  <svg class="share-icon" width="40" height="40" viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg" onclick="setupShareModal('${noteData.noteID}')">
+								  <path d="M30.6079 32.5223L27.8819 29.8441L36.6816 21.0444L27.8819 12.2446L30.6079 9.56641L42.0858 21.0444L30.6079 32.5223ZM3.82599 36.3483V28.6963C3.82599 26.05 4.7506 23.8023 6.59983 21.953C8.48094 20.0719 10.7446 19.1314 13.391 19.1314H25.2037L18.3169 12.2446L21.0429 9.56641L32.5209 21.0444L21.0429 32.5223L18.3169 29.8441L25.2037 22.9574H13.391C11.7968 22.9574 10.4418 23.5153 9.32584 24.6312C8.20993 25.7471 7.65197 27.1022 7.65197 28.6963V36.3483H3.82599Z" fill="#1D1B20"/>
+							  </svg>
+						  </div>            
+					  </div>
+				  </div> `; 
+
+		document.querySelector('.feed-container').insertAdjacentHTML('beforeend', noteCardsHtml); // 1
+
+		let newNoteCard = document.querySelector('.feed-note-card:last-child')
+		observers.observer().observe(newNoteCard) // 2
+		document.querySelector('.fetch-loading').style.display = 'flex'
+	},
+
+	addSaveNote: function(noteData) { 
+		let savedNotesContainer = document.querySelector(".saved-notes-container");
+		let savedNotesHtml = `
+			<div class="saved-note hide" id="saved-note-${noteData.noteID}">
+				<span class="sv-note-title">
+					<a class="sv-n-link" href='/view/${noteData.noteID}'>${truncatedTitle(noteData.noteTitle)}</a>
+				</span>
+			</div>`;
+		savedNotesContainer.insertAdjacentHTML('afterbegin', savedNotesHtml);
+		const newNote = document.getElementById(`saved-note-${noteData.noteID}`);
+		
+		// Remove the hide class and add the transition class after a short delay
+		setTimeout(() => {
+			if (newNote) {
+				newNote.classList.remove('hide'); 
+				newNote.classList.add('show-sv-in-LP');
+			}
+		}, 50);
+	},
+
+    addNoti: function (feedbackData) {
+        let notificationHtml = `
+              <div class="notification" id="noti-${feedbackData.notiID}">
+                  <span class='feedback-id' style="display: none;">${feedbackData.feedbackID}</span>
+                  <div class="first-row">
+                    <a href='/view/${feedbackData.noteID}/#${feedbackData.feedbackID}' class="notification-link">
+                      <span class="notification-title">
+                      ${truncatedTitle(feedbackData.nfnTitle)}
+                      </span>
+                    </a>  
+                    <span class="remove-notification" onclick="deleteNoti('${feedbackData.notiID}')">&times;</span>
+                  </div>
+                  <div class="notification-msg">
+                    <a href='/user/${feedbackData.commenterStudentID}' class="commenter-prfl">
+                    ${feedbackData.commenterDisplayName}
+                    </a><a href='/view/${feedbackData.noteID}/#${feedbackData.feedbackID}' class="notification-link-2"> has given feedback on your notes! Check it out.</a>
+                  </div>
+              </div>`
+        document.querySelector('.notifications-container').insertAdjacentHTML('afterbegin', notificationHtml);
+    }    
+}
+
+
+
+//* Download: Dashboard + Note View
+async function download(noteID, noteTitle) {
+    /* 
+    # Process:
+    ~   the noteID and title are given when clicking the download button. After getting them, a fetch request is sent
+    ~   the server processes that and in that meantime, the animation is started and run until it gets downloaded.
+    ~   all the images are sent in a zip file and the zip is then downloaded.
+    */
+
     start() // start of animation
 
     try {
@@ -29,16 +214,24 @@ async function download(noteID, noteTitle) {
         finish() // end of animation
     }
 }
-
 function start() {
-    document.querySelector('.status').style.display = 'flex'
+    document.querySelector('.download-status').style.display = 'flex'
 }
 function finish() {
-    document.querySelector('.status').style.display = 'none'
+    document.querySelector('.download-status').style.display = 'none'
 }
 
-// Share Note Modal
 
+
+/* 
+* Share Model: Dashboard + Note View
+# Funtions:
+    => copy: copies the url of the note (copyLink)
+    => share: shares the note in fb or whatsapp (share)
+        # process
+    ~       when fb/wp is clicked, the platform is also sent, the link from the _link_ element is grabed (1) and based on 
+    ~       the platform a share link is created and a new window is opened to share the link. (2)
+*/
 const linkElement = document.querySelector('._link_');
 function setupShareModal(noteID) {
     const shareNoteModal = document.querySelector('.share-note-overlay');
@@ -63,7 +256,6 @@ function setupShareModal(noteID) {
         }, 300); // Matches CSS transition duration
     });
 }
-
 function copyLink() {
     const linkElement = document.querySelector('._link_');
     const successfulLinkMsg = document.querySelector('.successful-copy');
@@ -89,22 +281,31 @@ function copyLink() {
             console.error('Failed to copy text: ', err);
         });
 }
-
 function share(platform) {
-    const linkElement = document.querySelector('._link_').innerHTML;
+    const linkElement = document.querySelector('._link_').innerHTML; // 1
 
     switch(platform) {
         case "facebook":
-            window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(linkElement + '/shared')}`, '_blank')
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(linkElement + '/shared')}`, '_blank') // 2
             break
         case "whatsapp":
             let message = `Check out this note on NoteRoom: ${linkElement}`
-            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`, '_blank')
+            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`, '_blank') // 2
             break
     }
 }
 
+
+ 
+//* Search Notes: All Pages
 async function searchNotes() {
+    /* 
+    # Process:
+    ~   when the search bar is clicked, an empty dropdown is opened (1). after clicking (either the enter/search button), the text is sent
+    ~   to the server via fetch request (2). the server returns possible notes in a json format (3). if there are notes returned, the notes'
+    ~   details are added in the dropdown (4). ottherwise, a message is shown that no notes are found (5). Also a loading runs in between the
+    ~   note fetching.
+    */
     let searchedResults = document.querySelector('.search-results')
     let existingNotes = searchedResults.querySelectorAll('div.results-card')
     let status = document.querySelector('.status')
@@ -117,11 +318,11 @@ async function searchNotes() {
     let searchTerm = document.querySelector('.search-bar').value
     if(searchTerm.length > 0) {
         status.style.display = 'flex' // Start of loading
-        let response = await fetch(`/search?q=${encodeURIComponent(searchTerm)}`)
-        let notes = await response.json()
+        let response = await fetch(`/search?q=${encodeURIComponent(searchTerm)}`) // 2
+        let notes = await response.json() // 3
         status.style.display = 'none' // End of loading
         if(notes.length > 0) {
-            document.querySelector('.status').style.display = 'none'
+            status.style.display = 'none'
             notes.forEach(note => {
                 searchedResults.insertAdjacentHTML('afterbegin', `
                     <a href="/view/${note._id}" style="text-decoration: none;">
@@ -130,38 +331,100 @@ async function searchNotes() {
                             <i class="fa-solid fa-arrow-up"></i>
                         </div>
                     </a>
-                `)
+                `) // 4
             })
         } else {
             searchedResults.insertAdjacentHTML('afterbegin', `
-                <div class="results-card">
-                    <p class="result-note-title">We didn't find any note related to your search</p>
-                    <i class="fa-solid fa-arrow-up"></i>
+                <div class='results-card'>
+                    <p>We didn't find any note related to your search</p>
                 </div>
-            `)
+            `) // 5
         }
     }
 }
-
 let searchBtn = document.querySelector('.search-btn')
 searchBtn.addEventListener('click', searchNotes)
-
 
 let searchInput = document.querySelector('.search-bar')
 let resultsContainer = document.querySelector('.results-container')
 
-// Press enter and the search will happen
+searchInput.addEventListener('focus', function() {
+    resultsContainer.style.display = 'flex'; // 1
+})
+
 searchInput.addEventListener('keydown', (event) => {
     if(event.key === 'Enter') {
         searchBtn.click()
     }
 })
 
-// Design this Arnob
-searchInput.addEventListener('focus', function() {
-    resultsContainer.style.display = 'flex';
+
+
+//* Delete notifications: all pages
+function deleteNoti(id) {
+    /* 
+    # Process:
+    ~   when clicking the delete noti. button, the notiID is sent. an WS event occurs to delete the notification with that id. (1)
+    ~   them that notification is removed from the frontend DOM (2). last, the noti. object is removed from the LS (3)
+    */
+    conSock.emit('delete-noti', id) // 1
+	document.querySelector(`#noti-${id}`).remove() // 2
+	manageStorage.update('notis', id, 'remove') //3 
+}
+
+
+
+//* Adding notifications: all pages
+let notificationCount = 0;
+function addNoti(feedbackData) {
+    /* 
+    # Process: The main function is manageNotes.addNoti. Related to feedback-given WS event
+    ~   the noti. data is got via feedback-given WS event. the process handles the main addNoti funnction (1). then the number got increased
+    ~   and shown in the noti. badge (2)
+    */
+    manageNotes.addNoti(feedbackData) // 1
+    notificationCount++;
+    updateNotificationBadge(); // 2
+}
+function updateNotificationBadge() {
+    const badge = document.getElementById('notification-count');
+    if (badge) {
+        badge.textContent = notificationCount;
+        if (notificationCount > 0) {
+            badge.style.display = 'inline-block';
+        } else {
+            badge.style.display = 'none';
+        }
+    } else {
+        console.error('Notification badge element not found');
+    }
+}
+
+//* Event that will trigger when someone gives a feedback to a note: all pages, related to addNoti
+conSock.on('feedback-given' , (feedbackData) => {
+    /* 
+    # Process: ARP Protocol structure
+    ~   the event is handled by every user. the WS is sent with the feedback data and every browser checks, if the recordName
+    ~   cookie which is the logged in user's unique username is as same as the note owner's username which is sent in the feedback
+    ~   object (1). If so, that means the noti. has found it's owner. the noti-data is added in LS|key=notis (2). then it is added
+    ~   in the right-panel (3). then the noti. button got shaked(mobile) (4).
+    */
+	if (feedbackData.ownerUsername == Cookies.get('recordName')) { // 1
+		feedbackData.isNoti = true
+		manageStorage.update('notis', undefined, 'insert', feedbackData) // 2
+		addNoti(feedbackData) // 3
+
+		const nftShake = document.querySelector('.mobile-nft-btn')
+		nftShake.classList.add('shake') // 4
+		setTimeout(() => {
+			nftShake.classList.remove('shake');
+		}, 300)
+	}
 })
 
+
+
+//* Mobile notification panel
 const notificationPanel = document.querySelector('.notification-panel');
 const notificationButton = document.querySelector('.mobile-nft-btn');
 const backgroundOverlay = document.querySelector('.background-overlay');

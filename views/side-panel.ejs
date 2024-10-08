@@ -56,6 +56,7 @@
     </div>
 <% } else if (block === 'right-panel') { %>
     <div class="notification-panel">
+	      <!-- <audio id="notification-sound" src="notification-ping-sound.mp3" preload="auto"></audio> -->
         <div class="notification-panel-header">
         <!-- This is button only visible on mobile -->
         <svg class="btn-hide-nft" width="40" height="40" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -93,7 +94,7 @@
             %>
             <% notis.forEach(noti => { %>
             <% if(noti.docType == 'feedback' ) { %>
-            <div class="notification" id="<%= noti._id %>">
+            <div class="notification" id="noti-<%= noti._id %>">
                 <span class='feedback-id' style="display: none;"><%= noti.feedbackDocID %></span> <!-- Anirban this the unique feedback id linked to the notification -->
                 <div class="first-row">
                 <a href='/view/<%= noti.noteDocID._id %>/#<%= noti.feedbackDocID %>' class="notification-link">
@@ -194,7 +195,7 @@
       </div>
     </div>
 <% } else if (block === 'downloading-loader') { %>
-    <div class="loader-overlay status">
+    <div class="loader-overlay download-status">
       <span class="loader"></span>
     </div>
 <% } else if (block === 'mbl-ctrl-panel') { %>
