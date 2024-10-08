@@ -19,8 +19,11 @@ const errorHandler = require('./errorhandlers/errors')
 const uploadRouter = require('./routers/upload-note')
 const noteViewRouter = require('./routers/note-view')
 const dashboardRouter = require('./routers/dashboard')
+const serachProfileRouter = require('./routers/search-profile')
 
 const Notes = require('./schemas/notes')
+const Students = require('./schemas/students')
+// const { getSavedNotes } = require('./routers/controller')
 
 const url = process.env.MONGO_URI
 mongoose.connect(url).then(() => {
@@ -52,6 +55,7 @@ app.use('/sign-up', signupRouter(io))
 app.use('/upload', uploadRouter(io))
 app.use('/view', noteViewRouter(io))
 app.use('/dashboard', dashboardRouter(io))
+app.use('/search-profile', serachProfileRouter(io))
 app.use(errorHandler) // Middleware for handling errors
 
 app.get('/logout', (req, res) => {
@@ -64,12 +68,6 @@ app.get('/', (req, res) => {
     res.redirect('/login')
 })
 
-app.get('/search-profile', (req, res) => {
-    res.render('search-profile')
-})
-app.get('/dashboard', (req, res) => {
-    res.render('dashboard')
-})
 app.get('/settings', (req, res) => {
     res.render('settings')
 })
@@ -82,6 +80,9 @@ app.get('/confetti', (req, res) => {
 app.get('/about-us', (req, res) => {
     res.render('about-us')
 })
+app.get('/privacy-policy', (req, res) => {
+    res.render('privacy-policy')
+})
 
 app.post('/download', async (req, res) => {
     let noteID = req.body.noteID
@@ -90,7 +91,11 @@ app.post('/download', async (req, res) => {
     const noteLinks = (await Notes.findById(noteID, { content: 1 })).content
     
     res.setHeader('Content-Type', 'application/zip');
-    res.setHeader('Content-Disposition', `attachment; filename=${noteTitle}.zip`);
+
+    const sanitizeFilename = (filename) => {
+        return filename.replace(/[^a-zA-Z0-9\.\-\_]/g, '_'); // Replace any invalid characters with an underscore
+    }
+    res.setHeader('Content-Disposition', `attachment; filename=${sanitizeFilename(noteTitle)}.zip`);
 
     const archive = archiver('zip', { zlib: { level: 9 } });
     archive.pipe(res);
@@ -120,6 +125,30 @@ app.get('/search', async (req, res, next) => {
     const regex = new RegExp(searchTerm.split(' ').map(word => `(${word})`).join('.*'), 'i');
     let notes = await Notes.find({ title: { $regex: regex } }, { title: 1 })
     res.json(notes)
+})
+
+app.get('/getnote', async (req, res, next) => {
+    let type = req.query.type
+    async function getSavedNotes(studentDocID) {
+        let student = await Students.findById(studentDocID, { saved_notes: 1 } )
+        let saved_notes_ids = student['saved_notes']
+        let notes = await Notes.find({ _id: { $in: saved_notes_ids } }, { title: 1 })
+        return notes
+    }
+    if(type === 'save') {
+        let studentDocID = req.query.studentDocID
+        let savedNotes = await getSavedNotes(studentDocID)
+        res.json(savedNotes)
+    } else if(type === 'seg') {
+        let {page, count} = req.query
+        let skip = (page - 1) * count
+        let notes = await Notes.find({}).skip(skip).limit(count).populate('ownerDocID', 'profile_pic displayname studentID')
+        if(notes.length != 0) {
+            res.json(notes)
+        } else {
+            res.json([])
+        }
+    }
 })
 
 app.get('*', (req, res) => {

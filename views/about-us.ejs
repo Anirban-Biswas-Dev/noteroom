@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About NoteRoom</title>
     <link rel="stylesheet" href="/css/About-us.css" />
+    <link rel="stylesheet" href="/css/header-footer.css">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -18,11 +19,12 @@
 </head>
 <body>
     <header>
-        <i class="fa-solid fa-arrow-left"></i>
+      <i class="fa-solid fa-arrow-left" onclick="goPrevPage()" ></i>
         <h1>About Us</h1>
     </header>
 <div class="hero-section">
-    <img src="\NoteRoom Deck Cover.jpg" alt="About NoteRoom"  
+  <!-- Make sure to change image url in aboutus.js -->
+    <img id="heroImage" src="\NoteRoom Deck Cover.jpg" alt="About NoteRoom"  
     sizes="(max-width: 600px) 100vw, (max-width: 1200px) 100vw, 1800px" >
 </div>
 <section class="founders-section">
@@ -99,5 +101,6 @@ Moshiur was responsible for the backend development, handling the server-side fu
       </div>
     </footer>
 <script type="module" src="/js/about-us.js"></script>
+<script src="/js/utils.js"></script>
 </body>
 </html>

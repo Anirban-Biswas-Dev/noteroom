@@ -77,7 +77,7 @@ function noteViewRouter(io) {
             }) // Save the feedback notifications in database
 
             io.emit('feedback-given', { //* Feedback-notifications: This will go to everyuser, but the user with ownerUsername=recordName will keep it
-                noteDocID /* The note on which the feedback is given: to create a direct link to that note */: noteDocID,
+                noteID /* The note on which the feedback is given: to create a direct link to that note */: noteDocID,
                 nfnTitle /* The note's title on which the feedback is given: the link will contain the note's title */: feedback.noteDocID.title, 
                 commenterStudentID /* Commenter's student-id: to create a direct link to the commenter's profile */: feedback.commenterDocID.studentID, 
                 commenterDisplayName /* The student's displayname who gave the feedback: the link will contain commenter's displayname */ : feedback.commenterDocID.displayname,

@@ -94,7 +94,7 @@ document.querySelector('.submit-button').addEventListener('click', function() {
     let rollnumber = document.querySelector('input[name="rollnumber"]').value
     let collegesection = document.querySelector('select[name="collegesection"]').value
     let bio = document.querySelector('textarea[name="bio"]').value
-    let collegeyear = document.querySelector('input[name="collegeyear"]').value
+    let collegeyear = document.querySelector('select[name="collegeyear"]').value
     let favouritesubject = document.querySelector('input[name="favouritesubject"]').value
     let notfavsubject = document.querySelector('input[name="notfavsubject"]').value
     let group = document.querySelector('select[name="group"]').value
