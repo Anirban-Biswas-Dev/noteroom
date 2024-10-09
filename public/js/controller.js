@@ -189,7 +189,7 @@ const manageNotes = { // I treat all the cards as notes
                     <div class="results-prfl">
                         <img src="${student.profile_pic}" alt="Profile Pic" class="prfl-pic">
                         <span class="prfl-name" onclick="window.location.href = '/user/${student.studentID}'">${student.displayname}</span>
-                        <span class="prfl-desc">${student.bio}</span>
+                        <span class="prfl-desc">${truncatedTitle(student.bio)}</span>
                         <span class="badge" style="display: none;">${student.badge}</span>
                         <img src="" alt="" class="user-badge">
                     </div>`
