@@ -3,10 +3,6 @@ const socket = io(host)
 
 socket.emit('connection')
 
-function logout() {
-    window.location.href = '/logout'
-}
-
 function badgeStyling() {
     let userBadge = document.querySelector('.top-voice-badge').textContent.trim();
     const badgeElement = document.querySelector('.top-voice-badge');

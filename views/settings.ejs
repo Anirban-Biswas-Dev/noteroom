@@ -102,14 +102,7 @@
           <span class="section-msg"
             >Manage NoteRoom notifications for you.</span
           >
-          <div class="parent-container">
-            <div class="toggle-container">
-              <input type="checkbox" id="toggle" class="toggle-checkbox">
-              <label for="toggle" class="toggle-label">
-                <span class="toggle-button"></span>
-              </label>
-            </div>
-          </div>
+            <button class="logout" onclick="alert('Are you sure you want to logout from NoteRoom?'),logout()">Logout</button>
         </div>
       </div>
       <div class="others section">
@@ -232,5 +225,10 @@
       </div>
     </div>
     <script src="/js/utils.js"></script>
+    <script>
+      function logout() {
+    window.location.href = '/logout'
+}
+    </script>
   </body>
 </html>

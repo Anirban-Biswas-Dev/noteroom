@@ -194,24 +194,7 @@
     align-items: center;
 }
 
-/* Log Out Button */
-.logout {
-    background-color: #07192D;
-    padding: 10px 5px;
-    letter-spacing: 1px;
-    color: #04DBF7;
-    border-radius: 25px;
-    width: 80px;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-}
 
-.logout:hover {
-    background-color: rgba(255, 0, 0, 0.78);
-    color: white;
-    transform: scale(1.05);
-}
 
 /* Uploaded Notes Section */
 .uploaded-notes-section {
