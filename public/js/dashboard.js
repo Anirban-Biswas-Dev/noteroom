@@ -1,6 +1,9 @@
 const host = window.location.origin
 const socket = io(host)
 
+// if(URL.parse(document.referrer).pathname === '/sign-up') {
+	
+// }
 
 //* Function to get paginated notes
 let page = 2
@@ -417,4 +420,8 @@ function triggerConfetti() {
 	setTimeout(() => {
 		overlay.classList.remove('show');
 	}, 3000);  // You can adjust the overlay timing to match the animation length
+}
+
+if(URL.parse(document.referrer).pathname === '/sign-up') {
+	startConfetti()
 }
