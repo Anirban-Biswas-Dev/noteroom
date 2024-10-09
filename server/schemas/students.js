@@ -6,7 +6,8 @@ const studentsSchema = new mongoose.Schema({
         default: ""
     },
     displayname: {
-        type: String
+        type: String,
+        required: true
     },
     email: {
         type: String,
@@ -28,10 +29,12 @@ const studentsSchema = new mongoose.Schema({
     },
     rollnumber: {
         type: Number,
-        unique: true
+        unique: true,
+        required: true,
     },
     collegesection: {
-        type: String
+        type: String,
+        default: "Not selected"
     },
     collegeyear: {
         type: String
@@ -43,17 +46,20 @@ const studentsSchema = new mongoose.Schema({
         default: ""
     },
     favouritesubject: {
-        type: String
+        type: String,
+        default: "Not selected"
     },
     notfavsubject: {
-        type: String
+        type: String,
+        default: "Not selected"
     },
     group: {
         type: String
     },
     username: {
         type: String,
-        unique: true
+        unique: true,
+        required: true
     },
     owned_notes: {
         type: [mongoose.Schema.Types.ObjectId],
