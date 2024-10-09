@@ -453,6 +453,9 @@ function deleteNoti(id) {
     conSock.emit('delete-noti', id) // 1
 	document.querySelector(`#noti-${id}`).remove() // 2
 	manageStorage.update('notis', id, 'remove') //3 
+
+    notificationCount--;
+    updateNotificationBadge(); // 2
 }
 
 

@@ -29,7 +29,7 @@ function serachProfileRouter(io) {
                     res.json({ students })
                 } else {
                     let students = await getRandomStudent(3)
-                    let root = await getRoot(Students, req.session.stdid, 'studentID')
+                    let root = await getRoot(Students, req.session.stdid, 'studentID', {})
                     let savedNotes = await getSavedNotes(Students, Notes, req.session.stdid)
                     let notis = await getNotifications(allNotifs, req.cookies['recordName'])
                     res.render('search-profile', { students: students, root: root, savedNotes: savedNotes, notis: notis })    
