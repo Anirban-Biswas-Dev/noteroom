@@ -39,11 +39,13 @@ function loginRouter(io) {
                 req.session.stdid = studentID // setting the session with the student ID
                 res.cookie('recordID', student['recordID']) // setting a cookie with a value of the document ID of the user
                 res.cookie('recordName', student['recordName']) // setting a cookie with a value of the username of the user
-                res.redirect('dashboard')
+                res.json({ url: '/dashboard' })
             } else {
+                res.json({ message: 'wrong-cred' })
                 io.emit('wrong-cred')
             }
         } catch (error) {
+            res.json({ message: 'no-studentid' })
             io.emit('no-studentid')
         }
     })
