@@ -76,7 +76,14 @@
 						<img src="<%= note.ownerDocID.profile_pic %>" class="author-img"/>
 						<div class="author-title-container">
 						<div class="note-title">
-							<a href="/view/<%= note._id %>"><%= note.title %></a>
+							<a href="/view/<%= note._id %>">
+								<% let title = note.title %>
+								<% if(title.length > 30) { %>
+									<%= title.slice(0, 30) %>...
+								<% } else { %>
+									<%= title %>
+								<% } %>
+							</a>
 						</div>
 						<div class="author">
 							<a class="author-prfl-link" href="/user/<%= note.ownerDocID.studentID %>"><%= note.ownerDocID.displayname %></a>

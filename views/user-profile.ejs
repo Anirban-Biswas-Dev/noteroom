@@ -125,7 +125,14 @@
                 <% for (const note of notes) { %>
                     <div class="note-card">
                         <a href="../view/<%= note._id %>">
-                            <h3><%= note.title %></h3>
+                            <h3>
+                                <% let title = note.title %>
+								<% if(title.length > 30) { %>
+									<%= title.slice(0, 30) %>...
+								<% } else { %>
+									<%= title %>
+								<% } %>
+                            </h3>
                             <% let description = note.description %>
                             <% if(description.length > 30) { %>
                                 <p><%= description.slice(0, 30) %>...</p>
@@ -154,7 +161,14 @@
                 <% for (const note of savedNotes) { %>
                     <div class="note-card">
                         <a href="../view/<%= note._id %>">
-                            <h3><%= note.title %></h3>
+                            <h3>
+                                <% let title = note.title %>
+								<% if(title.length > 30) { %>
+									<%= title.slice(0, 30) %>...
+								<% } else { %>
+									<%= title %>
+								<% } %>
+                            </h3>
                             <% let description = note.description; %>
                             <% if (description.length > 30) { %>
                                 <p><%= description.slice(0, 30) %>...</p>
