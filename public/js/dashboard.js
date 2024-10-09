@@ -155,7 +155,7 @@ if ((navigate.type === 'navigate') || (navigate.type == 'reload')) {
 		.catch(error => console.log(error.message))
 
 } else if (navigate.type === 'back_forward') {
-	let Datas = Object.values(localStorage)
+	let Datas = Object.keys(localStorage).filter(key => !key.includes('twk')).map(key => localStorage.getItem(key))
 	Datas.forEach(CardStr => {
 		let data = JSON.parse(CardStr)
 		data.map(note => {
