@@ -25,10 +25,19 @@ async function getNotifications(allNotifs, ownerUsername) {
     return data
 }
 
-async function getRoot(username, Students) {
-    let root = await Students.findOne({ username: username })
+async function getRoot(Students, value, type, fields) {
+    let root;
+    switch(type) {
+        case 'username':
+            root = await Students.findOne({ username: value }, fields)
+            break
+        case 'studentID':
+            root = await Students.findOne({ studentID: value }, fields)
+            break
+    }
     return root
 }
 
 module.exports.getSavedNotes = getSavedNotes
 module.exports.getNotifications = getNotifications
+module.exports.getRoot = getRoot

@@ -25,7 +25,6 @@
     <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
     <title><%= note.title %></title>
   </head>
-
   <body>
     <% if(mynote == 3) { %>
       <a href="/login" style="display: none;" class="kick"></a>
@@ -199,7 +198,7 @@
     <div class="background-overlay"></div>
     <%- include('side-panel', { block: 'share-note' }) %>
     <%- include('side-panel', { block: 'downloading-loader' }) %>
-    <script src="/js/note-view.js"></script>
     <script src="/js/controller.js"></script>
+    <script src="/js/note-view.js"></script>
   </body>
 </html>

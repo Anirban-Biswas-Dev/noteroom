@@ -1,6 +1,16 @@
 const conHost = window.location.origin
 const conSock = io(conHost)
 
+//* Badge images: user-profile + search-profile
+let baseURL = 'https://storage.googleapis.com/noteroom-fb1a7.appspot.com/badges/'
+let imageObject = {
+    'No Badge': `${baseURL}no-badge.png`,
+    'Biology': `${baseURL}biology.png`,
+    'English': `${baseURL}english.png`
+}
+
+
+
 //* Description or Bio truncater function
 function truncatedTitle(title) {
     const titleCharLimit = 30;
@@ -72,7 +82,7 @@ const manageStorage = {
 
 
 //* The main dynamic content loading manager object
-const manageNotes = {
+const manageNotes = { // I treat all the cards as notes
     /* 
     # Functions:
         => addNote: adds note in the dashboard
@@ -82,6 +92,8 @@ const manageNotes = {
     
         => addSaveNote: adds note in the left-panel
         => addNoti: adds a notification in the right-panel
+        => addProfile: adds profiles when searched in search-profile
+        => addFeedback: adds feedback in notes in note-view
     */
 
 	addNote: function(noteData) { 
@@ -170,7 +182,49 @@ const manageNotes = {
                   </div>
               </div>`
         document.querySelector('.notifications-container').insertAdjacentHTML('afterbegin', notificationHtml);
-    }    
+    },
+
+    addProfile: function(student) {
+        let profileCard = `
+                    <div class="results-prfl">
+                        <img src="${student.profile_pic}" alt="Profile Pic" class="prfl-pic">
+                        <span class="prfl-name" onclick="window.location.href = '/user/${student.studentID}'">${student.displayname}</span>
+                        <span class="prfl-desc">${student.bio}</span>
+                        <span class="badge" style="display: none;">${student.badge}</span>
+                        <img src="" alt="" class="user-badge">
+                    </div>`
+        document.querySelector('.results-prfls').insertAdjacentHTML('beforeend', profileCard);
+    },
+
+    addFeedback: function(feedbackData) {
+        let date = new Date(feedbackData.createdAt)
+        const formattedDate = date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+        })
+        let feedbackCard = `<div class="feedback" id="${feedbackData._id}">
+							<div class="feedback-header">
+                            	<span class="feedback-id" style="display: none;">${feedbackData._id}</span>
+								<img src="${feedbackData.commenterDocID.profile_pic}" alt="User Avatar" class="feedback-avatar">
+								<div class="feedback-author-info">
+									<a href='/user/${feedbackData.commenterDocID.studentID}'><h4 class="feedback-author">${feedbackData.commenterDocID.displayname}</h4></a>
+									<span class="feedback-date">${formattedDate}</span>
+								</div>
+							</div>
+							<div class="feedback-body">
+									<p>${feedbackData.feedbackContents}</p>
+							</div>
+							<div class="feedback-actions">
+								<!-- <button type="button" class="btn-reply">Reply</button> -->
+								<!-- <button type="button" class="btn-like">Like</button> -->
+							</div>
+						</div>` //* This feedback-card is used to broadcast the extented-feedback to all the users via websockets
+
+		document.querySelector('.feedbacks-list').insertAdjacentHTML('afterbegin', feedbackCard) // The feedback will be shown at the top while posting (not fetching)
+    }
 }
 
 
@@ -336,27 +390,56 @@ async function searchNotes() {
         } else {
             searchedResults.insertAdjacentHTML('afterbegin', `
                 <div class='results-card'>
-                    <p>We didn't find any note related to your search</p>
+                    <p>Oops! No notes found for "${searchTerm}". Try searching with different keywords or explore other subjects!</p>
                 </div>
             `) // 5
         }
     }
 }
-let searchBtn = document.querySelector('.search-btn')
-searchBtn.addEventListener('click', searchNotes)
+let searchBtn = document.querySelector('.search-btn');
+let noteSearchInput = document.querySelector('.search-bar');
+let resultsContainer = document.querySelector('.results-container');
 
-let searchInput = document.querySelector('.search-bar')
-let resultsContainer = document.querySelector('.results-container')
+/*
+# Process:
+1. Show the dropdown when the search bar is focused.
+2. Trigger the search when the 'Enter' key is pressed inside the search bar.
+3. Trigger the search when the search button is clicked and prevent dropdown from hiding.
+4. Hide the dropdown if the user clicks outside the search bar or the dropdown.
+5. Prevent the dropdown from hiding when interacting with the dropdown itself.
+*/
 
-searchInput.addEventListener('focus', function() {
-    resultsContainer.style.display = 'flex'; // 1
-})
+// Step 1: Show the results container on input focus
+noteSearchInput.addEventListener('focus', function() {
+    resultsContainer.style.display = 'flex'; // Show dropdown
+});
 
-searchInput.addEventListener('keydown', (event) => {
+// Step 2: Trigger search when pressing 'Enter'
+noteSearchInput.addEventListener('keydown', (event) => {
     if(event.key === 'Enter') {
-        searchBtn.click()
+        searchNotes(); // Call search function
     }
-})
+});
+
+// Step 3: Prevent dropdown from hiding and trigger search on search button click
+searchBtn.addEventListener('click', function(event) {
+    event.stopPropagation(); // Prevent dropdown from hiding
+    searchNotes(); // Call search function
+});
+
+// Step 4: Hide the dropdown if clicking outside of input and results container
+document.addEventListener('click', function(event) {
+    if (!noteSearchInput.contains(event.target) && !resultsContainer.contains(event.target)) {
+        resultsContainer.style.display = 'none'; // Hide dropdown
+    }
+});
+
+// Step 5: Prevent dropdown from hiding when interacting with the results container
+resultsContainer.addEventListener('click', function(event) {
+    event.stopPropagation(); // Stop clicks inside the dropdown from closing it
+});
+
+
 
 
 
@@ -370,6 +453,9 @@ function deleteNoti(id) {
     conSock.emit('delete-noti', id) // 1
 	document.querySelector(`#noti-${id}`).remove() // 2
 	manageStorage.update('notis', id, 'remove') //3 
+
+    notificationCount--;
+    updateNotificationBadge(); // 2
 }
 
 

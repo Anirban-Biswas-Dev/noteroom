@@ -2,7 +2,7 @@ const express = require('express')
 const Students = require('../schemas/students')
 const Notes = require('../schemas/notes')
 const allNotifs = require('../schemas/notifications').Notifs
-const { getSavedNotes, getNotifications } = require('./controller')
+const { getSavedNotes, getNotifications, getRoot } = require('./controller')
 const router = express.Router()
 
 function dashboardRouter(io) {
@@ -19,11 +19,6 @@ function dashboardRouter(io) {
             { _id: studentDocID },
             { $pull: { saved_notes: noteDocID } }
         )
-    }
-
-    async function getStudent(studentID) {
-        let student = await Students.findOne({ studentID: studentID }, { profile_pic: 1, displayname: 1, studentID: 1 })
-        return student
     }
 
     async function getAllNotes() {
@@ -47,7 +42,7 @@ function dashboardRouter(io) {
 
     router.get('/', async (req, res) => {
         if(req.session.stdid) {
-            let root = await getStudent(req.session.stdid)
+            let root = await getRoot(Students, req.session.stdid, 'studentID', { profile_pic: 1, displayname: 1, studentID: 1 })
             let notis = await getNotifications(allNotifs, req.cookies['recordName'])
             let allNotes = await getAllNotes()
             let savedNotes = await getSavedNotes(Students, Notes, req.session.stdid)

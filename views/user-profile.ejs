@@ -111,10 +111,6 @@
         </div>
     </div>
 
-    <% if (!visiting) { %>
-        <button class="logout" onclick="alert('Are you sure you want to logout from NoteRoom?'),logout()">Logout</button>
-    <% } %>
-
     <div class="uploaded-notes-section">
       <div class="toggle-header-uploaded-notes">
         <% if (visiting) { %>
@@ -189,7 +185,7 @@
     <%- include('side-panel', { block: 'mbl-ctrl-panel' }) %>
     <div class="background-overlay"></div>
 
-    <script src="/js/user-profile.js"></script> 
     <script src="/js/controller.js"></script> 
+    <script src="/js/user-profile.js"></script> 
 </body>
 </html>

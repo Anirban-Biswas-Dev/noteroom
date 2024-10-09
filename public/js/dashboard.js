@@ -1,6 +1,9 @@
 const host = window.location.origin
 const socket = io(host)
 
+// if(URL.parse(document.referrer).pathname === '/sign-up') {
+	
+// }
 
 //* Function to get paginated notes
 let page = 2
@@ -37,8 +40,8 @@ async function add_note(count) {
 
 
 
-let savedNotes = manageStorage.getContent('savedNotes').map(item => item.noteID) // List of saved notes' ids
 //* Observer's object
+let savedNotes = []
 const observers = {
 	observer: function() {
 		/*
@@ -114,10 +117,10 @@ const observers = {
 /*
 * Navigation capture and real time loading
 # Process:
-~	=>. when the page gets reload, first the saved notes data is fetched and added in LS|key=savedNotes (1.1). it helps to add save class
+~	=> when the page gets reload, first the saved notes data is fetched and added in LS|key=savedNotes (1.1). it helps to add save class
 ~		in the saved notes buttons. also empty lists are added in LS|key=addedNotes and LS|key=notis (1.2)
 
-~	=>. when a back_forward is captured, means when the user comes to dashboard without reloading and only using back-button, all the
+~	=> when a back_forward is captured, means when the user comes to dashboard without reloading and only using back-button, all the
 ~		data from LS is fetched. there are 3 types of data, all are list of objects form
 ~			1. addedNotes: notes which are uploaded by other users (without reloading, not the one from the database) => isAddNote=true
 ~			2. savedNotes: notes saved by the user => isSaveNote=true
@@ -146,6 +149,7 @@ if ((navigate.type === 'navigate') || (navigate.type == 'reload')) {
 					isSavedNote: true 
 				}	
 				saved_notes.push(noteData)
+				savedNotes.push(noteData.noteID)
 			})
 			localStorage.setItem('savedNotes', JSON.stringify(saved_notes)) // 1.1
 			localStorage.setItem('notis', JSON.stringify([])) // 1,2
@@ -154,7 +158,7 @@ if ((navigate.type === 'navigate') || (navigate.type == 'reload')) {
 		.catch(error => console.log(error.message))
 
 } else if (navigate.type === 'back_forward') {
-	let Datas = Object.values(localStorage)
+	let Datas = Object.keys(localStorage).filter(key => !key.includes('twk')).map(key => localStorage.getItem(key))
 	Datas.forEach(CardStr => {
 		let data = JSON.parse(CardStr)
 		data.map(note => {
@@ -189,7 +193,7 @@ if ((navigate.type === 'navigate') || (navigate.type == 'reload')) {
 
 
 
-//* saving/delete a note
+//* save/delete a note
 function saveNote(noteDocID) {
 	/*
 	# Process:
@@ -416,4 +420,8 @@ function triggerConfetti() {
 	setTimeout(() => {
 		overlay.classList.remove('show');
 	}, 3000);  // You can adjust the overlay timing to match the animation length
+}
+
+if(URL.parse(document.referrer).pathname === '/sign-up') {
+	startConfetti()
 }

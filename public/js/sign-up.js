@@ -3,8 +3,20 @@ const socket = io(host)
 
 socket.emit('connection')
 
+function showError(message) {
+    let errorMessage = document.querySelector("p#message")
+    setTimeout(() => {
+        if(errorMessage) errorMessage.style.display = 'none'    
+    }, 5000)
+    errorMessage.style.display = 'block'
+    errorMessage.innerHTML = message
+}
+
 socket.on('duplicate-value', (duplicate_field) => {
-    document.querySelector("p#message").innerHTML = `The <b>${duplicate_field}</b> you provided is already in use`
+    setTimeout(() => {
+        hideLoader(true)
+        showError(`The <b>${duplicate_field}</b> you provided is already in use`)
+    }, 1000)
     document.querySelector(`input[name=${duplicate_field}]`).style.border = "2px solid red"
 })
 
@@ -115,13 +127,58 @@ document.querySelector('.submit-button').addEventListener('click', function() {
     formData.append('group', group)
     formData.append('username', username)
 
+    const style = document.createElement('style')
+    style.id = 'temp'
+    style.innerHTML = `
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #07192d;
+        }
+        `;
+
     fetch('/sign-up', {
         method: 'POST',
         body: formData
-    }).then(response => { return response.json() })
-      .then(data => { 
-        if(data.messaqge) console.error(data.message)
-        else window.location.href = data.url
-       })
-      .catch(error => { console.error(error) })
+    })
+    .then(response => { return response.json() })
+    .then(data => { 
+        if(data.message) {
+            setTimeout(() => {
+                hideLoader(true)
+                showError(data.message)
+            }, 1000)
+        } else {
+            hideLoader()
+            window.location.href = data.url
+        }
+    })
+    .catch(error => { 
+        hideLoader(true)
+        console.error(error) 
+    })
+        
+    document.head.appendChild(style);
+    showLoader()
 })
+
+function showLoader() {
+    document.querySelector('.signup-container').style.display = 'none'
+    document.querySelector('.content-loader').style.display = 'block'
+}
+
+function hideLoader(restore=false) {
+    if(!restore) {
+        document.querySelector('.content-loader').style.display = 'none'
+    } else {
+        document.querySelector('.content-loader').style.display = 'none'
+        document.querySelector('.signup-container').style.display = 'block'
+        document.querySelector('style#temp').remove()
+    }
+}

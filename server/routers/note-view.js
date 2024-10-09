@@ -5,10 +5,10 @@ const Students = require('../schemas/students')
 const feedBackNotifs = require('../schemas/notifications').feedBackNotifs
 const allNotifs = require('../schemas/notifications').Notifs
 const Feedbacks = require('../schemas/feedbacks')
-const { getSavedNotes, getNotifications } = require('./controller')
+const { getSavedNotes, getNotifications, getRoot } = require('./controller')
 
 /*
-Variables: (commenter / owner)
+# Variables: (commenter / owner)
     => noteDocID: note's document ID
     => ownerDocID: note owner's studentDocID
     => studentID -> commenterID: commenter's studentDocID
@@ -20,7 +20,7 @@ Variables: (commenter / owner)
 
 function noteViewRouter(io) {
     async function getNote(noteDocID) {
-        // If the noteDocID is given in the url, the specific note will be shown. Otherwise all the notes will be shown //! note repo: will be deleted soon
+        // If the noteDocID is given in the url, the specific note will be shown. 
         if (noteDocID) {
             let note = await Notes.findById(noteDocID, { title: 1, subject: 1, description: 1, ownerDocID: 1, content: 1 })
             let owner = await Students.findById(note.ownerDocID, { displayname: 1, studentID: 1, profile_pic: 1, username: 1 }) 
@@ -28,10 +28,6 @@ function noteViewRouter(io) {
                 .populate('commenterDocID', 'displayname studentID profile_pic').sort({ createdAt: -1 }) 
 
             return { note: note, owner: owner, feedbacks: feedbacks }
-
-        } else {
-            let notes = await Notes.find({}, { title: 1, subject: 1, description: 1 }) //! note repo: will be removed soon
-            return notes
         }
     }
     
@@ -40,7 +36,7 @@ function noteViewRouter(io) {
         let feedbackStudents = await Feedbacks.findById(feedback._id)
             .populate('commenterDocID', 'displayname studentID profile_pic') 
             .populate('noteDocID', 'title')
-         //* Populating with some basic info of the commenter and the notes to send that to all the users via websockets
+         // Populating with some basic info of the commenter and the notes to send that to all the users via websockets
 
         return feedbackStudents
     }
@@ -48,11 +44,6 @@ function noteViewRouter(io) {
     async function addFeedbackNotifications(notiObj) {
         let feednoti = await feedBackNotifs.create(notiObj)
         return feednoti
-    }
-
-    async function getStudentInfo(studentID) {
-        let student = await Students.findOne({ studentID: studentID }, { displayname: 1, studentID: 1, profile_pic: 1 })
-        return student
     }
 
     io.on('connection', (socket) => {
@@ -91,7 +82,7 @@ function noteViewRouter(io) {
     router.get('/:noteID?', async (req, res, next) => {
         let noteDocID = req.params.noteID
         let information = await getNote(noteDocID)
-        let root = await getStudentInfo(req.session.stdid)
+        let root = await getRoot(Students, req.session.stdid, 'studentID', { displayname: 1, studentID: 1, profile_pic: 1 })
         let [note, owner, feedbacks] = [information['note'], information['owner'], information['feedbacks']]
         if (req.session.stdid) {
             let mynote = 1 //* Varifing if a note is mine or not: corrently using for not allowing users to give feedbacks based on some situations (self-notes and viewing notes without being logged in)
@@ -105,13 +96,6 @@ function noteViewRouter(io) {
                         mynote = 0
                         res.render('note-view', { note: note, mynote: mynote, owner: owner, feedbacks: feedbacks, root: root, savedNotes: savedNotes, notis: notis }) // Specific notes: visiting others notes
                     }
-                } catch (error) {
-                    next(error)
-                }
-            } else {
-                try {
-                    let notes = await getNote()
-                    res.render('notes-repo', { notes: notes }) //! Notes repository. Created for testing purposes, will be deleted soon    
                 } catch (error) {
                     next(error)
                 }

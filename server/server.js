@@ -20,10 +20,10 @@ const uploadRouter = require('./routers/upload-note')
 const noteViewRouter = require('./routers/note-view')
 const dashboardRouter = require('./routers/dashboard')
 const serachProfileRouter = require('./routers/search-profile')
+const settingsRouter = require('./routers/settings')
 
 const Notes = require('./schemas/notes')
 const Students = require('./schemas/students')
-// const { getSavedNotes } = require('./routers/controller')
 
 const url = process.env.MONGO_URI
 mongoose.connect(url).then(() => {
@@ -56,6 +56,7 @@ app.use('/upload', uploadRouter(io))
 app.use('/view', noteViewRouter(io))
 app.use('/dashboard', dashboardRouter(io))
 app.use('/search-profile', serachProfileRouter(io))
+app.use('/settings', settingsRouter(io))
 app.use(errorHandler) // Middleware for handling errors
 
 app.get('/logout', (req, res) => {
@@ -68,9 +69,6 @@ app.get('/', (req, res) => {
     res.redirect('/login')
 })
 
-app.get('/settings', (req, res) => {
-    res.render('settings')
-})
 app.get('/support', (req, res) => {
     res.render('support')
 })
@@ -81,7 +79,11 @@ app.get('/about-us', (req, res) => {
     res.render('about-us')
 })
 app.get('/privacy-policy', (req, res) => {
-    res.render('privacy-policy')
+    if(req.session.stdid) {
+        res.render('privacy-policy')
+    } else {
+        res.redirect('/login')
+    }
 })
 
 app.post('/download', async (req, res) => {
