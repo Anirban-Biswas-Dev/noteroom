@@ -44,7 +44,14 @@
                   <div class="saved-note" id="saved-note-<%= note._id %>">
                     <span class="saved-note-doc-id" style="display: none;"><%= note._id %></span>
                     <span class="sv-note-title">
-                      <a class="sv-n-link" href='/view/<%= note._id %>'><%= note.title %></a>
+                      <a class="sv-n-link" href='/view/<%= note._id %>'>
+                        <% let title = note.title %>
+                        <% if(title.length > 30) { %>
+                          <%= title.slice(0, 30) %>...
+                        <% } else { %>
+                          <%= title %>
+                        <% } %>
+                      </a>
                     </span>
                   </div>
                 <% }) %>
@@ -99,7 +106,13 @@
                 <div class="first-row">
                 <a href='/view/<%= noti.noteDocID._id %>/#<%= noti.feedbackDocID %>' class="notification-link">
                     <span class="notification-title">
-                    <%= noti.noteDocID.title %><span style="display: none;"><%= formatDate(new Date(noti.createdAt)) %></span>
+                    <% let title = noti.noteDocID.title %>
+                    <% if(title.length > 30) { %>
+                      <%= title.slice(0, 30) %>...
+                    <% } else { %>
+                      <%= title %>
+                    <% } %>
+                    <span style="display: none;"><%= formatDate(new Date(noti.createdAt)) %></span>
                     </span>
                 </a>
                 <span class="remove-notification" onclick="deleteNoti('<%= noti._id %>')">&times;</span>
