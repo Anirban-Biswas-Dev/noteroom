@@ -18,7 +18,7 @@ body {
     min-height: 100vh;   
 }
 
-.container {
+.container, iframe {
     width: 100%;
     max-width: 1000px;
     display: flex;
@@ -234,4 +234,4 @@ p.msg {
     .popup p{
         font-size: .8rem;
     }
-}
+}   

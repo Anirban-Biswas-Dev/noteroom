@@ -80,8 +80,31 @@ body {
 .section-btn svg:hover{
   transform: translateX(5px);
 }
+/* Log Out Button */
+.logout {
+  background-color: transparent;
+  padding: 10px 5px;
+  letter-spacing: 1px;
+  font-weight: 500;
+  color: var(--squid-ink);
+  border-radius: 25px;
+  width: 80px;
+  border: 2px solid var(--squid-ink);
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease, border 0.2s ease;
+}
 
-.parent-container {
+.logout:hover {
+  background-color: rgba(255, 0, 0, 0.78);
+  border: 2px solid transparent;
+  color: white;
+  transform: scale(1.05);
+}
+.logout:active{
+  transform: scale(0.98);
+}
+
+/* .parent-container {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -152,9 +175,9 @@ body {
   .toggle-checkbox:checked + .toggle-label .toggle-button {
     transform: translateX(30px);
   }
-}
+} */
 /* ****** Responsiveness Part ******* */
-@media (max-width: 480px) {
+/* @media (max-width: 480px) {
   .switch {
     width: 3em;
     height: 1.75em;
@@ -170,7 +193,7 @@ body {
   input:checked + .slider:before {
     transform: translateX(1.5em);
   }
-}
+} */
 @media (max-width:360px) {
   .section-header svg{
     width: 50px;
@@ -239,7 +262,7 @@ body {
   }
 }
 
-@media (min-width: 361px) and (max-width: 480px) {
+/* @media (min-width: 361px) and (max-width: 480px) {
   .parent-container{
     width: 15%;
   }
@@ -258,9 +281,9 @@ body {
   .toggle-checkbox:checked + .toggle-label .toggle-button {
     transform: translateX(35px);
   }
-}
+} */
 
-
+/* 
 @media (min-width: 481px) and (max-width: 767px) {
   .toggle-label {
     width: 80px;
@@ -277,4 +300,4 @@ body {
   .toggle-checkbox:checked + .toggle-label .toggle-button {
     transform: translateX(40px);
   }
-}
+} */
