@@ -50,7 +50,10 @@ function signupRouter(io) {
                 let profilePicUrl = imgManage.upload(profile_pic, savePath)
     
                 Students.findByIdAndUpdate(studentDocID, { profile_pic: (await profilePicUrl).toString() }).then(() => {
-                    res.send({ url: `/login` })
+                    req.session.stdid = studentData.studentID // setting the session with the student ID
+                    res.cookie('recordID', student['_id']) // setting a cookie with a value of the document ID of the user
+                    res.cookie('recordName', student['username']) // setting a cookie with a value of the username of the user
+                    res.send({ url: `/dashboard` })
                 }) //* Updating the student's record database to add the profile_pic image location so that it can be deirectly used by the front-end
             } else {
                 throw new Error('Profile picture not found')
