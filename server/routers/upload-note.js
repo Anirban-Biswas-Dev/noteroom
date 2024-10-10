@@ -45,41 +45,46 @@ function uploadRouter(io) {
             4. Save all the files into the cloud (into the note folder) and fetch their links
             5. Update the note's record by adding all the image-links into the database
          */
-        if(!req.files) {
-            res.send({ error: 'No files have been selected to publish' })
-        } else {
-            let noteData = {
-                ownerDocID: req.cookies['recordID'],
-                subject: req.body['noteSubject'],
-                title: req.body['noteTitle'],
-                description: req.body['noteDescription']
-            } //* All the data except the notes posted by the client
-
-            let note = await addNote(noteData) //* Adding all the record of a note except the content links in the database
-            let noteDocId = note._id
-
-            let allFiles = Object.values(req.files) //* Getting all the file objects from the requests
+        try {
+            if(!req.files) {
+                res.send({ error: 'No files have been selected to publish' })
+            } else {
+                let noteData = {
+                    ownerDocID: req.cookies['recordID'],
+                    subject: req.body['noteSubject'],
+                    title: req.body['noteTitle'],
+                    description: req.body['noteDescription']
+                } //* All the data except the notes posted by the client
     
-            let allFilePaths = [] //* These are the raw file paths that will be directly used in the note-view
-
-            for(const file of allFiles) {
-                let publicUrl = (await imgManage.upload(file, `${req.cookies['recordID']}/${noteDocId.toString()}/${file.name}`)).toString()
-                allFilePaths.push(publicUrl)
-            } 
-
-            Notes.findByIdAndUpdate(noteDocId, { $set: { content: allFilePaths } }).then(() => {
-                res.send({ url: '/dashboard' })
-            }) //* After adding everything into the note-db except content (image links), this will update the content field with the image links
-
-            let owner = await getRoot(Students, req.session.stdid, 'studentID', {}) //* Getting the user information, basically the owner of the note
-            io.emit('note-upload' , { //* Handler 1: Dashboard; for adding the note at feed via websockets  
-                noteID /* Document ID of the note */ : noteDocId, 
-                thumbnail /* The first image of the notes content as a thumbnail */: allFilePaths[0],
-                profile_pic /* Profile pic path of the owner of the note */ : owner.profile_pic,
-                noteTitle /* Title of the note */ : noteData.title, 
-                ownerDisplayName /* Displayname of the owener of the note*/ : owner.displayname, 
-                ownerID /* Student ID of the owner of the note */ : owner.studentID 
-            })
+                let note = await addNote(noteData) //* Adding all the record of a note except the content links in the database
+                let noteDocId = note._id
+    
+                let allFiles = Object.values(req.files) //* Getting all the file objects from the requests
+        
+                let allFilePaths = [] //* These are the raw file paths that will be directly used in the note-view
+    
+                for(const file of allFiles) {
+                    let publicUrl = (await imgManage.upload(file, `${req.cookies['recordID']}/${noteDocId.toString()}/${file.name}`)).toString()
+                    allFilePaths.push(publicUrl)
+                } 
+    
+                Notes.findByIdAndUpdate(noteDocId, { $set: { content: allFilePaths } }).then(() => {
+                    res.send({ url: '/dashboard' })
+                }) //* After adding everything into the note-db except content (image links), this will update the content field with the image links
+    
+                let owner = await getRoot(Students, req.session.stdid, 'studentID', {}) //* Getting the user information, basically the owner of the note
+                io.emit('note-upload' , { //* Handler 1: Dashboard; for adding the note at feed via websockets  
+                    noteID /* Document ID of the note */ : noteDocId, 
+                    thumbnail /* The first image of the notes content as a thumbnail */: allFilePaths[0],
+                    profile_pic /* Profile pic path of the owner of the note */ : owner.profile_pic,
+                    noteTitle /* Title of the note */ : noteData.title, 
+                    ownerDisplayName /* Displayname of the owener of the note*/ : owner.displayname, 
+                    ownerID /* Student ID of the owner of the note */ : owner.studentID 
+                })
+            }
+        } catch (error) {
+            console.log(error.message)
+            next(error)
         }
     })
 
