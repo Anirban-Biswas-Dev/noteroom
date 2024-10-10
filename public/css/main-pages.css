@@ -613,40 +613,6 @@ div.notification-msg > .commenter-prfl:visited{
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   cursor: pointer;
 }
-/* Confetti and Pop up for new user sign up celebration */
-.popup {
-  display: none;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);  /* Centers the element */
-  width: 300px;
-  padding: 20px;
-  background-color: white;
-  box-shadow: 0px 5px 20px rgba(255, 255, 255, 0.7);
-  border-radius: 8px;
-  text-align: center;
-  z-index: 1010;
-}
-
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(138, 138, 138, 0.5);
-  backdrop-filter: blur(5px);
-  visibility: hidden;
-  opacity: 0;
-  transition: visibility 0s, opacity 0.3s;
-  z-index: 1009;
-}
-
-.overlay.show {
-  visibility: visible;
-  opacity: 1;
-}
 
 .button {
   margin-top: 20px;
