@@ -63,11 +63,15 @@ const toggleSections = (activeBtn, inactiveBtn, showSection, hideSection) => {
     hideSection.classList.remove('visible-container');
 };
 
-userSavedNotesBtn.addEventListener('click', () => {
-    toggleSections(userSavedNotesBtn, userNotesBtn, userSavedNotes, userNotes);
-});
-
-userNotesBtn.addEventListener('click', () => {
-    toggleSections(userNotesBtn, userSavedNotesBtn, userNotes, userSavedNotes);
-});
+try {
+    userSavedNotesBtn.addEventListener('click', () => {
+        toggleSections(userSavedNotesBtn, userNotesBtn, userSavedNotes, userNotes);
+    });
+    
+    userNotesBtn.addEventListener('click', () => {
+        toggleSections(userNotesBtn, userSavedNotesBtn, userNotes, userSavedNotes);
+    });
+} catch (error) {
+    console.error(error)
+}
 
