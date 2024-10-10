@@ -51,7 +51,6 @@ try {
 	
 		document.querySelector('textarea[name="feedbackText"]').value = ''
 	
-		alert('Feedback sent')
 	})
 } catch (error) {
 	console.log(error.message)
