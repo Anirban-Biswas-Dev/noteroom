@@ -37,7 +37,7 @@ async function search() {
         if(searchTerm != "") {
             let searchContainer = document.querySelector('.search-result-prfls-container')
             let randomContainer = document.querySelector('.random-prfls-container')
-            let status = document.querySelector('.status')
+            let status = document.querySelector('.profile-status')
         
             let profiles = document.querySelectorAll('.results-prfls .results-prfl')
         
@@ -61,6 +61,7 @@ async function search() {
                     addProfile(student) // 3
                 })
             } else {
+                randomContainer.style.display = 'none' // 4
                 status.innerHTML = 'No profiles are here associated with your search!!'
                 status.style.display = 'block' // 5
             }

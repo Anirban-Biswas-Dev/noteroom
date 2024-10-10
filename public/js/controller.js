@@ -506,10 +506,12 @@ conSock.on('feedback-given' , (feedbackData) => {
 			nftShake.classList.remove('shake');
 		}, 300)
         
-        /*
-        const audio = document.getElementById('notificationAudio');
-        audio.play();
-        */ 
+        try {
+            const audio = document.getElementById('notificationAudio');
+            audio.play();
+        } catch (error) {
+            console.error(error)
+        }
 	}
 })
 

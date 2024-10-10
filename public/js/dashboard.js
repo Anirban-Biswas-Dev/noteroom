@@ -248,10 +248,14 @@ function saveNote(noteDocID) {
 
 
 //* Triggering all the observers
-document.querySelectorAll('.feed-note-card').forEach(card => {
-	observers.observer().observe(card)
-})
-observers.lastNoteObserver().observe(document.querySelector('.feed-note-card:last-child'))
+try {
+	document.querySelectorAll('.feed-note-card').forEach(card => {
+		observers.observer().observe(card)
+	})
+	observers.lastNoteObserver().observe(document.querySelector('.feed-note-card:last-child'))
+} catch (error) {
+	console.error(error)
+}
 
 
 //* Note upload WS event

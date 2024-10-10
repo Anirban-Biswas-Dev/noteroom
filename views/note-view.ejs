@@ -195,9 +195,13 @@
       <%- include('side-panel', { block: 'right-panel' }) %>
     <% } %>
     <%- include('side-panel', { block: 'mbl-ctrl-panel' }) %>
+
+	  <audio id="notificationAudio" src="/sounds/notification-ping-sound.mp3" preload="auto"></audio>
     <div class="background-overlay"></div>
+
     <%- include('side-panel', { block: 'share-note' }) %>
     <%- include('side-panel', { block: 'downloading-loader' }) %>
+    
     <script src="/js/controller.js"></script>
     <script src="/js/note-view.js"></script>
   </body>

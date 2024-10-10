@@ -60,7 +60,7 @@
                     Search Results
                 </h3>
                 <div class="results-prfls">
-                    <p class="status" style="display: none;"></p>
+                    <p class="profile-status" style="display: none;"></p>
                 </div>
             </div>
          </div>
@@ -68,9 +68,10 @@
     
     <%- include('side-panel', { block: 'right-panel' }) %>
 	<%- include('side-panel', { block: 'mbl-ctrl-panel' }) %>
-
+    
     <div class="background-overlay"></div>
 	<div id="overlay" class="overlay"></div>
+	<audio id="notificationAudio" src="/sounds/notification-ping-sound.mp3" preload="auto"></audio>
 
 	<script src="/js/controller.js"></script>
     <script src="/js/search-profile.js"></script>
