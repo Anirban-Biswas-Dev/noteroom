@@ -44,7 +44,12 @@
                  </div>
                 <input type="text" name="displayname" placeholder="Display Name" class="input-field" required>
                 <input type="email" name="email" placeholder="Email" class="input-field" required>
-                <input type="password" name="password" placeholder="Password" class="input-field" required>
+                <div class="password-container">
+                    <input type="password" id="password" name="password" placeholder="Password" class="input-field" required>
+                    <button type="button" id="togglePassword" class="toggle-password">
+                        <i class="fa-solid fa-eye"></i> 
+                    </button>
+                </div>
                 <button type="button" class="next-button">Next</button>
                 <p style="color: black;">Already have an account? <a href="/login">Login</a></p>
             </div>

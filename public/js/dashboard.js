@@ -407,21 +407,6 @@ function stopConfetti() {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
-function triggerConfetti() {
-	let overlay = document.getElementById('overlay');
-
-	// Show overlay
-	overlay.classList.add('show');
-
-	// Start confetti
-	startConfetti();
-
-	// Hide overlay after confetti has finished falling
-	setTimeout(() => {
-		overlay.classList.remove('show');
-	}, 3000);  // You can adjust the overlay timing to match the animation length
-}
-
 if(URL.parse(document.referrer).pathname === '/sign-up') {
 	startConfetti()
 }
