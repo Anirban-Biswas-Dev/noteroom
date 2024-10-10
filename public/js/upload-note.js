@@ -110,30 +110,35 @@ async function publish() {
             let noteTitle = document.querySelector('.note-title').value;
             let noteDescription = document.querySelector('.note-description').value;
 
-            let formData = new FormData();
-            stackFiles.forEach((file, index) => {
-                formData.append(`image-${index}`, file);
-            });
-            formData.append('noteSubject', noteSubject);
-            formData.append('noteTitle', noteTitle);
-            formData.append('noteDescription', noteDescription);
+            if(noteSubject && noteTitle && noteDescription) {
+                let formData = new FormData();
+                stackFiles.forEach((file, index) => {
+                    formData.append(`image-${index}`, file);
+                });
+                formData.append('noteSubject', noteSubject);
+                formData.append('noteTitle', noteTitle);
+                formData.append('noteDescription', noteDescription);
+    
+                fetch('/upload', {
+                        method: 'POST',
+                        body: formData
+                }).then(response => {
+                    return response.json()
+                }).then(data => {
+                    if (data.error) {
+                        hideLoader()
+                        alert(data.error);
+                    } else if (data.url) {
+                        hideLoader(); // Hide the loader after the process
+                        window.location.href = data.url;
+                    }
+                })
+    
+                showLoader()
+            } else {
+                alert('You have to fill all of the fields')
+            }
 
-            fetch('/upload', {
-                    method: 'POST',
-                    body: formData
-            }).then(response => {
-                return response.json()
-            }).then(data => {
-                if (data.error) {
-                    hideLoader()
-                    alert(data.error);
-                } else if (data.url) {
-                    hideLoader(); // Hide the loader after the process
-                    window.location.href = data.url;
-                }
-            })
-
-            showLoader()
         }
     } catch (error) {
         hideLoader(); // Hide the loader in case of an error

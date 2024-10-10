@@ -80,14 +80,14 @@ function noteViewRouter(io) {
     })
 
     router.get('/:noteID?', async (req, res, next) => {
-        let noteDocID = req.params.noteID
-        let information = await getNote(noteDocID)
-        let root = await getRoot(Students, req.session.stdid, 'studentID', { displayname: 1, studentID: 1, profile_pic: 1 })
-        let [note, owner, feedbacks] = [information['note'], information['owner'], information['feedbacks']]
-        if (req.session.stdid) {
-            let mynote = 1 //* Varifing if a note is mine or not: corrently using for not allowing users to give feedbacks based on some situations (self-notes and viewing notes without being logged in)
-            if (noteDocID) {
-                try {
+        try {
+            let noteDocID = req.params.noteID
+            let information = await getNote(noteDocID)
+            let root = await getRoot(Students, req.session.stdid, 'studentID', { displayname: 1, studentID: 1, profile_pic: 1 })
+            let [note, owner, feedbacks] = [information['note'], information['owner'], information['feedbacks']]
+            if (req.session.stdid) {
+                let mynote = 1 //* Varifing if a note is mine or not: corrently using for not allowing users to give feedbacks based on some situations (self-notes and viewing notes without being logged in)
+                if (noteDocID) {
                     let savedNotes = await getSavedNotes(Students, Notes, req.session.stdid)
                     let notis = await getNotifications(allNotifs, req.cookies['recordName'])
                     if (note.ownerDocID == req.cookies['recordID']) {
@@ -96,12 +96,12 @@ function noteViewRouter(io) {
                         mynote = 0
                         res.render('note-view', { note: note, mynote: mynote, owner: owner, feedbacks: feedbacks, root: root, savedNotes: savedNotes, notis: notis }) // Specific notes: visiting others notes
                     }
-                } catch (error) {
-                    next(error)
                 }
+            } else {
+                res.render('note-view', { note: note, mynote: 3, owner: owner, feedbacks: feedbacks, root: owner }) // Specific notes: visiting notes without being logged in
             }
-        } else {
-            res.render('note-view', { note: note, mynote: 3, owner: owner, feedbacks: feedbacks, root: owner }) // Specific notes: visiting notes without being logged in
+        } catch (error) {
+            next(error)
         }
     })
 

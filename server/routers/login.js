@@ -31,9 +31,10 @@ function loginRouter(io) {
     })
 
     router.post('/', async (req, res) => {
-        let studentID = req.body.studentID
-        let password = req.body.password
         try {
+            let studentID = req.body.studentID
+            let password = req.body.password
+
             let student = await extract(studentID)
             if (password === student['studentPass']) {
                 req.session.stdid = studentID // setting the session with the student ID
@@ -45,6 +46,7 @@ function loginRouter(io) {
                 io.emit('wrong-cred')
             }
         } catch (error) {
+            console.log(error.message)
             res.json({ message: 'no-studentid' })
             io.emit('no-studentid')
         }

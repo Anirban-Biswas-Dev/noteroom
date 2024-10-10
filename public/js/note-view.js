@@ -34,24 +34,27 @@ prevButton.addEventListener("click", () => {
 showSlide(currentIndex);
 
 try {
-	document.querySelector('.post-feedback').addEventListener('click', async function () {
-		let feedback = document.querySelector('textarea[name="feedbackText"]').value // Feedback text
-		let ownerUsername = document.querySelector('span.studentusername').innerHTML // Note owner's username
-		let noteDocID = window.location.pathname.split('/')[2] // Note's document ID
-		let commenterDocID = Cookies.get('recordID').split(':')[1].replaceAll('"', '') // Commenter's document ID
-	
-		socket.emit('feedback', 
-			noteDocID, 
-			feedback, 
-			noteDocID, 
-			commenterDocID, 
-			ownerUsername
-		) 
-		// sending room-name (unique noteDocID), feedback-text, noteid and commenter's doc-id, and note owner's username to the server 
-	
-		document.querySelector('textarea[name="feedbackText"]').value = ''
-	
-	})
+    let feedback = document.querySelector('textarea[name="feedbackText"]')
+    let ownerUsername = document.querySelector('span.studentusername').innerHTML // Note owner's username
+    let noteDocID = window.location.pathname.split('/')[2] // Note's document ID
+    let commenterDocID = Cookies.get('recordID').split(':')[1].replaceAll('"', '') // Commenter's document ID
+
+    async function postFeedback() {
+        if(feedback.value.trim() !== "") {
+            socket.emit('feedback', 
+                noteDocID, 
+                feedback.value, 
+                noteDocID, 
+                commenterDocID, 
+                ownerUsername
+            ) 
+            // sending room-name (unique noteDocID), feedback-text, noteid and commenter's doc-id, and note owner's username to the server 
+            document.querySelector('textarea[name="feedbackText"]').value = ''
+        }
+	}
+
+    let postBtn = document.querySelector('.post-feedback')
+	postBtn.addEventListener('click', postFeedback)
 } catch (error) {
 	console.log(error.message)
 }
