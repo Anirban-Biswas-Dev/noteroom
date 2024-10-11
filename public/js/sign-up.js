@@ -20,6 +20,16 @@ socket.on('duplicate-value', (duplicate_field) => {
     document.querySelector(`input[name=${duplicate_field}]`).style.border = "2px solid red"
 })
 
+document.querySelector('.clg-information').addEventListener('click', function() {
+    let displayName = document.querySelector('input[name="displayname"]').value
+    let studentID = document.querySelector('input[name="studentID"]').value
+
+    socket.emit('unique-username', { displayName, studentID })
+    socket.on('_unique-username', (username) => {
+        document.querySelector('input[name="username"]').value = username
+    })
+})
+
 document.addEventListener('DOMContentLoaded', function () {
     const steps = document.querySelectorAll('.step');
     const progressBar = document.querySelector('.progress-bar');
@@ -185,12 +195,12 @@ function hideLoader(restore=false) {
 const togglePassword = document.querySelector('#togglePassword');
 const password = document.querySelector('#password');
 
-    togglePassword.addEventListener('click', function () {
-        const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
-        
-        password.setAttribute('type', type);
-        
-        const icon = this.querySelector('i');
-        icon.classList.toggle('fa-eye');
-        icon.classList.toggle('fa-eye-slash');
-    });
+togglePassword.addEventListener('click', function () {
+    const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+    
+    password.setAttribute('type', type);
+    
+    const icon = this.querySelector('i');
+    icon.classList.toggle('fa-eye');
+    icon.classList.toggle('fa-eye-slash');
+});
