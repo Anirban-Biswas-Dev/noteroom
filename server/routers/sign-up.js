@@ -1,6 +1,7 @@
 const express = require('express')
 const Students = require('../schemas/students')
 const imgManage = require('../controllers/image-upload')
+const crypto = require('crypto')
 const router = express.Router()
 
 /* 
@@ -14,6 +15,19 @@ function signupRouter(io) {
         let student = await Students.create(studentObj)
         return student
     }
+
+    function generateRandomUsername(studentID, displayname) {
+        let username = `${displayname.toLowerCase().replace(/\s+/g, '-')}-${crypto.createHash('sha256').update(studentID).digest('hex').slice(0, 10)}`
+        return username
+    }
+    
+    io.on('connection', (socket) => {
+        socket.on('unique-username', (creds) => {
+            ({ displayName, studentID } = creds)
+            let username = generateRandomUsername(studentID, displayName)
+            socket.emit('_unique-username', username)
+        })
+    })
 
     router.get('/', (req, res) => {
         if (req.session.stdid) {
