@@ -55,7 +55,18 @@
         <div class="user-username">
             <span class="input-label">Username</span>
             <div class="username-box">
-                <p><%= student.username %></p>
+                <p>
+                    <%
+                        let username;
+                        let name = student.username
+                        if(name.length > 15) {
+                            username = name.slice(0, 15) + " ..."
+                        } else {
+                            username = name
+                        }
+                    %>
+                    <%= username %>
+                </p>
             </div>
         </div>
         <div class="user-college-year">
@@ -114,7 +125,13 @@
     <div class="uploaded-notes-section">
       <div class="toggle-header-uploaded-notes">
         <% if (visiting) { %>
-            <h2 class="user-notes active-section"><%= student.displayname %>'s Notes</h2>
+            <h2 class="user-notes active-section">
+                <% 
+                    let name = student.displayname 
+                    let displayname = name.match(/^\S+/i)
+                %>
+                <%= displayname %>'s Notes
+            </h2>
         <% } else { %>
             <h2 class="user-notes active-section" >My Notes</h2>
             <h2 class="student-saved-notes" id="savedNotes" >Saved Notes</h2>
