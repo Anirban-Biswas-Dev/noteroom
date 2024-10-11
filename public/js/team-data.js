@@ -13,11 +13,11 @@ export const founders = [
         }
     },
     {
-        name: 'Md. Moshiur Rahman',
+        name: 'Md. Rafi Rahman',
         imgSrc: '\Noteroom Caricature Catoonic - Moshiur.jpg',
         college: 'Gov.t Chattogram College',
         role: 'Backend Boss',
-        description: 'Moshiur is our go-to person when the code breaks—and by "go-to," we mean the one everyone calls when panic sets in. With a calm and collected approach, he fixes problems in seconds, often while cracking a dad joke. Known for his cool demeanor in coding chaos, he’s probably debugged more lines of code than most people have had hot dinners. In his spare time, he’s dreaming up ways to automate everything or dominating in Call of Duty. If it moves, he’ll find a way to make it more efficient—some of us are starting to think he might actually be part machine.',
+        description: 'Rafi is our go-to person when the code breaks—and by "go-to," we mean the one everyone calls when panic sets in. With a calm and collected approach, he fixes problems in seconds, often while cracking a dad joke. Known for his cool demeanor in coding chaos, he’s probably debugged more lines of code than most people have had hot dinners. In his spare time, he’s dreaming up ways to automate everything or dominating in Call of Duty. If it moves, he’ll find a way to make it more efficient—some of us are starting to think he might actually be part machine.',
         socialLinks: {
             facebook: '',
             instagram: '',
