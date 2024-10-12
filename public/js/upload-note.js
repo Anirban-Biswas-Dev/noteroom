@@ -1,11 +1,20 @@
 const host = window.location.origin
 const socket = io(host)
 
-/*
-!BUG-3: On uploading note: front-end
-    !When the discard button is clicked in the image preview, the window disappears and we can't select the same discarded image. The image preview is
-    !not even shown
-*/
+socket.on('note-validation', (message) => {
+    let { errorField } = message
+    setTimeout(() => {
+        switch(errorField) {
+            case 'title':
+                let titleElement = document.querySelector('.note-title')
+                titleElement.style.border = '2px solid red'
+                break
+        }
+
+        hideLoader()
+    }, 1000)
+})
+
 
 document.addEventListener('DOMContentLoaded', () => {
     let thumbnailPopup = document.querySelector('.thumbnail-pop-up');

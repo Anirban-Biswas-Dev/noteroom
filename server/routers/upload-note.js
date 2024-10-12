@@ -83,8 +83,12 @@ function uploadRouter(io) {
                 })
             }
         } catch (error) {
-            console.log(error.message)
-            next(error)
+            if(error.errors && error.errors['title'] && error.errors.title['kind'] === 'maxlength') {
+                let errorField = error.errors.title['path']
+                io.emit('note-validation', { errorField })
+            } else {
+                next(error)
+            }
         }
     })
 
