@@ -204,3 +204,10 @@ togglePassword.addEventListener('click', function () {
     icon.classList.toggle('fa-eye');
     icon.classList.toggle('fa-eye-slash');
 });
+
+  tippy('[data-tippy-content]', {
+    placement: 'top', // Tooltip position (you can adjust to 'bottom', 'right', 'left')
+    animation: 'scale', // Smooth scaling animation
+    theme: 'light', // Optional theme; can be 'light', 'dark', etc.
+  });
+
