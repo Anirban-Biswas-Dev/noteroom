@@ -18,7 +18,13 @@
   padding: 20px;
   box-sizing: border-box;
 }
-
+.search-wraper{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: fit-content;
+  min-width: 120px;
+}
 .search-bar {
   max-width: 980px;
   min-width: 100px;
@@ -51,6 +57,8 @@
   justify-content: center;
   width: 60px;
   min-width: 30px;
+  padding: 0 20px;
+  box-sizing: border-box;
   transition: transform 0.2s ease;
 
 }
@@ -822,6 +830,7 @@ canvas {
   .search-bar-box{
     padding: 10px;
     background-color: white;
+    justify-content: space-evenly;
   }
   .search-bar{
     height: 40px;
@@ -847,6 +856,9 @@ canvas {
   }
   .results-card i{
     font-size: 1rem;
+  }
+  .search-bar-box {
+    justify-content: space-evenly;
   }
 }
 

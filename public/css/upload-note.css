@@ -232,22 +232,27 @@ body {
 }
 .publish-note-btn{
     box-sizing: border-box;
-    background: var(--neon-blue);
+    background: var(--squid-ink);
     border: 0.5px solid #000000;
     border-radius: 7px;
     font-weight: 400;
     font-size: 18px;
     line-height: 26px;
     letter-spacing: -0.03em;
-    color:var(--squid-ink);
+    color:var(--neon-blue);
     width: 30%;
     height: 50px;
     align-self: center;
-    transition: background-color 0.2s ease, transform 0.2s ease; 
+    transition: background-color 0.3s ease, transform 0.2s ease, color 0.3s ease; 
 }
 .publish-note-btn:hover{
-    background-color: #02c8e2;
+    background-color: var(--neon-blue);
+    color: var(--squid-ink);
     transform: scale(1.03); 
+    cursor: pointer;
+}
+.publish-note-btn:active{
+    transform: scale(.98);
 }
 /* ***** Set Thumbnail Pop Design ****** */
 .thumbnail-pop-up {

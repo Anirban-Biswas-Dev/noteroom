@@ -92,3 +92,8 @@ function hideLoader(restore=false) {
         document.querySelector('style#temp').remove()
     }
 }
+tippy('[data-tippy-content]', {
+    placement: 'top', 
+    animation: 'scale', 
+    theme: 'light', 
+  });
