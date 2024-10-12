@@ -150,9 +150,17 @@
         <!-- Feedbacks List -->
         <div class="feedbacks-list">
           <% function formatDate(date) { 
-              const formattedDate = date.toLocaleDateString('en-US', 
-              { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }); 
-              return formattedDate 
+              const formatter = new Intl.DateTimeFormat('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                timeZone: 'Asia/Dhaka', 
+                hour12: true 
+              });
+            const formattedDate = formatter.format(date);
+            return formattedDate
           } %>
           <!-- Individual feedback -->
           <% feedbacks.forEach(feedback => { %>
