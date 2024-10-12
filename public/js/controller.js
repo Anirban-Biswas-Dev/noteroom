@@ -337,13 +337,26 @@ function copyLink() {
 }
 function share(platform) {
     const linkElement = document.querySelector('._link_').innerHTML; // 1
-
+    let messages = [
+        `Check out this note on NoteRoom: ${linkElement}`,
+        `Explore this amazing note on NoteRoom: ${linkElement}`,
+        `Take a look at this note I found on NoteRoom: ${linkElement}`,
+        `Don't miss this note on NoteRoom! Check it out here: ${linkElement}`,
+        `Here's something worth reading on NoteRoom: ${linkElement}`,
+        `Check out this awesome note on NoteRoom: ${linkElement}`,
+        `I came across this great note on NoteRoom, have a look: ${linkElement}`,
+        `Found something interesting on NoteRoom! See it here: ${linkElement}`,
+        `This note on NoteRoom is worth your time: ${linkElement}`,
+        `Take a moment to check out this note on NoteRoom: ${linkElement}`,
+        `Here's a note you'll find interesting on NoteRoom: ${linkElement}`
+    ]
+    
     switch(platform) {
         case "facebook":
             window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(linkElement + '/shared')}`, '_blank') // 2
             break
         case "whatsapp":
-            let message = `Check out this note on NoteRoom: ${linkElement}`
+            let message = messages[_.random(0, 9)]
             window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`, '_blank') // 2
             break
     }

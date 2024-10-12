@@ -42,7 +42,7 @@ const studentsSchema = new mongoose.Schema({
     bio: {
         type: String,
         minLength: 0,
-        maxLength: 100,
+        maxLength: 300,
         default: ""
     },
     favouritesubject: {

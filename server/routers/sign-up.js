@@ -17,7 +17,7 @@ function signupRouter(io) {
     }
 
     function generateRandomUsername(studentID, displayname) {
-        let username = `${displayname.toLowerCase().replace(/\s+/g, '-')}-${crypto.createHash('sha256').update(studentID).digest('hex').slice(0, 10)}`
+        let username = `${displayname.toLowerCase().replace(/\s+/g, '-')}-${crypto.createHash('sha256').update(studentID).digest('hex')}`
         return username
     }
     
@@ -41,7 +41,7 @@ function signupRouter(io) {
     router.post('/', async (req, res, next) => {
         try {
             let studentData = {
-                displayname: req.body.displayname,
+                displayname: req.body.displayname.trim(),
                 email: req.body.email,
                 password: req.body.password,
                 studentID: req.body.studentID,
