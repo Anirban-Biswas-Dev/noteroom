@@ -24,8 +24,12 @@ function signupRouter(io) {
     io.on('connection', (socket) => {
         socket.on('unique-username', (creds) => {
             ({ displayName, studentID } = creds)
-            let username = generateRandomUsername(studentID, displayName)
-            socket.emit('_unique-username', username)
+            try {
+                let username = generateRandomUsername(studentID, displayName.trim())
+                socket.emit('_unique-username', username)
+            } catch (error) {
+                console.log(error.message)
+            }
         })
     })
 
