@@ -88,14 +88,17 @@
         <% if(notis.length != 0) { %>
             <%
             function formatDate(date) {
-              const formattedDate = date.toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                  hour: '2-digit',
-                  minute: '2-digit'
+              const formatter = new Intl.DateTimeFormat('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                timeZone: 'Asia/Dhaka', 
+                hour12: true 
               });
-              return formattedDate
+            const formattedDate = formatter.format(date);
+            return formattedDate
             } 
             %>
             <% notis.forEach(noti => { %>

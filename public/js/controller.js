@@ -198,13 +198,16 @@ const manageNotes = { // I treat all the cards as notes
 
     addFeedback: function(feedbackData) {
         let date = new Date(feedbackData.createdAt)
-        const formattedDate = date.toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-        })
+        const formatter = new Intl.DateTimeFormat('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            timeZone: 'Asia/Dhaka', 
+            hour12: true 
+        });
+        const formattedDate = formatter.format(date);
         let feedbackCard = `<div class="feedback" id="${feedbackData._id}">
 							<div class="feedback-header">
                             	<span class="feedback-id" style="display: none;">${feedbackData._id}</span>
