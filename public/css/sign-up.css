@@ -238,6 +238,7 @@ textarea{
     cursor: pointer;
     font-size: 1em;
     margin-top: 15px;
+    box-sizing: border-box;
     box-shadow: 0px 4px 4px #00000025;
     transition: background-color 0.3s ease, transform 0.2s ease; 
 }
@@ -248,7 +249,7 @@ textarea{
 }
 
 button.back-button {
-    margin-right: 5px;
+    font-size: .8rem;
     color:var(--squid-ink);
     background-color: transparent;
     transition: color 0.3s ease, border 0.2s ease, background-color 0.3s ease, transform 0.2s ease;
