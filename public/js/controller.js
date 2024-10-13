@@ -551,3 +551,32 @@ hideNotificationPanel.addEventListener('click', () => {
   notificationPanel.classList.remove('show');
   backgroundOverlay.classList.remove('show-overlay');
 })
+// Rafi simply pass your error msg on this parameter. 
+function setupErrorPopup(errorMessage) {
+    const errorOverlay = document.querySelector('.error-overlay');
+    const closeErrorBtns = document.querySelectorAll('.close-err'); 
+    const errorMsgElement = document.querySelector('.error-msg');
+
+    errorMsgElement.innerHTML = errorMessage || "An unexpected error occurred."; // Default message if none provided. In case someone is playing with the functions on the console :)
+
+    errorOverlay.style.display = 'flex'; 
+    requestAnimationFrame(() => { 
+        errorOverlay.classList.add('err-visible');
+    });
+
+    closeErrorBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            errorOverlay.classList.remove('err-visible');
+            setTimeout(() => {
+                errorOverlay.style.display = 'none'; 
+            }, 300); 
+        });
+    });
+
+    errorOverlay.addEventListener('click', (event) => {
+        if (event.target === errorOverlay) {
+            closeErrorBtns[0].click(); 
+        }
+    });
+}
+

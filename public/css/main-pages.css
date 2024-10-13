@@ -982,3 +982,8 @@ canvas {
     max-width: 800px;
   }
 }
+@media (max-width:950px) {
+  .left-panel{
+    display: none;
+  }
+}
