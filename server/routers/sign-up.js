@@ -16,7 +16,8 @@ function signupRouter(io) {
         return student
     }
 
-    function generateRandomUsername(studentID, displayname) {
+    function generateRandomUsername(stdID, displayname) {
+        let studentID = stdID.replace(/\s+/g, '')
         let username = `${displayname.toLowerCase().replace(/\s+/g, '-')}-${crypto.createHash('sha256').update(studentID).digest('hex')}`
         return username
     }
