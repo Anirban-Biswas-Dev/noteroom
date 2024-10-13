@@ -118,9 +118,10 @@ async function publish() {
         if (stackFiles.length != 0) {
             let noteSubject = document.querySelector('.note-subject').value;
             let noteTitle = document.querySelector('.note-title').value;
-            let noteDescription = document.querySelector('.note-description').value;
+            // const noteDescription = document.querySelector('.note-description').value
+            const noteDescription = editor.getHTML();
 
-            if(noteSubject && noteTitle && noteDescription) {
+            if(noteSubject && noteTitle && noteDescription !== "<p><br></p>") {
                 let formData = new FormData();
                 stackFiles.forEach((file, index) => {
                     formData.append(`image-${index}`, file);
@@ -142,7 +143,7 @@ async function publish() {
                         window.location.href = data.url;
                     }
                 })
-    
+                
                 showLoader()
             } else {
                 setupErrorPopup('Please fill up all the available fields to upload.')
@@ -154,3 +155,16 @@ async function publish() {
         alert(error.message);
     }
 }
+
+const editor = new toastui.Editor({
+    el: document.querySelector('#editor'),
+    previewStyle: 'vertical',
+    initialEditType: 'wysiwyg',
+    height: '200px',
+    toolbarItems: [
+        ['heading', 'bold', 'italic', 'strike'],
+        ['hr'],
+        ['link'],
+    ],
+    placeholder: "Tell a bit about your note"
+});
