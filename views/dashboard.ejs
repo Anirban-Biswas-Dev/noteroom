@@ -8,6 +8,7 @@
 	<link rel="stylesheet" href="/css/dashboard.css" />
 	<link rel="stylesheet" href="/css/loaders.css" />
 	<link rel="stylesheet" href="/css/share-note.css" />
+	<link rel="stylesheet" href="/css/error-popup.css" />
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 	<link
@@ -160,6 +161,7 @@
 
 	<%- include('side-panel', { block: 'share-note' }) %>
 	<%- include('side-panel', { block: 'downloading-loader' }) %>
+	<%- include('side-panel', { block: 'error-popup' }) %>
 
 	<canvas id="confettiCanvas"></canvas>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.10.4/gsap.min.js"></script>
