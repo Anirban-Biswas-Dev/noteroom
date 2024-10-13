@@ -16,7 +16,9 @@ body {
     margin: 0;
     background: linear-gradient(301deg, var(--neon-blue) 34.2%, #FFFFFF 95.62%);
     box-sizing: border-box;
-
+    background-size: cover;
+    min-width: 100vw;
+    min-height: 800px;
 }
 
 a {
@@ -320,16 +322,32 @@ button.toggle-password:hover, .toggle-password i:hover{
         padding: 10px;
     }
     .signup-container h2{
-        font-size: 1.3em;
+        font-size: 1.2em;
+        margin: 5px;
     }
     .message-container{
         margin-bottom: 10px;
     }
     .message-container p{
-        font-size: .9rem;
+        font-size: .8rem;
+        font-weight: 500;
     }
     .instructions{
-        font-size: 0.8rem;
+        font-size: 0.7rem;
+    }
+    .input-field{
+        font-size: .8rem;
+    }
+    .profile-picture-placeholder{
+        width: 60px;
+        height: 60px;
+        font-size: 1rem;
+    }
+    .signup-container button{
+        margin-top: 0;
+    }
+    button.back-button{
+        margin: 15px;
     }
 }
 @media (min-width:361px) and (max-width:480px) {
@@ -351,5 +369,22 @@ button.toggle-password:hover, .toggle-password i:hover{
     }
     .instructions{
         font-size: 0.8rem;
+    }
+    .instructions{
+        font-size: 0.8rem;
+    }
+    .input-field{
+        font-size: .9rem;
+    }
+    .profile-picture-placeholder{
+        width: 70px;
+        height: 70px;
+        font-size: 1.2rem;
+    }
+    .signup-container button{
+        margin-top: 0;
+    }
+    button.back-button{
+        margin: 15px;
     }
 }
