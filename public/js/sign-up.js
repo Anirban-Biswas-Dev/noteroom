@@ -122,6 +122,22 @@ document.querySelector('.submit-button').addEventListener('click', function() {
     let group = document.querySelector('select[name="group"]').value
     let username = document.querySelector('input[name="username"]').value
 
+    if(!bio) {
+        let randomBio = [
+            "Just here to share notes and help others out!",
+            "Currently exploring all things Noteroom.",
+            "Learning, sharing, and taking notes like a pro.",
+            "A student of life, taking notes as I go.",
+            "Notes? Got 'em. Ready to share!",
+            "Making studying easier, one note at a time.",
+            "Using Noteroom to keep my brain organized!",
+            "Sharing is caring, especially with notes!",
+            "Here for the notes, staying for the knowledge.",
+            "Note-taker extraordinaire, happy to be here!"
+        ]
+        bio = randomBio[_.random(0, 9)]
+    }
+
     let formData = new FormData()
     formData.append('profilepic', profilePic)
     formData.append('displayname', displayName)
