@@ -412,48 +412,53 @@ async function searchNotes() {
         }
     }
 }
-let searchBtn = document.querySelector('.search-btn');
-let noteSearchInput = document.querySelector('.search-bar');
-let resultsContainer = document.querySelector('.results-container');
 
-/*
-# Process:
-1. Show the dropdown when the search bar is focused.
-2. Trigger the search when the 'Enter' key is pressed inside the search bar.
-3. Trigger the search when the search button is clicked and prevent dropdown from hiding.
-4. Hide the dropdown if the user clicks outside the search bar or the dropdown.
-5. Prevent the dropdown from hiding when interacting with the dropdown itself.
-*/
-
-// Step 1: Show the results container on input focus
-noteSearchInput.addEventListener('focus', function() {
-    resultsContainer.style.display = 'flex'; // Show dropdown
-});
-
-// Step 2: Trigger search when pressing 'Enter'
-noteSearchInput.addEventListener('keydown', (event) => {
-    if(event.key === 'Enter') {
+try {
+    let searchBtn = document.querySelector('.search-btn');
+    let noteSearchInput = document.querySelector('.search-bar');
+    let resultsContainer = document.querySelector('.results-container');
+    
+    /*
+    # Process:
+    1. Show the dropdown when the search bar is focused.
+    2. Trigger the search when the 'Enter' key is pressed inside the search bar.
+    3. Trigger the search when the search button is clicked and prevent dropdown from hiding.
+    4. Hide the dropdown if the user clicks outside the search bar or the dropdown.
+    5. Prevent the dropdown from hiding when interacting with the dropdown itself.
+    */
+    
+    // Step 1: Show the results container on input focus
+    noteSearchInput.addEventListener('focus', function() {
+        resultsContainer.style.display = 'flex'; // Show dropdown
+    });
+    
+    // Step 2: Trigger search when pressing 'Enter'
+    noteSearchInput.addEventListener('keydown', (event) => {
+        if(event.key === 'Enter') {
+            searchNotes(); // Call search function
+        }
+    });
+    
+    // Step 3: Prevent dropdown from hiding and trigger search on search button click
+    searchBtn.addEventListener('click', function(event) {
+        event.stopPropagation(); // Prevent dropdown from hiding
         searchNotes(); // Call search function
-    }
-});
-
-// Step 3: Prevent dropdown from hiding and trigger search on search button click
-searchBtn.addEventListener('click', function(event) {
-    event.stopPropagation(); // Prevent dropdown from hiding
-    searchNotes(); // Call search function
-});
-
-// Step 4: Hide the dropdown if clicking outside of input and results container
-document.addEventListener('click', function(event) {
-    if (!noteSearchInput.contains(event.target) && !resultsContainer.contains(event.target)) {
-        resultsContainer.style.display = 'none'; // Hide dropdown
-    }
-});
-
-// Step 5: Prevent dropdown from hiding when interacting with the results container
-resultsContainer.addEventListener('click', function(event) {
-    event.stopPropagation(); // Stop clicks inside the dropdown from closing it
-});
+    });
+    
+    // Step 4: Hide the dropdown if clicking outside of input and results container
+    document.addEventListener('click', function(event) {
+        if (!noteSearchInput.contains(event.target) && !resultsContainer.contains(event.target)) {
+            resultsContainer.style.display = 'none'; // Hide dropdown
+        }
+    });
+    
+    // Step 5: Prevent dropdown from hiding when interacting with the results container
+    resultsContainer.addEventListener('click', function(event) {
+        event.stopPropagation(); // Stop clicks inside the dropdown from closing it
+    });    
+} catch (error) {
+    console.log(error.message)
+}
 
 
 
@@ -532,25 +537,31 @@ conSock.on('feedback-given' , (feedbackData) => {
 })
 
 
+try {
+    //* Mobile notification panel
+    const notificationPanel = document.querySelector('.notification-panel');
+    const notificationButton = document.querySelector('.mobile-nft-btn');
+    const backgroundOverlay = document.querySelector('.background-overlay');
+    const hideNotificationPanel = document.querySelector('.btn-hide-nft');
+    
+    notificationButton.addEventListener('click', () => {
+      notificationPanel.classList.toggle('show');
+      backgroundOverlay.classList.toggle('show-overlay');
+    });
+    backgroundOverlay.addEventListener('click', () => {
+      notificationPanel.classList.remove('show');
+      backgroundOverlay.classList.remove('show-overlay');
+    });
+    hideNotificationPanel.addEventListener('click', () => {
+      notificationPanel.classList.remove('show');
+      backgroundOverlay.classList.remove('show-overlay');
+    })
+} catch (error) {
+    console.log(error.message)
+}
 
-//* Mobile notification panel
-const notificationPanel = document.querySelector('.notification-panel');
-const notificationButton = document.querySelector('.mobile-nft-btn');
-const backgroundOverlay = document.querySelector('.background-overlay');
-const hideNotificationPanel = document.querySelector('.btn-hide-nft');
 
-notificationButton.addEventListener('click', () => {
-  notificationPanel.classList.toggle('show');
-  backgroundOverlay.classList.toggle('show-overlay');
-});
-backgroundOverlay.addEventListener('click', () => {
-  notificationPanel.classList.remove('show');
-  backgroundOverlay.classList.remove('show-overlay');
-});
-hideNotificationPanel.addEventListener('click', () => {
-  notificationPanel.classList.remove('show');
-  backgroundOverlay.classList.remove('show-overlay');
-})
+
 function setupErrorPopup(errorMessage) {
     const errorOverlay = document.querySelector('.error-overlay');
     const closeErrorBtns = document.querySelectorAll('.close-err'); 

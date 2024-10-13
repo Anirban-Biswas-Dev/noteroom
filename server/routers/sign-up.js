@@ -50,7 +50,7 @@ function signupRouter(io) {
                 email: req.body.email,
                 password: req.body.password,
                 studentID: req.body.studentID,
-                rollnumber: req.body.rollnumber,
+                rollnumber: req.body.rollnumber.trim(),
                 collegesection: req.body.collegesection,
                 collegeyear: req.body.collegeyear,
                 bio: req.body.bio,
@@ -79,10 +79,27 @@ function signupRouter(io) {
             }
 
         } catch (error) {
-            console.log(error)
             if(error.code === 11000) {
                 let duplicate_field = Object.keys(error.keyValue)[0] // Sending the first duplicated field name to the client-side to show an error
                 io.emit('duplicate-value', duplicate_field)
+            } else if(error.name === 'ValidationError') {
+                let requiredFields = []
+                let userDefineds = []
+
+                for(field in error.errors) {
+                    if(error.errors[field].kind === 'required') {
+                        requiredFields.push(field)
+                    } else if(error.errors[field].kind === 'user defined'){
+                        userDefineds.push({ fieldName: error.errors[field].path, errorMessage :error.errors[field].properties.message})
+                    }
+                }
+
+                if (requiredFields.length > 0 || userDefineds.length > 0) {
+                    res.send({
+                        emptyFields: requiredFields,
+                        userDefinedErrors: userDefineds
+                    })
+                }
             } else {
                 res.send({ message: error.message })
             }

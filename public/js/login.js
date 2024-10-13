@@ -39,43 +39,46 @@ document.querySelector('.login-button').addEventListener('click', function() {
     let studentID = document.querySelector('.studentid').value
     let password = document.querySelector('.password').value
 
-    let formData = new FormData()
-    formData.append('studentID', studentID)
-    formData.append('password', password)
-
-    const style = document.createElement('style')
-    style.id = 'temp'
-    style.innerHTML = `
-        body {
-            margin: 0;
-            padding: 0;
-            width: 100vw;
-            height: 100vh;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #07192d;
-        }
-        `;
+    if(studentID && password) {
+        let formData = new FormData()
+        formData.append('studentID', studentID)
+        formData.append('password', password)
     
-    fetch('/login', {
-        method: 'POST',
-        body: formData
-    }).then(response => { return response.json() })
-        .then(data => { 
-            if(data.url) {
-                hideLoader()
-                window.location.href = data.url 
-            } else {
-                hideLoader(true)
-                setupErrorPopup(data.message)
+        const style = document.createElement('style')
+        style.id = 'temp'
+        style.innerHTML = `
+            body {
+                margin: 0;
+                padding: 0;
+                width: 100vw;
+                height: 100vh;
+                overflow: hidden;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: #07192d;
             }
-        })
-        .catch(error => { console.error(error) })
+            `;
+        
+        fetch('/login', {
+            method: 'POST',
+            body: formData
+        }).then(response => { return response.json() })
+            .then(data => { 
+                if(data.url) {
+                    hideLoader()
+                    window.location.href = data.url 
+                } else {
+                    hideLoader(true)
+                    setupErrorPopup(data.message)
+                }
+            })
+            .catch(error => { console.error(error) })
+    
+        document.head.appendChild(style);
+        showLoader()
+    }
 
-    document.head.appendChild(style);
-    showLoader()
 })
 
 function showLoader() {
