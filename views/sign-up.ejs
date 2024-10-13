@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign-Up Page</title>
     <link rel="stylesheet" href="/css/sign-up.css"> 
+	<link rel="stylesheet" href="/css/error-popup.css" />
     <script src="https://cdn.socket.io/socket.io-3.0.1.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -49,12 +50,12 @@
                     <p class="prfl-pic-success-msg">Successfully uploaded Image!</p>
                 </div>
                 
-                <input type="text" name="displayname" placeholder="Your Name" class="input-field" required data-tippy-content="Enter your name: First Name space Last Name (e.g. John Doe)">
+                <input type="text" name="displayname" placeholder="Your Name (required)" class="input-field" required data-tippy-content="Enter your name: First Name space Last Name (e.g. John Doe)">
             
-                <input type="email" name="email" placeholder="Email" class="input-field" required data-tippy-content="Enter your valid email address.">
+                <input type="email" name="email" placeholder="Email (required)" class="input-field" required data-tippy-content="Enter your valid email address.">
             
                 <div class="password-container">
-                    <input type="password" id="password" name="password" placeholder="Password" class="input-field" required data-tippy-content="Use a strong yet memorable password.">
+                    <input type="password" id="password" name="password" placeholder="Password (required)" class="input-field" required data-tippy-content="Use a strong yet memorable password.">
                     <button type="button" id="togglePassword" class="toggle-password">
                         <i class="fa-solid fa-eye"></i>
                     </button>
@@ -67,10 +68,10 @@
 
             <!-- Step 2: College Information -->
             <div class="step" id="step-2">
-                <input type="text" name="studentID" placeholder="Student ID" class="input-field" required data-tippy-content="Last 5 digit of roll e.g. 10422. This will be used for login">
-                <input type="text" name="rollnumber" placeholder="Class Roll" class="input-field" required data-tippy-content="Use the last 3 digit e.g. 422">
+                <input type="text" name="studentID" placeholder="Student ID (required)" class="input-field" required data-tippy-content="Last 5 digit of roll e.g. 10422. This will be used for login">
+                <input type="text" name="rollnumber" placeholder="Class Roll (required)" class="input-field" required data-tippy-content="Use the last 3 digit e.g. 422">
                 <select name="collegesection" class="input-field" required data-tippy-content="A-E for Science, F-G for Arts" >
-                    <option value="">College Section</option>
+                    <option value="Not selected">College Section</option>
                     <option value="A">A</option>
                     <option value="B">B</option>
                     <option value="C">C</option>
@@ -80,7 +81,7 @@
                     <option value="G">G</option>
                 </select>
                 <select name="collegeyear" class="input-field" required>
-                    <option value="">Select College Year</option>
+                    <option value="Not selected">Select College Year</option>
                     <option value="1st Year👶">1st Year👶</option>
                     <option value="2nd Year😎">2nd Year😎</option>
                   </select>
@@ -113,6 +114,8 @@
                 <button type="button" class="back-button">Back</button>
             </div>
     </div>
+	<%- include('side-panel', { block: 'error-popup' }) %>
+    <script src="/js/controller.js"></script>
     <script src="/js/sign-up.js"></script>
     <script src="/js/utils.js"></script>
 </body>

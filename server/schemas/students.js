@@ -13,9 +13,10 @@ const studentsSchema = new mongoose.Schema({
         type: String,
         validate: {
             validator: (email) => email.includes("@"),
-            message: (data) => `${data.value} doesn't contain @`
+            message: (data) => `Email doesn't contain @`
         },
-        unique: true
+        unique: true,
+        required: true
     },
     password: {
         type: String,
@@ -28,8 +29,7 @@ const studentsSchema = new mongoose.Schema({
         unique: true
     },
     rollnumber: {
-        type: Number,
-        unique: true,
+        type: String,
         required: true,
     },
     collegesection: {

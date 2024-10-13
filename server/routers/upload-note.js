@@ -87,6 +87,7 @@ function uploadRouter(io) {
                 let errorField = error.errors.title['path']
                 io.emit('note-validation', { errorField })
             } else {
+                res.send({ error: error.message })
                 next(error)
             }
         }

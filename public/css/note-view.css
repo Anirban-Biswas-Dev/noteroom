@@ -164,7 +164,7 @@ body {
     box-sizing: border-box;
     border: 2px solid #000000;
     border-radius: 10px;
-    padding: 10px 15px 10px 15px;
+    padding: 50px 20px 50px 20px;
     width: 90%;
     min-height: fit-content;
     display: flex;

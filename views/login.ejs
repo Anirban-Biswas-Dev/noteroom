@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Page</title>
     <link rel="stylesheet" href="/css/login.css">
+	<link rel="stylesheet" href="/css/error-popup.css" />
     <script src="https://cdn.socket.io/socket.io-3.0.1.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -33,6 +34,9 @@
         <p  style="color: black;">Don't have an account? <a href="/sign-up">Sign Up</a></p>
         <a href="/support">Need Help?</a>
     </div>
+	<%- include('side-panel', { block: 'error-popup' }) %>
+
+    <script src="/js/controller.js"></script>
     <script src="/js/login.js"></script>
     <script src="/js/utils.js"></script>
 </body>

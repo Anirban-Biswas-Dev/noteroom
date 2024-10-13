@@ -3,19 +3,10 @@ const socket = io(host)
 
 socket.emit('connection')
 
-function showError(message) {
-    let errorMessage = document.querySelector("p#message")
-    setTimeout(() => {
-        if(errorMessage) errorMessage.style.display = 'none'    
-    }, 5000)
-    errorMessage.style.display = 'block'
-    errorMessage.innerHTML = message
-}
-
 socket.on('duplicate-value', (duplicate_field) => {
     setTimeout(() => {
         hideLoader(true)
-        showError(`The <b>${duplicate_field}</b> you provided is already in use`)
+        setupErrorPopup(`The <b>${_.capitalize(duplicate_field)}</b> you provided is already in use`)
     }, 1000)
     document.querySelector(`input[name=${duplicate_field}]`).style.border = "2px solid red"
 })
@@ -175,14 +166,33 @@ document.querySelector('.submit-button').addEventListener('click', function() {
     })
     .then(response => { return response.json() })
     .then(data => { 
-        if(data.message) {
-            setTimeout(() => {
-                hideLoader(true)
-                showError(data.message)
-            }, 1000)
-        } else {
+        if(data.url) {
             hideLoader()
             window.location.href = data.url
+        } else if(data.message) { 
+            setTimeout(() => {
+                hideLoader(true)
+                setupErrorPopup(data.message)
+            }, 1000)
+        } else if(data.emptyFields) {
+            let { emptyFields, userDefinedErrors } = data
+            let message
+
+            if(emptyFields.length > 0 && userDefinedErrors.length == 0) {
+                message = `Empty Fields: <b>${emptyFields.join()}</b>`
+            } else if(emptyFields.length > 0 && userDefinedErrors.length > 0) {
+                message = `
+                Empty Fields: <b>${emptyFields.join()}</b><br>
+                <b>${_.capitalize(userDefinedErrors[0].fieldName)}</b>: ${userDefinedErrors[0].errorMessage}
+                `
+            } else if(emptyFields.length == 0 && userDefinedErrors.length > 0) {
+                message = `<b>${_.capitalize(userDefinedErrors[0].fieldName)}</b>: ${userDefinedErrors[0].errorMessage}`
+            }
+
+            setTimeout(() => {
+                hideLoader(true)
+                setupErrorPopup(message)
+            }, 1000)
         }
     })
     .catch(error => { 
