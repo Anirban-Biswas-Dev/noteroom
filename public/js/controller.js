@@ -551,7 +551,6 @@ hideNotificationPanel.addEventListener('click', () => {
   notificationPanel.classList.remove('show');
   backgroundOverlay.classList.remove('show-overlay');
 })
-// Rafi simply pass your error msg on this parameter. 
 function setupErrorPopup(errorMessage) {
     const errorOverlay = document.querySelector('.error-overlay');
     const closeErrorBtns = document.querySelectorAll('.close-err'); 

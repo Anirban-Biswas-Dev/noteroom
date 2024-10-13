@@ -6,6 +6,7 @@
     <title>Upload Note</title>
     <link rel="stylesheet" href="/css/main-pages.css">
     <link rel="stylesheet" href="/css/upload-note.css">
+	<link rel="stylesheet" href="/css/error-popup.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
@@ -114,10 +115,10 @@
             <button class="thumbnail-addstack-btn">Add to Stack</button>
         </div>
      </div>
-    <%- include('side-panel', { block: 'right-panel' }) %>
-     
-      <!-- Mobile Bottom Control Bar -->
+    <%- include('side-panel', { block: 'right-panel' }) %>     
     <%- include('side-panel', { block: 'mbl-ctrl-panel' }) %>
+	<%- include('side-panel', { block: 'error-popup' }) %>
+
     <audio id="notificationAudio" src="/sounds/notification-ping-sound.mp3" preload="auto"></audio>
 
 	<div class="background-overlay"></div>

@@ -8,6 +8,7 @@ socket.on('note-validation', (message) => {
             case 'title':
                 let titleElement = document.querySelector('.note-title')
                 titleElement.style.border = '2px solid red'
+                setupErrorPopup("Title's character must be less than 200.")
                 break
         }
 
@@ -136,7 +137,6 @@ async function publish() {
                 }).then(data => {
                     if (data.error) {
                         hideLoader()
-                        alert(data.error);
                     } else if (data.url) {
                         hideLoader(); // Hide the loader after the process
                         window.location.href = data.url;
@@ -145,7 +145,7 @@ async function publish() {
     
                 showLoader()
             } else {
-                alert('You have to fill all of the fields')
+                setupErrorPopup('Please fill up all the available fields to upload.')
             }
 
         }

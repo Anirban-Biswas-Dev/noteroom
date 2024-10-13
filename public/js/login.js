@@ -12,13 +12,13 @@ function show_warning() {
 
 socket.on('wrong-cred', function() {
     hideLoader(true)
-    document.querySelector('p#message').innerHTML = "Sorry! Credentials are not accepted"
+    setupErrorPopup("Sorry! Credentials are not accepted")
     show_warning()
 })
 
 socket.on('no-studentid', function() {
     hideLoader(true)
-    document.querySelector('p#message').innerHTML = "Sorry! No student account is associated with that ID"
+    setupErrorPopup("Sorry! No student account is associated with that ID")
     show_warning()
 })
 
@@ -64,13 +64,13 @@ document.querySelector('.login-button').addEventListener('click', function() {
         body: formData
     }).then(response => { return response.json() })
         .then(data => { 
-        if(data.url) {
-            hideLoader()
-            window.location.href = data.url 
-        } else {
-            hideLoader(true)
-            console.error(data.message)
-        }
+            if(data.url) {
+                hideLoader()
+                window.location.href = data.url 
+            } else {
+                hideLoader(true)
+                setupErrorPopup(data.message)
+            }
         })
         .catch(error => { console.error(error) })
 
