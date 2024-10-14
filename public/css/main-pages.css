@@ -282,6 +282,20 @@
   align-items: center;
   justify-content: end;
 }
+.search-prfl-pc {
+  min-width: 45px;
+  transition: transform 0.2s ease, fill 0.2s ease, color 0.2s ease; 
+  cursor: pointer; 
+}
+
+.search-prfl-pc:hover {
+  transform: scale(1.05); 
+}
+.search-prfl-pc:active{
+  transform: scale(0.99);
+}
+
+
 .profile-pic {
   box-sizing: border-box;
   width: 55px;
@@ -289,6 +303,7 @@
   border: 2px solid var(--squid-ink);
   border-radius: 50px;
   object-fit: contain;
+  margin-left: 45px;
 }
 .btn-hide-nft{
   display: none;
@@ -985,5 +1000,21 @@ canvas {
 @media (max-width:950px) {
   .left-panel{
     display: none;
+  }
+}
+@media (max-width:1025px) {
+    .search-prfl-pc{
+      display: none;
+    }
+}
+@media (min-width:1026px) and (max-width:1380px) {
+  .profile-pic{
+    margin-left: 20px;
+    width: 45px;
+    height: 45px;
+  }
+  .settings-icon{
+    margin-left: 20px;
+    font-size: 2.6rem;
   }
 }
