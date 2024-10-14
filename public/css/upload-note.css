@@ -177,7 +177,7 @@ body {
 }
 .note-subject{
     box-sizing: border-box;
-    background: var(--light-gray);
+    background-color: #f7f9fc;
     border-radius: 10px;
     width: 45%;
     height: 40px;
@@ -191,33 +191,34 @@ body {
     background-position: right 10px center;
     background-size: 16px 8px;
     padding: 0px 0px 0px 5px;
+    border: 1px solid rgb(218, 221, 230);
 }
 .note-subject:focus {
     outline: none;
     border-color: var(--squid-ink);
-    border: solid 2px;
+    border: solid 1px rgba(0, 0, 0, 0.5);
 }
 
 .note-title{
     box-sizing: border-box;
-    background: var(--light-gray);
+    background-color: #f7f9fc;
     border-radius: 10px;
     height: 40px;
     font-size: 1rem;
     padding: 0px 0px 0px 5px;
-    border: 1px solid;
+    border: 1px solid rgb(218, 221, 230);
 }
 .note-title:focus {
     outline: none;
     border-color: var(--squid-ink);
-    border: solid 2px;
+    border: solid 1px rgba(0, 0, 0, 0.5);
 }
 
-.note-description {
+.note-description, .editor {
     resize: none; 
     width: 100%; 
     max-width: 100%; 
-    height: 200px; 
+    height: 300px; 
     padding: 10px; 
     box-sizing: border-box;
     font-size: 16px; 
@@ -514,16 +515,16 @@ body {
         width: 100%;
         min-width: fit-content;
         font-size: .85rem;
-        background-color: rgba(217, 217, 217, 0.4);
+        background: rgb(247, 249, 252);
         box-shadow: 0px 1.5px 2px rgba(0, 0, 0, 0.25);
     }
     .note-title{
         font-size: .85rem;
-        background: rgba(217, 217, 217, 0.4);
+        background: rgb(247, 249, 252);
         box-shadow: 0px 1.5px 2px rgba(0, 0, 0, 0.25);
     }
     .note-description{
-        background: rgba(217, 217, 217, 0.4);
+        background: rgb(247, 249, 252);
         font-size: .85rem;
         box-shadow: 0px 1.5px 2px rgba(0, 0, 0, 0.25);
     }
@@ -645,16 +646,16 @@ body {
     .note-subject {
         width: 100%;
         font-size: .9rem; 
-        background-color: rgba(217, 217, 217, 0.45);
+        background: rgb(247, 249, 252);
         box-shadow: 0px 1.5px 2px rgba(0, 0, 0, 0.3); 
     }
     .note-title {
         font-size: .9rem;
-        background: rgba(217, 217, 217, 0.45);
+        background: rgb(247, 249, 252);
         box-shadow: 0px 1.5px 2px rgba(0, 0, 0, 0.3); 
     }
     .note-description {
-        background: rgba(217, 217, 217, 0.45);
+        background: rgb(247, 249, 252);
         font-size: .9rem;
         box-shadow: 0px 1.5px 2px rgba(0, 0, 0, 0.3); 
     }
@@ -775,16 +776,16 @@ body {
     .note-subject {
         width: 100%;
         font-size: 1rem; 
-        background-color: rgba(217, 217, 217, 0.5);
+        background-color:rgb(247, 249, 252);
         box-shadow: 0px 1.5px 2px rgba(0, 0, 0, 0.35); 
     }
     .note-title {
         font-size: 1rem;
-        background: rgba(217, 217, 217, 0.5);
+        background:rgb(247, 249, 252);
         box-shadow: 0px 1.5px 2px rgba(0, 0, 0, 0.35);
     }
     .note-description {
-        background: rgba(217, 217, 217, 0.5);
+        background:rgb(247, 249, 252);
         font-size: 1rem;
         box-shadow: 0px 1.5px 2px rgba(0, 0, 0, 0.35);
     }
