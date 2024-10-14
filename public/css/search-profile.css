@@ -125,6 +125,7 @@ body {
   border-radius: 50%;
   object-fit: cover;
   padding: 0 5px;
+  aspect-ratio: 1 / 1;
 }
 .prfl-name {
   padding: 0 0 0 10px;
