@@ -62,6 +62,8 @@ app.use(errorHandler) // Middleware for handling errors
 app.get('/logout', (req, res) => {
     req.session.destroy()
     res.clearCookie('stdid')
+    res.clearCookie('recordName')
+    res.clearCookie('recordID')
     res.redirect('/login')
 })
 
@@ -72,18 +74,11 @@ app.get('/', (req, res) => {
 app.get('/support', (req, res) => {
     res.render('support')
 })
-app.get('/confetti', (req, res) => {
-    res.render('confetti')
-})
 app.get('/about-us', (req, res) => {
     res.render('about-us')
 })
 app.get('/privacy-policy', (req, res) => {
-    if(req.session.stdid) {
-        res.render('privacy-policy')
-    } else {
-        res.redirect('/login')
-    }
+    res.render('privacy-policy')
 })
 
 app.post('/download', async (req, res) => {
@@ -144,7 +139,7 @@ app.get('/getnote', async (req, res, next) => {
     } else if(type === 'seg') {
         let {page, count} = req.query
         let skip = (page - 1) * count
-        let notes = await Notes.find({}).skip(skip).limit(count).populate('ownerDocID', 'profile_pic displayname studentID')
+        let notes = await Notes.find({}).sort({ createdAt: -1 }).skip(skip).limit(count).populate('ownerDocID', 'profile_pic displayname studentID')
         if(notes.length != 0) {
             res.json(notes)
         } else {

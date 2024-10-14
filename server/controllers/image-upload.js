@@ -1,6 +1,3 @@
-const { URL } = require('url')
-const fs = require('fs')
-const os = require('os')
 const path = require('path')
 const admin = require('firebase-admin')
 require('dotenv').config({ path: path.join(__dirname, '../.env') })
@@ -39,38 +36,6 @@ async function uploadImage(fileObject, fileName) {
     })
 }
 
-async function downloadImage(publicURLs, destination) {
-    let localFilePath = path.join(os.homedir(), 'Downloads/noteroom' , destination)
-    let fileDownload = []
-
-    if(!fs.existsSync(localFilePath)) {
-        await fs.promises.mkdir(localFilePath, { recursive: true })
-        console.log(`Created`)
-    }
-
-    for (const url of publicURLs) {
-        let filePublicURL = new URL(url)
-        let filePath = filePublicURL.pathname.split('/')
-
-        let remotePath = `${filePath[2]}/${filePath[3]}/${filePath[4]}` // studentDocID/NoteID/note-image.png
-        let file = bucket.file(remotePath)
-
-        try {
-            fileDownload.push(file.download({ destination: path.join(localFilePath, filePath[4]) }))
-        } catch (error) {
-            console.log(error)
-        }
-    }
-
-    return new Promise((resolve) => {
-        Promise.all(fileDownload).then(() => {
-            resolve(true)
-        }).catch(error => {
-            resolve(false)
-        })
-    })
-}
-
 // bucket.getFiles().then(files => {
 //     let files_ = files[0]
 //     files_.forEach(file => {
@@ -79,4 +44,3 @@ async function downloadImage(publicURLs, destination) {
 // })
 
 module.exports.upload = uploadImage
-module.exports.download = downloadImage
