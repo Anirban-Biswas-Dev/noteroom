@@ -177,7 +177,7 @@
               <% if (savedNotes.length != 0) { %>
                 <% for (const note of savedNotes) { %>
                     <div class="note-card">
-                        <a href="view/<%= note._id %>">
+                        <a href="/view/<%= note._id %>">
                             <h3>
                                 <% let title = note.title %>
 								<% if(title.length > 30) { %>
