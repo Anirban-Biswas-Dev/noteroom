@@ -152,9 +152,9 @@
                             </h3>
                             <% let description = note.description %>
                             <% if(description.length > 30) { %>
-                                <p><%= description.slice(0, 30) %>...</p>
+                                <p><%- description.slice(0, 30) %>...</p>
                             <% } else { %>
-                                <p><%= description %></p>
+                                <p><%- description %></p>
                             <% } %>
                             <img src="<%= note.content[0] %>" alt="No thumbnail?!">
                         </a>
@@ -188,9 +188,9 @@
                             </h3>
                             <% let description = note.description; %>
                             <% if (description.length > 30) { %>
-                                <p><%= description.slice(0, 30) %>...</p>
+                                <p><%- description.slice(0, 30) %>...</p>
                             <% } else { %>
-                                <p><%= description %></p>
+                                <p><%- description %></p>
                             <% } %>
                             <img src="<%= note.content[0] %>" alt="No thumbnail?!">
                         </a>
