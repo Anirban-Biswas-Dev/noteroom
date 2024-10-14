@@ -158,13 +158,17 @@ async function publish() {
 
 const editor = new toastui.Editor({
     el: document.querySelector('#editor'),
-    previewStyle: 'vertical',
-    initialEditType: 'wysiwyg',
-    height: '200px',
+    previewStyle: 'none', // Disable split preview
+    initialEditType: 'wysiwyg', // Lock in WYSIWYG mode
+    height: '300px', // Adjusted height
     toolbarItems: [
-        ['heading', 'bold', 'italic', 'strike'],
-        ['hr'],
-        ['link'],
+        ['bold', 'italic', 'strike'],
+        ['hr'], 
+        ['link'], 
+        ['quote', 'ul', 'ol'], 
     ],
-    placeholder: "Tell a bit about your note"
+    placeholder: "Describe your note in detail so others can know it's unique", 
+    useCommandShortcut: true, // Enable shortcuts
+    hideModeSwitch: true, // Hide the "Markdown" tab
 });
+
