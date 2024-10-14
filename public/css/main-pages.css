@@ -697,12 +697,13 @@ canvas {
 }
 
 /* UPLOAD BUTTON (Responsive special effects) */
-.mbl-upload-btn {
+.mbl-ctrl-panel.mbl-upload-btn {
+  width: 50px !important;
   position: relative;
   transition: transform 0.4s ease, box-shadow 0.4s ease;
   border-radius: 50%;
-  min-width: 12vw;
-  min-height: 12vw; 
+  min-width: 45px;
+  min-height: auto; 
   padding: 2vw;
 }
 
@@ -790,7 +791,11 @@ canvas {
     opacity: 1;
   }
 }
-
+.search-prfls-mbl-btn{
+  height: auto;
+  width: 30px;
+  max-width: 45px;
+}
 /* ****** Responsiveness ***** */
 
 /* Temporarily Hiding the notification panel */
