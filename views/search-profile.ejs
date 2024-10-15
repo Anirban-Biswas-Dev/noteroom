@@ -44,15 +44,15 @@
                 </h3>
                 <div class="random-prfls">
                     <% students.forEach(student => { %>
-                        <div class="random-prfl" id="random-<%= student._id %>">
+                        <div onclick="window.location.href = '/user/<%= student.studentID %>'" class="random-prfl" id="random-<%= student._id %>">
                             <img src="<%= student.profile_pic %>" alt="Profile Pic" class="prfl-pic">
-                            <span class="prfl-name" onclick="window.location.href = '/user/<%= student.studentID %>'"><%= student.displayname %></span>
+                            <span class="prfl-name"><%= student.displayname %></span>
                             <span class="prfl-desc"><%= student.bio.slice(0, 30) %>...</span>
                             <span class="badge" style="display: none;"><%= student.badge %></span>
                             <img src="" alt="" class="user-badge">
-                            <span class="not-show-prfl" onclick="deleteProfile('<%= student._id %>')">&times;</span>
+                            <span class="not-show-prfl" onclick="event.stopPropagation(); deleteProfile('<%= student._id %>')">&times;</span>
                         </div>
-                    <% }) %>
+                    <% }) %>                    
                 </div>
             </div>
             <div class="search-result-prfls-container" style="display: none;">
