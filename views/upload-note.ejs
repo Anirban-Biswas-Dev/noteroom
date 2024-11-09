@@ -53,9 +53,15 @@
         </div>
         <div class="stack-status">
             <div class="stack-number-container">
+                <div class="snc-info-wrapper">
                 <i class="fa-solid fa-layer-group"></i>
-                <span class="stack-number">No Image Added</span>
+                <span class="stack-info">
+                    <span class="stack-number">No Images</span>
+                </span>
+                </div>
+                <span class="stack-prompt">Click to view</span>
             </div>
+            
             <div class="success-upload-msg">
                 <svg width="20" height="20" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <g clip-path="url(#clip0_1844_2149)">
@@ -107,7 +113,7 @@
     </div>
     <div class="overlay"></div>
     <!-- ***** Pop up to set a thumbnail **** -->
-    <div class="thumbnail-pop-up">
+    <!-- <div class="thumbnail-pop-up">
         <div class="popup-heading">
             <h2>Preview</h2>
             <button class="discard-btn">Discard &times;</button>
@@ -118,7 +124,17 @@
         <div class="popup-footer">
             <button class="thumbnail-addstack-btn">Add to Stack</button>
         </div>
-     </div>
+     </div> -->
+     <div class="thumbnail-pop-up">
+        <div class="popup-heading">
+            <h2>Stack</h2>
+            <button class="discard-btn">Close &times;</button>
+        </div>
+        <p class="no-notes">You haven't added any images. Start uploading</p>
+        <div class="thumbnail-container">
+        </div>
+    </div>
+    
     <%- include('side-panel', { block: 'right-panel' }) %>     
     <%- include('side-panel', { block: 'mbl-ctrl-panel' }) %>
 	<%- include('side-panel', { block: 'error-popup' }) %>

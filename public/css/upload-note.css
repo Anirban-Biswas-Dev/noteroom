@@ -116,25 +116,50 @@ body {
     align-items: center;
     justify-content: space-between;
 }
-.stack-number-container{
+.stack-number-container {
     width: 50%;
     max-width: 140px;
     background: #FFEFEF;
     border: 1px solid #D55F5F;
     border-radius: 5px;
-    padding: 10px 5px;
+    padding: 5px ;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+.stack-number-container:hover{
+    cursor: pointer;
+}
+.snc-info-wrapper{
+    width: 100%;
     display: flex;
     align-items: center;
-    justify-content: space-around;
+    justify-content: center;
 }
-.stack-number-container i{
+.stack-info {
+    padding: 2px 4px;
+    display: flex;
+    align-items: center;
+}
+
+.stack-number-container i {
     font-size: 1.2rem;
     color: #565555;
 }
-.stack-number{
-    font-size: .8rem;
+
+.stack-number {
+    font-size: 0.8rem;
     letter-spacing: -0.02em;
 }
+
+.stack-prompt {
+    font-size: 0.7rem;
+    color: #888888;
+    font-style: italic;
+    padding: 4px 0 0 0;
+}
+
 .success-upload-msg{
     border: solid 1px #1D8102;
     background-color: #F2F8F0;
@@ -268,7 +293,6 @@ body {
     display: none; 
     flex-direction: column;
     align-items: center;
-    overflow-y: auto; 
     overflow-x: hidden;
     box-sizing: border-box;
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2), 
@@ -319,26 +343,152 @@ body {
     color: white;
     transform: scale(1.05); 
 }
-.thumbnail-container{
+
+/* Responsive Grid for Image Cards */
+.thumbnail-container {
+    box-sizing: border-box;
+    display: grid;
+    gap: 10px;
+    padding: 20px;
+    width: 100%;
+    height: auto;
+    max-height: 600px;
+    overflow-y: scroll;
+}
+.no-notes{
+    width: 100%;
+    padding: 50px;
+    box-sizing: border-box;
+    text-align: center;
     display: flex;
-    justify-content: center; 
-    align-items: center; 
-    padding: 20px; 
-    width: 100%; 
+    justify-content: center;
+}
+/* Responsive Breakpoints for Grid */
+@media (max-width: 360px) {
+    .thumbnail-container {
+        grid-template-columns: repeat(2, 1fr);
+        max-height: 450px;
+        overflow-y:scroll;
+        padding: 15px;
+    }
+    .thumbnail-card {
+        width: 100%;
+        max-width: 100px;
+        height: 100px;
+    }
 }
 
-.thumbnail-container img{
-    object-fit: contain;
-    border: 0.5px solid #000000;
-    max-width: 100%; 
-    height: auto; 
-    max-height: 65vh; 
-}
-.popup-footer{
-    padding: 10px 15px;
+@media (min-width: 361px) and (max-width: 480px) {
+    .thumbnail-container {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    .thumbnail-card {
+        max-width: 120px;
+        height: 120px;
+    }
 }
 
-.thumbnail-addstack-btn{
+@media (min-width: 481px) and (max-width: 768px) {
+    .thumbnail-container {
+        grid-template-columns: repeat(4, 1fr);
+    }
+    .thumbnail-card {
+        max-width: 150px;
+        height: 150px;
+    }
+}
+
+@media (min-width: 769px) {
+    .thumbnail-container {
+        grid-template-columns: repeat(5, 1fr);
+    }
+    .thumbnail-card {
+        max-width: 180px;
+        height: 180px;
+    }
+}
+
+.thumbnail-card {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #000000;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease;
+    cursor: pointer;
+}
+.thumbnail-card:hover {
+    transform: scale(1.05);
+}
+
+.thumbnail-card img.noteImage {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+    image-rendering: -webkit-optimize-contrast; /* Improve clarity on WebKit browsers */
+    image-rendering: crisp-edges;
+}
+.thumbnail-card {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+    cursor: pointer;
+}
+
+.thumbnail-card .noteImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.3s ease;
+}
+
+/* Delete button styling */
+.thumbnail-card .delete-btn {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Keep the button centered */
+    font-size: 1.5rem;
+    color: #757575; /* Dark contrast color for default state */
+    cursor: pointer;
+    opacity: 0; /* Hidden by default */
+    transition: color 0.3s ease, opacity 0.3s ease, transform 0.2s ease;
+}
+
+/* Dimming the background and showing delete icon on hover */
+.thumbnail-card:hover .noteImage {
+    opacity: 0.4; /* Slightly dim image */
+    background-color: rgba(0, 0, 0, 0.3); /* Dark overlay on image */
+}
+
+.thumbnail-card:hover .delete-btn {
+    opacity: 1; /* Show the delete icon */
+}
+
+/* Hover effect for delete icon */
+.thumbnail-card .delete-btn:hover {
+    color: #d9534f; /* Slightly brighter red */
+    transform: translate(-50%, -50%) scale(1.1); /* Keep centered, add subtle scale effect */
+}
+
+/* Click effect for delete icon */
+.thumbnail-card .delete-btn:active {
+    color: #c9302c; /* Darker red for click */
+    transform: translate(-50%, -50%) scale(0.9); /* Slightly smaller on click, still centered */
+    opacity: 0.8; /* Slight dimming on click */
+}
+
+
+
+/* .thumbnail-addstack-btn {
     box-sizing: border-box;
     width: 150px;
     height: 50px;
@@ -352,10 +502,31 @@ body {
     align-self: center;
     transition: background-color 0.2s ease, transform 0.2s ease; 
 }
-.thumbnail-addstack-btn:hover{
+
+.thumbnail-addstack-btn:hover {
     background-color: #02c8e2;
     transform: scale(1.03);
+} */
+.thumbnail-container::-webkit-scrollbar {
+    width: 8px; /* Width of the vertical scrollbar */
 }
+
+.thumbnail-container::-webkit-scrollbar-track {
+    background: #f0f0f0; /* Track color */
+    border-radius: 4px; /* Rounded track edges */
+}
+
+.thumbnail-container::-webkit-scrollbar-thumb {
+    background-color: #888; /* Thumb (scroll bar handle) color */
+    border-radius: 4px; /* Rounded corners for the thumb */
+    border: 2px solid #f0f0f0; /* Adds a border for contrast */
+    transition: background-color 0.3s ease;
+}
+
+.thumbnail-container::-webkit-scrollbar-thumb:hover {
+    background-color: #555; /* Darken the thumb on hover */
+}
+
 .overlay {
     display: none; 
     position: fixed;
