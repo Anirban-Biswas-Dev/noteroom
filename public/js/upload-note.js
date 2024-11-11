@@ -34,73 +34,77 @@ let stackImgNum = 0; // Stack size number will be stored here
 let stackImgNumMsg = '';
 const stackNumBox = document.querySelector('.stack-number-container');
 const uploadSuccessful = document.querySelector('.success-upload-msg');
+
 document.querySelector('input#fileInput').addEventListener('change', function (event) {
-    file = event.target.files[0]
+    fileList = event.target.files // One/more fileList objects
+
     let thumbnailPopup = document.querySelector('.thumbnail-pop-up'); // The hidden thumbnail
-    let previewImage = document.querySelector('img#noteImage'); // The image in the thumnail
+    let previewImage = document.querySelector('.thumbnail-container'); // The image in the thumnail
     let discardThumbnailSetup = document.querySelector('.discard-btn'); // The discard button
     let addToStack = document.querySelector('.thumbnail-addstack-btn'); // The add-stack button
     let bgOverlay = document.querySelector('.overlay')
 
-    if (file) {
-        thumbnailPopup.style.display = 'flex'
-        bgOverlay.style.display = 'flex';
-
-        // ----- Image Viewing on the popup page -----
-        let blobUrl = URL.createObjectURL(file) // Creating a temporary link to preview the image 
-        previewImage.src = blobUrl
-        previewImage.onload = function () {
-            URL.revokeObjectURL(previewImage.src)
-        }
-        // -------------------------------------------
-
-        discardThumbnailSetup.addEventListener('click', function () {
-            thumbnailPopup.style.display = 'none';
-            bgOverlay.style.display = 'none';
-        })
-
-        addToStack.addEventListener('click', function () {
-            let image = document.querySelector('input#fileInput')
-            if (image.files[0] != undefined) {
-                stackFiles.push(image.files[0]) // Adding File Object into the stack
-                image.value = '' // Clearing file input
-                thumbnailPopup.style.display = 'none'; // Closing the preview
-                bgOverlay.style.display = 'none';
-                console.log(stackFiles)
-            function updateStackStatus () {
-                    stackImgNum = stackFiles.length; 
-                    let message = stackImgNum === 1 ? '1 Image Added' : `${stackImgNum} Images Added`;
-                    document.querySelector('.stack-number').textContent = message;
-                    if (stackImgNum >= 1 && stackImgNum <= 5) {
-                        stackNumBox.style.backgroundColor = '#DEEDFF';
-                        stackNumBox.style.borderColor = '#2D61D8'; 
-                    } else if (stackImgNum >= 6) {
-                        stackNumBox.style.backgroundColor = '#F2F8F0'; 
-                        stackNumBox.style.borderColor = '#529F3D'; 
-                    };
-            }; 
-            // function to show the temp msg on successful upload
-            function showSuEffect() {
-                uploadSuccessful.style.display = 'flex';
-                
-                requestAnimationFrame(() => {
-                    uploadSuccessful.classList.add('s-u-effect');
-                });
-            
-                setTimeout(() => {
-                    uploadSuccessful.classList.remove('s-u-effect');
-                    
-                    setTimeout(() => {
-                        uploadSuccessful.style.display = 'none';
-                    }, 400); 
-                }, 2000); 
-            }
-            updateStackStatus()
-            showSuEffect();
-                
-            }
-        })
+    function clearPreview() {
+        thumbnailPopup.style.display = 'none';
+        bgOverlay.style.display = 'none';
+        document.querySelector('input#fileInput').value = ''
+        previewImage.innerHTML = ''
     }
+
+    function updateStackStatus (imageList) {
+        stackImgNum = imageList.length; 
+        let message = stackImgNum === 1 ? '1 Image Added' : `${stackImgNum} Images Added`;
+        document.querySelector('.stack-number').textContent = message;
+        if (stackImgNum >= 1 && stackImgNum <= 5) {
+            stackNumBox.style.backgroundColor = '#DEEDFF';
+            stackNumBox.style.borderColor = '#2D61D8'; 
+        } else if (stackImgNum >= 6) {
+            stackNumBox.style.backgroundColor = '#F2F8F0'; 
+            stackNumBox.style.borderColor = '#529F3D'; 
+        };
+    } 
+    function showSuEffect() {
+        uploadSuccessful.style.display = 'flex';
+        
+        requestAnimationFrame(() => {
+            uploadSuccessful.classList.add('s-u-effect');
+        });
+    
+        setTimeout(() => {
+            uploadSuccessful.classList.remove('s-u-effect');
+            
+            setTimeout(() => {
+                uploadSuccessful.style.display = 'none';
+            }, 400); 
+        }, 2000); 
+    }
+
+    for(let i = 0; i < fileList.length; i ++) {
+        let file = fileList[i]
+        let blobURL = URL.createObjectURL(file) // 1. Each file's blob url
+        
+        let image = document.createElement("img")
+        image.src = blobURL // 2. clearting an image element and adding the image
+        
+        previewImage.appendChild(image) // 3. adding the image inside the preview
+        image.onload = function() {
+            URL.revokeObjectURL(file)
+        }
+    }
+
+    thumbnailPopup.style.display = 'flex' // 4. After adding all the images inside the preview, showing the preview
+
+    discardThumbnailSetup.addEventListener('click', function () {
+        clearPreview()
+    })   
+    addToStack.addEventListener('click', function () {
+        for(let i = 0; i < fileList.length; i ++) {
+            stackFiles.push(fileList[i])
+        }
+        updateStackStatus(stackFiles)
+        showSuEffect()
+        clearPreview()
+    })
 })
 
 // Function to show loader
@@ -118,7 +122,6 @@ async function publish() {
         if (stackFiles.length != 0) {
             let noteSubject = document.querySelector('.note-subject').value;
             let noteTitle = document.querySelector('.note-title').value;
-            // const noteDescription = document.querySelector('.note-description').value
             const noteDescription = editor.getHTML();
 
             if(noteSubject && noteTitle && noteDescription !== "<p><br></p>") {
@@ -148,7 +151,6 @@ async function publish() {
             } else {
                 setupErrorPopup('Please fill up all the available fields to upload.')
             }
-
         }
     } catch (error) {
         hideLoader(); // Hide the loader in case of an error

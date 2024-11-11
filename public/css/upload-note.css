@@ -325,13 +325,14 @@ body {
     align-items: center; 
     padding: 20px; 
     width: 100%; 
+    overflow: scroll;
 }
 
 .thumbnail-container img{
     object-fit: contain;
     border: 0.5px solid #000000;
-    max-width: 100%; 
-    height: auto; 
+    height: 200px; 
+    width: 200px; 
     max-height: 65vh; 
 }
 .popup-footer{
