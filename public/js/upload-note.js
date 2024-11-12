@@ -33,117 +33,78 @@ let stackFiles = []; // Stores all the uploaded File objects
 let stackImgNum = 0;
 const stackNumBox = document.querySelector('.stack-number-container');
 const uploadSuccessful = document.querySelector('.success-upload-msg');
-const thumbnailPopup = document.querySelector('.thumbnail-pop-up'); 
-const thumbnailContainer = document.querySelector('.thumbnail-container'); 
-const bgOverlay = document.querySelector('.overlay');
 
 document.querySelector('input#fileInput').addEventListener('change', function (event) {
-    file = event.target.files[0];
+    fileList = event.target.files // One/more fileList objects
 
-    if (file) {
-        stackFiles.push(file); // Automatically stack the uploaded image
-        updateStackDisplay(); // Update the thumbnail popup display
-        updateStackStatus(); // Update stack status message
-        showUploadEffect(); // Show success upload effect
+    let thumbnailPopup = document.querySelector('.thumbnail-pop-up'); // The hidden thumbnail
+    let previewImage = document.querySelector('.thumbnail-container'); // The image in the thumnail
+    let discardThumbnailSetup = document.querySelector('.discard-btn'); // The discard button
+    let addToStack = document.querySelector('.thumbnail-addstack-btn'); // The add-stack button
+    let bgOverlay = document.querySelector('.overlay')
+
+    function clearPreview() {
+        thumbnailPopup.style.display = 'none';
+        bgOverlay.style.display = 'none';
+        document.querySelector('input#fileInput').value = ''
+        previewImage.innerHTML = ''
     }
-    this.value = ''; // Clear the file input
-});
 
-document.querySelector('.stack-number-container').addEventListener('click', function () {
-    thumbnailPopup.style.display = 'flex'; 
-    bgOverlay.style.display = 'flex'; 
-});
-
-document.querySelector('.discard-btn').addEventListener('click', function () {
-    thumbnailPopup.style.display = 'none';
-    bgOverlay.style.display = 'none';
-});
-
-// Function to update the thumbnail container display with stacked images
-function updateStackDisplay() {
-    thumbnailContainer.innerHTML = ''; // Clear previous images
-
-    // Loop through each file and create a card for each
-    stackFiles.forEach((file, index) => {
-        let blobUrl = URL.createObjectURL(file); // Create temporary URL
-
-        // Create a new card div and image element
-        let card = document.createElement('div');
-        card.classList.add('thumbnail-card');
-
-        let img = document.createElement('img');
-        img.classList.add('noteImage');
-        img.src = blobUrl;
-        img.alt = `Note Image ${index + 1}`;
-
-        // Create delete icon and set up click event for deletion
-        let deleteBtn = document.createElement('i');
-        deleteBtn.classList.add('fa-solid', 'fa-trash', 'delete-btn');
-        deleteBtn.onclick = function () {
-            stackFiles.splice(index, 1); // Remove the file from the array
-            updateStackDisplay(); // Re-render gallery
-            updateStackStatus(); // Update stack status
+    function updateStackStatus (imageList) {
+        stackImgNum = imageList.length; 
+        let message = stackImgNum === 1 ? '1 Image Added' : `${stackImgNum} Images Added`;
+        document.querySelector('.stack-number').textContent = message;
+        if (stackImgNum >= 1 && stackImgNum <= 5) {
+            stackNumBox.style.backgroundColor = '#DEEDFF';
+            stackNumBox.style.borderColor = '#2D61D8'; 
+        } else if (stackImgNum >= 6) {
+            stackNumBox.style.backgroundColor = '#F2F8F0'; 
+            stackNumBox.style.borderColor = '#529F3D'; 
         };
-
-        // Append image and delete button to card, and card to container
-        card.appendChild(img);
-        card.appendChild(deleteBtn);
-        thumbnailContainer.appendChild(card);
-
-        // Revoke the blob URL after the image has loaded to free memory
-        img.onload = function () {
-            URL.revokeObjectURL(blobUrl);
-        };
-    });
-}
-
-// Function to update the stack status message
-function updateStackStatus() {
-    stackImgNum = stackFiles.length;
-    const noNotesMsg = document.querySelector('.no-notes');
-
-    let message;
-    if (stackImgNum === 0) {
-        message = 'No Images';
-        noNotesMsg.style.display = 'flex';
-    } else if (stackImgNum === 1) {
-        message = '1 Image';
-        noNotesMsg.style.display = 'none';
-    } else {
-        message = `${stackImgNum} Images`;
-        noNotesMsg.style.display = 'none';
-    }
-    document.querySelector('.stack-number').textContent = message;
-
-    // Update the stack number box color based on the stack size
-    if (stackImgNum >= 1 && stackImgNum <= 5) {
-        stackNumBox.style.backgroundColor = '#DEEDFF';
-        stackNumBox.style.borderColor = '#2D61D8';
-    } else if (stackImgNum >= 6) {
-        stackNumBox.style.backgroundColor = '#F2F8F0';
-        stackNumBox.style.borderColor = '#529F3D';
-    }
-}
-
-
-
-// Function to show the upload success effect
-function showUploadEffect() {
-    uploadSuccessful.style.display = 'flex';
-
-    requestAnimationFrame(() => {
-        uploadSuccessful.classList.add('s-u-effect');
-    });
-
-    setTimeout(() => {
-        uploadSuccessful.classList.remove('s-u-effect');
-
+    } 
+    function showSuEffect() {
+        uploadSuccessful.style.display = 'flex';
+        
+        requestAnimationFrame(() => {
+            uploadSuccessful.classList.add('s-u-effect');
+        });
+    
         setTimeout(() => {
-            uploadSuccessful.style.display = 'none';
-        }, 400);
-    }, 2000);
-}
+            uploadSuccessful.classList.remove('s-u-effect');
+            
+            setTimeout(() => {
+                uploadSuccessful.style.display = 'none';
+            }, 400); 
+        }, 2000); 
+    }
 
+    for(let i = 0; i < fileList.length; i ++) {
+        let file = fileList[i]
+        let blobURL = URL.createObjectURL(file) // 1. Each file's blob url
+        
+        let image = document.createElement("img")
+        image.src = blobURL // 2. clearting an image element and adding the image
+        
+        previewImage.appendChild(image) // 3. adding the image inside the preview
+        image.onload = function() {
+            URL.revokeObjectURL(file)
+        }
+    }
+
+    thumbnailPopup.style.display = 'flex' // 4. After adding all the images inside the preview, showing the preview
+
+    discardThumbnailSetup.addEventListener('click', function () {
+        clearPreview()
+    })   
+    addToStack.addEventListener('click', function () {
+        for(let i = 0; i < fileList.length; i ++) {
+            stackFiles.push(fileList[i])
+        }
+        updateStackStatus(stackFiles)
+        showSuEffect()
+        clearPreview()
+    })
+})
 
 // Function to show loader
 function showLoader() {
@@ -160,7 +121,6 @@ async function publish() {
         if (stackFiles.length != 0) {
             let noteSubject = document.querySelector('.note-subject').value;
             let noteTitle = document.querySelector('.note-title').value;
-            // const noteDescription = document.querySelector('.note-description').value
             const noteDescription = editor.getHTML();
 
             if(noteSubject && noteTitle && noteDescription !== "<p><br></p>") {
@@ -190,7 +150,6 @@ async function publish() {
             } else {
                 setupErrorPopup('Please fill up all the available fields to upload.')
             }
-
         }
     } catch (error) {
         hideLoader(); // Hide the loader in case of an error

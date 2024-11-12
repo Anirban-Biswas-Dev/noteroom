@@ -44,8 +44,8 @@
                 <p class="upload-msg">Upload pictures from your         
                     device
                 </p>
-            <div class="browse-file-container"> <!--Backend integration for file type-->
-                <input type="file" id="fileInput" class="file-input" name="images"/>
+            <div class="browse-file-container"> 
+                <input type="file" id="fileInput" class="file-input" name="images" multiple/>
                 <label for="fileInput" class="browse-files-btn">
                     <pre><i class="fa-regular fa-file"></i> Browse</pre>
                 </label>
@@ -105,7 +105,6 @@
                 <option value="Islamic Studies">Islamic Studies</option>
             </select>
             <input type="text" class="note-title" placeholder="Note's Title (less than 200 characters)" name="noteTitle">
-            <!-- <textarea name="noteDescription" class="note-description" rows="4" placeholder="Tell a bit about your note" required></textarea> -->
             <div id="editor"></div>
 
             <button class="publish-note-btn" onclick="publish()">Publish</button>
@@ -119,7 +118,7 @@
             <button class="discard-btn">Discard &times;</button>
         </div>
         <div class="thumbnail-container">
-            <img alt="Note Image" id="noteImage">
+            <!-- <img alt="Note Image" id="noteImage"> -->
         </div>
         <div class="popup-footer">
             <button class="thumbnail-addstack-btn">Add to Stack</button>
