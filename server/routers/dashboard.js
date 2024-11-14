@@ -2,6 +2,7 @@ const express = require('express')
 const Students = require('../schemas/students')
 const Notes = require('../schemas/notes')
 const allNotifs = require('../schemas/notifications').Notifs
+const feedbackNotifs = require("../schemas/notifications").feedBackNotifs
 const { getSavedNotes, getNotifications, getRoot } = require('./controller')
 const router = express.Router()
 
@@ -11,6 +12,13 @@ function dashboardRouter(io) {
             { _id: studentDocID },
             { $addToSet: { saved_notes: noteDocID } }, 
             { new: true }
+        )
+    }
+
+    async function readNoti(notiID) {
+        await feedbackNotifs.updateOne(
+            { _id: notiID },
+            { $set: { isRead: true } }
         )
     }
 
@@ -38,6 +46,9 @@ function dashboardRouter(io) {
         })
         socket.on('delete-saved-note', async (studentDocID, noteDocID) => {
             await deleteSavedNote(studentDocID, noteDocID)
+        })
+        socket.on("read-noti", (notiID) => {
+            readNoti(notiID)
         })
     })
 

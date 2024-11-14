@@ -507,6 +507,19 @@ function updateNotificationBadge() {
     }
 }
 
+
+//* Event that will be triggerd when a notification is clicked to make it "read" (true)
+let notiLinks = document.querySelectorAll('.notiLink')
+notiLinks.forEach(notiLink => {
+    notiLink.addEventListener("click", function() {
+        let notiElement = notiLink.parentNode.parentNode // The notification div which is clicked
+        let notiID = notiElement.getAttribute("id").split("-")[1] // Getting the notification id from div.id
+        conSock.emit("read-noti", notiID) // Sending the event to make the status true (read)
+    })
+})
+
+
+
 //* Event that will trigger when someone gives a feedback to a note: all pages, related to addNoti
 conSock.on('feedback-given' , (feedbackData) => {
     /* 

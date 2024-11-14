@@ -21,6 +21,8 @@
     "firebase-admin": "^12.5.0",
     "mongoose": "^8.5.1",
     "node-fetch": "^3.3.2",
+    "passport": "^0.7.0",
+    "passport-google-oauth2": "^0.2.0",
     "redis": "^4.7.0",
     "socket.io": "^4.7.5",
     "socket.io-client": "^4.7.5",
