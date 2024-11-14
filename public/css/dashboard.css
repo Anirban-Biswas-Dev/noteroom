@@ -240,6 +240,93 @@ body {
   transform: scale(1.1);
   transition: transform 0.2s ease-in-out;
 }
+/* Upvote & Downvote */
+.vote-container{
+  width: 110px;
+  min-height: fit-content;
+  border-radius: 15px;
+  background: #FFFFFF;
+  box-shadow: 2px 5px 10px rgba(0, 0, 0, 0.05);
+  display: flex;
+  justify-content:center;
+  align-items: center;
+}
+.vote-container:hover{
+  cursor: pointer;
+}
+.note-engagement .uv-icon{
+  all: unset;
+}
+.note-engagement .uv-icon:hover{
+  all: unset;
+  cursor: pointer;
+}
+.uv-container {
+  flex: 0 0 60%;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  padding: 5px;
+  margin: 0;
+  box-sizing: border-box;
+  border-radius: 15px 0 0 15px;
+  transition: background-color 0.2s ease;
+}
+
+.uv-container:hover {
+  background-color: #1ddc6f3d;
+}
+
+.uv-container:active {
+  background-color: #1ddc6f52;
+}
+
+.uv-container:hover .uv-icon path {
+  fill: #39e58c; 
+}
+.uv-container:hover .uv-count {
+  color: #39e58c; 
+}
+.uv-count {
+  font-weight: 600;
+  font-size: 0.85rem;
+  line-height: 12px;
+  letter-spacing: 0;
+}
+
+.divider-uv-dv{
+  height: 100%;
+  min-height: 30px;
+  background-color: #D9D9D9;
+  border: 1px solid #D9D9D9;
+  border-radius: 1px;
+}
+.dv-container{
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  margin: 0;
+  border-radius: 0 15px 15px 0;
+  transition: background-color 0.2s ease;
+}
+.dv-container:hover{
+  background-color: #d52b203d;
+}
+.dv-container:hover .dv-icon path {
+  fill:#e04337; 
+}
+.note-engagement .dv-icon{
+  all: unset;
+  padding: 0 5px;
+}
+.note-engagement .dv-icon:hover{
+  all: unset;
+  padding: 0 5px;
+  cursor: pointer;
+}
+.dv-container:active {
+  background-color: #d52b2052;
+}
 /* Confetti and Pop up for new user sign up celebration */
 .popup {
   display: none;
