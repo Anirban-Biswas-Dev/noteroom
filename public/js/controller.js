@@ -168,11 +168,14 @@ const manageNotes = { // I treat all the cards as notes
               <div class="notification" id="noti-${feedbackData.notiID}">
                   <span class='feedback-id' style="display: none;">${feedbackData.feedbackID}</span>
                   <div class="first-row">
+                  <div class="frnt-wrapper">
+                  <span class="isRead ${feedbackData.isread}"></span>
                     <a href='/view/${feedbackData.noteID}/#${feedbackData.feedbackID}' class="notification-link">
                       <span class="notification-title">
                       ${truncatedTitle(feedbackData.nfnTitle)}
                       </span>
-                    </a>  
+                    </a>
+                    </div>   
                     <span class="remove-notification" onclick="deleteNoti('${feedbackData.notiID}')">&times;</span>
                   </div>
                   <div class="notification-msg">
@@ -509,14 +512,16 @@ function updateNotificationBadge() {
 
 
 //* Event that will be triggerd when a notification is clicked to make it "read" (true)
-let notiLinks = document.querySelectorAll('.notiLink')
+let notiLinks = document.querySelectorAll('.notiLink');
 notiLinks.forEach(notiLink => {
-    notiLink.addEventListener("click", function() {
-        let notiElement = notiLink.parentNode.parentNode // The notification div which is clicked
-        let notiID = notiElement.getAttribute("id").split("-")[1] // Getting the notification id from div.id
-        conSock.emit("read-noti", notiID) // Sending the event to make the status true (read)
-    })
-})
+    notiLink.addEventListener("click", function(event) {
+        // Traverse up to the parent notification div (ensuring correct targeting)
+        let notiElement = event.currentTarget.closest('.notification'); 
+        if (!notiElement) return; // Ensure notiElement is found
+        let notiID = notiElement.getAttribute("id").split("-")[1]; 
+        conSock.emit("read-noti", notiID); 
+    });
+});
 
 
 
