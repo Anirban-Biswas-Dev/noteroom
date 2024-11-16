@@ -54,7 +54,7 @@ body {
 }
 .thumbnail-loading {
   width: 100%;
-  height: 360px;
+  height: 300px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -399,6 +399,9 @@ canvas {
   .thumbnail-container{
     width: 95vw;
   }
+  .thumbnail-loading{
+    height: 220px;
+  }
   .save-note-btn {
     font-size: 1.8rem;
   }
@@ -442,6 +445,9 @@ canvas {
   }
   .thumbnail-container{
     width: 95vw;
+  }
+  .thumbnail-loading{
+    height: 280px;
   }
   .save-note-btn {
     font-size: 1.8rem;
