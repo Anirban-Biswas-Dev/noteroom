@@ -268,7 +268,7 @@ socket.on('note-upload', (noteData) => {
 
 
 document.addEventListener('DOMContentLoaded', () => {
-  const buttons = document.querySelectorAll('.save-note-btn');
+  const buttons = document.querySelectorAll('.svn-btn-parent');
 
   buttons.forEach(button => {
     const isSaved = button.classList.contains('saved');
@@ -410,3 +410,59 @@ function stopConfetti() {
 if(URL.parse(document.referrer).pathname === '/sign-up') {
 	startConfetti()
 }
+
+class NoteMenu {
+	constructor(menuButton) {
+	  this.menuButton = menuButton; // The button that triggers the menu
+	  this.menu = menuButton.nextElementSibling; // The corresponding menu
+	  this.init();
+	}
+  
+	init() {
+	  this.menuButton.addEventListener('click', (event) => {
+		event.stopPropagation(); // Prevent the click from propagating to the window
+		this.toggleMenu();
+		this.closeOtherMenus();
+	  });
+	}
+  
+	toggleMenu() {
+	  // Toggle the active class to show/hide the menu
+	  this.menu.classList.toggle('active');
+	}
+  
+	closeOtherMenus() {
+	  // Close all other menus when clicking on one
+	  const allMenus = document.querySelectorAll('.menu-options');
+	  allMenus.forEach((menu) => {
+		if (menu !== this.menu && menu.classList.contains('active')) {
+		  menu.classList.remove('active');
+		}
+	  });
+  
+	  // Remove this event listener after it's triggered
+	  window.addEventListener('click', (event) => this.closeAllMenus(event));
+	}
+  
+	closeAllMenus(event) {
+	  // Close the menu if clicked anywhere outside
+	  const menus = document.querySelectorAll('.menu-options');
+	  menus.forEach((menu) => {
+		if (menu.classList.contains('active') && !menu.contains(event.target)) {
+		  menu.classList.remove('active');
+		}
+	  });
+  
+	  // Remove the event listener for closing menus after one action
+	  window.removeEventListener('click', this.closeAllMenus);
+	}
+  }
+  
+  document.addEventListener('DOMContentLoaded', () => {
+	const noteMenuButtons = document.querySelectorAll('.note-menu-btn');
+	noteMenuButtons.forEach((btn) => {
+	  new NoteMenu(btn); // Create a new instance of NoteMenu for each button
+	});
+  });
+  
+
