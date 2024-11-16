@@ -9,14 +9,14 @@ function serachProfileRouter(io) {
     async function getRandomStudent(sampleSize) {
         let students = await Students.aggregate([
             { $sample : { size: sampleSize } },
-            { $project: { profile_pic: 1, displayname: 1, bio: 1, badge: 1, studentID: 1 } }
+            { $project: { profile_pic: 1, displayname: 1, bio: 1, badge: 1, studentID: 1, username: 1 } }
         ])
         return students
     }
 
     async function getStudent(searchTerm) {
         const regex = new RegExp(searchTerm.split(' ').map(word => `(${word})`).join('.*'), 'i');
-        let students = await Students.find({ displayname: { $regex: regex } }, { profile_pic: 1, displayname: 1, bio: 1, badge: 1, studentID: 1 })
+        let students = await Students.find({ displayname: { $regex: regex } }, { profile_pic: 1, displayname: 1, bio: 1, badge: 1, studentID: 1, username: 1 })
         return students
     }
     

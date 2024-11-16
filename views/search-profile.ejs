@@ -44,7 +44,7 @@
                 </h3>
                 <div class="random-prfls">
                     <% students.forEach(student => { %>
-                        <div onclick="window.location.href = '/user/<%= student.studentID %>'" class="random-prfl" id="random-<%= student._id %>">
+                        <div onclick="window.location.href = '/user/<%= student.username %>'" class="random-prfl" id="random-<%= student._id %>">
                             <img src="<%= student.profile_pic %>" alt="Profile Pic" class="prfl-pic">
                             <span class="prfl-name"><%= student.displayname %></span>
                             <span class="prfl-desc"><%= student.bio.slice(0, 30) %>...</span>
