@@ -216,7 +216,7 @@ const manageNotes = { // I treat all the cards as notes
                             	<span class="feedback-id" style="display: none;">${feedbackData._id}</span>
 								<img src="${feedbackData.commenterDocID.profile_pic}" alt="User Avatar" class="feedback-avatar">
 								<div class="feedback-author-info">
-									<a href='/user/${feedbackData.commenterDocID.studentID}'><h4 class="feedback-author">${feedbackData.commenterDocID.displayname}</h4></a>
+									<a href='/user/${feedbackData.commenterDocID.username}'><h4 class="feedback-author">${feedbackData.commenterDocID.displayname}</h4></a>
 									<span class="feedback-date">${formattedDate}</span>
 								</div>
 							</div>

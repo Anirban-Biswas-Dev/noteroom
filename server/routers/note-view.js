@@ -25,7 +25,7 @@ function noteViewRouter(io) {
             let note = await Notes.findById(noteDocID, { title: 1, subject: 1, description: 1, ownerDocID: 1, content: 1 })
             let owner = await Students.findById(note.ownerDocID, { displayname: 1, studentID: 1, profile_pic: 1, username: 1 }) 
             let feedbacks = await Feedbacks.find({ noteDocID: note._id })
-                .populate('commenterDocID', 'displayname studentID profile_pic').sort({ createdAt: -1 }) 
+                .populate('commenterDocID', 'displayname username studentID profile_pic').sort({ createdAt: -1 }) 
 
             return { note: note, owner: owner, feedbacks: feedbacks }
         }
@@ -34,7 +34,7 @@ function noteViewRouter(io) {
     async function addFeedback(feedbackObj) {
         let feedback = await Feedbacks.create(feedbackObj)
         let feedbackStudents = await Feedbacks.findById(feedback._id)
-            .populate('commenterDocID', 'displayname studentID profile_pic') 
+            .populate('commenterDocID', 'displayname username studentID profile_pic') 
             .populate('noteDocID', 'title')
          // Populating with some basic info of the commenter and the notes to send that to all the users via websockets
 
