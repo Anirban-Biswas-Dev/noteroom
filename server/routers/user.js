@@ -33,11 +33,22 @@ function userRouter(io) {
         })
     }
 
-    router.get('/:stdid?', async (req, res, next) => {
-        if (req.params.stdid) {
+    async function getUserName(studentID) {
+        let username = (await Students.findOne({ studentID: studentID }, { username: 1 }))["username"]
+        return username
+    }
+    async function getStudentID(username) {
+        let studentID = (await Students.findOne({ username: username }, { studentID: 1 }))["studentID"]
+        return studentID
+    }
+
+    router.get('/:username?', async (req, res, next) => {
+        if (req.params.username) {
             if (req.session.stdid) {
+                let username = await getUserName(req.session.stdid)
                 let notis = await getNotifications(allNotifs, req.cookies['recordName']) // Notifications of the root-user
-                if (req.session.stdid == req.params.stdid) {
+
+                if (username == req.params.username) {
                     try {
                         let data = await extract(req.session.stdid)
                         let [student, notes] = [data['student'], data['notes']]
@@ -48,13 +59,14 @@ function userRouter(io) {
                     }
                 } else {
                     try {
-                        let data = await extract(req.params.stdid)
+                        let userStudentID = await getStudentID(req.params.username)
+                        let data = await extract(userStudentID)
                         let [student, notes] = [data['student'], data['notes']] // This is the student-data whose profile is being visited
                         let savedNotes = await getSavedNotes(Students, Notes, req.session.stdid)
                         let root = (await extract(req.session.stdid))['student']
                         res.render('user-profile', { student: student, notes: notes, savedNotes: savedNotes, visiting: true, notis: notis, root: root })
                     } catch (err) {
-                        req.studentID = req.params.stdid
+                        req.studentID = req.params.username
                         const error = new Error('No students found')
                         error.status = 404
                         error.errorID = 1000 // An error id of 'student not found'
@@ -66,7 +78,8 @@ function userRouter(io) {
             }
         } else {
             if (req.session.stdid) {
-                res.redirect(`user/${req.session.stdid}`)
+                let username = await getUserName(req.session.stdid)
+                res.redirect(`user/${username}`)
             } else {
                 res.redirect('/login')
             }
