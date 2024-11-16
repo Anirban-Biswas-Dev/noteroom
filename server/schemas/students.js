@@ -23,7 +23,7 @@ const studentsSchema = new mongoose.Schema({
         required: true
     },
     studentID: {
-        type: String, // college ID 
+        type: String, 
         required: true,
         immutable: true,
         unique: true
