@@ -25,7 +25,7 @@ function noteViewRouter(io) {
             let note = await Notes.findById(noteDocID, { title: 1, subject: 1, description: 1, ownerDocID: 1, content: 1 })
             let owner = await Students.findById(note.ownerDocID, { displayname: 1, studentID: 1, profile_pic: 1, username: 1 }) 
             let feedbacks = await Feedbacks.find({ noteDocID: note._id })
-                .populate('commenterDocID', 'displayname studentID profile_pic').sort({ createdAt: -1 }) 
+                .populate('commenterDocID', 'displayname username studentID profile_pic').sort({ createdAt: -1 }) 
 
             return { note: note, owner: owner, feedbacks: feedbacks }
         }
@@ -34,7 +34,7 @@ function noteViewRouter(io) {
     async function addFeedback(feedbackObj) {
         let feedback = await Feedbacks.create(feedbackObj)
         let feedbackStudents = await Feedbacks.findById(feedback._id)
-            .populate('commenterDocID', 'displayname studentID profile_pic') 
+            .populate('commenterDocID', 'displayname username studentID profile_pic') 
             .populate('noteDocID', 'title')
          // Populating with some basic info of the commenter and the notes to send that to all the users via websockets
 
@@ -44,6 +44,11 @@ function noteViewRouter(io) {
     async function addFeedbackNotifications(notiObj) {
         let feednoti = await feedBackNotifs.create(notiObj)
         return feednoti
+    }
+
+    async function getStudentID(username) {
+        let studentID = (await Students.findOne({ username: username }, { studentID: 1 }))["studentID"]
+        return studentID
     }
 
     io.on('connection', (socket) => {
@@ -64,7 +69,8 @@ function noteViewRouter(io) {
                 noteDocID: noteDocID, 
                 commenterDocID: commenterDocID, 
                 feedbackDocID: feedback._id,
-                ownerUsername: ownerUsername
+                ownerUsername: ownerUsername,
+                ownerStudentID: (await getStudentID(ownerUsername))
             }) // Save the feedback notifications in database
 
             io.emit('feedback-given', { //* Feedback-notifications: This will go to everyuser, but the user with ownerUsername=recordName will keep it
@@ -83,13 +89,13 @@ function noteViewRouter(io) {
         try {
             let noteDocID = req.params.noteID
             let information = await getNote(noteDocID)
-            let root = await getRoot(Students, req.session.stdid, 'studentID', { displayname: 1, studentID: 1, profile_pic: 1 })
+            let root = await getRoot(Students, req.session.stdid, 'studentID', { displayname: 1, username: 1, profile_pic: 1 })
             let [note, owner, feedbacks] = [information['note'], information['owner'], information['feedbacks']]
             if (req.session.stdid) {
                 let mynote = 1 //* Varifing if a note is mine or not: corrently using for not allowing users to give feedbacks based on some situations (self-notes and viewing notes without being logged in)
                 if (noteDocID) {
                     let savedNotes = await getSavedNotes(Students, Notes, req.session.stdid)
-                    let notis = await getNotifications(allNotifs, req.cookies['recordName'])
+                    let notis = await getNotifications(allNotifs, req.session.stdid)
                     if (note.ownerDocID == req.cookies['recordID']) {
                         res.render('note-view', { note: note, mynote: mynote, owner: owner, feedbacks: feedbacks, root: root, savedNotes: savedNotes, notis: notis }) // Specific notes: visiting my notes
                     } else {

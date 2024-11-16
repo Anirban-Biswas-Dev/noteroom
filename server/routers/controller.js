@@ -5,12 +5,12 @@ async function getSavedNotes(Students, Notes, studentID) {
     return notes
 }
 
-async function getNotifications(allNotifs, ownerUsername) {
+async function getNotifications(allNotifs, ownerStudentID) {
     let allNotifications = await allNotifs.find().sort({ createdAt: -1 })
     let populatedNotifications = []
     allNotifications.map(doc => {
         if (doc['docType'] === 'feedback') {
-            if(doc.ownerUsername == ownerUsername) {
+            if(doc.ownerStudentID == ownerStudentID) {
                 populatedNotifications.push(doc.populate([
                     { path: 'noteDocID', select: 'title' },
                     { path: 'commenterDocID', select: 'displayname studentID' }

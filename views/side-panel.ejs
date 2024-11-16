@@ -81,7 +81,7 @@
           <path d="M49.4475 39.4709C49.4475 45.2615 44.7747 49.9417 39.0279 49.9417C33.2811 49.9417 28.6083 45.2615 28.6083 39.4709C28.6083 33.6802 33.2811 29 39.0279 29C44.7747 29 49.4475 33.6802 49.4475 39.4709Z" stroke="#07192D" stroke-width="4"/>
           <path d="M3.32248 34.8098C9.00331 27.6792 21.1727 27.069 23.5029 28.6011C25.833 30.1332 25.833 30.9126 23.5029 37.9542C21.1727 44.9958 28.1617 47.278 23.5029 47.3074C18.844 47.3367 0.216087 47.3074 0.216087 47.3074C0.216087 47.3074 -1.22218 40.5142 3.32248 34.8098Z" fill="#07192D"/>
           </svg>          
-        <a href='/user/<%= root.studentID %>'><img src="<%= root.profile_pic %>" class="profile-pic" /></a>
+        <a href='/user/<%= root.username %>'><img src="<%= root.profile_pic %>" class="profile-pic" /></a>
         <i class="fa-solid fa-gear settings-icon" onclick="window.location.href = '/settings'"></i>
         </div>
         <p class="sub-header">
@@ -161,7 +161,7 @@
         <!-- Badge for notification count -->
         <span class="badge-nft" id="notification-count">0</span>
         </div>
-        <a href='/user/<%= root.studentID %>'><img src="<%= root.profile_pic %>" class="mbl-profile-pic" /></a>
+        <a href='/user/<%= root.username %>'><img src="<%= root.profile_pic %>" class="mbl-profile-pic" /></a>
     </div>
     <div class="results-container">
       <div class="search-results">
@@ -238,7 +238,7 @@ onclick="window.location.href = '/dashboard'"
     </defs>
     </svg>
 <svg class="mbl-saved-notes-page"
-onclick="window.location.href = '/user/<%= root.studentID %>/#savedNotes'"
+onclick="window.location.href = '/user/<%= root.username %>/#savedNotes'"
     width="23"
     height="23" viewBox="0 0 44 43" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
     <rect x="0.125" width="43" height="43" fill="url(#pattern0_2219_2121)"/>
