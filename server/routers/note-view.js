@@ -46,6 +46,11 @@ function noteViewRouter(io) {
         return feednoti
     }
 
+    async function getStudentID(username) {
+        let studentID = (await Students.findOne({ username: username }, { studentID: 1 }))["studentID"]
+        return studentID
+    }
+
     io.on('connection', (socket) => {
         socket.on('join-room', room => {
             socket.join(room)
@@ -64,7 +69,8 @@ function noteViewRouter(io) {
                 noteDocID: noteDocID, 
                 commenterDocID: commenterDocID, 
                 feedbackDocID: feedback._id,
-                ownerUsername: ownerUsername
+                ownerUsername: ownerUsername,
+                ownerStudentID: (await getStudentID(ownerUsername))
             }) // Save the feedback notifications in database
 
             io.emit('feedback-given', { //* Feedback-notifications: This will go to everyuser, but the user with ownerUsername=recordName will keep it
@@ -89,7 +95,7 @@ function noteViewRouter(io) {
                 let mynote = 1 //* Varifing if a note is mine or not: corrently using for not allowing users to give feedbacks based on some situations (self-notes and viewing notes without being logged in)
                 if (noteDocID) {
                     let savedNotes = await getSavedNotes(Students, Notes, req.session.stdid)
-                    let notis = await getNotifications(allNotifs, req.cookies['recordName'])
+                    let notis = await getNotifications(allNotifs, req.session.stdid)
                     if (note.ownerDocID == req.cookies['recordID']) {
                         res.render('note-view', { note: note, mynote: mynote, owner: owner, feedbacks: feedbacks, root: root, savedNotes: savedNotes, notis: notis }) // Specific notes: visiting my notes
                     } else {

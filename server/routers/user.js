@@ -46,7 +46,7 @@ function userRouter(io) {
         if (req.params.username) {
             if (req.session.stdid) {
                 let username = await getUserName(req.session.stdid)
-                let notis = await getNotifications(allNotifs, req.cookies['recordName']) // Notifications of the root-user
+                let notis = await getNotifications(allNotifs, req.session.stdid) // Notifications of the root-user
 
                 if (username == req.params.username) {
                     try {
