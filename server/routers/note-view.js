@@ -83,7 +83,7 @@ function noteViewRouter(io) {
         try {
             let noteDocID = req.params.noteID
             let information = await getNote(noteDocID)
-            let root = await getRoot(Students, req.session.stdid, 'studentID', { displayname: 1, studentID: 1, profile_pic: 1 })
+            let root = await getRoot(Students, req.session.stdid, 'studentID', { displayname: 1, username: 1, profile_pic: 1 })
             let [note, owner, feedbacks] = [information['note'], information['owner'], information['feedbacks']]
             if (req.session.stdid) {
                 let mynote = 1 //* Varifing if a note is mine or not: corrently using for not allowing users to give feedbacks based on some situations (self-notes and viewing notes without being logged in)

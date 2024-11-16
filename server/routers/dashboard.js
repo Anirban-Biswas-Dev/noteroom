@@ -54,7 +54,7 @@ function dashboardRouter(io) {
 
     router.get('/', async (req, res) => {
         if(req.session.stdid) {
-            let root = await getRoot(Students, req.session.stdid, 'studentID', { profile_pic: 1, displayname: 1, studentID: 1 })
+            let root = await getRoot(Students, req.session.stdid, 'studentID', { profile_pic: 1, displayname: 1, username: 1 })
             let notis = await getNotifications(allNotifs, req.cookies['recordName'])
             let allNotes = await getAllNotes()
             let savedNotes = await getSavedNotes(Students, Notes, req.session.stdid)
