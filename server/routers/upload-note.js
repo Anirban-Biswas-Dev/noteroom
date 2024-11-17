@@ -79,7 +79,8 @@ function uploadRouter(io) {
                     profile_pic /* Profile pic path of the owner of the note */ : owner.profile_pic,
                     noteTitle /* Title of the note */ : noteData.title, 
                     ownerDisplayName /* Displayname of the owener of the note*/ : owner.displayname, 
-                    ownerID /* Student ID of the owner of the note */ : owner.studentID 
+                    ownerID /* Student ID of the owner of the note */ : owner.studentID,
+                    ownerUserName /* Username of the owner of the note */ : owner.username
                 })
             }
         } catch (error) {
