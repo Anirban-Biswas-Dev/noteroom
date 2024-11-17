@@ -51,12 +51,37 @@ function noteViewRouter(io) {
         return studentID
     }
 
+    async function getDocumentID(studentID) {
+        let documentID = (await Students.findOne({ studentID: studentID }, { _id : 1 }))["_id"]
+        return documentID
+    }
+
+    async function getOwner(noteDocID) {
+        let ownerUserName = (await Notes.findById(noteDocID, { ownerDocID: 1 }).populate('ownerDocID', 'username')).ownerDocID["username"]
+        return ownerUserName
+    } 
+
     io.on('connection', (socket) => {
+
+        /* 
+        # Process Sequence:
+        ~   1. (ws) join-room: from client : request to join the note-room
+        ~   2. (ws) feedback : from client : given a feedback object
+        ~       - get the commenter's student ID and note owner's username
+        ~       - add the feedback object to the database (feedback collections), this will return an extented-feedback object
+        ~   3. (ws) add-feedback : to client : command to add the feedback to the frontend with the returned extented-feedback object
+        ~   4. prepare the notification with the extented-feedback object and add that (notifications collection). 
+        ~   5. (ws) feedback-given : to client : command to add the notification to the note-owner's dashboard with the prepared noti. object
+        */
+
         socket.on('join-room', room => {
             socket.join(room)
             console.log(`A user added to room: ${room}`)
         })
-        socket.on('feedback', async (room, feedbackText, noteDocID, commenterDocID, ownerUsername) => {
+        socket.on('feedback', async (room, feedbackText, noteDocID, commenterStudentID) => {
+            let commenterDocID = await getDocumentID(commenterStudentID)
+            let ownerUsername = await getOwner(noteDocID)
+            
             let feedbackData = {
                 noteDocID: noteDocID,
                 commenterDocID: commenterDocID,
