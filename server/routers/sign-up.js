@@ -72,7 +72,6 @@ function signupRouter(io) {
                 Students.findByIdAndUpdate(studentDocID, { profile_pic: (await profilePicUrl).toString() }).then(() => {
                     req.session.stdid = studentData.studentID // setting the session with the student ID
                     res.cookie('recordID', student['_id']) // setting a cookie with a value of the document ID of the user
-                    res.cookie('recordName', student['username']) // setting a cookie with a value of the username of the user
                     res.send({ url: `/dashboard` })
                 }) //* Updating the student's record database to add the profile_pic image location so that it can be deirectly used by the front-end
             } else {

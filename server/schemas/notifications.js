@@ -23,7 +23,6 @@ const feedBackSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         required: true
     },
-    ownerUsername: String,
     ownerStudentID: String,
     isRead: {
         type: Boolean,

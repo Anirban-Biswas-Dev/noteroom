@@ -544,7 +544,7 @@ conSock.on('feedback-given' , (feedbackData) => {
     ~   object (1). If so, that means the noti. has found it's owner. the noti-data is added in LS|key=notis (2). then it is added
     ~   in the right-panel (3). then the noti. button got shaked(mobile) (4).
     */
-	if (feedbackData.ownerUsername == Cookies.get('recordName')) { // 1
+	if (feedbackData.ownerStudentID == Cookies.get('studentID')) { // 1
 		feedbackData.isNoti = true
 		manageStorage.update('notis', undefined, 'insert', feedbackData) // 2
 		addNoti(feedbackData) // 3

@@ -6,7 +6,6 @@ const router = express.Router()
 # Cookies:
     => stdid: session cookie generated with studentID
     => recordID: student's studentDocID
-    => recordName: student's username
 */
 
 function loginRouter(io) {
@@ -17,7 +16,6 @@ function loginRouter(io) {
                 resolve({ 
                     studentPass: student["password"], 
                     recordID: student["_id" ], 
-                    recordName: student["username"],
                     studentID: student["studentID"]
                 })
             } else {
@@ -44,7 +42,6 @@ function loginRouter(io) {
             if (password === student['studentPass']) {
                 req.session.stdid = student["studentID"] // setting the session with the student ID
                 res.cookie('recordID', student['recordID']) // setting a cookie with a value of the document ID of the user
-                res.cookie('recordName', student['recordName']) // setting a cookie with a value of the username of the user
                 res.cookie('studentID', student['studentID']) // setting a cookie with a value of the student ID
                 res.json({ url: '/dashboard' })
                 // res.json({ url: `/user` })
