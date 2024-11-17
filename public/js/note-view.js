@@ -1,6 +1,13 @@
 const host = window.location.origin
 const socket = io(host)
 
+/*
+# Event Sequence:
+~   1. join-room: to server : request server to join the room of that note
+~   2. feedback: to server : give the feedback and other assoc. data to add the feedbacks to db
+~   3. add-feedback: from server : add the responsed extented feedback data with commenter's information   
+*/
+
 socket.emit('join-room', window.location.pathname.split('/')[2] /* The note-id as the unique room name */)
 
 //* Broadcasted feedback handler. The extented-feedback is broadcasted
@@ -37,18 +44,16 @@ try {
     let feedback = document.querySelector('textarea[name="feedbackText"]')
     let ownerUsername = document.querySelector('span.studentusername').innerHTML // Note owner's username
     let noteDocID = window.location.pathname.split('/')[2] // Note's document ID
-    let commenterDocID = Cookies.get('recordID').split(':')[1].replaceAll('"', '') // Commenter's document ID
+    let commenterStudentID = Cookies.get('studentID') // Commenter's document ID
 
     async function postFeedback() {
         if(feedback.value.trim() !== "") {
             socket.emit('feedback', 
-                noteDocID, 
-                feedback.value, 
-                noteDocID, 
-                commenterDocID, 
-                ownerUsername
+                noteDocID, // room-name (unique noteDocID) 
+                feedback.value, // feedback-text 
+                noteDocID, // noteid 
+                commenterStudentID // commenter's student ID, alt for commenterDocID and ownerUsername
             ) 
-            // sending room-name (unique noteDocID), feedback-text, noteid and commenter's doc-id, and note owner's username to the server 
             document.querySelector('textarea[name="feedbackText"]').value = ''
         }
 	}
