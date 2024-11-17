@@ -33,7 +33,7 @@ function dashboardRouter(io) {
         let notes = await Notes.find({}, { ownerDocID: 1, title: 1, content: 1 })
             .sort({ createdAt: -1 })
             .limit(3)
-            .populate('ownerDocID', 'profile_pic displayname studentID')
+            .populate('ownerDocID', 'profile_pic displayname studentID username')
         return notes
     }
 
@@ -54,8 +54,8 @@ function dashboardRouter(io) {
 
     router.get('/', async (req, res) => {
         if(req.session.stdid) {
-            let root = await getRoot(Students, req.session.stdid, 'studentID', { profile_pic: 1, displayname: 1, studentID: 1 })
-            let notis = await getNotifications(allNotifs, req.cookies['recordName'])
+            let root = await getRoot(Students, req.session.stdid, 'studentID', { profile_pic: 1, displayname: 1, username: 1 })
+            let notis = await getNotifications(allNotifs, req.session.stdid)
             let allNotes = await getAllNotes()
             let savedNotes = await getSavedNotes(Students, Notes, req.session.stdid)
             res.render('dashboard', { root: root, notis: notis, notes: allNotes, savedNotes: savedNotes })

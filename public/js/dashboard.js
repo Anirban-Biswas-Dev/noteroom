@@ -466,3 +466,7 @@ class NoteMenu {
   });
   
 
+//* Temporary alert close
+document.querySelector('.error__close').addEventListener('click', function() {
+	document.querySelector('.error').remove()
+})

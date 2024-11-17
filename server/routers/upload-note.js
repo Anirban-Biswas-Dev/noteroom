@@ -26,9 +26,9 @@ function uploadRouter(io) {
 
     router.get('/', async (req, res) => {
         if(req.session.stdid) {
-            let student = await getRoot(Students, req.session.stdid, 'studentID', { displayname: 1, studentID: 1, profile_pic: 1 })
+            let student = await getRoot(Students, req.session.stdid, 'studentID', { displayname: 1, username: 1, profile_pic: 1 })
             let savedNotes = await getSavedNotes(Students, Notes, req.session.stdid)
-            let notis = await getNotifications(allNotifs, req.cookies['recordName'])
+            let notis = await getNotifications(allNotifs, req.session.stdid)
             res.render('upload-note', { root: student, savedNotes: savedNotes, notis: notis })
         } else {
             res.redirect('/login')
@@ -79,7 +79,8 @@ function uploadRouter(io) {
                     profile_pic /* Profile pic path of the owner of the note */ : owner.profile_pic,
                     noteTitle /* Title of the note */ : noteData.title, 
                     ownerDisplayName /* Displayname of the owener of the note*/ : owner.displayname, 
-                    ownerID /* Student ID of the owner of the note */ : owner.studentID 
+                    ownerID /* Student ID of the owner of the note */ : owner.studentID,
+                    ownerUserName /* Username of the owner of the note */ : owner.username
                 })
             }
         } catch (error) {

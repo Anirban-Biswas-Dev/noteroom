@@ -11,16 +11,6 @@ socket.on('duplicate-value', (duplicate_field) => {
     document.querySelector(`input[name=${duplicate_field}]`).style.border = "2px solid red"
 })
 
-document.querySelector('.clg-information').addEventListener('click', function() {
-    let displayName = document.querySelector('input[name="displayname"]').value
-    let studentID = document.querySelector('input[name="studentID"]').value
-
-    socket.emit('unique-username', { displayName, studentID })
-    socket.on('_unique-username', (username) => {
-        document.querySelector('input[name="username"]').value = username
-    })
-})
-
 document.addEventListener('DOMContentLoaded', function () {
     const steps = document.querySelectorAll('.step');
     const progressBar = document.querySelector('.progress-bar');
@@ -103,7 +93,6 @@ document.querySelector('.submit-button').addEventListener('click', function() {
     let displayName = document.querySelector('input[name="displayname"]').value
     let email = document.querySelector('input[name="email"]').value
     let password = document.querySelector('input[name="password"]').value
-    let studentID = document.querySelector('input[name="studentID"]').value
     let rollnumber = document.querySelector('input[name="rollnumber"]').value
     let collegesection = document.querySelector('select[name="collegesection"]').value
     let bio = document.querySelector('textarea[name="bio"]').value
@@ -134,7 +123,6 @@ document.querySelector('.submit-button').addEventListener('click', function() {
     formData.append('displayname', displayName)
     formData.append('email', email)
     formData.append('password', password)
-    formData.append('studentID', studentID)
     formData.append('rollnumber', rollnumber)
     formData.append('collegesection', collegesection)
     formData.append('collegeyear', collegeyear)

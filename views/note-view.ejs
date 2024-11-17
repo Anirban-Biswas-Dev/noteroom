@@ -67,7 +67,7 @@
         <div class="author-info">
           <img src="<%= owner.profile_pic %>" alt="Author Picture" />
           <span class="author-name">
-            <a href="/user/<%= owner.studentID %>">
+            <a href="/user/<%= owner.username %>">
               <%= owner.displayname %>
             </a>
             <span class="studentusername" style="display: none"
@@ -177,7 +177,7 @@
               <div class="feedback-author-info">
                 <a
                   class="link_"
-                  href="/user/<%= feedback.commenterDocID.studentID %>"
+                  href="/user/<%= feedback.commenterDocID.username %>"
                   ><h4 class="feedback-author">
                     <%= feedback.commenterDocID.displayname %>
                   </h4></a

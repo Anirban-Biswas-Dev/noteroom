@@ -4,9 +4,9 @@ const socket = io(host)
 socket.emit('connection')
 
 function show_warning() {
-    document.querySelector('input.studentid').value = ""
+    document.querySelector('input.email').value = ""
     document.querySelector('input.password').value = ""
-    document.querySelector('input.studentid').style.border = "2px solid red"
+    document.querySelector('input.email').style.border = "2px solid red"
     document.querySelector('input.password').style.border = "2px solid red"
 }
 
@@ -16,9 +16,9 @@ socket.on('wrong-cred', function() {
     show_warning()
 })
 
-socket.on('no-studentid', function() {
+socket.on('no-email', function() {
     hideLoader(true)
-    setupErrorPopup("Sorry! No student account is associated with that ID")
+    setupErrorPopup("Sorry! No student account is associated with that email account")
     show_warning()
 })
 
@@ -36,12 +36,12 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 document.querySelector('.login-button').addEventListener('click', function() {
-    let studentID = document.querySelector('.studentid').value
+    let email = document.querySelector('.email').value
     let password = document.querySelector('.password').value
 
-    if(studentID && password) {
+    if(email && password) {
         let formData = new FormData()
-        formData.append('studentID', studentID)
+        formData.append('email', email)
         formData.append('password', password)
     
         const style = document.createElement('style')
