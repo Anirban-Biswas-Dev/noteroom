@@ -1,7 +1,8 @@
 const express = require('express')
 const Students = require('../schemas/students')
 const imgManage = require('../controllers/image-upload')
-const crypto = require('crypto')
+const slugify = require('slugify')
+const uuidv4 = require("uuid").v4
 const router = express.Router()
 
 /* 
@@ -16,23 +17,22 @@ function signupRouter(io) {
         return student
     }
 
-    function generateRandomUsername(stdID, displayname) {
-        let studentID = stdID.replace(/\s+/g, '')
-        let username = `${displayname.toLowerCase().replace(/\s+/g, '-')}-${crypto.createHash('sha256').update(studentID).digest('hex')}`
-        return username
-    }
+    function generateRandomUsername(displayname) {
+        let sluggfied = slugify(displayname, {
+            lower: true, 
+            strict: true, 
+            replacement: '-',
+            remove: /[^\w\s-]/g}
+        )
+        let uuid = uuidv4()
+        let suffix = uuid.split("-")[0]
+        let username = `${sluggfied}-${suffix}`
     
-    io.on('connection', (socket) => {
-        socket.on('unique-username', (creds) => {
-            ({ displayName, studentID } = creds)
-            try {
-                let username = generateRandomUsername(studentID, displayName.trim())
-                socket.emit('_unique-username', username)
-            } catch (error) {
-                console.log(error.message)
-            }
-        })
-    })
+        return {
+            userID: uuid,
+            username: username
+        }
+    }
 
     router.get('/', (req, res) => {
         if (req.session.stdid) {
@@ -45,11 +45,12 @@ function signupRouter(io) {
 
     router.post('/', async (req, res, next) => {
         try {
+            let identifier = generateRandomUsername(req.body.displayname.trim())
             let studentData = {
                 displayname: req.body.displayname.trim(),
                 email: req.body.email,
                 password: req.body.password,
-                studentID: req.body.studentID,
+                studentID: identifier["userID"],
                 rollnumber: req.body.rollnumber.trim(),
                 collegesection: req.body.collegesection,
                 collegeyear: req.body.collegeyear,
@@ -57,7 +58,7 @@ function signupRouter(io) {
                 favouritesubject: req.body.favouritesubject,
                 notfavsubject: req.body.notfavsubject,
                 group: req.body.group,
-                username: req.body.username
+                username: identifier["username"]
             } //* Getting all the data posted by the client except the profile picture
 
             if(req.files) {

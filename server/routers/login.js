@@ -10,11 +10,16 @@ const router = express.Router()
 */
 
 function loginRouter(io) {
-    async function extract(studentid) {
-        let student = await Students.findOne({ studentID: studentid })
+    async function extractLogin(email) {
+        let student = await Students.findOne({ email: email })
         return new Promise((resolve, reject) => {
-            if (student.length != 0) {
-                resolve({ studentPass: student["password"], recordID: student["_id" ], recordName: student["username"] })
+            if (student) {
+                resolve({ 
+                    studentPass: student["password"], 
+                    recordID: student["_id" ], 
+                    recordName: student["username"],
+                    studentID: student["studentID"]
+                })
             } else {
                 reject('No students found!')
             }
@@ -32,23 +37,24 @@ function loginRouter(io) {
 
     router.post('/', async (req, res) => {
         try {
-            let studentID = req.body.studentID
+            let email = req.body.email
             let password = req.body.password
 
-            let student = await extract(studentID)
+            let student = await extractLogin(email)
             if (password === student['studentPass']) {
-                req.session.stdid = studentID // setting the session with the student ID
+                req.session.stdid = student["studentID"] // setting the session with the student ID
                 res.cookie('recordID', student['recordID']) // setting a cookie with a value of the document ID of the user
                 res.cookie('recordName', student['recordName']) // setting a cookie with a value of the username of the user
                 res.json({ url: '/dashboard' })
+                // res.json({ url: `/user` })
             } else {
                 res.json({ message: 'wrong-cred' })
                 io.emit('wrong-cred')
             }
         } catch (error) {
-            console.log(error.message)
-            res.json({ message: 'no-studentid' })
-            io.emit('no-studentid')
+            console.log(error)
+            res.json({ message: 'no-email' })
+            io.emit('no-email')
         }
     })
     

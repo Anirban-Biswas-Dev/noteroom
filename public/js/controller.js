@@ -119,7 +119,7 @@ const manageNotes = { // I treat all the cards as notes
 							  <img src="${noteData.profile_pic}" class="author-img">
 							  <div class="author-title-container">
 								  <div class="note-title"><a href="/view/${noteData.noteID}" onclick='location.reload()'>${truncatedTitle(noteData.noteTitle)}</a></div>
-								  <div class="author"><a class="author-prfl-link" href="/user/${noteData.ownerID}">${noteData.ownerDisplayName}</a></div>
+								  <div class="author"><a class="author-prfl-link" href="/user/${noteData.ownerUserName}">${noteData.ownerDisplayName}</a></div>
 							  </div>
 						  </div>
 						  <div class="note-engagement">
@@ -179,7 +179,7 @@ const manageNotes = { // I treat all the cards as notes
                     <span class="remove-notification" onclick="deleteNoti('${feedbackData.notiID}')">&times;</span>
                   </div>
                   <div class="notification-msg">
-                    <a href='/user/${feedbackData.commenterStudentID}' class="commenter-prfl">
+                    <a href='/user/${feedbackData.commenterUserName}' class="commenter-prfl">
                     ${feedbackData.commenterDisplayName}
                     </a><a href='/view/${feedbackData.noteID}/#${feedbackData.feedbackID}' class="notification-link-2"> has given feedback on your notes! Check it out.</a>
                   </div>
@@ -191,7 +191,7 @@ const manageNotes = { // I treat all the cards as notes
         let profileCard = `
                     <div class="results-prfl">
                         <img src="${student.profile_pic}" alt="Profile Pic" class="prfl-pic">
-                        <span class="prfl-name" onclick="window.location.href = '/user/${student.studentID}'">${student.displayname}</span>
+                        <span class="prfl-name" onclick="window.location.href = '/user/${student.username}'">${student.displayname}</span>
                         <span class="prfl-desc">${truncatedTitle(student.bio)}</span>
                         <span class="badge" style="display: none;">${student.badge}</span>
                         <img src="" alt="" class="user-badge">
@@ -216,7 +216,7 @@ const manageNotes = { // I treat all the cards as notes
                             	<span class="feedback-id" style="display: none;">${feedbackData._id}</span>
 								<img src="${feedbackData.commenterDocID.profile_pic}" alt="User Avatar" class="feedback-avatar">
 								<div class="feedback-author-info">
-									<a href='/user/${feedbackData.commenterDocID.studentID}'><h4 class="feedback-author">${feedbackData.commenterDocID.displayname}</h4></a>
+									<a href='/user/${feedbackData.commenterDocID.username}'><h4 class="feedback-author">${feedbackData.commenterDocID.displayname}</h4></a>
 									<span class="feedback-date">${formattedDate}</span>
 								</div>
 							</div>

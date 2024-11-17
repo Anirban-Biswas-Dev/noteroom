@@ -28,7 +28,9 @@
         <div class="info-items-1">
             <!-- We'll update the frontend js codes for these element soon -->
             <span class="display-name"><%= student.displayname %></span>
-            <span class="user-clg-id">ID: <%= student.studentID %></span>
+            <% if(!visiting) { %>
+                <span class="user-clg-id">ID: <%= student.studentID %></span>
+            <% } %>
             <!-- for this non-editable data, basic data fetch will do or even DOM -->
             <div class="user-group"><%= student.group %></div>
             <!-- fetching exam rank needs to be discussed -->
