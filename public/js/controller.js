@@ -200,6 +200,16 @@ const manageNotes = { // I treat all the cards as notes
     },
 
     addFeedback: function(feedbackData) {
+        /*
+        # feedbackData:
+            => _id: document id of that feedback
+            => feedbackContents
+            => commenterDocID:
+                ~ profile_pic
+                ~ username
+                ~ displayname
+                
+        */
         let date = new Date(feedbackData.createdAt)
         const formatter = new Intl.DateTimeFormat('en-US', {
             year: 'numeric',
