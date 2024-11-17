@@ -78,6 +78,7 @@ function noteViewRouter(io) {
                 nfnTitle /* The note's title on which the feedback is given: the link will contain the note's title */: feedback.noteDocID.title, 
                 commenterStudentID /* Commenter's student-id: to create a direct link to the commenter's profile */: feedback.commenterDocID.studentID, 
                 commenterDisplayName /* The student's displayname who gave the feedback: the link will contain commenter's displayname */ : feedback.commenterDocID.displayname,
+                commenterUserName /* The student's username who gave the feedback: for redirecting directly to the commenter's profile */ : feedback.commenterDocID.username,
                 ownerUsername /* The student's username who ownes the note: varifing with recordName if the notification will be dropped or not */: ownerUsername,
                 notiID: /* The document ID of notification. This is used to remove specific notifications later */ feedbackNoti._id,
                 feedbackID /* This is the unique id of each feedback, used for redirection to that specific feedback*/ : feedback._id

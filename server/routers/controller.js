@@ -13,7 +13,7 @@ async function getNotifications(allNotifs, ownerStudentID) {
             if(doc.ownerStudentID == ownerStudentID) {
                 populatedNotifications.push(doc.populate([
                     { path: 'noteDocID', select: 'title' },
-                    { path: 'commenterDocID', select: 'displayname studentID' }
+                    { path: 'commenterDocID', select: 'displayname studentID username' }
                 ]))
             }
         } else {

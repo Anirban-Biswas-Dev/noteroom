@@ -179,7 +179,7 @@ const manageNotes = { // I treat all the cards as notes
                     <span class="remove-notification" onclick="deleteNoti('${feedbackData.notiID}')">&times;</span>
                   </div>
                   <div class="notification-msg">
-                    <a href='/user/${feedbackData.commenterStudentID}' class="commenter-prfl">
+                    <a href='/user/${feedbackData.commenterUserName}' class="commenter-prfl">
                     ${feedbackData.commenterDisplayName}
                     </a><a href='/view/${feedbackData.noteID}/#${feedbackData.feedbackID}' class="notification-link-2"> has given feedback on your notes! Check it out.</a>
                   </div>
