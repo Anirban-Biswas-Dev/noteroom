@@ -24,6 +24,7 @@ const settingsRouter = require('./routers/settings')
 
 const Notes = require('./schemas/notes')
 const Students = require('./schemas/students')
+const Alerts = require('./schemas/alerts')
 
 const url = process.env.MONGO_URI
 mongoose.connect(url).then(() => {
@@ -145,6 +146,25 @@ app.get('/getnote', async (req, res, next) => {
         } else {
             res.json([])
         }
+    }
+})
+
+
+app.get('/message', async (req, res) => {
+    if(req.session && req.session.stdid == "1094a5ad-d519-4055-9e2b-0f0d9447da02") {
+        if (req.query.message == undefined) {
+            res.render('message')
+        } else {
+            let message = req.query.message
+            let type = req.query.type
+
+            await Alerts.create({ message: message, type: type })
+
+            res.send({ url: '/dashboard' })
+        }
+    } else {
+        res.status(404)
+        res.render('404-error', { message: 'The page you are looking for is not found' })
     }
 })
 

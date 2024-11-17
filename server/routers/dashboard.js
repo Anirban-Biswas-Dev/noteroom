@@ -1,6 +1,7 @@
 const express = require('express')
 const Students = require('../schemas/students')
 const Notes = require('../schemas/notes')
+const Alerts = require('../schemas/alerts')
 const allNotifs = require('../schemas/notifications').Notifs
 const feedbackNotifs = require("../schemas/notifications").feedBackNotifs
 const { getSavedNotes, getNotifications, getRoot } = require('./controller')
@@ -37,6 +38,11 @@ function dashboardRouter(io) {
         return notes
     }
 
+    async function getAlert() {
+        let alert = (await Alerts.find({}).sort({ createdAt: -1 }))[0];
+        return alert
+    }
+
     io.on('connection', (socket) => {
         socket.on('delete-noti', async (notiID) => {
             await allNotifs.deleteOne({ _id: notiID }) // Deleteing notification based on the ID given from the frontend
@@ -54,11 +60,12 @@ function dashboardRouter(io) {
 
     router.get('/', async (req, res) => {
         if(req.session.stdid) {
+            let alert = await getAlert()
             let root = await getRoot(Students, req.session.stdid, 'studentID', { profile_pic: 1, displayname: 1, username: 1 })
             let notis = await getNotifications(allNotifs, req.session.stdid)
             let allNotes = await getAllNotes()
             let savedNotes = await getSavedNotes(Students, Notes, req.session.stdid)
-            res.render('dashboard', { root: root, notis: notis, notes: allNotes, savedNotes: savedNotes })
+            res.render('dashboard', { root: root, notis: notis, notes: allNotes, savedNotes: savedNotes, alert: alert })
         } else {
             res.redirect('login')
         }
