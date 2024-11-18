@@ -63,7 +63,6 @@ app.use(errorHandler) // Middleware for handling errors
 app.get('/logout', (req, res) => {
     req.session.destroy()
     res.clearCookie('stdid')
-    res.clearCookie('recordName')
     res.clearCookie('recordID')
     res.redirect('/login')
 })

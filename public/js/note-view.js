@@ -42,7 +42,6 @@ showSlide(currentIndex);
 
 try {
     let feedback = document.querySelector('textarea[name="feedbackText"]')
-    let ownerUsername = document.querySelector('span.studentusername').innerHTML // Note owner's username
     let noteDocID = window.location.pathname.split('/')[2] // Note's document ID
     let commenterStudentID = Cookies.get('studentID') // Commenter's document ID
 
@@ -52,7 +51,7 @@ try {
                 noteDocID, // room-name (unique noteDocID) 
                 feedback.value, // feedback-text 
                 noteDocID, // noteid 
-                commenterStudentID // commenter's student ID, alt for commenterDocID and ownerUsername
+                commenterStudentID // commenter's student ID
             ) 
             document.querySelector('textarea[name="feedbackText"]').value = ''
         }
