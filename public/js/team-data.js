@@ -8,7 +8,7 @@ export const founders = [
         socialLinks: {
             facebook: 'https://www.facebook.com/profile.php?id=61558992303361&locale=bn_IN',
             instagram: '',
-            twitter: '',
+            twitter: 'https://x.com/AnirbanBiz',
             linkedin: ''
         }
     },
@@ -30,12 +30,12 @@ export const founders = [
         imgSrc: '/images/Rohit Caricature - NoteRoom Cartoonic.jpg',
         college: 'Gov.t City College, Chattogram',
         role: 'The Design Diva',
-        description: "Devajit is our creative genius who can turn even the craziest sketches into stunning designs. He speaks fluent hex code, wields Figma like a pro, and gets lost in fonts and color palettes for hours. He’s famous for producing countless “final” versions of design files—just don’t ask how many “final, final” ones there are! He’s constantly obsessing over whether that shade of blue is really blue enough. Perfection is his thing—and the results speak for themselves.",
+        description: "Devajit Mutsuddy Rohit is the design genius behind NoteRoom’s sleek, user-friendly interface. A master of Figma and fluent in hex code, he transforms wild ideas into polished designs. His obsession with fonts and color palettes has led to countless “final” versions—trust us, it’s a real thing. Once aiming to be a psychiatrist, Devajit now proudly calls himself a “failed psychiatrist” turned tech enthusiast. He’s always refining shades of blue and sketching new concepts, with his sights set on Silicon Valley.",
         socialLinks: {
-            facebook: '',
-            instagram: '',
-            twitter: '',
-            linkedin: ''
+            facebook: 'https://www.facebook.com/profile.php?id=61565086526857',
+            instagram: 'https://www.instagram.com/devajitmutsuddy/',
+            twitter: 'https://x.com/devajitrohit',
+            linkedin: 'https://www.linkedin.com/in/devajit-mutsuddy-rohit-1bb31730a/'
         }
     }
 ];
