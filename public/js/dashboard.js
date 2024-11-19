@@ -267,145 +267,165 @@ socket.on('note-upload', (noteData) => {
 
 
 
-document.addEventListener('DOMContentLoaded', () => {
-  const buttons = document.querySelectorAll('.svn-btn-parent');
-
-  buttons.forEach(button => {
-    const isSaved = button.classList.contains('saved');
-    const iconRegular = button.querySelector('.fa-regular');
-    const iconSolid = button.querySelector('.fa-solid');
-
-    iconRegular.style.display = isSaved ? 'none' : 'inline';
-    iconSolid.style.display = isSaved ? 'inline' : 'none';
-
-    button.addEventListener('click', () => {
-      if (iconRegular.style.display === 'none') {
-        iconRegular.style.display = 'inline';
-        iconSolid.style.display = 'none';
-        button.classList.remove('saved');
-      } else {
-        iconRegular.style.display = 'none';
-        iconSolid.style.display = 'inline';
-        button.classList.add('saved');
-
-        button.classList.add('active');
-        setTimeout(() => button.classList.remove('active'), 600);
-
-        createConfetti(button);
-      }
-    });
-  });
-});
-
-function createConfetti(button) {
-  const confettiContainer = document.createElement('div');
-  confettiContainer.className = 'confetti';
-  button.appendChild(confettiContainer);
-
-  for (let i = 0; i < 50; i++) {
-    const confettiPiece = document.createElement('div');
-    confettiPiece.className = 'confetti-piece';
-    confettiPiece.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 70%)`;
-    confettiPiece.style.top = `${Math.random() * 100}%`;
-    confettiPiece.style.left = `${Math.random() * 100}%`;
-
-    const size = Math.random() * 8 + 4;
-    confettiPiece.style.width = `${size}px`;
-    confettiPiece.style.height = `${size}px`;
-    confettiPiece.style.opacity = 1;
-
-    confettiContainer.appendChild(confettiPiece);
-
-    confettiPiece.animate([
-      { transform: `translateY(0) rotate(${Math.random() * 360}deg)` },
-      { transform: `translateY(${Math.random() * -300}px) rotate(${Math.random() * 360}deg)` }
-    ], {
-      duration: 1500 + Math.random() * 1000,
-      easing: 'ease-out',
-      fill: 'forwards'
-    });
-  }
-
-  setTimeout(() => confettiContainer.remove(), 2000);
-}
-
-// Confetti for new user celebration
-const canvas = document.getElementById('confettiCanvas');
-const ctx = canvas.getContext('2d');
-let confetti = [];
-let animationFrame;
-let confettiBlown = false;
-let hasStopped = false;  // New flag to track when confetti has stopped
-
-// Set canvas size to match window
-function resizeCanvas() {
-	canvas.width = window.innerWidth;
-	canvas.height = window.innerHeight;
-}
-resizeCanvas();
-window.addEventListener('resize', resizeCanvas);
-
-function createConfettiPiece() {
-	return {
-		x: Math.random() * canvas.width,
-		y: Math.random() * canvas.height - canvas.height,
-		width: Math.random() * 10 + 5,  // Rectangular width
-		height: Math.random() * 6 + 3,  // Rectangular height
-		color: gsap.utils.random(["#FF6F61", "#FFD700", "#4CAF50", "#42A5F5", "#FF4081", "#FFEB3B", "#7E57C2", "#F06292", "#FFA726", "#8BC34A"]),
-		rotation: Math.random() * Math.PI * 2,
-		speed: Math.random() * 3 + 2,
-		rotationSpeed: Math.random() * 0.02 + 0.01,
-		drift: Math.random() * 0.5 - 0.25,  // Adds slight drifting to left/right
-		fallSpeed: Math.random() * 2 + 3
-	};
-}
-
-function updateConfetti() {
-	ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-	let activeConfettiCount = 0;
-
-	confetti.forEach((piece, index) => {
-		piece.y += piece.fallSpeed;
-		piece.x += piece.drift;
-		piece.rotation += piece.rotationSpeed;
-
-		if (piece.y < canvas.height) {
-			activeConfettiCount++;
+function initializeSaveButtons() {
+	const buttons = document.querySelectorAll('.svn-btn-parent:not([data-initialized])');
+  
+	buttons.forEach((button) => {
+	  const isSaved = button.classList.contains('saved');
+	  const iconRegular = button.querySelector('.fa-regular');
+	  const iconSolid = button.querySelector('.fa-solid');
+  
+	  // Set initial state
+	  iconRegular.style.display = isSaved ? 'none' : 'inline';
+	  iconSolid.style.display = isSaved ? 'inline' : 'none';
+  
+	  // Add click event listener
+	  button.addEventListener('click', () => {
+		if (iconRegular.style.display === 'none') {
+		  iconRegular.style.display = 'inline';
+		  iconSolid.style.display = 'none';
+		  button.classList.remove('saved');
+		} else {
+		  iconRegular.style.display = 'none';
+		  iconSolid.style.display = 'inline';
+		  button.classList.add('saved');
+  
+		  // Add animation effect
+		  button.classList.add('active');
+		  setTimeout(() => button.classList.remove('active'), 600);
 		}
-
-		ctx.save();
-		ctx.translate(piece.x, piece.y);
-		ctx.rotate(piece.rotation);
-		ctx.fillStyle = piece.color;
-		ctx.fillRect(-piece.width / 2, -piece.height / 2, piece.width, piece.height);
-		ctx.restore();
+	  });
+  
+	  // Mark button as initialized
+	  button.setAttribute('data-initialized', 'true');
 	});
+  }
+  
+  // Initialize Save Buttons on DOMContentLoaded
+  document.addEventListener('DOMContentLoaded', () => {
+	initializeSaveButtons();
+  });
+  
+  // Re-initialize Save Buttons when new content is lazy-loaded
+  const saveButtonObserver = new MutationObserver(() => {
+	initializeSaveButtons();
+  });
+  
+  // Observe the parent container of lazy-loaded cards
+  const saveButtonContainer = document.querySelector('.feed-container'); // Replace with the appropriate selector
+  if (saveButtonContainer) {
+	saveButtonObserver.observe(saveButtonContainer, { childList: true, subtree: true });
+  }
+  
+// function createConfetti(button) {
+//   const confettiContainer = document.createElement('div');
+//   confettiContainer.className = 'confetti';
+//   button.appendChild(confettiContainer);
 
-	// Continue animating if there's active confetti
-	if (activeConfettiCount > 0 || !hasStopped) {
-		animationFrame = requestAnimationFrame(updateConfetti);
-	} else {
-		// Once all confetti is down, stop the animation
-		stopConfetti();
-	}
-}
+//   for (let i = 0; i < 50; i++) {
+//     const confettiPiece = document.createElement('div');
+//     confettiPiece.className = 'confetti-piece';
+//     confettiPiece.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 70%)`;
+//     confettiPiece.style.top = `${Math.random() * 100}%`;
+//     confettiPiece.style.left = `${Math.random() * 100}%`;
 
-function startConfetti() {
-	// Create all confetti pieces in one burst
-	confetti = Array.from({ length: 200 }, createConfettiPiece);
-	confettiBlown = true;
-	hasStopped = false;  // Reset stop flag
-	updateConfetti();
-}
+//     const size = Math.random() * 8 + 4;
+//     confettiPiece.style.width = `${size}px`;
+//     confettiPiece.style.height = `${size}px`;
+//     confettiPiece.style.opacity = 1;
 
-function stopConfetti() {
-	// When all pieces are off screen, stop the animation naturally
-	cancelAnimationFrame(animationFrame);
-	hasStopped = true;  // Set flag to stop future updates
-	confetti = [];
-	ctx.clearRect(0, 0, canvas.width, canvas.height);
-}
+//     confettiContainer.appendChild(confettiPiece);
+
+//     confettiPiece.animate([
+//       { transform: `translateY(0) rotate(${Math.random() * 360}deg)` },
+//       { transform: `translateY(${Math.random() * -300}px) rotate(${Math.random() * 360}deg)` }
+//     ], {
+//       duration: 1500 + Math.random() * 1000,
+//       easing: 'ease-out',
+//       fill: 'forwards'
+//     });
+//   }
+
+//   setTimeout(() => confettiContainer.remove(), 2000);
+// }
+
+// // Confetti for new user celebration
+// const canvas = document.getElementById('confettiCanvas');
+// const ctx = canvas.getContext('2d');
+// let confetti = [];
+// let animationFrame;
+// let confettiBlown = false;
+// let hasStopped = false;  // New flag to track when confetti has stopped
+
+// // Set canvas size to match window
+// function resizeCanvas() {
+// 	canvas.width = window.innerWidth;
+// 	canvas.height = window.innerHeight;
+// }
+// resizeCanvas();
+// window.addEventListener('resize', resizeCanvas);
+
+// function createConfettiPiece() {
+// 	return {
+// 		x: Math.random() * canvas.width,
+// 		y: Math.random() * canvas.height - canvas.height,
+// 		width: Math.random() * 10 + 5,  // Rectangular width
+// 		height: Math.random() * 6 + 3,  // Rectangular height
+// 		color: gsap.utils.random(["#FF6F61", "#FFD700", "#4CAF50", "#42A5F5", "#FF4081", "#FFEB3B", "#7E57C2", "#F06292", "#FFA726", "#8BC34A"]),
+// 		rotation: Math.random() * Math.PI * 2,
+// 		speed: Math.random() * 3 + 2,
+// 		rotationSpeed: Math.random() * 0.02 + 0.01,
+// 		drift: Math.random() * 0.5 - 0.25,  // Adds slight drifting to left/right
+// 		fallSpeed: Math.random() * 2 + 3
+// 	};
+// }
+
+// function updateConfetti() {
+// 	ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+// 	let activeConfettiCount = 0;
+
+// 	confetti.forEach((piece, index) => {
+// 		piece.y += piece.fallSpeed;
+// 		piece.x += piece.drift;
+// 		piece.rotation += piece.rotationSpeed;
+
+// 		if (piece.y < canvas.height) {
+// 			activeConfettiCount++;
+// 		}
+
+// 		ctx.save();
+// 		ctx.translate(piece.x, piece.y);
+// 		ctx.rotate(piece.rotation);
+// 		ctx.fillStyle = piece.color;
+// 		ctx.fillRect(-piece.width / 2, -piece.height / 2, piece.width, piece.height);
+// 		ctx.restore();
+// 	});
+
+// 	// Continue animating if there's active confetti
+// 	if (activeConfettiCount > 0 || !hasStopped) {
+// 		animationFrame = requestAnimationFrame(updateConfetti);
+// 	} else {
+// 		// Once all confetti is down, stop the animation
+// 		stopConfetti();
+// 	}
+// }
+
+// function startConfetti() {
+// 	// Create all confetti pieces in one burst
+// 	confetti = Array.from({ length: 200 }, createConfettiPiece);
+// 	confettiBlown = true;
+// 	hasStopped = false;  // Reset stop flag
+// 	updateConfetti();
+// }
+
+// function stopConfetti() {
+// 	// When all pieces are off screen, stop the animation naturally
+// 	cancelAnimationFrame(animationFrame);
+// 	hasStopped = true;  // Set flag to stop future updates
+// 	confetti = [];
+// 	ctx.clearRect(0, 0, canvas.width, canvas.height);
+// }
 
 if(URL.parse(document.referrer).pathname === '/sign-up') {
 	startConfetti()
@@ -458,12 +478,31 @@ class NoteMenu {
 	}
   }
   
-  document.addEventListener('DOMContentLoaded', () => {
-	const noteMenuButtons = document.querySelectorAll('.note-menu-btn');
+  // Function to initialize NoteMenu for all buttons
+  function initializeNoteMenus() {
+	const noteMenuButtons = document.querySelectorAll('.note-menu-btn:not([data-initialized])');
 	noteMenuButtons.forEach((btn) => {
 	  new NoteMenu(btn); // Create a new instance of NoteMenu for each button
+	  btn.setAttribute('data-initialized', 'true'); // Mark as initialized
 	});
+  }
+  
+  // Initialize NoteMenus on DOMContentLoaded
+  document.addEventListener('DOMContentLoaded', () => {
+	initializeNoteMenus();
   });
+  
+  // Re-initialize NoteMenus when new content is lazy-loaded
+  const observer = new MutationObserver(() => {
+	initializeNoteMenus();
+  });
+  
+  // Observe the parent container of lazy-loaded cards
+  const feedContainer = document.querySelector('.feed-container'); // Replace with the appropriate selector
+  if (feedContainer) {
+	observer.observe(feedContainer, { childList: true, subtree: true });
+  }
+  
   
 
 //* Temporary alert close
