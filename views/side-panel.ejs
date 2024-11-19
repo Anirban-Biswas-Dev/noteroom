@@ -40,6 +40,10 @@
                   <p>Start saving <span class="anim-bg">important notes</span> to easily access them later!</p>
                 </div>
               <% } else { %>
+                <div class="no-saved-notes-message"  style="display: none;">
+                  <p>It looks like you haven't saved any notes yet.</p>
+                  <p>Start saving <span class="anim-bg">important notes</span> to easily access them later!</p>
+                </div>
                 <% savedNotes.forEach(note => { %>
                   <div class="saved-note" id="saved-note-<%= note._id %>">
                     <span class="saved-note-doc-id" style="display: none;"><%= note._id %></span>

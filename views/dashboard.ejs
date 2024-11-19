@@ -26,6 +26,7 @@
 	<script src="https://cdn.socket.io/socket.io-3.0.1.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dexie@latest/dist/dexie.min.js"></script>
 	<link rel="apple-touch-icon" sizes="180x180" href="\apple-touch-icon.png">
 	<link rel="icon" type="image/png" sizes="32x32" href="\favicon-32x32.png">
 	<link rel="icon" type="image/png" sizes="16x16" href="\favicon-16x16.png">
@@ -85,20 +86,27 @@
 								<i class="fas fa-ellipsis-v"></i>
 							</button>
 							<div class="menu-options">
-								<div class="option svn-btn-parent" id="save-btn-<%= note._id %>" onclick="saveNote('<%= note._id %>')">
-									<% if(savedNotesIDs.includes(note._id.toString())) { %>
-										<button class="save-note-btn saved">
+
+
+								<% if(savedNotesIDs.includes(note._id.toString())) { %>
+									<div class="option svn-btn-parent saved" id="save-btn-<%= note._id %>" onclick="saveNote('<%= note._id %>', '<%= note.title %>')">
+										<button class="save-note-btn">
 											<i class="fa-regular fa-bookmark"></i>
 											<i class="fa-solid fa-bookmark saved"></i>
 										</button>
-									<% } else { %>
-										<button class="save-note-btn" >
-											<i class="fa-regular fa-bookmark"></i>
-											<i class="fa-solid fa-bookmark saved"></i>
-										</button>
-									<% } %>	
 										<span class="opt-label">Save Note</span>
-								</div>
+									</div>
+								<% } else { %>
+									<div class="option svn-btn-parent" id="save-btn-<%= note._id %>" onclick="saveNote('<%= note._id %>', '<%= note.title %>')">
+										<button class="save-note-btn">
+											<i class="fa-regular fa-bookmark"></i>
+											<i class="fa-solid fa-bookmark saved"></i>
+										</button>
+										<span class="opt-label">Save Note</span>
+									</div>
+								<% } %>
+
+
 								<div class="option" onclick="download('<%= note._id %>', '<%= note.title %>')">
 										<svg
 									class="download-icon"
@@ -118,7 +126,7 @@
 									</svg>
 									<span class="opt-label">Download</span>
 								</div>
-								<div class="option" 									onclick="setupShareModal('<%= note._id %>')"
+								<div class="option" onclick="setupShareModal('<%= note._id %>')"
 									>
 									<svg
 									class="share-icon"
