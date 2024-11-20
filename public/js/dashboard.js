@@ -122,6 +122,16 @@ let back_forward_note_add = {
 				manageNotes.addSaveNote(note)
 			})
 		}
+	},
+
+	async addNotis() {
+		let notis = await manageNotis.get()
+
+		if (notis.length != 0) {
+			notis.forEach(noti => {
+				manageNotes.addNoti(noti)
+			})
+		}
 	}
 }
 
@@ -146,6 +156,7 @@ if ((navigate.type === 'navigate') || (navigate.type == 'reload')) {
 
 } else if (navigate.type === 'back_forward') {	
 	back_forward_note_add.addSavedNotes()
+	back_forward_note_add.addNotis()
 }
 
 
