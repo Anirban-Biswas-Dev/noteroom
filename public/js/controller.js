@@ -22,10 +22,10 @@ function truncatedTitle(title) {
 }
 
 
-
 const db = new Dexie("Notes")
-db.version(1).stores({
-    savedNotes: "++id,noteID,noteTitle"
+db.version(2).stores({
+    savedNotes: "++id,noteID,noteTitle",
+    notis: "++id,notiID,feedbackID,isread,noteID,nfnTitle,commenterUsername,commenterDisplayname"
 })
 const manageSavedNotes = {
     /**
@@ -57,7 +57,41 @@ const manageSavedNotes = {
         await db.savedNotes.delete(note.id)
     }
 }
+const manageNotis = {
+    /**
+     * @param {Object} noteObj - { notiID, feedbackID, isread, noteID, nfnTitle, commenterUserName, commenterDisplayName }
+     * @description First checks if there is already a noteObject with noteID, if not then add that
+    */
+    async add(notiObj) {
+        let existingNoti = await db.notis.where("notiID").equals(notiObj.notiID).first()
+        if(!existingNoti) {
+            await db.notis.add({
+                notiID: notiObj.notiID, 
+                feedbackID: notiObj.feedbackID, 
+                isread: true, //! this needs to be dynamic. this has to be sent via feedback-given WS event
+                noteID: notiObj.noteID, 
+                nfnTitle: notiObj.nfnTitle, 
+                commenterUserName: notiObj.commenterUserName,
+                commenterDisplayName: notiObj.commenterDisplayName
+            })
+        }
+    },
 
+    async get(notiID) {
+        if (notiID === undefined) {
+            let allNotis = await db.notis.toArray()
+            return allNotis
+        } else {
+            let noti = await db.notis.where("notiID").equals(notiID).first()
+            return noti
+        }
+    },
+
+    async delete(notiID) {
+        let noti = await db.notis.where("notiID").equals(notiID).first()
+        await db.notis.delete(noti.id)
+    }
+}
 
 //* The main dynamic content loading manager object
 const manageNotes = { // I treat all the cards as notes
@@ -67,7 +101,6 @@ const manageNotes = { // I treat all the cards as notes
             # process:
         ~       notes are added with this function in 2 scenerios. One is after back_forward and another is lazy loading.
         ~       first the note will be added (1) and then the lazy loading oserver will be triggered for that specific note. (2)
-    
         => addSaveNote: adds note in the left-panel
         => addNoti: adds a notification in the right-panel
         => addProfile: adds profiles when searched in search-profile
@@ -201,28 +234,37 @@ const manageNotes = { // I treat all the cards as notes
         }
 	},
 
+    /**
+     * @param {Object} feedbackData - { notiID, feedbackID, isread, noteID, nfnTitle, commenterUserName, commenterDisplayName }
+     * @description - First checks if there is already a noti div with noti-notiID, if not, adds one
+    */
     addNoti: function (feedbackData) {
-        let notificationHtml = `
-              <div class="notification" id="noti-${feedbackData.notiID}">
-                  <span class='feedback-id' style="display: none;">${feedbackData.feedbackID}</span>
-                  <div class="first-row">
-                  <div class="frnt-wrapper">
-                  <span class="isRead ${feedbackData.isread}"></span>
-                    <a href='/view/${feedbackData.noteID}/#${feedbackData.feedbackID}' class="notification-link">
-                      <span class="notification-title">
-                      ${truncatedTitle(feedbackData.nfnTitle)}
-                      </span>
-                    </a>
-                    </div>   
-                    <span class="remove-notification" onclick="deleteNoti('${feedbackData.notiID}')">&times;</span>
-                  </div>
-                  <div class="notification-msg">
-                    <a href='/user/${feedbackData.commenterUserName}' class="commenter-prfl">
-                    ${feedbackData.commenterDisplayName}
-                    </a><a href='/view/${feedbackData.noteID}/#${feedbackData.feedbackID}' class="notification-link-2"> has given feedback on your notes! Check it out.</a>
-                  </div>
-              </div>`
-        document.querySelector('.notifications-container').insertAdjacentHTML('afterbegin', notificationHtml);
+        let notificationContainer = document.querySelector('.notifications-container')
+        let existingNoti = document.querySelector(`#noti-${feedbackData.notiID}`)
+
+        if (!existingNoti) {
+            let notificationHtml = `
+                  <div class="notification" id="noti-${feedbackData.notiID}">
+                      <span class='feedback-id' style="display: none;">${feedbackData.feedbackID}</span>
+                      <div class="first-row">
+                      <div class="frnt-wrapper">
+                      <span class="isRead ${feedbackData.isread}"></span>
+                        <a href='/view/${feedbackData.noteID}/#${feedbackData.feedbackID}' class="notification-link">
+                          <span class="notification-title">
+                          ${truncatedTitle(feedbackData.nfnTitle)}
+                          </span>
+                        </a>
+                        </div>   
+                        <span class="remove-notification" onclick="deleteNoti('${feedbackData.notiID}')">&times;</span>
+                      </div>
+                      <div class="notification-msg">
+                        <a href='/user/${feedbackData.commenterUserName}' class="commenter-prfl">
+                        ${feedbackData.commenterDisplayName}
+                        </a><a href='/view/${feedbackData.noteID}/#${feedbackData.feedbackID}' class="notification-link-2"> has given feedback on your notes! Check it out.</a>
+                      </div>
+                  </div>`
+            notificationContainer.insertAdjacentHTML('afterbegin', notificationHtml);
+        }
     },
 
     addProfile: function(student) {
@@ -516,7 +558,7 @@ try {
 
 
 //* Delete notifications: all pages
-function deleteNoti(id) {
+async function deleteNoti(id) {
     /* 
     # Process:
     ~   when clicking the delete noti. button, the notiID is sent. an WS event occurs to delete the notification with that id. (1)
@@ -524,6 +566,7 @@ function deleteNoti(id) {
     */
     conSock.emit('delete-noti', id) // 1
 	document.querySelector(`#noti-${id}`).remove() // 2
+    await manageNotis.delete(id)
 
     notificationCount--;
     updateNotificationBadge(); // 2
@@ -582,8 +625,8 @@ conSock.on('feedback-given' , (feedbackData) => {
     ~   in the right-panel (3). then the noti. button got shaked(mobile) (4).
     */
 	if (feedbackData.ownerStudentID == Cookies.get('studentID')) { // 1
-		feedbackData.isNoti = true
-		addNoti(feedbackData) // 3
+		addNoti(feedbackData)
+        manageNotis.add(feedbackData)
 
 		const nftShake = document.querySelector('.mobile-nft-btn')
 		nftShake.classList.add('shake') // 4
