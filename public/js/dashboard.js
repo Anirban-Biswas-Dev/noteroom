@@ -19,6 +19,7 @@ async function add_note(count) {
                 let noteData = {
                     thumbnail: note.content[0],
                     noteID: note._id,
+					feedbackCount: note.feedbackCount,
                     profile_pic: note.ownerDocID.profile_pic,
                     noteTitle: note.title,
                     ownerID: note.ownerDocID.studentID,
@@ -108,33 +109,27 @@ const observers = {
 	}
 }
 
-
-
-/*
-* Navigation capture and real time loading
-# Process:
-~	=> when the page gets reload, first the saved notes data is fetched and added in LS|key=savedNotes (1.1). it helps to add save class
-~		in the saved notes buttons. also empty lists are added in LS|key=addedNotes and LS|key=notis (1.2)
-
-~	=> when a back_forward is captured, means when the user comes to dashboard without reloading and only using back-button, all the
-~		data from LS is fetched. there are 3 types of data, all are list of objects form
-~			1. addedNotes: notes which are uploaded by other users (without reloading, not the one from the database) => isAddNote=true
-~			2. savedNotes: notes saved by the user => isSaveNote=true
-~			3. notis: notifications got at real time (without reloading, not the one from the database) => isNoti=true
-
-~		mapping through them, if isAddNote=true, the note gets added in the dashboard (if there is no note with that id, usefull for chrome) (2.1).
-
-~		if isSavedNote=true, first the no-notes-message is removed (2.2), then it gets added in the left-panel (if not already added) (2.3) and lastly
-~		the save class is added in the save button (2.4).
-
-~		if isNoti=true, the noti. object is added in the right-panel. (2.5)
+/**
+ * @description When back_forward is captured, these functions will add cards if there are any in IndexedBD 
 */
-let saved_notes = []
+let back_forward_note_add = {
+	async addSavedNotes() {
+		let savedNotes = await manageSavedNotes.get()
+	
+		if(savedNotes.length != 0) {
+			document.querySelector('.no-saved-notes-message').style.display = 'none'
+			savedNotes.forEach(note => {
+				manageNotes.addSaveNote(note)
+			})
+		}
+	}
+}
+
 let [navigate] = performance.getEntriesByType('navigation')
 if ((navigate.type === 'navigate') || (navigate.type == 'reload')) {
-	localStorage.clear()
-
+		
 	let studentDocID = Cookies.get('recordID').split(':')[1].replaceAll('"', '')
+
 	fetch(`/getNote?type=save&studentDocID=${studentDocID}`) // 1.1
 		.then(response => response.json() )
 		.then(notes => {
@@ -142,104 +137,51 @@ if ((navigate.type === 'navigate') || (navigate.type == 'reload')) {
 				let noteData = {
 					noteID: note._id,
 					noteTitle: note.title,
-					isSavedNote: true 
 				}	
-				saved_notes.push(noteData)
+				manageSavedNotes.add(noteData)
 				savedNotes.push(noteData.noteID)
 			})
-			localStorage.setItem('savedNotes', JSON.stringify(saved_notes)) // 1.1
-			localStorage.setItem('notis', JSON.stringify([])) // 1,2
-			localStorage.setItem('addedNotes', JSON.stringify([])) // 1.2
 		})
 		.catch(error => console.log(error.message))
 
-} else if (navigate.type === 'back_forward') {
-	let Datas = Object.keys(localStorage).filter(key => !key.includes('twk')).map(key => localStorage.getItem(key))
-	Datas.forEach(CardStr => {
-		let data = JSON.parse(CardStr)
-		data.map(note => {
-			if(note.isAddNote) { // 2.1
-				let existingNote = document.querySelector(`#note-${note.noteID}`)
-				if(existingNote === null) {
-					manageNotes.addNote(note)
-				}
-			} 
-			else if(note.isSavedNote) {
-				let noSavedNoteMessage = document.querySelector('.no-saved-notes-message')
-				if(noSavedNoteMessage) {
-					noSavedNoteMessage.style.display = 'none' // 2.2
-				}
-				if(manageStorage.isExists('savedNotes', note.noteID)) {
-					let existingNote = document.querySelector(`#saved-note-${note.noteID}`)
-					if(existingNote === null) {
-						manageNotes.addSaveNote(note) // 2.3
-						let saveBtn = document.querySelector(`#save-btn-${note.noteID}`)
-						if(saveBtn) {
-							saveBtn.classList.add('saved') // 2.4
-						}
-					}
-				}	
-			} 
-			else if(note.isNoti) {
-				manageNotes.addNoti(note) // 2.5
-			} 
-		})
-	})
+} else if (navigate.type === 'back_forward') {	
+	back_forward_note_add.addSavedNotes()
 }
 
 
+// A checker if there are any saved notes in `savedNotes` store, if not, shows the no-saved-notes message
+async function checkNoSavedMessage() {
+	let _savedNotes = await manageSavedNotes.get()
+	let noSavedNoteMessage = document.querySelector('.no-saved-notes-message')
+
+	if (_savedNotes.length == 0) {
+		if(noSavedNoteMessage) {
+			noSavedNoteMessage.style.display = 'inline' 
+		}
+	}
+}
 
 //* save/delete a note
-function saveNote(noteDocID) {
-	/*
-	# Process:
-	~	the noteID is sent when clicking the save button. first if the note is already saved or not is checked. this is checked by if the button has a class 
-	~	save or not (1). if has, the button acts like a save button, otherwise works like a delete button. 
-	~	after clicking save button, save class is added, then the prepared saved note object is added in LS|key=savedNotes, then adding to front-end, sending 
-	~	WS event to save the data in database. and lastly, if there are any no-saved-note msg, it gets removed.
-
-	~	clicking the delete button, WS event is raised to delete the data from db, removing save class from button, removing data from LS, and then removing
-	~	element from front-end. then if the LS|key=savedNotes has 0 contents, the no-saved-notes msg is shown (created if not exists)
-	*/
-
-    let button = document.querySelector(`#save-btn-${noteDocID}`);
+async function saveNote(noteDocID, noteTitle) {
     let recordID = Cookies.get('recordID').split(':')[1].replaceAll('"', '');
-	let noSavedNotesMsg = document.querySelector('.no-saved-notes-message')
+    let saveBtnDiv = document.querySelector(`#save-btn-${noteDocID}`)
 
-    if (!button.classList.contains('saved')) { // 1
-        button.classList.add('saved'); // adding saved class
-        let noteData = {
-            noteID: noteDocID,
-            noteTitle: document.querySelector(`#note-${noteDocID} .note-title a`).innerHTML,
-            isSavedNote: true 
-        };
+	if(saveBtnDiv.classList.contains("saved")) {
+		//* Delete note: from db, removing note-card, from `savedNotes` store
+		socket.emit('delete-saved-note', recordID, noteDocID);
 
-        manageStorage.update('savedNotes', undefined, 'insert', noteData); // adding to localstorage
-        manageNotes.addSaveNote(noteData); // adding to document
-        socket.emit('save-note', recordID, noteDocID); // adding to database
-		if(noSavedNotesMsg) {
-			noSavedNotesMsg.style.display = 'none' // removing no-saved-notes msg
-		}
-
-    } else {
-        socket.emit('delete-saved-note', recordID, noteDocID); // removing from db
-        button.classList.remove('saved'); // removing saved class
-        manageStorage.update('savedNotes', noteDocID, 'remove', undefined, 'note'); // removing from localstorage
-        document.querySelector(`#saved-note-${noteDocID}`).remove(); // removing from frontend
-
-		if(manageStorage.getContentLength('savedNotes') == 0) {
-			if(noSavedNotesMsg) {
-				noSavedNotesMsg.style.display = 'block' // showing no no-notes-saved if there are no saved notes left
-			} else {
-				document.querySelector('.saved-notes-container').insertAdjacentHTML('beforeend', `
-					<div class="no-saved-notes-message">
-                  		<p>It looks like you haven't saved any notes yet.</p>
-                  		<p>Start saving <span class="anim-bg">important notes</span> to easily access them later!</p>
-                	</div>
-				`) // creating no-saved-notes if there isn't any
-			}
-		}
-    }
+		document.querySelector(`#saved-note-${noteDocID}`).remove()
+		await manageSavedNotes.delete(noteDocID)
+		await checkNoSavedMessage()
+	} else {
+		//* Save note: into db, removing no-saved-notes message, into frontend, into `savedNotes` store
+		socket.emit('save-note', recordID, noteDocID);
+		document.querySelector('.no-saved-notes-message').style.display = 'none'
+		
+		let savedNoteObject = { noteID: noteDocID, noteTitle: noteTitle }
+		manageNotes.addSaveNote(savedNoteObject)
+		manageSavedNotes.add(savedNoteObject)
+	}
 }
 
 
@@ -261,7 +203,6 @@ socket.on('note-upload', (noteData) => {
 	~	first the data is added as isAddNote in LS|key=addedNotes. then it is added in the dashboard.
 	*/
 	noteData.isAddNote = true 
-	manageStorage.update('addedNotes', undefined, 'insert', noteData)
 	manageNotes.addNote(noteData)
 })
 

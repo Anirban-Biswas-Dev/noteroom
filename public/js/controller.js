@@ -23,62 +23,40 @@ function truncatedTitle(title) {
 
 
 
-//* Local Storage manager object
-const manageStorage = {
-    /* 
-    # Functions:
-        => add: adds a stringified object in the localStorage under a given key
-        => getContent: returns a list of objects under a key
-        => update: updates an entry under a key, either insert an object in a list or remove an object from that list
-            # process: key is must
-        ~       insert: id has to be undefined cause everytime an object will be inserted. so, object can't be undefined. 
-        ~               method=insert. after getting the content under that key, the object will be pushed and updated in LS.
-        ~               type is not needed
-        ~       remove: method=remove, object has to be undefined cause object removal is dependent on id(noteID or notiID). 
-        ~               so, id can't be undefined. if type=undefined then id will refer notiID which is default. if type=note 
-        ~               then id will refer noteID. after getting type and id, the object with that id will be filtered out 
-        ~               and pused, updated in LS
-        => isExists: checks if an object exists in a list under a key or not. The object is identified ONLY BY ITS NOTEID 
-        => getContentLength: returns the amount of objects in a list under a key
+const db = new Dexie("Notes")
+db.version(1).stores({
+    savedNotes: "++id,noteID,noteTitle"
+})
+const manageSavedNotes = {
+    /**
+     * @param {Object} noteObj - { noteID, noteTitle }
+     * @description First checks if there is already a noteObject with noteID, if not then add that
     */
+    async add(noteObj) {
+        let existingNote = await db.savedNotes.where("noteID").equals(noteObj.noteID).first()
+        if(!existingNote) {
+            await db.savedNotes.add({
+                noteID: noteObj.noteID,
+                noteTitle: noteObj.noteTitle
+            })
+        }
+    },
 
-    add: function(key, object) {
-        localStorage.setItem(key, JSON.stringify(object))
+    async get(noteID) {
+        if (noteID === undefined) {
+            let allNotes = await db.savedNotes.toArray()
+            return allNotes
+        } else {
+            let note = await db.savedNotes.where("noteID").equals(noteID).first()
+            return note
+        }
     },
-    getContent: function(key) {
-        let values = JSON.parse(localStorage.getItem(key))
-        return values
-    },
-    update: function(key, id=undefined, method, object=undefined, type=undefined) {
-        if(method === 'insert') {
-            let values = this.getContent(key)
-            if((object !== undefined) && (id === undefined)) {
-                values.push(object)
-                this.add(key, values)
-            }
-        } else if(method === 'remove') {
-            if(object === undefined) {
-                let values = this.getContent(key)
-                let modifiedDocs;
-                if(type == undefined) {
-                    modifiedDocs = values.filter(item => item.notiID != id) // after remove
-                } else if(type == 'note') {
-                    modifiedDocs = values.filter(item => item.noteID != id) // after remove
-                }
-                this.add(key, modifiedDocs)
-            }
-        } 
-    },
-    isExists: function(key, noteID) {
-        let values = this.getContent(key)
-        let noteData = values.find(item => item.noteID == noteID)
-	    return !(noteData == undefined)
-    },
-    getContentLength: function(key) {
-        return this.getContent(key).length
+
+    async delete(noteID) {
+        let note = await db.savedNotes.where("noteID").equals(noteID).first()
+        await db.savedNotes.delete(note.id)
     }
 }
-
 
 
 //* The main dynamic content loading manager object
@@ -115,7 +93,7 @@ const manageNotes = { // I treat all the cards as notes
 								<i class="fas fa-ellipsis-v"></i>
 							</button>
 							<div class="menu-options">
-								<div class="option svn-btn-parent" id="save-btn-${noteData.noteID}" onclick="saveNote('${noteData.noteID}')">
+								<div class="option svn-btn-parent" id="save-btn-${noteData.noteID}" onclick="saveNote('${noteData.noteID}', '${noteData.noteTitle}')">
 									
 										<button class="save-note-btn" >
 											<i class="fa-regular fa-bookmark"></i>
@@ -181,7 +159,7 @@ const manageNotes = { // I treat all the cards as notes
 							stroke-linejoin="round"
 						/>
 								</svg>
-							<span class="cmnt-count">0</span>
+							<span class="cmnt-count">${noteData.feedbackCount}</span>
 						</div>
 						
 					</div>           
@@ -195,24 +173,32 @@ const manageNotes = { // I treat all the cards as notes
 		document.querySelector('.fetch-loading').style.display = 'flex'
 	},
 
+    /**
+     * @param {Object} noteData - { noteID, noteTitle }
+     * @description First checks if there is already a saved note div with that noteID (saved-note-noteID). If not then adds one
+     */
 	addSaveNote: function(noteData) { 
 		let savedNotesContainer = document.querySelector(".saved-notes-container");
-		let savedNotesHtml = `
-			<div class="saved-note hide" id="saved-note-${noteData.noteID}">
-				<span class="sv-note-title">
-					<a class="sv-n-link" href='/view/${noteData.noteID}'>${truncatedTitle(noteData.noteTitle)}</a>
-				</span>
-			</div>`;
-		savedNotesContainer.insertAdjacentHTML('afterbegin', savedNotesHtml);
-		const newNote = document.getElementById(`saved-note-${noteData.noteID}`);
-		
-		// Remove the hide class and add the transition class after a short delay
-		setTimeout(() => {
-			if (newNote) {
-				newNote.classList.remove('hide'); 
-				newNote.classList.add('show-sv-in-LP');
-			}
-		}, 50);
+		let existingNote = document.querySelector(`#saved-note-${noteData.noteID}`)
+
+        if(!existingNote) {
+            let savedNotesHtml = `
+                <div class="saved-note hide" id="saved-note-${noteData.noteID}">
+                    <span class="sv-note-title">
+                        <a class="sv-n-link" href='/view/${noteData.noteID}'>${truncatedTitle(noteData.noteTitle)}</a>
+                    </span>
+                </div>`;
+            savedNotesContainer.insertAdjacentHTML('afterbegin', savedNotesHtml);
+            const newNote = document.getElementById(`saved-note-${noteData.noteID}`);
+            
+            // Remove the hide class and add the transition class after a short delay
+            setTimeout(() => {
+                if (newNote) {
+                    newNote.classList.remove('hide'); 
+                    newNote.classList.add('show-sv-in-LP');
+                }
+            }, 50);
+        }
 	},
 
     addNoti: function (feedbackData) {
@@ -538,7 +524,6 @@ function deleteNoti(id) {
     */
     conSock.emit('delete-noti', id) // 1
 	document.querySelector(`#noti-${id}`).remove() // 2
-	manageStorage.update('notis', id, 'remove') //3 
 
     notificationCount--;
     updateNotificationBadge(); // 2
@@ -598,7 +583,6 @@ conSock.on('feedback-given' , (feedbackData) => {
     */
 	if (feedbackData.ownerStudentID == Cookies.get('studentID')) { // 1
 		feedbackData.isNoti = true
-		manageStorage.update('notis', undefined, 'insert', feedbackData) // 2
 		addNoti(feedbackData) // 3
 
 		const nftShake = document.querySelector('.mobile-nft-btn')
