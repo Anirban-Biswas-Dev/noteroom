@@ -31,6 +31,10 @@ const notesSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    feedbackCount: {
+        type: Number,
+        default: 0
+    },
     createdAt: {
         type: Date,
         required: true,

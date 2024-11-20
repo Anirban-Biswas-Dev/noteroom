@@ -159,7 +159,7 @@ const manageNotes = { // I treat all the cards as notes
 							stroke-linejoin="round"
 						/>
 								</svg>
-							<span class="cmnt-count">0</span>
+							<span class="cmnt-count">${noteData.feedbackCount}</span>
 						</div>
 						
 					</div>           

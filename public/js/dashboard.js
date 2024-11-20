@@ -19,6 +19,7 @@ async function add_note(count) {
                 let noteData = {
                     thumbnail: note.content[0],
                     noteID: note._id,
+					feedbackCount: note.feedbackCount,
                     profile_pic: note.ownerDocID.profile_pic,
                     noteTitle: note.title,
                     ownerID: note.ownerDocID.studentID,

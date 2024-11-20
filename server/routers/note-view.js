@@ -32,6 +32,7 @@ function noteViewRouter(io) {
     }
     
     async function addFeedback(feedbackObj) {
+        await Notes.findByIdAndUpdate(feedbackObj.noteDocID, { $inc: { feedbackCount: 1 } })
         let feedback = await Feedbacks.create(feedbackObj)
         let feedbackStudents = await Feedbacks.findById(feedback._id)
             .populate('commenterDocID', 'displayname username studentID profile_pic') 
