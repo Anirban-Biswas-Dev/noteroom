@@ -120,6 +120,12 @@ let back_forward_note_add = {
 			document.querySelector('.no-saved-notes-message').style.display = 'none'
 			savedNotes.forEach(note => {
 				manageNotes.addSaveNote(note)
+				let _note = document.querySelector(`#save-btn-${note.noteID}`)
+				if(_note) {
+					_note.classList.add("saved")
+					document.querySelector(`#save-btn-${note.noteID} .save-note-btn .fa-solid`).style.display = 'inline'
+					document.querySelector(`#save-btn-${note.noteID} .save-note-btn .fa-regular`).style.display = 'none'
+				}
 			})
 		}
 	},
