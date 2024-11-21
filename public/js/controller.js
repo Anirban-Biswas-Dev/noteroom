@@ -244,7 +244,7 @@ const manageNotes = { // I treat all the cards as notes
 
         if (!existingNoti) {
             let notificationHtml = `
-                  <div class="notification" id="noti-${feedbackData.notiID}">
+                  <div class="notification secondary-${feedbackData.isread}" id="noti-${feedbackData.notiID}">
                       <span class='feedback-id' style="display: none;">${feedbackData.feedbackID}</span>
                       <div class="first-row">
                       <div class="frnt-wrapper">
