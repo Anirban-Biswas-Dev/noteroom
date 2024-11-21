@@ -132,6 +132,16 @@ let back_forward_note_add = {
 				manageNotes.addNoti(noti)
 			})
 		}
+	},
+
+	async addUNotes() {
+		let notes = await manageDb.get('notes')
+
+		if (notes.length != 0) {
+			notes.forEach(note => {
+				manageNotes.addNote(note)
+			})
+		}
 	}
 }
 
@@ -139,6 +149,7 @@ let [navigate] = performance.getEntriesByType('navigation')
 if ((navigate.type === 'navigate') || (navigate.type == 'reload')) {
 	
 	db.notis.clear()
+	db.notes.clear()
 	let studentDocID = Cookies.get('recordID').split(':')[1].replaceAll('"', '')
 
 	fetch(`/getNote?type=save&studentDocID=${studentDocID}`) // 1.1
@@ -158,6 +169,7 @@ if ((navigate.type === 'navigate') || (navigate.type == 'reload')) {
 } else if (navigate.type === 'back_forward') {	
 	back_forward_note_add.addSavedNotes()
 	back_forward_note_add.addNotis()
+	back_forward_note_add.addUNotes()
 }
 
 
@@ -214,8 +226,8 @@ socket.on('note-upload', (noteData) => {
 	# Process: when a note is uploaded, this event is handled by every online user
 	~	first the data is added as isAddNote in LS|key=addedNotes. then it is added in the dashboard.
 	*/
-	noteData.isAddNote = true 
 	manageNotes.addNote(noteData)
+	manageDb.add('notes', noteData)
 })
 
 
