@@ -102,6 +102,7 @@ function noteViewRouter(io) {
             io.emit('feedback-given', { //* Feedback-notifications: This will go to everyuser, but the user with ownerUsername=recordName will keep it
                 noteID /* The note on which the feedback is given: to create a direct link to that note */: noteDocID,
                 nfnTitle /* The note's title on which the feedback is given: the link will contain the note's title */: feedback.noteDocID.title, 
+                isread: feedbackNoti.isRead,
 
                 commenterDisplayName /* The student's displayname who gave the feedback: the link will contain commenter's displayname */ : feedback.commenterDocID.displayname,
                 commenterUserName /* The student's username who gave the feedback: for redirecting directly to the commenter's profile */ : feedback.commenterDocID.username,

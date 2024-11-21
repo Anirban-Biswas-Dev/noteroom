@@ -114,7 +114,7 @@ const observers = {
 */
 let back_forward_note_add = {
 	async addSavedNotes() {
-		let savedNotes = await manageSavedNotes.get()
+		let savedNotes = await manageDb.get('savedNotes');
 	
 		if(savedNotes.length != 0) {
 			document.querySelector('.no-saved-notes-message').style.display = 'none'
@@ -125,7 +125,7 @@ let back_forward_note_add = {
 	},
 
 	async addNotis() {
-		let notis = await manageNotis.get()
+		let notis = await manageDb.get('notis')
 
 		if (notis.length != 0) {
 			notis.forEach(noti => {
@@ -137,7 +137,8 @@ let back_forward_note_add = {
 
 let [navigate] = performance.getEntriesByType('navigation')
 if ((navigate.type === 'navigate') || (navigate.type == 'reload')) {
-		
+	
+	db.notis.clear()
 	let studentDocID = Cookies.get('recordID').split(':')[1].replaceAll('"', '')
 
 	fetch(`/getNote?type=save&studentDocID=${studentDocID}`) // 1.1
@@ -148,7 +149,7 @@ if ((navigate.type === 'navigate') || (navigate.type == 'reload')) {
 					noteID: note._id,
 					noteTitle: note.title,
 				}	
-				manageSavedNotes.add(noteData)
+				manageDb.add('savedNotes', noteData)
 				savedNotes.push(noteData.noteID)
 			})
 		})
@@ -162,7 +163,7 @@ if ((navigate.type === 'navigate') || (navigate.type == 'reload')) {
 
 // A checker if there are any saved notes in `savedNotes` store, if not, shows the no-saved-notes message
 async function checkNoSavedMessage() {
-	let _savedNotes = await manageSavedNotes.get()
+	let _savedNotes = await manageDb.get('savedNotes')
 	let noSavedNoteMessage = document.querySelector('.no-saved-notes-message')
 
 	if (_savedNotes.length == 0) {
@@ -182,7 +183,7 @@ async function saveNote(noteDocID, noteTitle) {
 		socket.emit('delete-saved-note', recordID, noteDocID);
 
 		document.querySelector(`#saved-note-${noteDocID}`).remove()
-		await manageSavedNotes.delete(noteDocID)
+		await manageDb.delete('savedNotes', noteDocID)
 		await checkNoSavedMessage()
 	} else {
 		//* Save note: into db, removing no-saved-notes message, into frontend, into `savedNotes` store
@@ -191,7 +192,7 @@ async function saveNote(noteDocID, noteTitle) {
 		
 		let savedNoteObject = { noteID: noteDocID, noteTitle: noteTitle }
 		manageNotes.addSaveNote(savedNoteObject)
-		manageSavedNotes.add(savedNoteObject)
+		manageDb.add('savedNotes', savedNoteObject)
 	}
 }
 
