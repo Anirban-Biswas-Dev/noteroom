@@ -78,6 +78,7 @@ function uploadRouter(io) {
                     thumbnail /* The first image of the notes content as a thumbnail */: allFilePaths[0],
                     profile_pic /* Profile pic path of the owner of the note */ : owner.profile_pic,
                     noteTitle /* Title of the note */ : noteData.title, 
+                    feedbackCount: 0, //! maybe this needs to be dynamic
                     ownerDisplayName /* Displayname of the owener of the note*/ : owner.displayname, 
                     ownerID /* Student ID of the owner of the note */ : owner.studentID,
                     ownerUserName /* Username of the owner of the note */ : owner.username
