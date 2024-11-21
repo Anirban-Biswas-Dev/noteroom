@@ -27,71 +27,87 @@ db.version(2).stores({
     savedNotes: "++id,noteID,noteTitle",
     notis: "++id,notiID,feedbackID,isread,noteID,nfnTitle,commenterUsername,commenterDisplayname"
 })
-const manageSavedNotes = {
+
+/**
+* @param {string} store - 'savedNotes' or 'notis'
+* @param {Object} obj - The object to store
+*/
+const manageDb = {
+     /**
+     * @description For **savedNotes** store, `obj` = { noteID, noteTitle }
+     * @description For **notis** store, `obj` = { notiID, feedbackID, isread, noteID, nfnTitle, commenterUserName, commenterDisplayName }
+     */
+    async add(store, obj) {
+        switch(store) {
+            case 'savedNotes':
+                let existingNote = await db.savedNotes.where("noteID").equals(obj.noteID).first()
+                if(!existingNote) {
+                    await db.savedNotes.add({
+                        noteID: obj.noteID,
+                        noteTitle: obj.noteTitle
+                    })
+                }
+                break
+            case 'notis':
+                let existingNoti = await db.notis.where("notiID").equals(obj.notiID).first()
+                if(!existingNoti) {
+                    await db.notis.add({
+                        notiID: obj.notiID, 
+                        feedbackID: obj.feedbackID, 
+                        isread: true, //! this needs to be dynamic. this has to be sent via feedback-given WS event
+                        noteID: obj.noteID, 
+                        nfnTitle: obj.nfnTitle, 
+                        commenterUserName: obj.commenterUserName,
+                        commenterDisplayName: obj.commenterDisplayName
+                    })
+                }
+                break
+        }
+    },
+
     /**
-     * @param {Object} noteObj - { noteID, noteTitle }
-     * @description First checks if there is already a noteObject with noteID, if not then add that
+    * @param {string} id
+    * @description For **savedNotes** = `noteID`, for **notis** = `notiID`
     */
-    async add(noteObj) {
-        let existingNote = await db.savedNotes.where("noteID").equals(noteObj.noteID).first()
-        if(!existingNote) {
-            await db.savedNotes.add({
-                noteID: noteObj.noteID,
-                noteTitle: noteObj.noteTitle
-            })
+    async get(store, id) {
+        switch(store) {
+            case 'savedNotes':
+                if (id === undefined) {
+                    let allNotes = await db.savedNotes.toArray()
+                    return allNotes
+                } else {
+                    let note = await db.savedNotes.where("noteID").equals(id).first()
+                    return note
+                }
+            case 'notis':
+                if (id === undefined) {
+                    let allNotis = await db.notis.toArray()
+                    return allNotis
+                } else {
+                    let noti = await db.notis.where("notiID").equals(id).first()
+                    return noti
+                }
         }
     },
 
-    async get(noteID) {
-        if (noteID === undefined) {
-            let allNotes = await db.savedNotes.toArray()
-            return allNotes
-        } else {
-            let note = await db.savedNotes.where("noteID").equals(noteID).first()
-            return note
+    /**
+    * @param {string} id
+    * @description For **savedNotes** = `noteID`, for **notis** = `notiID`
+    */
+    async delete(store, id) {
+        switch(store) {
+            case 'savedNotes':
+                let note = await db.savedNotes.where("noteID").equals(id).first()
+                await db.savedNotes.delete(note.id)
+                break
+            case 'notis':
+                let noti = await db.notis.where("notiID").equals(id).first()
+                await db.notis.delete(noti.id)
+                break
         }
-    },
-
-    async delete(noteID) {
-        let note = await db.savedNotes.where("noteID").equals(noteID).first()
-        await db.savedNotes.delete(note.id)
     }
 }
-const manageNotis = {
-    /**
-     * @param {Object} noteObj - { notiID, feedbackID, isread, noteID, nfnTitle, commenterUserName, commenterDisplayName }
-     * @description First checks if there is already a noteObject with noteID, if not then add that
-    */
-    async add(notiObj) {
-        let existingNoti = await db.notis.where("notiID").equals(notiObj.notiID).first()
-        if(!existingNoti) {
-            await db.notis.add({
-                notiID: notiObj.notiID, 
-                feedbackID: notiObj.feedbackID, 
-                isread: true, //! this needs to be dynamic. this has to be sent via feedback-given WS event
-                noteID: notiObj.noteID, 
-                nfnTitle: notiObj.nfnTitle, 
-                commenterUserName: notiObj.commenterUserName,
-                commenterDisplayName: notiObj.commenterDisplayName
-            })
-        }
-    },
 
-    async get(notiID) {
-        if (notiID === undefined) {
-            let allNotis = await db.notis.toArray()
-            return allNotis
-        } else {
-            let noti = await db.notis.where("notiID").equals(notiID).first()
-            return noti
-        }
-    },
-
-    async delete(notiID) {
-        let noti = await db.notis.where("notiID").equals(notiID).first()
-        await db.notis.delete(noti.id)
-    }
-}
 
 //* The main dynamic content loading manager object
 const manageNotes = { // I treat all the cards as notes
@@ -566,7 +582,7 @@ async function deleteNoti(id) {
     */
     conSock.emit('delete-noti', id) // 1
 	document.querySelector(`#noti-${id}`).remove() // 2
-    await manageNotis.delete(id)
+    await manageDb.delete('notis', id)
 
     notificationCount--;
     updateNotificationBadge(); // 2
@@ -626,7 +642,7 @@ conSock.on('feedback-given' , (feedbackData) => {
     */
 	if (feedbackData.ownerStudentID == Cookies.get('studentID')) { // 1
 		addNoti(feedbackData)
-        manageNotis.add(feedbackData)
+        manageDb.add('notis', feedbackData)
 
 		const nftShake = document.querySelector('.mobile-nft-btn')
 		nftShake.classList.add('shake') // 4
