@@ -38,7 +38,6 @@ async function add_note(count) {
 
 
 //* Observer's object
-let savedNotes = []
 const observers = {
 	observer: function() {
 		/*
@@ -87,11 +86,16 @@ const observers = {
 				document.querySelector('.fetch-loading').style.display = 'flex'
 				let noteList = await add_note(3) // 1
 				if(noteList.length != 0) {
-					noteList.forEach(note => {
+					noteList.forEach(async note => {
 						if(!document.querySelector(`#note-${note.noteID}`)) {
 							manageNotes.addNote(note) // 2
+							let savedNotesObj = await manageDb.get('savedNotes')
+							let savedNotes = savedNotesObj.map(obj => obj.noteID)
+
 							if(savedNotes.includes(note.noteID)) {
 								document.querySelector(`#save-btn-${note.noteID}`).classList.add('saved') // 3
+								document.querySelector(`#save-btn-${note.noteID} .save-note-btn .fa-solid`).style.display = 'inline'
+								document.querySelector(`#save-btn-${note.noteID} .save-note-btn .fa-regular`).style.display = 'none'
 							}
 						}
 					})
@@ -156,6 +160,7 @@ if ((navigate.type === 'navigate') || (navigate.type == 'reload')) {
 	
 	db.notis.clear()
 	db.notes.clear()
+
 	let studentDocID = Cookies.get('recordID').split(':')[1].replaceAll('"', '')
 
 	fetch(`/getNote?type=save&studentDocID=${studentDocID}`) // 1.1
@@ -167,7 +172,6 @@ if ((navigate.type === 'navigate') || (navigate.type == 'reload')) {
 					noteTitle: note.title,
 				}	
 				manageDb.add('savedNotes', noteData)
-				savedNotes.push(noteData.noteID)
 			})
 		})
 		.catch(error => console.log(error.message))
