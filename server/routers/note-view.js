@@ -92,26 +92,30 @@ function noteViewRouter(io) {
             let feedback = await addFeedback(feedbackData) /* The extented-feedback document with commenter info */
             io.to(room).emit('add-feedback', feedback.toObject()) //* Adding feedback under the note view: Sending extented-feedback to all the users via websockets
 
-            let feedbackNoti = await addFeedbackNotifications({
-                noteDocID: noteDocID, 
-                commenterDocID: commenterDocID, 
-                feedbackDocID: feedback._id,
-                ownerStudentID: ownerStudentID
-            }) // Save the feedback notifications in database
+            
+            if (commenterStudentID != ownerStudentID) {
+                let feedbackNoti = await addFeedbackNotifications({
+                    noteDocID: noteDocID, 
+                    commenterDocID: commenterDocID, 
+                    feedbackDocID: feedback._id,
+                    ownerStudentID: ownerStudentID
+                }) // Save the feedback notifications in database
 
-            io.emit('feedback-given', { //* Feedback-notifications: This will go to everyuser, but the user with ownerUsername=recordName will keep it
-                noteID /* The note on which the feedback is given: to create a direct link to that note */: noteDocID,
-                nfnTitle /* The note's title on which the feedback is given: the link will contain the note's title */: feedback.noteDocID.title, 
-                isread: feedbackNoti.isRead,
+                io.emit('feedback-given', { //* Feedback-notifications: This will go to everyuser, but the user with ownerUsername=recordName will keep it
+                    noteID /* The note on which the feedback is given: to create a direct link to that note */: noteDocID,
+                    nfnTitle /* The note's title on which the feedback is given: the link will contain the note's title */: feedback.noteDocID.title, 
+                    isread: feedbackNoti.isRead,
+    
+                    commenterDisplayName /* The student's displayname who gave the feedback: the link will contain commenter's displayname */ : feedback.commenterDocID.displayname,
+                    commenterUserName /* The student's username who gave the feedback: for redirecting directly to the commenter's profile */ : feedback.commenterDocID.username,
+    
+                    ownerStudentID /* The note-owner's studentID : varifing with studentID cookie to keep/drop notification */: ownerStudentID,
+    
+                    notiID: /* The document ID of notification. This is used to remove specific notifications later */ feedbackNoti._id,
+                    feedbackID /* This is the unique id of each feedback, used for redirection to that specific feedback*/ : feedback._id
+                })
+            }
 
-                commenterDisplayName /* The student's displayname who gave the feedback: the link will contain commenter's displayname */ : feedback.commenterDocID.displayname,
-                commenterUserName /* The student's username who gave the feedback: for redirecting directly to the commenter's profile */ : feedback.commenterDocID.username,
-
-                ownerStudentID /* The note-owner's studentID : varifing with studentID cookie to keep/drop notification */: ownerStudentID,
-
-                notiID: /* The document ID of notification. This is used to remove specific notifications later */ feedbackNoti._id,
-                feedbackID /* This is the unique id of each feedback, used for redirection to that specific feedback*/ : feedback._id
-            })
         })
     })
 
