@@ -77,7 +77,6 @@ function noteViewRouter(io) {
 
         socket.on('join-room', room => {
             socket.join(room)
-            console.log(`A user added to room: ${room}`)
         })
         socket.on('feedback', async (room, feedbackText, noteDocID, commenterStudentID) => {
             let commenterDocID = await getDocumentID(commenterStudentID)

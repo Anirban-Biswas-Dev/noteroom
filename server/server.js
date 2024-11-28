@@ -25,6 +25,8 @@ const settingsRouter = require('./routers/settings')
 const Notes = require('./schemas/notes')
 const Students = require('./schemas/students')
 const Alerts = require('./schemas/alerts')
+const { getNotifications } = require('./routers/controller')
+const allNotifs = require('./schemas/notifications').Notifs
 
 const url = process.env.MONGO_URI
 mongoose.connect(url).then(() => {
@@ -148,6 +150,11 @@ app.get('/getnote', async (req, res, next) => {
     }
 })
 
+app.get('/getNotifs', async (req, res) => {
+    let studentID = req.query.studentID
+    let notifs = await getNotifications(allNotifs, studentID)
+    res.json(notifs)
+})
 
 app.get('/message', async (req, res) => {
     if(req.session && req.session.stdid == "1094a5ad-d519-4055-9e2b-0f0d9447da02") {
@@ -173,5 +180,5 @@ app.get('*', (req, res) => {
 }) // 404 if any url requested by the user is not found
 
 server.listen(port, () => {
-    console.log(`Server is listening on localhost:${port}`);
+    console.log(`Server is listening on ${port}`);
 })
