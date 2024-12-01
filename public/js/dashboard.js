@@ -496,9 +496,17 @@ class NoteMenu {
 	observer.observe(feedContainer, { childList: true, subtree: true });
   }
   
-  
 
-//* Temporary alert close
-document.querySelector('.error__close').addEventListener('click', function() {
-	document.querySelector('.error').remove()
-})
+let alert = document.querySelector('#production')
+if (alert) {
+	if(location.href.includes(".co")) {
+		document.querySelector('#production').remove()
+	}
+}
+
+try {
+	//* Temporary alert close
+	document.querySelector('.error__close').addEventListener('click', function() {
+		document.querySelector('.error').remove()
+	})
+} catch (error) {}
