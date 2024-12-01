@@ -162,6 +162,7 @@ if ((navigate.type === 'navigate') || (navigate.type == 'reload')) {
 	db.notes.clear()
 
 	let studentDocID = Cookies.get('recordID').split(':')[1].replaceAll('"', '')
+	let studentID = Cookies.get('studentID')
 
 	fetch(`/getNote?type=save&studentDocID=${studentDocID}`) // 1.1
 		.then(response => response.json() )
@@ -175,6 +176,23 @@ if ((navigate.type === 'navigate') || (navigate.type == 'reload')) {
 			})
 		})
 		.catch(error => console.log(error.message))
+
+	fetch(`/getNotifs?studentID=${studentID}`)
+		.then(response =>  response.json() )
+		.then(notifs => {
+			notifs.forEach(noti => {
+				let notiData = {
+					notiID: noti._id,
+					feedbackID: noti.feedbackDocID,
+					isread: noti.isRead,
+					noteID: noti.noteDocID._id,
+					nfnTitle: noti.noteDocID.title,
+					commenterUserName: noti.commenterDocID.username,
+					commenterDisplayName: noti.commenterDocID.displayname
+				}
+				manageDb.add('notis', notiData)
+			})
+		})
 
 } else if (navigate.type === 'back_forward') {	
 	back_forward_note_add.addSavedNotes()
