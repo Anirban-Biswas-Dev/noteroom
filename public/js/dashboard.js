@@ -499,7 +499,7 @@ class NoteMenu {
 
 let alert = document.querySelector('#production')
 if (alert) {
-	if(location.href.includes(".co")) {
+	if(location.href.includes("noteroom.co")) {
 		document.querySelector('#production').remove()
 	}
 }
