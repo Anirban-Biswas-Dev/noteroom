@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Join Noteroom - Your Ultimate Student Community of Bangladesh</title>
-    <meta name="description" content="Create your Noteroom account to share notes, collaborate with classmates, and stay organized with your studies. Join the community and make learning easier today!">
-    <meta name="keywords" content="Noteroom sign up, student collaboration platform, share notes online, study groups, online study platform, academic collaboration, group teaching sessions, student notes sharing">
+    <title>Log In to Your NoteRoom Account</title>
+    <meta name="description" content="Access your notes, collaborate with others, and manage your study materials. Secure and easy login.">
+    <meta name="keywords" content="login, NoteRoom, student notes, study, collaborate, secure login">
     <meta name="author" content="Noteroom Team">
     <link rel="stylesheet" href="/css/signup-login.css"> 
 	<link rel="stylesheet" href="/css/error-popup.css" />
@@ -23,18 +23,18 @@
 	<script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/animations/scale.css">
 </head>
-<body class="flex-center-evenly">
+<body class="flex-center-evenly flex-inverse gradient-2">
     <div class="main-container flex-column-center">
         <div class="brand-section flex-column-center">
             <img src="\apple-touch-icon.png" alt="NoteRoom" class="brand__site-logo">
             <p class="brand__logo-title">NoteRoom</p>
-            <h2 class="brand__main-heading">Create a new account</h2>
-            <p class="txt-gray-light-bold">Join the country’s top note-sharing platform to connect, share, and download notes</p>
+            <h2 class="brand__main-heading">Login to NoteRoom</h2>
+            <p class="txt-gray-light-bold">Welcome back! Pick up where left off</p>
         </div>
         <div class="acquisition-container flex-column-center">
             <!-- Google Sign up options -->
             <button type="button" class="google-btn" >
-                Sign Up with Google
+                Login with Google
             </button>
 
             <div class="separator flex-center-evenly">
@@ -44,28 +44,26 @@
             </div>
 
             <div class="custom-form flex-column-center">
-                
-                <input type="text" name="displayname" placeholder="Your Name" class="custom__input-field" required data-tippy-content="Enter your name (e.g. John Doe)">
             
                 <input type="email" name="email" placeholder="Email (required)" class="custom__input-field" required data-tippy-content="Enter your valid email address.">
             
                 <div class="password-container">
-                    <input type="password" id="password" name="password" placeholder="Set a password" class="custom__input-field custom__input-field--marginless" required data-tippy-content="Use a strong yet memorable password.">
+                    <input type="password" id="password" name="password" placeholder="NoteRoom Password" class="custom__input-field custom__input-field--marginless" required data-tippy-content="Forgot password? Reach out through support page kindly.">
                     <button type="button" id="togglePassword" class="toggle-password">
                         <i class="fa-solid fa-eye"></i>
                     </button>
                 </div>
 
-                <button class="primary-btn flex-center-evenly">Sign Up
-                    <!-- once the js file is available, this leaoder needs to be displayed on submission of details -->
+                <button class="primary-btn flex-center-evenly">Login
+                    <!-- once the js file is available, this loader needs to be displayed on submission of details -->
                     <div class="btn-loader"></div>
                 </button>
             </div>
             
         </div>
-        <p class="redirecting-msg">Already have an account? <a href="/login" class="redirect-link">Login</a></p>
+        <p class="redirecting-msg">Don't have an account? <a href="/signup" class="redirect-link">Create Today</a></p>
     </div>
 
-    <img class="focus-img" src="\images\sign-up-enhancer.png" alt="Two friends talking about NoteRoom">
+    <img class="focus-img" src="\images\Login-hero-image.png" alt="Two friends talking about NoteRoom">
 </body>
 </html>

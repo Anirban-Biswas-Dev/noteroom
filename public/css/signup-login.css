@@ -25,7 +25,10 @@ body{
     width: 100vw;
     height: 100vh;
     background: linear-gradient(108.47deg, var(--grad-neon-blue) -14.31%, var(--grad-white) 61.11%);
+}
 
+.gradient-2{
+    background: linear-gradient(110.91deg, --grad-neon-blue -13.67%, --grad-white 39.19%);
 }
 
 /* || Reusable Classes */
@@ -60,6 +63,10 @@ body{
     min-width: 200px;
     height: 100%;
     flex-direction: column;
+}
+
+.flex-inverse{
+    flex-direction: row-reverse;
 }
 
 .brand-section{
