@@ -82,6 +82,9 @@ app.get('/about-us', (req, res) => {
 app.get('/privacy-policy', (req, res) => {
     res.render('privacy-policy')
 })
+app.get('/signup2', (req, res) => {
+    res.render('signup2')
+})
 
 app.post('/download', async (req, res) => {
     let noteID = req.body.noteID
