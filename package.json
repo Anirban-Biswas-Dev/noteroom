@@ -11,6 +11,7 @@
   "description": "",
   "dependencies": {
     "archiver": "^7.0.1",
+    "connect-mongo": "^5.1.0",
     "cookie-parser": "^1.4.6",
     "crypto": "^1.0.1",
     "dotenv": "^16.4.5",
