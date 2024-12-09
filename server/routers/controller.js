@@ -1,5 +1,5 @@
 async function getSavedNotes(Students, Notes, studentID) {
-    let student = await Students.findOne({ studentID: studentID }, { saved_notes: 1 } )
+    let student = await Students.findOne({ studentID: studentID }, { saved_notes: 1 })
     let saved_notes_ids = student['saved_notes']
     let notes = await Notes.find({ _id: { $in: saved_notes_ids } })
     return notes
@@ -10,7 +10,7 @@ async function getNotifications(allNotifs, ownerStudentID) {
     let populatedNotifications = []
     allNotifications.map(doc => {
         if (doc['docType'] === 'feedback') {
-            if(doc.ownerStudentID == ownerStudentID) {
+            if (doc.ownerStudentID == ownerStudentID) {
                 populatedNotifications.push(doc.populate([
                     { path: 'noteDocID', select: 'title' },
                     { path: 'commenterDocID', select: 'displayname studentID username' }
@@ -27,7 +27,7 @@ async function getNotifications(allNotifs, ownerStudentID) {
 
 async function getRoot(Students, value, type, fields) {
     let root;
-    switch(type) {
+    switch (type) {
         case 'username':
             root = await Students.findOne({ username: value }, fields)
             break
@@ -38,6 +38,22 @@ async function getRoot(Students, value, type, fields) {
     return root
 }
 
+async function unreadNotiCount(allNotifs, ownerStudentID) {
+    let u = await allNotifs.aggregate([
+        { $match: { ownerStudentID: ownerStudentID } },
+        { $match: { isRead: false } },
+        { $count: "unReadCount" }
+    ])
+    return new Promise(resolve => {
+        if (u.length != 0) {
+            resolve(u[0]["unReadCount"])
+        } else {
+            resolve(0)
+        }
+    })
+}
+
 module.exports.getSavedNotes = getSavedNotes
 module.exports.getNotifications = getNotifications
 module.exports.getRoot = getRoot
+module.exports.unreadNotiCount = unreadNotiCount

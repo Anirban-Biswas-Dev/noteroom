@@ -4,14 +4,17 @@ const Notes = require('../schemas/notes')
 const Alerts = require('../schemas/alerts')
 const allNotifs = require('../schemas/notifications').Notifs
 const feedbackNotifs = require("../schemas/notifications").feedBackNotifs
-const { getSavedNotes, getNotifications, getRoot } = require('./controller')
+const { getSavedNotes, getNotifications, getRoot, unreadNotiCount } = require('./controller')
 const router = express.Router()
 
 function dashboardRouter(io) {
+
+    
+
     async function addSaveNote(studentDocID, noteDocID) {
         await Students.updateOne(
             { _id: studentDocID },
-            { $addToSet: { saved_notes: noteDocID } }, 
+            { $addToSet: { saved_notes: noteDocID } },
             { new: true }
         )
     }
@@ -59,13 +62,14 @@ function dashboardRouter(io) {
     })
 
     router.get('/', async (req, res) => {
-        if(req.session.stdid) {
+        if (req.session.stdid) {
             let alert = await getAlert()
             let root = await getRoot(Students, req.session.stdid, 'studentID', { profile_pic: 1, displayname: 1, username: 1 })
             let notis = await getNotifications(allNotifs, req.session.stdid)
+            let unReadCount = await unreadNotiCount(allNotifs, req.session.stdid)
             let allNotes = await getAllNotes()
             let savedNotes = await getSavedNotes(Students, Notes, req.session.stdid)
-            res.render('dashboard', { root: root, notis: notis, notes: allNotes, savedNotes: savedNotes, alert: alert })
+            res.render('dashboard', { root: root, notis: notis, notes: allNotes, savedNotes: savedNotes, alert: alert, unReadCount: unReadCount })
         } else {
             res.redirect('login')
         }
@@ -75,3 +79,4 @@ function dashboardRouter(io) {
 }
 
 module.exports = dashboardRouter
+

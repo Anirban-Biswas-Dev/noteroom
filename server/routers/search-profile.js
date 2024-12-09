@@ -3,7 +3,7 @@ const router = express.Router()
 const Students = require('../schemas/students')
 const Notes = require('../schemas/notes')
 const allNotifs = require('../schemas/notifications').Notifs
-const { getSavedNotes, getNotifications, getRoot } = require('./controller')
+const { getSavedNotes, getNotifications, getRoot, unreadNotiCount } = require('./controller')
 
 function serachProfileRouter(io) {
     async function getRandomStudent(sampleSize) {
@@ -32,7 +32,8 @@ function serachProfileRouter(io) {
                     let root = await getRoot(Students, req.session.stdid, 'studentID', {})
                     let savedNotes = await getSavedNotes(Students, Notes, req.session.stdid)
                     let notis = await getNotifications(allNotifs, req.session.stdid)
-                    res.render('search-profile', { students: students, root: root, savedNotes: savedNotes, notis: notis })    
+                    let unReadCount = await unreadNotiCount(allNotifs, req.session.stdid)
+                    res.render('search-profile', { students: students, root: root, savedNotes: savedNotes, notis: notis, unReadCount: unReadCount })    
                 }
             } catch (error) {
                 console.log(error)
