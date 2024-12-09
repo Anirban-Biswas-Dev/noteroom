@@ -345,6 +345,59 @@ body {
     color: #04DBF7;
 }
 
+/* 2.0 Thread Styling Part */
+.cmnts-section{
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 50px;
+    height: fit-content;
+} 
+.editor-container {
+    position: relative;
+    padding: 10px; 
+}
+.editor {
+    width: 100%; 
+    max-width: 100%;
+    min-width: 250px; 
+    box-sizing: border-box;
+    font-size: 16px; 
+}
+.cmnt-btn {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    padding: 8px 20px;
+    background-color:var(--light-gray);
+    fill: var(--squid-ink);
+    border: 1px solid var(--squid-ink);
+    border-radius: 5px;
+    cursor: pointer;
+    border: 1px solid rgba(0, 0, 0, 0.16);    
+    transition: opacity 0.1s ease;
+    transition: all 0.3s ease;   
+}
+.cmnt-btn:hover {
+    color: #fff; 
+    transform: translateY(-2px);  
+}
+
+.cmnt-btn:active {
+    transform: translateY(2px);  
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);  
+}
+
+.cmnt-btn:focus {
+    outline: none;  
+    box-shadow: 0 0 0 2px #0056b3;  
+}
+
+@media (max-width:400px) {
+    .cmnt-btn{
+        right: 10px;
+        top: 220px;
+    }
+}
 /* Carousel Responsiveness */
 @media (max-width: 768px) {
     .carousel-control.prev {

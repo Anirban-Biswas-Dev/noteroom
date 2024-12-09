@@ -162,3 +162,20 @@ function highlightSection(element, highlightColor = '#F0F0F0') {
         }, 300); 
     }, 300); 
 }
+
+toastui.Editor.codeBlockLanguages = []; 
+
+const editor = new toastui.Editor({
+    el: document.querySelector('#editor'),
+    initialEditType: 'wysiwyg', 
+    previewStyle: 'none',       
+    height: '200px',          
+    hideModeSwitch: true,       
+    placeholder: "Give a feedback",
+    toolbarItems: [
+        ['bold', 'italic', 'strike'], 
+        ['link'],                    
+        ['image'],                   
+    ],
+}); 
+
