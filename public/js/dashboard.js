@@ -420,9 +420,9 @@ function initializeSaveButtons() {
 // 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 // }
 
-if(URL.parse(document.referrer).pathname === '/sign-up') {
-	startConfetti()
-}
+// if(URL.parse(document.referrer).pathname === '/sign-up') {
+// 	startConfetti()
+// }
 
 class NoteMenu {
 	constructor(menuButton) {

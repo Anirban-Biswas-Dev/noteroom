@@ -11,6 +11,7 @@ const bodyParser = require('body-parser')
 const fileUpload = require('express-fileupload')
 const archiver = require('archiver')
 const cors = require('cors')
+const MongoStore  = require('connect-mongo')
 
 const loginRouter = require('./routers/login')
 const userRouter = require('./routers/user')
@@ -31,7 +32,7 @@ const allNotifs = require('./schemas/notifications').Notifs
 const url = process.env.MONGO_URI
 mongoose.connect(url).then(() => {
     console.log(`Connected to database information`);
-}) 
+})
 
 const port = process.env.PORT
 
@@ -46,13 +47,22 @@ app.use(bodyParser.urlencoded({
 })) // Middleware for working with POST requests.
 // app.use(express.json());
 app.use(session({
-    secret: 'a-secret-key',
-    resave: true,
-    saveUninitialized: true
+    secret: "a-secret-key",
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({
+        mongoUrl: url,
+        ttl: 60 * 60 * 720
+    }),
+    cookie: {
+        httpOnly: true,
+        secure: false,
+        maxAge: 1000 * 60 * 60 * 720
+    }
 })) // Middleware for working with sessions
 app.use(cookieParser()) // Middleware for working with cookies
 app.use(fileUpload()) // Middleware for working with files
-app.use('/login', loginRouter(io))  
+app.use('/login', loginRouter(io))
 app.use('/user', userRouter(io))
 app.use('/sign-up', signupRouter(io))
 app.use('/upload', uploadRouter(io))
@@ -94,7 +104,7 @@ app.post('/download', async (req, res) => {
     let noteTitle = req.body.noteTitle
 
     const noteLinks = (await Notes.findById(noteID, { content: 1 })).content
-    
+
     res.setHeader('Content-Type', 'application/zip');
 
     const sanitizeFilename = (filename) => {
@@ -135,20 +145,20 @@ app.get('/search', async (req, res, next) => {
 app.get('/getnote', async (req, res, next) => {
     let type = req.query.type
     async function getSavedNotes(studentDocID) {
-        let student = await Students.findById(studentDocID, { saved_notes: 1 } )
+        let student = await Students.findById(studentDocID, { saved_notes: 1 })
         let saved_notes_ids = student['saved_notes']
         let notes = await Notes.find({ _id: { $in: saved_notes_ids } }, { title: 1 })
         return notes
     }
-    if(type === 'save') {
+    if (type === 'save') {
         let studentDocID = req.query.studentDocID
         let savedNotes = await getSavedNotes(studentDocID)
         res.json(savedNotes)
-    } else if(type === 'seg') {
-        let {page, count} = req.query
+    } else if (type === 'seg') {
+        let { page, count } = req.query
         let skip = (page - 1) * count
         let notes = await Notes.find({}).sort({ createdAt: -1 }).skip(skip).limit(count).populate('ownerDocID', 'profile_pic displayname studentID')
-        if(notes.length != 0) {
+        if (notes.length != 0) {
             res.json(notes)
         } else {
             res.json([])
@@ -163,7 +173,7 @@ app.get('/getNotifs', async (req, res) => {
 })
 
 app.get('/message', async (req, res) => {
-    if(req.session && req.session.stdid == "1094a5ad-d519-4055-9e2b-0f0d9447da02") {
+    if (req.session && req.session.stdid == "1094a5ad-d519-4055-9e2b-0f0d9447da02") {
         if (req.query.message == undefined) {
             res.render('message')
         } else {
@@ -182,7 +192,7 @@ app.get('/message', async (req, res) => {
 
 app.get('*', (req, res) => {
     res.status(404)
-    res.render('404-error', { message: 'The page you are looking for is not found' }) 
+    res.render('404-error', { message: 'The page you are looking for is not found' })
 }) // 404 if any url requested by the user is not found
 
 server.listen(port, () => {
