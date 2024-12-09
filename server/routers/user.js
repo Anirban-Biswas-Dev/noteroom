@@ -3,7 +3,7 @@ const router = express.Router()
 const Students = require('../schemas/students')
 const allNotifs = require('../schemas/notifications').Notifs
 const Notes = require('../schemas/notes')
-const { getSavedNotes, getNotifications } = require('./controller')
+const { getSavedNotes, getNotifications, unreadNotiCount } = require('./controller')
 
 function userRouter(io) {
     /*
@@ -47,13 +47,14 @@ function userRouter(io) {
             if (req.session.stdid) {
                 let username = await getUserName(req.session.stdid)
                 let notis = await getNotifications(allNotifs, req.session.stdid) // Notifications of the root-user
+                let unReadCount = await unreadNotiCount(allNotifs, req.session.stdid)
 
                 if (username == req.params.username) {
                     try {
                         let data = await extract(req.session.stdid)
                         let [student, notes] = [data['student'], data['notes']]
                         let savedNotes = await getSavedNotes(Students, Notes, req.session.stdid)
-                        res.render('user-profile', { student: student, notes: notes, savedNotes: savedNotes, visiting: false, notis: notis, root: student })
+                        res.render('user-profile', { student: student, notes: notes, savedNotes: savedNotes, visiting: false, notis: notis, root: student, unReadCount: unReadCount })
                     } catch (error) {
                         next(error)
                     }
@@ -64,7 +65,7 @@ function userRouter(io) {
                         let [student, notes] = [data['student'], data['notes']] // This is the student-data whose profile is being visited
                         let savedNotes = await getSavedNotes(Students, Notes, req.session.stdid)
                         let root = (await extract(req.session.stdid))['student']
-                        res.render('user-profile', { student: student, notes: notes, savedNotes: savedNotes, visiting: true, notis: notis, root: root })
+                        res.render('user-profile', { student: student, notes: notes, savedNotes: savedNotes, visiting: true, notis: notis, root: root, unReadCount: unReadCount })
                     } catch (err) {
                         req.studentID = req.params.username
                         const error = new Error('No students found')

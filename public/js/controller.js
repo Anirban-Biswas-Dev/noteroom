@@ -15,9 +15,9 @@ let imageObject = {
 function truncatedTitle(title) {
     const titleCharLimit = 30;
     let truncatedTitle =
-      title.length > titleCharLimit
-        ? title.slice(0, titleCharLimit) + "..."
-        : title;
+        title.length > titleCharLimit
+            ? title.slice(0, titleCharLimit) + "..."
+            : title;
     return truncatedTitle
 }
 
@@ -34,16 +34,16 @@ db.version(4).stores({
 * @param {Object} obj - The object to store
 */
 const manageDb = {
-     /**
-     * @description For **savedNotes** store, `obj` = { noteID, noteTitle }
-     * @description For **notis** store, `obj` = { notiID, feedbackID, isread, noteID, nfnTitle, commenterUserName, commenterDisplayName }
-     * @description For **notes** store, `obj` = { noteID, thumbnail, profile_pic, noteTitle, ownerDisplayName, ownerID, ownerUserName }
-     */
+    /**
+    * @description For **savedNotes** store, `obj` = { noteID, noteTitle }
+    * @description For **notis** store, `obj` = { notiID, feedbackID, isread, noteID, nfnTitle, commenterUserName, commenterDisplayName }
+    * @description For **notes** store, `obj` = { noteID, thumbnail, profile_pic, noteTitle, ownerDisplayName, ownerID, ownerUserName }
+    */
     async add(store, obj) {
-        switch(store) {
+        switch (store) {
             case 'savedNotes':
                 let existingNote = await db.savedNotes.where("noteID").equals(obj.noteID).first()
-                if(!existingNote) {
+                if (!existingNote) {
                     await db.savedNotes.add({
                         noteID: obj.noteID,
                         noteTitle: obj.noteTitle
@@ -52,13 +52,13 @@ const manageDb = {
                 break
             case 'notis':
                 let existingNoti = await db.notis.where("notiID").equals(obj.notiID).first()
-                if(!existingNoti) {
+                if (!existingNoti) {
                     await db.notis.add({
-                        notiID: obj.notiID, 
-                        feedbackID: obj.feedbackID, 
+                        notiID: obj.notiID,
+                        feedbackID: obj.feedbackID,
                         isread: true, //! this needs to be dynamic. this has to be sent via feedback-given WS event
-                        noteID: obj.noteID, 
-                        nfnTitle: obj.nfnTitle, 
+                        noteID: obj.noteID,
+                        nfnTitle: obj.nfnTitle,
                         commenterUserName: obj.commenterUserName,
                         commenterDisplayName: obj.commenterDisplayName
                     })
@@ -66,7 +66,7 @@ const manageDb = {
                 break
             case 'notes':
                 let existingUNote = await db.notes.where("noteID").equals(obj.noteID).first()
-                if(!existingUNote) {
+                if (!existingUNote) {
                     await db.notes.add({
                         noteID: obj.noteID,
                         thumbnail: obj.thumbnail,
@@ -77,7 +77,7 @@ const manageDb = {
                         ownerID: obj.ownerID,
                         ownerUserName: obj.ownerUserName
                     })
-                } 
+                }
                 break
         }
     },
@@ -87,7 +87,7 @@ const manageDb = {
     * @description For **savedNotes** | **notes** = `noteID`, for **notis** = `notiID`
     */
     async get(store, id) {
-        switch(store) {
+        switch (store) {
             case 'savedNotes':
                 if (id === undefined) {
                     let allNotes = await db.savedNotes.toArray()
@@ -120,7 +120,7 @@ const manageDb = {
     * @description For **savedNotes** | **notes** = `noteID`, for **notis** = `notiID`
     */
     async delete(store, id) {
-        switch(store) {
+        switch (store) {
             case 'savedNotes':
                 let note = await db.savedNotes.where("noteID").equals(id).first()
                 await db.savedNotes.delete(note.id)
@@ -152,10 +152,10 @@ const manageNotes = { // I treat all the cards as notes
         => addFeedback: adds feedback in notes in note-view
     */
 
-	addNote: function(noteData) { 
+    addNote: function (noteData) {
         let existingUNote = document.querySelector(`#note-${noteData.noteID}`)
 
-        if(!existingUNote) {
+        if (!existingUNote) {
             let noteCardsHtml = `
                         <div class="feed-note-card" id="note-${noteData.noteID}">
                               <div class="thumbnail-container">
@@ -245,25 +245,25 @@ const manageNotes = { // I treat all the cards as notes
                             
                         </div>           
                           </div>
-                      </div> `; 
-    
+                      </div> `;
+
             document.querySelector('.feed-container').insertAdjacentHTML('beforeend', noteCardsHtml); // 1
-    
+
             let newNoteCard = document.querySelector('.feed-note-card:last-child')
             observers.observer().observe(newNoteCard) // 2
             document.querySelector('.fetch-loading').style.display = 'flex'
         }
-	},
+    },
 
     /**
      * @param {Object} noteData - { noteID, noteTitle }
      * @description First checks if there is already a saved note div with that noteID (saved-note-noteID). If not then adds one
      */
-	addSaveNote: function(noteData) { 
-		let savedNotesContainer = document.querySelector(".saved-notes-container");
-		let existingNote = document.querySelector(`#saved-note-${noteData.noteID}`)
+    addSaveNote: function (noteData) {
+        let savedNotesContainer = document.querySelector(".saved-notes-container");
+        let existingNote = document.querySelector(`#saved-note-${noteData.noteID}`)
 
-        if(!existingNote) {
+        if (!existingNote) {
             let savedNotesHtml = `
                 <div class="saved-note hide" id="saved-note-${noteData.noteID}">
                     <span class="sv-note-title">
@@ -272,16 +272,16 @@ const manageNotes = { // I treat all the cards as notes
                 </div>`;
             savedNotesContainer.insertAdjacentHTML('afterbegin', savedNotesHtml);
             const newNote = document.getElementById(`saved-note-${noteData.noteID}`);
-            
+
             // Remove the hide class and add the transition class after a short delay
             setTimeout(() => {
                 if (newNote) {
-                    newNote.classList.remove('hide'); 
+                    newNote.classList.remove('hide');
                     newNote.classList.add('show-sv-in-LP');
                 }
             }, 50);
         }
-	},
+    },
 
     /**
      * @param {Object} feedbackData - { notiID, feedbackID, isread, noteID, nfnTitle, commenterUserName, commenterDisplayName }
@@ -316,7 +316,7 @@ const manageNotes = { // I treat all the cards as notes
         }
     },
 
-    addProfile: function(student) {
+    addProfile: function (student) {
         let profileCard = `
                     <div class="results-prfl">
                         <img src="${student.profile_pic}" alt="Profile Pic" class="prfl-pic">
@@ -328,7 +328,7 @@ const manageNotes = { // I treat all the cards as notes
         document.querySelector('.results-prfls').insertAdjacentHTML('beforeend', profileCard);
     },
 
-    addFeedback: function(feedbackData) {
+    addFeedback: function (feedbackData) {
         /*
         # feedbackData:
             => _id: document id of that feedback
@@ -346,8 +346,8 @@ const manageNotes = { // I treat all the cards as notes
             day: 'numeric',
             hour: '2-digit',
             minute: '2-digit',
-            timeZone: 'Asia/Dhaka', 
-            hour12: true 
+            timeZone: 'Asia/Dhaka',
+            hour12: true
         });
         const formattedDate = formatter.format(date);
         let feedbackCard = `<div class="feedback" id="${feedbackData._id}">
@@ -368,7 +368,7 @@ const manageNotes = { // I treat all the cards as notes
 							</div>
 						</div>` //* This feedback-card is used to broadcast the extented-feedback to all the users via websockets
 
-		document.querySelector('.feedbacks-list').insertAdjacentHTML('afterbegin', feedbackCard) // The feedback will be shown at the top while posting (not fetching)
+        document.querySelector('.feedbacks-list').insertAdjacentHTML('afterbegin', feedbackCard) // The feedback will be shown at the top while posting (not fetching)
     }
 }
 
@@ -389,24 +389,24 @@ async function download(noteID, noteTitle) {
         let noteDetailes = new FormData()
         noteDetailes.append('noteID', noteID)
         noteDetailes.append('noteTitle', noteTitle)
-    
+
         let response = await fetch('/download', {
             method: 'POST',
             body: noteDetailes
         })
-        
+
         let blob = await response.blob()
         const url = URL.createObjectURL(blob)
         const link = document.createElement('a')
-    
+
         link.href = url
         link.setAttribute('download', `${noteTitle}.zip`)
-    
+
         document.body.appendChild(link)
         link.click()
         link.remove()
-    
-        URL.revokeObjectURL(url)    
+
+        URL.revokeObjectURL(url)
     } catch (error) {
         console.error(error)
     } finally {
@@ -442,16 +442,16 @@ function setupShareModal(noteID) {
     }
 
     // Open the modal and populate the link (immediate execution)
-    shareNoteModal.style.display = 'flex'; 
+    shareNoteModal.style.display = 'flex';
     linkElement.innerHTML = `${window.location.origin}/view/${noteID}`;
-    requestAnimationFrame(() => { 
+    requestAnimationFrame(() => {
         shareNoteModal.classList.add('visible');
     });
 
     closeNoteModalBtn.addEventListener('click', () => {
         shareNoteModal.classList.remove('visible');
         setTimeout(() => {
-            shareNoteModal.style.display = 'none'; 
+            shareNoteModal.style.display = 'none';
         }, 300); // Matches CSS transition duration
     });
 }
@@ -461,20 +461,20 @@ function copyLink() {
 
     navigator.clipboard.writeText(linkElement.textContent)
         .then(() => {
-            
-                successfulLinkMsg.style.display = 'flex';
-                
-                requestAnimationFrame(() => {
-                    successfulLinkMsg.classList.add('s-c-effect');
-                });
-    
+
+            successfulLinkMsg.style.display = 'flex';
+
+            requestAnimationFrame(() => {
+                successfulLinkMsg.classList.add('s-c-effect');
+            });
+
+            setTimeout(() => {
+                successfulLinkMsg.classList.remove('s-c-effect');
                 setTimeout(() => {
-                    successfulLinkMsg.classList.remove('s-c-effect');
-                    setTimeout(() => {
-                        successfulLinkMsg.style.display = 'none';
-                    }, 400); 
-                }, 2000);
-            
+                    successfulLinkMsg.style.display = 'none';
+                }, 400);
+            }, 2000);
+
         })
         .catch(err => {
             console.error('Failed to copy text: ', err);
@@ -495,8 +495,8 @@ function share(platform) {
         `Take a moment to check out this note on NoteRoom: ${linkElement}`,
         `Here's a note you'll find interesting on NoteRoom: ${linkElement}`
     ]
-    
-    switch(platform) {
+
+    switch (platform) {
         case "facebook":
             window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(linkElement + '/shared')}`, '_blank') // 2
             break
@@ -508,7 +508,7 @@ function share(platform) {
 }
 
 
- 
+
 //* Search Notes: All Pages
 async function searchNotes() {
     /* 
@@ -522,18 +522,18 @@ async function searchNotes() {
     let existingNotes = searchedResults.querySelectorAll('div.results-card')
     let status = document.querySelector('.status')
 
-    if(existingNotes) {
+    if (existingNotes) {
         existingNotes.forEach(note => {
             note.remove()
         })
     }
     let searchTerm = document.querySelector('.search-bar').value
-    if(searchTerm.length > 0) {
+    if (searchTerm.length > 0) {
         status.style.display = 'flex' // Start of loading
         let response = await fetch(`/search?q=${encodeURIComponent(searchTerm)}`) // 2
         let notes = await response.json() // 3
         status.style.display = 'none' // End of loading
-        if(notes.length > 0) {
+        if (notes.length > 0) {
             status.style.display = 'none'
             notes.forEach(note => {
                 searchedResults.insertAdjacentHTML('afterbegin', `
@@ -559,7 +559,7 @@ try {
     let searchBtn = document.querySelector('.search-btn');
     let noteSearchInput = document.querySelector('.search-bar');
     let resultsContainer = document.querySelector('.results-container');
-    
+
     /*
     # Process:
     1. Show the dropdown when the search bar is focused.
@@ -568,36 +568,36 @@ try {
     4. Hide the dropdown if the user clicks outside the search bar or the dropdown.
     5. Prevent the dropdown from hiding when interacting with the dropdown itself.
     */
-    
+
     // Step 1: Show the results container on input focus
-    noteSearchInput.addEventListener('focus', function() {
+    noteSearchInput.addEventListener('focus', function () {
         resultsContainer.style.display = 'flex'; // Show dropdown
     });
-    
+
     // Step 2: Trigger search when pressing 'Enter'
     noteSearchInput.addEventListener('keydown', (event) => {
-        if(event.key === 'Enter') {
+        if (event.key === 'Enter') {
             searchNotes(); // Call search function
         }
     });
-    
+
     // Step 3: Prevent dropdown from hiding and trigger search on search button click
-    searchBtn.addEventListener('click', function(event) {
+    searchBtn.addEventListener('click', function (event) {
         event.stopPropagation(); // Prevent dropdown from hiding
         searchNotes(); // Call search function
     });
-    
+
     // Step 4: Hide the dropdown if clicking outside of input and results container
-    document.addEventListener('click', function(event) {
+    document.addEventListener('click', function (event) {
         if (!noteSearchInput.contains(event.target) && !resultsContainer.contains(event.target)) {
             resultsContainer.style.display = 'none'; // Hide dropdown
         }
     });
-    
+
     // Step 5: Prevent dropdown from hiding when interacting with the results container
-    resultsContainer.addEventListener('click', function(event) {
+    resultsContainer.addEventListener('click', function (event) {
         event.stopPropagation(); // Stop clicks inside the dropdown from closing it
-    });    
+    });
 } catch (error) {
     console.log(error.message)
 }
@@ -605,6 +605,11 @@ try {
 
 
 
+
+let notificationCount = document.getElementById('notification-count').textContent;
+if(notificationCount <= 0) {
+    document.getElementById('notification-count').style.display = 'none'
+} 
 
 //* Delete notifications: all pages
 async function deleteNoti(id) {
@@ -614,7 +619,7 @@ async function deleteNoti(id) {
     ~   them that notification is removed from the frontend DOM (2). last, the noti. object is removed from the LS (3)
     */
     conSock.emit('delete-noti', id) // 1
-	document.querySelector(`#noti-${id}`).remove() // 2
+    document.querySelector(`#noti-${id}`).remove() // 2
     await manageDb.delete('notis', id)
 
     notificationCount--;
@@ -624,7 +629,7 @@ async function deleteNoti(id) {
 
 
 //* Adding notifications: all pages
-let notificationCount = 0;
+
 function addNoti(feedbackData) {
     /* 
     # Process: The main function is manageNotes.addNoti. Related to feedback-given WS event
@@ -640,9 +645,10 @@ function updateNotificationBadge() {
     if (badge) {
         badge.textContent = notificationCount;
         if (notificationCount > 0) {
-            badge.style.display = 'inline-block';
-        } else {
-            badge.style.display = 'none';
+            document.getElementById('notification-count').style.display = 'inline-block';
+        }
+        else {
+            document.getElementById('notification-count').style.display = 'none';
         }
     } else {
         console.error('Notification badge element not found');
@@ -653,19 +659,19 @@ function updateNotificationBadge() {
 //* Event that will be triggerd when a notification is clicked to make it "read" (true)
 let notiLinks = document.querySelectorAll('.notiLink');
 notiLinks.forEach(notiLink => {
-    notiLink.addEventListener("click", function(event) {
+    notiLink.addEventListener("click", function (event) {
         // Traverse up to the parent notification div (ensuring correct targeting)
-        let notiElement = event.currentTarget.closest('.notification'); 
+        let notiElement = event.currentTarget.closest('.notification');
         if (!notiElement) return; // Ensure notiElement is found
-        let notiID = notiElement.getAttribute("id").split("-")[1]; 
-        conSock.emit("read-noti", notiID); 
+        let notiID = notiElement.getAttribute("id").split("-")[1];
+        conSock.emit("read-noti", notiID);
     });
 });
 
 
 
 //* Event that will trigger when someone gives a feedback to a note: all pages, related to addNoti
-conSock.on('feedback-given' , (feedbackData) => {
+conSock.on('feedback-given', (feedbackData) => {
     /* 
     # Process: ARP Protocol structure
     ~   the event is handled by every user. the WS is sent with the feedback data and every browser checks, if the recordName
@@ -673,23 +679,23 @@ conSock.on('feedback-given' , (feedbackData) => {
     ~   object (1). If so, that means the noti. has found it's owner. the noti-data is added in LS|key=notis (2). then it is added
     ~   in the right-panel (3). then the noti. button got shaked(mobile) (4).
     */
-	if (feedbackData.ownerStudentID == Cookies.get('studentID')) { // 1
-		addNoti(feedbackData)
+    if (feedbackData.ownerStudentID == Cookies.get('studentID')) { // 1
+        addNoti(feedbackData)
         manageDb.add('notis', feedbackData)
 
-		const nftShake = document.querySelector('.mobile-nft-btn')
-		nftShake.classList.add('shake') // 4
-		setTimeout(() => {
-			nftShake.classList.remove('shake');
-		}, 300)
-        
+        const nftShake = document.querySelector('.mobile-nft-btn')
+        nftShake.classList.add('shake') // 4
+        setTimeout(() => {
+            nftShake.classList.remove('shake');
+        }, 300)
+
         try {
             const audio = document.getElementById('notificationAudio');
             audio.play();
         } catch (error) {
             console.error(error)
         }
-	}
+    }
 })
 
 
@@ -699,18 +705,18 @@ try {
     const notificationButton = document.querySelector('.mobile-nft-btn');
     const backgroundOverlay = document.querySelector('.background-overlay');
     const hideNotificationPanel = document.querySelector('.btn-hide-nft');
-    
+
     notificationButton.addEventListener('click', () => {
-      notificationPanel.classList.toggle('show');
-      backgroundOverlay.classList.toggle('show-overlay');
+        notificationPanel.classList.toggle('show');
+        backgroundOverlay.classList.toggle('show-overlay');
     });
     backgroundOverlay.addEventListener('click', () => {
-      notificationPanel.classList.remove('show');
-      backgroundOverlay.classList.remove('show-overlay');
+        notificationPanel.classList.remove('show');
+        backgroundOverlay.classList.remove('show-overlay');
     });
     hideNotificationPanel.addEventListener('click', () => {
-      notificationPanel.classList.remove('show');
-      backgroundOverlay.classList.remove('show-overlay');
+        notificationPanel.classList.remove('show');
+        backgroundOverlay.classList.remove('show-overlay');
     })
 } catch (error) {
     console.log(error.message)
@@ -720,13 +726,13 @@ try {
 
 function setupErrorPopup(errorMessage) {
     const errorOverlay = document.querySelector('.error-overlay');
-    const closeErrorBtns = document.querySelectorAll('.close-err'); 
+    const closeErrorBtns = document.querySelectorAll('.close-err');
     const errorMsgElement = document.querySelector('.error-msg');
 
     errorMsgElement.innerHTML = errorMessage || "An unexpected error occurred."; // Default message if none provided. In case someone is playing with the functions on the console :)
 
-    errorOverlay.style.display = 'flex'; 
-    requestAnimationFrame(() => { 
+    errorOverlay.style.display = 'flex';
+    requestAnimationFrame(() => {
         errorOverlay.classList.add('err-visible');
     });
 
@@ -734,14 +740,14 @@ function setupErrorPopup(errorMessage) {
         btn.addEventListener('click', () => {
             errorOverlay.classList.remove('err-visible');
             setTimeout(() => {
-                errorOverlay.style.display = 'none'; 
-            }, 300); 
+                errorOverlay.style.display = 'none';
+            }, 300);
         });
     });
 
     errorOverlay.addEventListener('click', (event) => {
         if (event.target === errorOverlay) {
-            closeErrorBtns[0].click(); 
+            closeErrorBtns[0].click();
         }
     });
 }
