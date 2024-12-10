@@ -17,6 +17,10 @@
       href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" 
       rel="stylesheet"
     >
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/tributejs/5.1.3/tribute.min.css"
+    />
     <script
       src="https://kit.fontawesome.com/be4b1d4185.js"
       crossorigin="anonymous"
@@ -25,6 +29,7 @@
     <script src="https://cdn.socket.io/socket.io-3.0.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dexie@latest/dist/dexie.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tributejs/5.1.3/tribute.min.js"></script>
     <title><%= note.title %></title>
   </head>
   <body>
@@ -140,6 +145,7 @@
             placeholder="Write a feedback..."
             rows="3"
             name="feedbackText"
+            id="feedbackText"
           ></textarea>
           <button type="button" class="btn-submit-feedback post-feedback">
             Post feedback
