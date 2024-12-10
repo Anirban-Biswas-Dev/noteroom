@@ -47,7 +47,7 @@ app.use(bodyParser.urlencoded({
 })) // Middleware for working with POST requests.
 // app.use(express.json());
 app.use(session({
-    secret: "a-secret-key",
+    secret: process.env.SECRET_KEY,
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({
