@@ -9,7 +9,7 @@ async function getNotifications(allNotifs, ownerStudentID) {
     let allNotifications = await allNotifs.find().sort({ createdAt: -1 })
     let populatedNotifications = []
     allNotifications.map(doc => {
-        if (doc['docType'] === 'feedback') {
+        if (doc['docType'] === 'feedback' || doc['docType'] === 'mention') {
             if (doc.ownerStudentID == ownerStudentID) {
                 populatedNotifications.push(doc.populate([
                     { path: 'noteDocID', select: 'title' },

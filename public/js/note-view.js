@@ -12,7 +12,7 @@ socket.emit('join-room', window.location.pathname.split('/')[2] /* The note-id a
 
 //* Broadcasted feedback handler. The extented-feedback is broadcasted
 socket.on('add-feedback', (feedbackData) => {
-	manageNotes.addFeedback(feedbackData)
+    manageNotes.addFeedback(feedbackData)
 })
 
 const slides = document.querySelectorAll(".carousel-slide");
@@ -21,20 +21,20 @@ const prevButton = document.querySelector(".prev");
 let currentIndex = 0;
 
 function showSlide(index) {
-	const offset = -index * 100;
-	document.querySelector(
-		".carousel-wrapper"
-	).style.transform = `translateX(${offset}%)`;
+    const offset = -index * 100;
+    document.querySelector(
+        ".carousel-wrapper"
+    ).style.transform = `translateX(${offset}%)`;
 }
 
 nextButton.addEventListener("click", () => {
-	currentIndex = (currentIndex + 1) % slides.length;
-	showSlide(currentIndex);
+    currentIndex = (currentIndex + 1) % slides.length;
+    showSlide(currentIndex);
 });
 
 prevButton.addEventListener("click", () => {
-	currentIndex = (currentIndex - 1 + slides.length) % slides.length;
-	showSlide(currentIndex);
+    currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+    showSlide(currentIndex);
 });
 
 // Initially show the first slide
@@ -46,29 +46,29 @@ try {
     let commenterStudentID = Cookies.get('studentID') // Commenter's document ID
 
     async function postFeedback() {
-        if(feedback.value.trim() !== "") {
-            socket.emit('feedback', 
+        if (feedback.value.trim() !== "") {
+            socket.emit('feedback',
                 noteDocID, // room-name (unique noteDocID) 
                 feedback.value, // feedback-text 
                 noteDocID, // noteid 
                 commenterStudentID // commenter's student ID
-            ) 
+            )
             document.querySelector('textarea[name="feedbackText"]').value = ''
         }
-	}
+    }
 
     let postBtn = document.querySelector('.post-feedback')
-	postBtn.addEventListener('click', postFeedback)
+    postBtn.addEventListener('click', postFeedback)
 } catch (error) {
-	console.log(error.message)
+    console.log(error.message)
 }
 
 let kickUser = document.querySelector('.kick')
-if(kickUser) {
-	setTimeout(() => {
-		alert('You are kicked out of noteroom cause you are not a user of it, cry about it or signup')
-		kickUser.click()
-	}, 3000)
+if (kickUser) {
+    setTimeout(() => {
+        alert('Please login to continue!')
+        kickUser.click()
+    }, 3000)
 }
 
 
@@ -142,7 +142,7 @@ function smoothScrollTo(element, duration = 1000, offset = 100, callback = null)
 function highlightSection(element, highlightColor = '#F0F0F0') {
     const originalColor = getComputedStyle(element).backgroundColor; // 5
 
-    element.style.transition = 'background-color 0.3s ease'; 
+    element.style.transition = 'background-color 0.3s ease';
 
     // First blink (highlight color)
     element.style.backgroundColor = highlightColor;
@@ -158,7 +158,37 @@ function highlightSection(element, highlightColor = '#F0F0F0') {
             setTimeout(() => {
                 // Return to the original color
                 element.style.backgroundColor = originalColor;
-            }, 300); 
-        }, 300); 
-    }, 300); 
+            }, 300);
+        }, 300);
+    }, 300);
 }
+
+
+const tribute = new Tribute({
+    lookup: "displayname",
+    trigger: "@",
+    selectTemplate: function (item) {
+        return `@${item.original.username}`
+    },
+    menuItemTemplate: function (item) {
+        return `
+            <div style="display: flex; align-items: center; padding: 5px;">
+                <img src="${item.original.profile_pic}" style="width: 30px; height: 30px; border-radius: 50%; margin-right: 10px;">
+                <b style="font-size: 14px;">${item.original.displayname}</b>
+                <small style="font-size: 12px; color: #888;">&nbsp;(${item.original.username})</small>
+            </div>
+        `;
+
+    },
+    values: async (text, callback) => {
+        try {
+            let response = await fetch(`/searchUser?term=${text}`)
+            if (!response.ok) console.log(`No network connection!`)
+            let data = await response.json()
+            callback(data)
+        } catch (error) {
+            console.log(error)
+        }
+    }
+})
+tribute.attach(document.querySelector('#feedbackText'))
