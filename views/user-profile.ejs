@@ -16,6 +16,7 @@
     >
     <script src="https://cdn.socket.io/socket.io-3.0.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dexie@latest/dist/dexie.min.js"></script>
 
 </head>
 <body>
@@ -28,7 +29,6 @@
         <div class="info-items-1">
             <!-- We'll update the frontend js codes for these element soon -->
             <span class="display-name"><%= student.displayname %></span>
-            <span class="user-clg-id">ID: <%= student.studentID %></span>
             <!-- for this non-editable data, basic data fetch will do or even DOM -->
             <div class="user-group"><%= student.group %></div>
             <!-- fetching exam rank needs to be discussed -->
@@ -55,7 +55,18 @@
         <div class="user-username">
             <span class="input-label">Username</span>
             <div class="username-box">
-                <p><%= student.username %></p>
+                <p>
+                    <%
+                        let username;
+                        let name = student.username
+                        if(name.length > 15) {
+                            username = name.slice(0, 15) + " ..."
+                        } else {
+                            username = name
+                        }
+                    %>
+                    <%= username %>
+                </p>
             </div>
         </div>
         <div class="user-college-year">
@@ -114,7 +125,13 @@
     <div class="uploaded-notes-section">
       <div class="toggle-header-uploaded-notes">
         <% if (visiting) { %>
-            <h2 class="user-notes active-section"><%= student.displayname %>'s Notes</h2>
+            <h2 class="user-notes active-section">
+                <% 
+                    let name = student.displayname 
+                    let displayname = name.match(/^\S+/i)
+                %>
+                <%= displayname %>'s Notes
+            </h2>
         <% } else { %>
             <h2 class="user-notes active-section" >My Notes</h2>
             <h2 class="student-saved-notes" id="savedNotes" >Saved Notes</h2>
@@ -124,11 +141,18 @@
             <% if(notes != 0) { %>
                 <% for (const note of notes) { %>
                     <div class="note-card">
-                        <a href="../view/<%= note._id %>">
-                            <h3><%= note.title %></h3>
+                        <a href="/view/<%= note._id %>">
+                            <h3>
+                                <% let title = note.title %>
+								<% if(title.length > 30) { %>
+									<%= title.slice(0, 30) %>...
+								<% } else { %>
+									<%= title %>
+								<% } %>
+                            </h3>
                             <% let description = note.description %>
-                            <% if(description.length > 30) { %>
-                                <p><%= description.slice(0, 30) %>...</p>
+                            <% if(description.length > 40) { %>
+                                <p><%= description.slice(0, 40) %>...</p>
                             <% } else { %>
                                 <p><%= description %></p>
                             <% } %>
@@ -153,11 +177,18 @@
               <% if (savedNotes.length != 0) { %>
                 <% for (const note of savedNotes) { %>
                     <div class="note-card">
-                        <a href="../view/<%= note._id %>">
-                            <h3><%= note.title %></h3>
+                        <a href="/view/<%= note._id %>">
+                            <h3>
+                                <% let title = note.title %>
+								<% if(title.length > 30) { %>
+									<%= title.slice(0, 30) %>...
+								<% } else { %>
+									<%= title %>
+								<% } %>
+                            </h3>
                             <% let description = note.description; %>
-                            <% if (description.length > 30) { %>
-                                <p><%= description.slice(0, 30) %>...</p>
+                            <% if (description.length > 40) { %>
+                                <p><%= description.slice(0, 40) %>...</p>
                             <% } else { %>
                                 <p><%= description %></p>
                             <% } %>
@@ -183,6 +214,8 @@
     <%- include('side-panel', { block: 'right-panel' }) %>
 
     <%- include('side-panel', { block: 'mbl-ctrl-panel' }) %>
+
+	<audio id="notificationAudio" src="/sounds/notification-ping-sound.mp3" preload="auto"></audio>
     <div class="background-overlay"></div>
 
     <script src="/js/controller.js"></script> 

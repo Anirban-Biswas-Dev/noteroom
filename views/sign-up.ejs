@@ -5,13 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign-Up Page</title>
     <link rel="stylesheet" href="/css/sign-up.css"> 
+	<link rel="stylesheet" href="/css/error-popup.css" />
     <script src="https://cdn.socket.io/socket.io-3.0.1.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
     <script src="https://cdn.socket.io/socket.io-3.0.1.min.js"></script>
-    <link rel="stylesheet" href="/css/bar-loader.css"> <!-- See login.js for file linking process -->
+    <link rel="stylesheet" href="/css/bar-loader.css">
+    <!-- tooltips cdn of tippy.js -->
+    <script src="https://unpkg.com/@popperjs/core@2"></script>
+    <script src="https://unpkg.com/tippy.js@6"></script>
+	<script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/animations/scale.css">
+
 </head>
 <body>
     <p class="message" id="message"></p>
@@ -29,7 +36,7 @@
             <!-- Step 1: Profile Picture & Basic Info -->
             <div class="step active" id="step-1">
                 <div class="profile-picture-upload">
-                    <label for="profile-picture" class="profile-picture-label">
+                    <label for="profile-picture" class="profile-picture-label" data-tippy-content="Please upload a clear profile photo for authentication.">
                         <div class="profile-picture-placeholder">
                             <span><i class="fa-solid fa-camera"></i></span>
                         </div>
@@ -37,64 +44,78 @@
                     <input type="file" id="profile-picture" name="profile-picture" class="profile-picture-input" accept="image/*" required>
                     <p class="instructions">Please upload a clear image of yourself for authentication purposes.</p>
                 </div>
-                <!-- * This picture is dynamically triggered on the uploading an image -->
+                
                 <div class="profile-pic-preview-placeholder">
                     <img alt="Profile Picture" style="display: none;" id="profile-picture-preview" class="profile-picture-preview">
-                    <p class="prfl-pic-success-msg" >Successfully uploaded Image!</p>
-                 </div>
-                <input type="text" name="displayname" placeholder="Display Name" class="input-field" required>
-                <input type="email" name="email" placeholder="Email" class="input-field" required>
-                <input type="password" name="password" placeholder="Password" class="input-field" required>
+                    <p class="prfl-pic-success-msg">Successfully uploaded Image!</p>
+                </div>
+                
+                <input type="text" name="displayname" placeholder="Your Name (required)" class="input-field" required data-tippy-content="Enter your name: First Name space Last Name (e.g. John Doe)">
+            
+                <input type="email" name="email" placeholder="Email (required)" class="input-field" required data-tippy-content="Enter your valid email address.">
+            
+                <div class="password-container">
+                    <input type="password" id="password" name="password" placeholder="Password (required)" class="input-field" required data-tippy-content="Use a strong yet memorable password.">
+                    <button type="button" id="togglePassword" class="toggle-password">
+                        <i class="fa-solid fa-eye"></i>
+                    </button>
+                </div>
+                
                 <button type="button" class="next-button">Next</button>
                 <p style="color: black;">Already have an account? <a href="/login">Login</a></p>
             </div>
+            
 
             <!-- Step 2: College Information -->
             <div class="step" id="step-2">
-                <input type="text" name="studentID" placeholder="ID (5-digit roll e.g. 10422)" class="input-field">
-                <input type="text" name="rollnumber" placeholder="Class Roll (e.g. 422)" class="input-field">
-                <select name="collegesection" class="input-field">
-                    <option value="">College Section</option>
+                <input type="text" name="rollnumber" placeholder="Class Roll (required)" class="input-field" required data-tippy-content="Use the last 3 digit e.g. 422">
+                <select name="collegesection" class="input-field" required data-tippy-content="A-E for Science, F-G for Arts" >
+                    <option value="Not selected">College Section</option>
                     <option value="A">A</option>
                     <option value="B">B</option>
                     <option value="C">C</option>
                     <option value="D">D</option>
                     <option value="E">E</option>
+                    <option value="F">F</option>
+                    <option value="G">G</option>
                 </select>
-                <select name="collegeyear" class="input-field">
-                    <option value="">Select College Year</option>
-                    <option value="1st">1st Year👶</option>
-                    <option value="2nd">2nd Year😎</option>
+                <select name="collegeyear" class="input-field" required>
+                    <option value="Not selected">Select College Year</option>
+                    <option value="1st Year👶">1st Year👶</option>
+                    <option value="2nd Year😎">2nd Year😎</option>
                   </select>
-                <textarea name="bio" placeholder="Tell the world something about you" class="input-field"></textarea>
-                <button type="button" class="next-button">Next</button>
+                <textarea name="bio" placeholder="Add a bio" class="input-field" required data-tippy-content="Tell something about yourself. This makes people interested in you." ></textarea>
+                <button type="button" class="next-button clg-information">Next</button>
                 <button type="button" class="back-button">Back</button>
             </div>
 
             <!-- Step 3: Academic Preferences -->
             <div class="step" id="step-3">
-                <input type="text" name="favouritesubject" placeholder="Favorite Subject" class="input-field">
-                <input type="text" name="notfavsubject" placeholder="Not-so-Favorite Subject" class="input-field">
                 <select name="group" class="input-field">
                     <option value="Science">Science</option>
                     <option value="Arts">Arts</option>
                 </select>
-                <button type="button" class="back-button">Back</button>
+                <input type="text" name="favouritesubject" placeholder="Favorite Subject" class="input-field">
+                <input type="text" name="notfavsubject" placeholder="Not-so-Favorite Subject" class="input-field" data-tippy-content="Only one subject please🫡" >
                 <button type="button" class="next-button">Next</button>
+                <button type="button" class="back-button">Back</button>
             </div>
 
             <!-- Step 4: Final Information -->
             <div class="step" id="step-4">
-                <input type="text" name="username" placeholder="Choose an username" class="input-field" required>
-                <p>*Please note that you won't be able to edit your information for the first month after signing up.So, make sure they are accurate.</p>
+                <input type="text" style="display: none;" name="username" class="input-field" required disabled data-tippy-content="Auto-generated">
+                <p>*Please double-check your information before submitting. You won't be able to edit your details for the first month after signing up (unless you contact support team). Make sure everything is accurate!</p>
                 <div class="privacy-policy">
                     <input type="checkbox" id="privacy-policy" name="privacy-policy" checked>
                     <label for="privacy-policy">I agree to the <a href="#privacy-policy" target="_blank">Privacy Policy</a>.</label>
                 </div>
-                <button type="button" class="back-button">Back</button>
                 <button class="submit-button">Sign Up</button>              
+                <button type="button" class="back-button">Back</button>
             </div>
     </div>
+	<%- include('side-panel', { block: 'error-popup' }) %>
+    <script src="/js/controller.js"></script>
     <script src="/js/sign-up.js"></script>
+    <script src="/js/utils.js"></script>
 </body>
 </html>

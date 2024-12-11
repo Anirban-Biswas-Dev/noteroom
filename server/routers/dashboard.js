@@ -1,16 +1,25 @@
-const express = require('express')
-const Students = require('../schemas/students')
-const Notes = require('../schemas/notes')
-const allNotifs = require('../schemas/notifications').Notifs
-const { getSavedNotes, getNotifications, getRoot } = require('./controller')
-const router = express.Router()
+import { Router } from 'express'
+import Students from '../schemas/students.js'
+import Notes from '../schemas/notes.js'
+import Alerts from '../schemas/alerts.js'
+import { Notifs as allNotifs } from '../schemas/notifications.js'
+import { getSavedNotes, getNotifications, getRoot, unreadNotiCount } from './controller.js'
+const router = Router()
 
 function dashboardRouter(io) {
+
     async function addSaveNote(studentDocID, noteDocID) {
         await Students.updateOne(
             { _id: studentDocID },
-            { $addToSet: { saved_notes: noteDocID } }, 
+            { $addToSet: { saved_notes: noteDocID } },
             { new: true }
+        )
+    }
+
+    async function readNoti(notiID) {
+        await allNotifs.updateOne(
+            { _id: notiID },
+            { $set: { isRead: true } }
         )
     }
 
@@ -22,10 +31,16 @@ function dashboardRouter(io) {
     }
 
     async function getAllNotes() {
-        let notes = await Notes.find({}, { ownerDocID: 1, title: 1, content: 1 })
+        let notes = await Notes.find({}, { ownerDocID: 1, title: 1, content: 1, feedbackCount: 1 })
+            .sort({ createdAt: -1 })
             .limit(3)
-            .populate('ownerDocID', 'profile_pic displayname studentID')
+            .populate('ownerDocID', 'profile_pic displayname studentID username')
         return notes
+    }
+
+    async function getAlert() {
+        let alert = (await Alerts.find({}).sort({ createdAt: -1 }))[0];
+        return alert
     }
 
     io.on('connection', (socket) => {
@@ -38,15 +53,20 @@ function dashboardRouter(io) {
         socket.on('delete-saved-note', async (studentDocID, noteDocID) => {
             await deleteSavedNote(studentDocID, noteDocID)
         })
+        socket.on("read-noti", (notiID) => {
+            readNoti(notiID)
+        })
     })
 
     router.get('/', async (req, res) => {
-        if(req.session.stdid) {
-            let root = await getRoot(Students, req.session.stdid, 'studentID', { profile_pic: 1, displayname: 1, studentID: 1 })
-            let notis = await getNotifications(allNotifs, req.cookies['recordName'])
+        if (req.session.stdid) {
+            let alert = await getAlert()
+            let root = await getRoot(Students, req.session.stdid, 'studentID', { profile_pic: 1, displayname: 1, username: 1 })
+            let notis = await getNotifications(allNotifs, req.session.stdid)
+            let unReadCount = await unreadNotiCount(allNotifs, req.session.stdid)
             let allNotes = await getAllNotes()
             let savedNotes = await getSavedNotes(Students, Notes, req.session.stdid)
-            res.render('dashboard', { root: root, notis: notis, notes: allNotes, savedNotes: savedNotes })
+            res.render('dashboard', { root: root, notis: notis, notes: allNotes, savedNotes: savedNotes, alert: alert, unReadCount: unReadCount })
         } else {
             res.redirect('login')
         }
@@ -55,4 +75,5 @@ function dashboardRouter(io) {
     return router
 }
 
-module.exports = dashboardRouter
+export default dashboardRouter
+

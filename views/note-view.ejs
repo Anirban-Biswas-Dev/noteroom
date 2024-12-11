@@ -17,12 +17,19 @@
       href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" 
       rel="stylesheet"
     >
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/tributejs/5.1.3/tribute.min.css"
+    />
     <script
       src="https://kit.fontawesome.com/be4b1d4185.js"
       crossorigin="anonymous"
     ></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
     <script src="https://cdn.socket.io/socket.io-3.0.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dexie@latest/dist/dexie.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tributejs/5.1.3/tribute.min.js"></script>
     <title><%= note.title %></title>
   </head>
   <body>
@@ -66,7 +73,7 @@
         <div class="author-info">
           <img src="<%= owner.profile_pic %>" alt="Author Picture" />
           <span class="author-name">
-            <a href="/user/<%= owner.studentID %>">
+            <a href="/user/<%= owner.username %>">
               <%= owner.displayname %>
             </a>
             <span class="studentusername" style="display: none"
@@ -127,31 +134,38 @@
       </div>
       <div class="desc-box">
         <h3>Note description</h3>
-        <p><%= note.description %></p>
+        <p><%- note.description %></p>
       </div>
       <div class="feedbacks-section" id="feedbacks">
         <h2>Feedbacks</h2>
 
         <!-- feedback Input Area -->
-        <% if(mynote == 0) { %>
         <div class="feedback-input">
           <textarea
             placeholder="Write a feedback..."
             rows="3"
             name="feedbackText"
+            id="feedbackText"
           ></textarea>
           <button type="button" class="btn-submit-feedback post-feedback">
             Post feedback
           </button>
         </div>
-        <% } %>
 
         <!-- Feedbacks List -->
         <div class="feedbacks-list">
           <% function formatDate(date) { 
-              const formattedDate = date.toLocaleDateString('en-US', 
-              { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }); 
-              return formattedDate 
+              const formatter = new Intl.DateTimeFormat('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                timeZone: 'Asia/Dhaka', 
+                hour12: true 
+              });
+            const formattedDate = formatter.format(date);
+            return formattedDate
           } %>
           <!-- Individual feedback -->
           <% feedbacks.forEach(feedback => { %>
@@ -168,7 +182,7 @@
               <div class="feedback-author-info">
                 <a
                   class="link_"
-                  href="/user/<%= feedback.commenterDocID.studentID %>"
+                  href="/user/<%= feedback.commenterDocID.username %>"
                   ><h4 class="feedback-author">
                     <%= feedback.commenterDocID.displayname %>
                   </h4></a
@@ -195,9 +209,13 @@
       <%- include('side-panel', { block: 'right-panel' }) %>
     <% } %>
     <%- include('side-panel', { block: 'mbl-ctrl-panel' }) %>
+
+	  <audio id="notificationAudio" src="/sounds/notification-ping-sound.mp3" preload="auto"></audio>
     <div class="background-overlay"></div>
+
     <%- include('side-panel', { block: 'share-note' }) %>
     <%- include('side-panel', { block: 'downloading-loader' }) %>
+    
     <script src="/js/controller.js"></script>
     <script src="/js/note-view.js"></script>
   </body>

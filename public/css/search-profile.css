@@ -2,7 +2,6 @@
   font-family: "Inter", "Hind Siliguri", sans-serif;
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
 }
 :root {
   --squid-ink: #06192d;
@@ -15,12 +14,17 @@ body {
   justify-content: center;
   flex-direction: column;
 }
+.middle-section {
+  padding-top: 15vh;
+  height: 100vh;
+}
 .prfl-search-container {
   width: 90%;
   padding: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
+  box-sizing: border-box;
 }
 .field-container {
   width: 80%;
@@ -30,6 +34,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-around;
+  box-sizing: border-box;
 }
 .field {
   width: 90%;
@@ -40,6 +45,7 @@ body {
   border-right: none;
   flex: 1;
   border-radius: 25px 0 0 25px;
+  box-sizing: border-box;
 }
 .field:focus {
   outline: none;
@@ -50,6 +56,7 @@ body {
   font-size: 1.2rem;
   padding: 10px;
   border-radius: 0 25px 25px 0;
+  box-sizing: border-box;
 }
 .field-container i {
   cursor: pointer;
@@ -62,6 +69,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  box-sizing: border-box;
 }
 .random-prfls-container,
 .search-result-prfls-container {
@@ -79,13 +87,15 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  box-sizing: border-box;
 }
 .random-prfl,
 .results-prfl {
   width: 95%;
+  min-width: 250px;
   height: 60px;
   padding: 5px;
-  background-color: white;
+  background-color: var(--light-gray);
   box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.2);
   border-radius: 12px;
   margin: 10px 0px;
@@ -114,11 +124,17 @@ body {
   height: 50px;
   border-radius: 50%;
   object-fit: cover;
+  padding: 0 5px;
+  aspect-ratio: 1 / 1;
 }
 .prfl-name {
-  padding: 0 5px;
+  padding: 0 0 0 10px;
+  width: 25%;
+  max-width: 150px;
+  height: fit-content;
   font-size: 15px;
   letter-spacing: -0.06em;
+  box-sizing: border-box;
 }
 .prfl-desc {
   padding: 0 5px;
@@ -126,6 +142,10 @@ body {
   font-size: 13px;
   line-height: 15px;
   letter-spacing: -0.07em;
+  width: 30%;
+  min-width: 200px;
+  height: fit-content;
+  box-sizing: border-box;
 }
 .user-badge {
   width: 40px;
@@ -155,12 +175,92 @@ body {
   .results-prfls {
     width: 100%;
   }
+  .prfl-pic {
+    width: 40px;
+    height: 40px;
+  }
   .prfl-name {
-    font-size: 14px;
+    font-size: 12px;
+    width: 20%;
+    padding-left: 5px;
   }
   .prfl-desc {
     font-size: 10px;
     font-weight: 400;
     letter-spacing: 0px;
+    width: 25%;
+    min-width: 100px;
+  }
+  .user-badge {
+    width: 30px;
+    height: 30px;
+  }
+  .not-show-prfl {
+    font-size: 1.4rem;
+  }
+}
+@media (min-width: 361px) and (max-width: 480px) {
+  .prfls-container {
+    width: 100%;
+  }
+  .random-prfls,
+  .results-prfls {
+    width: 100%;
+  }
+  .prfl-pic {
+    width: 50px;
+    height: 50px;
+  }
+  .prfl-name {
+    font-size: 14px;
+    width: 30%;
+    padding-left: 10px;
+  }
+  .prfl-desc {
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 0px;
+    width: 30%;
+    min-width: 120px;
+  }
+  .user-badge {
+    width: 35px;
+    height: 35px;
+  }
+  .not-show-prfl {
+    font-size: 1.6rem;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  .prfls-container {
+    width: 100%;
+  }
+  .random-prfls,
+  .results-prfls {
+    width: 100%;
+  }
+  .prfl-pic {
+    width: 60px;
+    height: 60px;
+  }
+  .prfl-name {
+    font-size: 16px;
+    width: 35%;
+    padding-left: 15px;
+  }
+  .prfl-desc {
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: 0px;
+    width: 35%;
+    min-width: 150px;
+  }
+  .user-badge {
+    width: 40px;
+    height: 40px;
+  }
+  .not-show-prfl {
+    font-size: 1.8rem;
   }
 }

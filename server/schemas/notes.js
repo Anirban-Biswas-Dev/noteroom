@@ -1,14 +1,14 @@
-const mongoose = require('mongoose')
+import { Schema, model } from 'mongoose'
 
-const notesSchema = new mongoose.Schema({
+const notesSchema = new Schema({
     ownerDocID: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         required: true,
         ref: 'students'
     },
     title: {
         type: String,
-        maxLength: 50,
+        maxLength: 200,
         required: true,
     },
     content: {
@@ -31,6 +31,10 @@ const notesSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    feedbackCount: {
+        type: Number,
+        default: 0
+    },
     createdAt: {
         type: Date,
         required: true,
@@ -42,6 +46,6 @@ const notesSchema = new mongoose.Schema({
     }
 })
 
-const notesModel = mongoose.model('notes', notesSchema)
+const notesModel = model('notes', notesSchema)
 
-module.exports = notesModel
+export default notesModel

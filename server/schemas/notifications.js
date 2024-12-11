@@ -1,54 +1,97 @@
-const mongoose = require('mongoose')
+import { Schema, model } from 'mongoose'
 
 const baseOptions = {
     discriminatorKey: 'docType',
-    collection: 'notifications' 
+    collection: 'notifications'
 }
 
-const NotifsSchema = new mongoose.Schema({}, baseOptions)
-const NotifsModel = mongoose.model('notifications', NotifsSchema)
-
-const feedBackSchema = new mongoose.Schema({
-    noteDocID: { 
-        type: mongoose.Schema.Types.ObjectId,
+const NotifsSchema = new Schema({
+    noteDocID: {
+        type: Schema.Types.ObjectId,
         ref: 'notes',
         required: true
     },
     commenterDocID: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'students',
         required: true,
     },
     feedbackDocID: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         required: true
     },
-    ownerUsername: String, 
+    ownerStudentID: String,
+    isRead: {
+        type: Boolean,
+        default: false
+    },
     createdAt: {
         type: Date,
         default: Date.now
     }
-}, { _id: false })
-const feedBackNotifs = NotifsModel.discriminator('feedback', feedBackSchema)
+}, baseOptions)
+const NotifsModel = model('notifications', NotifsSchema)
 
-const uploadNoteSchema = new mongoose.Schema({
+
+const feedBackSchema = new Schema({
     noteDocID: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'notes',
         required: true
     },
-    ownerDocID: {
-        type: mongoose.Schema.Types.ObjectId,
+    commenterDocID: {
+        type: Schema.Types.ObjectId,
         ref: 'students',
+        required: true,
+    },
+    feedbackDocID: {
+        type: Schema.Types.ObjectId,
         required: true
+    },
+    ownerStudentID: String,
+    isRead: {
+        type: Boolean,
+        default: false
     },
     createdAt: {
         type: Date,
         default: Date.now
     }
-}, { _id: false })
-const uploadNoteNotifs = NotifsModel.discriminator('upload-note', uploadNoteSchema)
+})
+const feedBackNotifs = NotifsModel.discriminator('feedback', feedBackSchema)
 
-module.exports.Notifs = NotifsModel
-module.exports.feedBackNotifs = feedBackNotifs
-module.exports.uploadNoteNotifs = uploadNoteNotifs
+
+const mentionSchema = new Schema({
+    noteDocID: {
+        type: Schema.Types.ObjectId,
+        ref: 'notes',
+        required: true
+    },
+    commenterDocID: {
+        type: Schema.Types.ObjectId,
+        ref: 'students',
+        required: true,
+    },
+    feedbackDocID: {
+        type: Schema.Types.ObjectId,
+        required: true
+    },
+    ownerStudentID: String, // The person who is being mentioned
+    isRead: {
+        type: Boolean,
+        default: false
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now
+    }
+})
+const mentionNotifs = NotifsModel.discriminator('mention', mentionSchema)
+
+
+
+export const Notifs = NotifsModel
+const _feedBackNotifs = feedBackNotifs
+export { _feedBackNotifs as feedBackNotifs }
+const _mentionNotifs = mentionNotifs
+export { _mentionNotifs as mentionNotifs }

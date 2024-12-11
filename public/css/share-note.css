@@ -188,6 +188,10 @@
     .plf-box i {
         font-size: 1.8rem;
     }
+    .modal-header h3 {
+        font-size: 1.3rem;
+        font-weight: 600;
+    }
 }
 @media (min-width: 361px) and (max-width: 480px) {
     .share-note-modal {

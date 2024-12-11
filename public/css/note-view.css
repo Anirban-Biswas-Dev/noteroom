@@ -120,6 +120,8 @@ body {
         height: 80px;
         border: 1px solid #000000;
         border-radius: 100px;
+        object-fit: cover;
+        aspect-ratio: 1 / 1;
     }
 }
 
@@ -164,7 +166,7 @@ body {
     box-sizing: border-box;
     border: 2px solid #000000;
     border-radius: 10px;
-    padding: 10px 15px 10px 15px;
+    padding: 50px 20px 50px 20px;
     width: 90%;
     min-height: fit-content;
     display: flex;
@@ -178,6 +180,13 @@ body {
         letter-spacing: -0.06em;
         align-self: center;
         padding: 5px 0px 10px 0px;
+    }
+
+    blockquote {
+        margin: 1em 0;
+        padding: 1em;
+        border-left: 5px solid #ccc; /* Adds a left border */
+        background-color: #f9f9f9; /* Light background */
     }
 }
 

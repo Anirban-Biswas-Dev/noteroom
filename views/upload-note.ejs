@@ -6,6 +6,7 @@
     <title>Upload Note</title>
     <link rel="stylesheet" href="/css/main-pages.css">
     <link rel="stylesheet" href="/css/upload-note.css">
+	<link rel="stylesheet" href="/css/error-popup.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
@@ -13,9 +14,12 @@
       href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" 
       rel="stylesheet"
     >
+    <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.css">
+    <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.js"></script>
     <script src="https://kit.fontawesome.com/be4b1d4185.js" crossorigin="anonymous"></script>
     <script src="https://cdn.socket.io/socket.io-3.0.1.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dexie@latest/dist/dexie.min.js"></script>
 </head>
 <body>
     
@@ -35,14 +39,14 @@
                 </clipPath>
                 </defs>
                 </svg>
-            <p class="upload-msg">Drag & drop files</p>
+            <!-- <p class="upload-msg">Drag & drop files</p> -->
             <p class="suggested-formats-msg">Suggested Formats : PNG, JPG</p>
-            <span class="device-upload-sep">Or</span>  
+            <!-- <span class="device-upload-sep">Or</span>   -->
                 <p class="upload-msg">Upload pictures from your         
                     device
                 </p>
-            <div class="browse-file-container"> <!--Backend integration for file type-->
-                <input type="file" id="fileInput" class="file-input" name="images"/>
+            <div class="browse-file-container"> 
+                <input type="file" id="fileInput" class="file-input" name="images" multiple/>
                 <label for="fileInput" class="browse-files-btn">
                     <pre><i class="fa-regular fa-file"></i> Browse</pre>
                 </label>
@@ -50,9 +54,15 @@
         </div>
         <div class="stack-status">
             <div class="stack-number-container">
+                <div class="snc-info-wrapper">
                 <i class="fa-solid fa-layer-group"></i>
-                <span class="stack-number">No Image Added</span>
+                <span class="stack-info">
+                    <span class="stack-number">No Images</span>
+                </span>
+                </div>
+                <span class="stack-prompt">Click to view</span>
             </div>
+            
             <div class="success-upload-msg">
                 <svg width="20" height="20" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <g clip-path="url(#clip0_1844_2149)">
@@ -71,6 +81,9 @@
         <div class="text-form">
             <select name="noteSubject" class="note-subject" required>
                 <option value="No Subject" disabled selected >Choose Subject</option>
+                <option value="Bangla">Bangla</option>
+                <option value="English">English</option>
+                <option value="ICT">ICT</option>
                 <option value="Physics 1st Paper">Physics 1st Paper</option>
                 <option value="Physics 2nd Paper">Physics 2nd Paper</option>
                 <option value="Chemistry 1st Paper">Chemistry 1st Paper</option>
@@ -79,22 +92,28 @@
                 <option value="Biology 2nd Paper">Biology 2nd Paper</option>
                 <option value="Higher Mathematics 1st Paper">Higher Mathematics 1st Paper</option>
                 <option value="Higher Mathematics 2nd Paper">Higher Mathematics 2nd Paper</option>
-                <option value="ICT">ICT</option>
-                <option value="Bangla">Bangla</option>
-                <option value="English">English</option>
+                <option value="Statistics">Statistics</option>
                 <option value="History">History</option>
                 <option value="Geography">Geography</option>
                 <option value="Logic">Logic</option>
                 <option value="Philosophy">Philosophy</option>
+                <option value="Political Science">Political Science</option>
+                <option value="Sociology">Sociology</option>
+                <option value="Economics">Economics</option>
+                <option value="Islamic History & Culture">Islamic History & Culture</option>
+                <option value="Social Work">Social Work</option>
+                <option value="Psychology">Psychology</option>
+                <option value="Islamic Studies">Islamic Studies</option>
             </select>
-            <input type="text" class="note-title" placeholder="Note's Title" name="noteTitle">
-            <textarea name="noteDescription" class="note-description" rows="4" placeholder="Tell a bit about your note" required></textarea>
+            <input type="text" class="note-title" placeholder="Note's Title (less than 200 characters)" name="noteTitle">
+            <div id="editor"></div>
+
             <button class="publish-note-btn" onclick="publish()">Publish</button>
         </div>
     </div>
     <div class="overlay"></div>
     <!-- ***** Pop up to set a thumbnail **** -->
-    <div class="thumbnail-pop-up">
+    <!-- <div class="thumbnail-pop-up">
         <div class="popup-heading">
             <h2>Preview</h2>
             <button class="discard-btn">Discard &times;</button>
@@ -105,17 +124,29 @@
         <div class="popup-footer">
             <button class="thumbnail-addstack-btn">Add to Stack</button>
         </div>
-     </div>
-    <%- include('side-panel', { block: 'right-panel' }) %>
-     
-      <!-- Mobile Bottom Control Bar -->
+     </div> -->
+     <div class="thumbnail-pop-up">
+        <div class="popup-heading">
+            <h2>Stack</h2>
+            <button class="discard-btn">Close &times;</button>
+        </div>
+        <p class="no-notes">You haven't added any images. Start uploading</p>
+        <div class="thumbnail-container">
+        </div>
+    </div>
+    
+    <%- include('side-panel', { block: 'right-panel' }) %>     
     <%- include('side-panel', { block: 'mbl-ctrl-panel' }) %>
+	<%- include('side-panel', { block: 'error-popup' }) %>
+
+    <audio id="notificationAudio" src="/sounds/notification-ping-sound.mp3" preload="auto"></audio>
+
 	<div class="background-overlay"></div>
     <div class="loader-overlay">
         <span class="loader"></span>
     </div>
        
-    <script src="/js/upload-note.js"></script>
     <script src="/js/controller.js"></script>
+    <script src="/js/upload-note.js"></script>
 </body>
 </html>

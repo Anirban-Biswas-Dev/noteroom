@@ -1,7 +1,9 @@
-const express = require('express')
-const Students = require('../schemas/students')
-const imgManage = require('../controllers/image-upload')
-const router = express.Router()
+import { Router } from 'express'
+import Students from '../schemas/students.js'
+import { upload } from '../controllers/image-upload.js'
+import slugify from 'slugify'
+import { v4 as uuidv4 } from "uuid"
+const router = Router()
 
 /* 
 # Variables:
@@ -15,6 +17,24 @@ function signupRouter(io) {
         return student
     }
 
+    function generateRandomUsername(displayname) {
+        let sluggfied = slugify(displayname, {
+            lower: true,
+            strict: true,
+            replacement: '-',
+            remove: /[^\w\s-]/g
+        }
+        )
+        let uuid = uuidv4()
+        let suffix = uuid.split("-")[0]
+        let username = `${sluggfied}-${suffix}`
+
+        return {
+            userID: uuid,
+            username: username
+        }
+    }
+
     router.get('/', (req, res) => {
         if (req.session.stdid) {
             res.redirect(`/user/${req.session.stdid}`)
@@ -26,33 +46,40 @@ function signupRouter(io) {
 
     router.post('/', async (req, res, next) => {
         try {
+            let identifier = generateRandomUsername(req.body.displayname.trim())
             let studentData = {
-                displayname: req.body.displayname,
+                displayname: req.body.displayname.trim(),
                 email: req.body.email,
                 password: req.body.password,
-                studentID: req.body.studentID,
-                rollnumber: req.body.rollnumber,
+                studentID: identifier["userID"],
+                rollnumber: req.body.rollnumber.trim(),
                 collegesection: req.body.collegesection,
                 collegeyear: req.body.collegeyear,
                 bio: req.body.bio,
                 favouritesubject: req.body.favouritesubject,
                 notfavsubject: req.body.notfavsubject,
                 group: req.body.group,
-                username: req.body.username
+                username: identifier["username"]
             } //* Getting all the data posted by the client except the profile picture
 
-            if(req.files) {
+            if (req.files) {
                 let profile_pic = Object.values(req.files)[0] //* Getting the profiloe picture File Object
                 let student = await addStudent(studentData)
                 let studentDocID = student._id
-                
+
                 let savePath = `${studentDocID.toString()}/${profile_pic.name}`
-                let profilePicUrl = imgManage.upload(profile_pic, savePath)
-    
+                let profilePicUrl = upload(profile_pic, savePath)
+
                 Students.findByIdAndUpdate(studentDocID, { profile_pic: (await profilePicUrl).toString() }).then(() => {
                     req.session.stdid = studentData.studentID // setting the session with the student ID
-                    res.cookie('recordID', student['_id']) // setting a cookie with a value of the document ID of the user
-                    res.cookie('recordName', student['username']) // setting a cookie with a value of the username of the user
+                    res.cookie('recordID', student['_id'], {
+                        secure: false,
+                        maxAge: 1000 * 60 * 60 * 720
+                    }) // setting a cookie with a value of the document ID of the user
+                    res.cookie('studentID', student['studentID'], {
+                        secure: false,
+                        maxAge: 1000 * 60 * 60 * 720
+                    }) // setting a cookie with a value of the student ID
                     res.send({ url: `/dashboard` })
                 }) //* Updating the student's record database to add the profile_pic image location so that it can be deirectly used by the front-end
             } else {
@@ -60,10 +87,27 @@ function signupRouter(io) {
             }
 
         } catch (error) {
-            console.log(error)
-            if(error.code === 11000) {
+            if (error.code === 11000) {
                 let duplicate_field = Object.keys(error.keyValue)[0] // Sending the first duplicated field name to the client-side to show an error
                 io.emit('duplicate-value', duplicate_field)
+            } else if (error.name === 'ValidationError') {
+                let requiredFields = []
+                let userDefineds = []
+
+                for (field in error.errors) {
+                    if (error.errors[field].kind === 'required') {
+                        requiredFields.push(field)
+                    } else if (error.errors[field].kind === 'user defined') {
+                        userDefineds.push({ fieldName: error.errors[field].path, errorMessage: error.errors[field].properties.message })
+                    }
+                }
+
+                if (requiredFields.length > 0 || userDefineds.length > 0) {
+                    res.send({
+                        emptyFields: requiredFields,
+                        userDefinedErrors: userDefineds
+                    })
+                }
             } else {
                 res.send({ message: error.message })
             }
@@ -73,4 +117,4 @@ function signupRouter(io) {
     return router
 }
 
-module.exports = signupRouter
+export default signupRouter

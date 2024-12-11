@@ -2,3 +2,8 @@ node_modules/
 /.vscode
 /server/.env
 test.*
+logs.log
+/server/controllers/logger.js
+*.json
+/server/routers/db/
+/experiment/

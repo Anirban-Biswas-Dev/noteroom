@@ -14,6 +14,53 @@ body {
   justify-content: center;
   flex-direction: column;
 }
+
+/* Temporary alert message */
+.error {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  width: 90%;
+  padding: 12px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: start;
+  background: #EF665B;
+  border-radius: 8px;
+  box-shadow: 0px 0px 5px -3px #111;
+  margin-bottom: 30px;
+}
+.success {
+  background: #4CAF50;
+}
+
+.error__icon {
+  width: 20px;
+  height: 20px;
+  transform: translateY(-2px);
+  margin-right: 8px;
+}
+
+.error__icon path {
+  fill: #fff;
+}
+
+.error__title {
+  font-weight: 500;
+  font-size: 14px;
+  color: #fff;
+}
+
+.error__close {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  margin-left: auto;
+}
+
+.error__close path {
+  fill: #fff;
+}
+
 /* ********* Search Bar ********* */
 /* Search Bar Box */
 .feed-container {
@@ -44,6 +91,9 @@ body {
   object-fit: cover;
   display: none;
 }
+.thumbnail:hover{
+  cursor: pointer;
+}
 
 .thumbnail-container {
   position: relative;
@@ -51,7 +101,7 @@ body {
 }
 .thumbnail-loading {
   width: 100%;
-  height: 360px;
+  height: 300px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -94,23 +144,80 @@ body {
     background-color: hsl(0, 0%, 90%);
   }
 }
-
-
-
-
-.save-note-btn {
+.note-menu{
   position: absolute;
   top: 10px;
   right: 10px;
+  width: fit-content;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.note-menu-btn{ 
   background: none;
   border-radius: 8px;
-  padding: 5px 10px;
+  padding: 5px 15px;
   cursor: pointer;
   border: none;
-  font-size: 2.5rem;
+  font-size: 2rem;
   background: rgba(255, 255, 255, 0.5);
   transition: transform 0.3s, box-shadow 0.3s;
   box-sizing: border-box;
+}
+.menu-options {
+  flex-direction: column; 
+  position: absolute;
+  top: 60px; 
+  right: 0;
+  width: 200px; 
+  background: #FAFAFA;
+  border-radius: 8px;
+  padding: 10px 0;
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 10px 15px -3px, rgba(0, 0, 0, 0.1) 0px 4px 6px -2px;
+  opacity: 0; 
+  pointer-events: none; 
+  transform: translateY(10px); 
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.menu-options.active {
+  opacity: 1;
+  pointer-events: auto; 
+  transform: translateY(0); 
+}
+.option {
+  display: flex;
+  align-items: center; 
+  padding: 8px 16px;
+  cursor: pointer;
+  gap: 15px; 
+}
+
+.option:hover {
+  background-color: #f0f0f0;
+}
+
+.option svg{
+  flex-shrink: 0; 
+  width: 24px; 
+  height: 24px; 
+}
+
+.opt-label {
+  color: #333;
+  line-height: 1.2; 
+  font-weight: 500;
+  font-size: .8rem;
+}
+
+.save-note-btn {
+  background: none;
+  cursor: pointer;
+  border: none;
+  font-size: 1.5rem;
+  transition: transform 0.3s, box-shadow 0.3s;
+  box-sizing: border-box;
+  padding: 0 3px ;
 }
 
 .save-note-btn i.fa-solid {
@@ -126,7 +233,6 @@ body {
 
 .save-note-btn.active {
   animation: bounce 0.6s ease;
-  box-shadow: 0 0 15px rgba(0, 255, 0, 0.8);
 }
 
 @keyframes bounce {
@@ -139,11 +245,7 @@ body {
   60% {
     transform: translateY(-10px);
   }
-}
-
-.save-note-btn.saved {
-  border: 2px solid rgba(0, 255, 0, 0.6);
-}
+} 
 
 .confetti {
   position: absolute;
@@ -226,16 +328,131 @@ body {
 .note-engagement {
   display: flex;
   align-items: center;
+  justify-content: space-evenly;
+  padding: 0 15px;
+  width: fit-content;
 }
 
 .note-engagement svg {
-  margin-left: 20px;
   cursor: pointer;
 }
 
 .note-engagement svg:hover {
   transform: scale(1.1);
   transition: transform 0.2s ease-in-out;
+}
+/* Upvote & Downvote */
+.vote-container{
+  width: fit-content;
+  min-height: fit-content;
+  border-radius: 15px;
+  background: transparent;
+  display: flex;
+  justify-content:center;
+  align-items: center;
+  filter: drop-shadow(0px 1px 10px rgba(0, 0, 0, 0.1));
+  margin: 0 15px 0 0;
+}
+.vote-container:hover{
+  cursor: pointer;
+}
+.note-engagement .uv-icon{
+  all: unset;
+}
+.note-engagement .uv-icon:hover{
+  all: unset;
+  cursor: pointer;
+}
+.uv-container {
+  background-color: var(--light-gray);
+  flex: 0 0 60%;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  padding: 10px;
+  box-sizing: border-box;
+  border-radius: 15px 0 0 15px;
+  transition: background-color 0.2s ease;
+}
+
+.uv-container:hover {
+  background-color: #c9edd9;
+}
+
+.uv-container:active {
+  background-color: #1ddc6f52;
+}
+
+.uv-container:hover .uv-icon path {
+  fill: #39e58c; 
+}
+.uv-container:hover .uv-count {
+  color: #39e58c; 
+}
+.uv-count {
+  font-size: .8rem;
+  font-weight: 400;
+  line-height: 12px;
+  letter-spacing: -0.09em;
+  padding: 0 0 0 5px;
+}
+
+.divider-uv-dv{
+  height: 100%;
+  min-height: 30px;
+  background-color: #D9D9D9;
+  border: 1px solid #D9D9D9;
+  border-radius: 1px;
+}
+.dv-container{
+  background-color: var(--light-gray);
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border-radius: 0 15px 15px 0;
+  transition: background-color 0.2s ease;
+}
+.dv-container:hover{
+  background-color: #d52b203d;
+}
+.dv-container:hover .dv-icon path {
+  fill:#e04337; 
+}
+.note-engagement .dv-icon{
+  all: unset;
+  padding: 0 5px;
+}
+.note-engagement .dv-icon:hover{
+  all: unset;
+  padding: 0 5px;
+  cursor: pointer;
+}
+.dv-container:active {
+  background-color: #d52b2052;
+}
+
+.cmnt-engagement{
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  padding: 10px 15px;
+  background: var(--light-gray);
+  box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.15);
+  border-radius: 15px;
+  margin: 0 0 0 15px;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+.cmnt-engagement:hover{
+  cursor: pointer;
+  background-color: #f1efef;
+  box-shadow: none;
+}
+.cmnt-count{
+font-weight: 300;
+font-size: .85rem;
+line-height: 12px;
+letter-spacing: -0.09em;
+padding: 5px;
 }
 /* Confetti and Pop up for new user sign up celebration */
 .popup {
@@ -309,6 +526,9 @@ canvas {
   .thumbnail-container{
     width: 95vw;
   }
+  .thumbnail-loading{
+    height: 220px;
+  }
   .save-note-btn {
     font-size: 1.8rem;
   }
@@ -323,6 +543,9 @@ canvas {
   }
   .note-title{
     font-size: .7rem;
+    width: 25vw;
+    max-width: 180px;
+    min-width: 50px;
   }
   .author-info{
     width: 80%;
@@ -330,13 +553,70 @@ canvas {
   .author{
     font-size: .5rem;
   }
-  .note-engagement{
-    margin-left: 10px;
+  .vote-container{
+    margin: 0 10px 0 0;
   }
-  .note-engagement svg{
-    margin-left: 10px;
+  .uv-container{
+    padding: 8px 5px;
+  }
+  .note-engagement .uv-icon{
+    width: 10vw;
+    max-width: 12px;
+  }
+  .uv-count {
+    font-size: .7rem;
+  }
+  .divider-uv-dv{
+    min-height: 26px;
+  }
+  .uv-count{
+    padding: 0 0 0 2px;
+  }
+  .dv-container{
+    padding: 8px 5px;
+  }
+  .note-engagement .dv-icon{
+    width: 10vw;
+    max-width: 12px;
+  }
+  .cmnt-engagement{
+    padding: 5px 8px;
+    margin: 5px;
+    border-radius: 12px;
+  }
+  .cmnt-count{
+    font-size: .7rem;
+  }
+  .comment-icon{
+    width: 5vw;
+    max-width: 14px;
+  }
+  @media (max-width:310px) {
+    .cmnt-engagement{
+      display: none;
+    }
+  }
+  .note-menu-btn{
+    padding: 5px 10px;
+    font-size: 1.5rem;
+  }
+  .menu-options{
+    width: 150px;
+  }
+  .option{
+    gap: 10px;
+    padding: 8px 10px;
+  }
+  .option svg{
     width: 20px;
     height: 20px;
+  }
+  .opt-label{
+    font-size: .7rem;
+  }
+  .save-note-btn{
+    font-size: 1.2rem;
+    padding: 0 2.2px;
   }
 }
 @media (min-width:361px) and ( max-width:480px) {
@@ -352,6 +632,9 @@ canvas {
   }
   .thumbnail-container{
     width: 95vw;
+  }
+  .thumbnail-loading{
+    height: 280px;
   }
   .save-note-btn {
     font-size: 1.8rem;
@@ -374,12 +657,62 @@ canvas {
   .author{
     font-size: .7rem;
   }
-  .note-engagement{
-    margin-left: 15px;
+  .vote-container {
+    margin: 0 12px 0 0;
   }
-  .note-engagement svg{
-    margin-left: 10px;
-    width: 30px;
-    height: 30px;
+  .uv-container {
+    padding: 10px 6px;
+  }
+  .note-engagement .uv-icon {
+    width: 12vw;
+    max-width: 14px;
+  }
+  .uv-count {
+    font-size: 0.8rem;
+    padding: 0 0 0 3px;
+  }
+  .divider-uv-dv {
+    min-height: 28px;
+  }
+  .dv-container {
+    padding: 10px 6px;
+  }
+  .note-engagement .dv-icon {
+    width: 12vw;
+    max-width: 14px;
+  }
+  .cmnt-engagement {
+    padding: 6px 10px;
+    margin: 6px;
+    border-radius: 14px;
+  }
+  .cmnt-count {
+    font-size: 0.75rem;
+  }
+  .comment-icon {
+    width: 6vw;
+    max-width: 16px;
+  }
+  .note-menu-btn {
+    padding: 6px 12px;
+    font-size: 1.6rem;
+  }
+  .menu-options {
+    width: 170px;
+  }
+  .option {
+    gap: 12px;
+    padding: 10px 12px;
+  }
+  .option svg {
+    width: 22px;
+    height: 22px;
+  }
+  .opt-label {
+    font-size: 0.75rem;
+  }
+  .save-note-btn {
+    font-size: 1.3rem;
+    padding: 0 3px;
   }
 }
