@@ -270,14 +270,14 @@ const setupThreadReplyListeners = () => {
     button.addEventListener("click", (event) => {
       let threadSection = event.target
         .closest(".main__cmnts-replies-wrapper")
-        ?.querySelector(".thread-section");
+        ?.querySelector(".thread-section"); 
 
       // Check if editor already exists
       let threadEditor = threadSection.querySelector(
         ".thread-editor-container"
       );
       if (!threadEditor) {
-        threadEditor1 = document.createElement("div");
+        threadEditor1 = document.createElement("div"); // add "let" here
         threadEditor1.classList.add("thread-editor-container");
         threadEditor1.innerHTML = `
                 <img class="tec__avatar-preview thread-avatar" src="${imgTemplate}">
@@ -291,10 +291,10 @@ const setupThreadReplyListeners = () => {
                   </div>    
                 `;
         console.log(threadEditor);
-        threadSection.appendChild(threadEditor);
+        threadSection.appendChild(threadEditor); // Why are you adding `threadEditor`, what if its `null`??
       }
 
-      const textarea = threadEditor.querySelector(".thread-editor");
+      const textarea = threadEditor.querySelector(".thread-editor"); // The `threadEditor` is always null so this line won't work
       textarea.focus();
 
       // Handle post button
