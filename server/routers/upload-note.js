@@ -1,10 +1,10 @@
-const express = require('express')
-const Notes = require('../schemas/notes')
-const Students = require('../schemas/students')
-const imgManage = require('../controllers/image-upload')
-const allNotifs = require('../schemas/notifications').Notifs
-const { getSavedNotes, getNotifications, getRoot, unreadNotiCount } = require('./controller')
-const router = express.Router()
+import { Router } from 'express'
+import Notes from '../schemas/notes.js'
+import Students from '../schemas/students.js'
+import { upload } from '../controllers/image-upload.js'
+import { Notifs as allNotifs } from '../schemas/notifications.js'
+import { getSavedNotes, getNotifications, getRoot, unreadNotiCount } from './controller.js'
+const router = Router()
 
 /*
 # Variables:
@@ -17,15 +17,15 @@ function uploadRouter(io) {
     async function addNote(noteObj) {
         let note = await Notes.create(noteObj)
         await Students.findByIdAndUpdate(
-            noteObj.ownerDocID, 
-            { $push: { owned_notes: note._id } }, 
+            noteObj.ownerDocID,
+            { $push: { owned_notes: note._id } },
             { upsert: true, new: true }
         )
         return note
     }
 
     router.get('/', async (req, res) => {
-        if(req.session.stdid) {
+        if (req.session.stdid) {
             let student = await getRoot(Students, req.session.stdid, 'studentID', { displayname: 1, username: 1, profile_pic: 1 })
             let savedNotes = await getSavedNotes(Students, Notes, req.session.stdid)
             let notis = await getNotifications(allNotifs, req.session.stdid)
@@ -47,7 +47,7 @@ function uploadRouter(io) {
             5. Update the note's record by adding all the image-links into the database
          */
         try {
-            if(!req.files) {
+            if (!req.files) {
                 res.send({ error: 'No files have been selected to publish' })
             } else {
                 let noteData = {
@@ -56,37 +56,37 @@ function uploadRouter(io) {
                     title: req.body['noteTitle'],
                     description: req.body['noteDescription']
                 } //* All the data except the notes posted by the client
-    
+
                 let note = await addNote(noteData) //* Adding all the record of a note except the content links in the database
                 let noteDocId = note._id
-    
+
                 let allFiles = Object.values(req.files) //* Getting all the file objects from the requests
-        
+
                 let allFilePaths = [] //* These are the raw file paths that will be directly used in the note-view
-    
-                for(const file of allFiles) {
-                    let publicUrl = (await imgManage.upload(file, `${req.cookies['recordID']}/${noteDocId.toString()}/${file.name}`)).toString()
+
+                for (const file of allFiles) {
+                    let publicUrl = (await upload(file, `${req.cookies['recordID']}/${noteDocId.toString()}/${file.name}`)).toString()
                     allFilePaths.push(publicUrl)
-                } 
-    
+                }
+
                 Notes.findByIdAndUpdate(noteDocId, { $set: { content: allFilePaths } }).then(() => {
                     res.send({ url: '/dashboard' })
                 }) //* After adding everything into the note-db except content (image links), this will update the content field with the image links
-    
+
                 let owner = await getRoot(Students, req.session.stdid, 'studentID', {}) //* Getting the user information, basically the owner of the note
-                io.emit('note-upload' , { //* Handler 1: Dashboard; for adding the note at feed via websockets  
-                    noteID /* Document ID of the note */ : noteDocId, 
+                io.emit('note-upload', { //* Handler 1: Dashboard; for adding the note at feed via websockets  
+                    noteID /* Document ID of the note */: noteDocId,
                     thumbnail /* The first image of the notes content as a thumbnail */: allFilePaths[0],
-                    profile_pic /* Profile pic path of the owner of the note */ : owner.profile_pic,
-                    noteTitle /* Title of the note */ : noteData.title, 
+                    profile_pic /* Profile pic path of the owner of the note */: owner.profile_pic,
+                    noteTitle /* Title of the note */: noteData.title,
                     feedbackCount: 0, //! maybe this needs to be dynamic
-                    ownerDisplayName /* Displayname of the owener of the note*/ : owner.displayname, 
-                    ownerID /* Student ID of the owner of the note */ : owner.studentID,
-                    ownerUserName /* Username of the owner of the note */ : owner.username
+                    ownerDisplayName /* Displayname of the owener of the note*/: owner.displayname,
+                    ownerID /* Student ID of the owner of the note */: owner.studentID,
+                    ownerUserName /* Username of the owner of the note */: owner.username
                 })
             }
         } catch (error) {
-            if(error.errors && error.errors['title'] && error.errors.title['kind'] === 'maxlength') {
+            if (error.errors && error.errors['title'] && error.errors.title['kind'] === 'maxlength') {
                 let errorField = error.errors.title['path']
                 io.emit('note-validation', { errorField })
             } else {
@@ -99,4 +99,4 @@ function uploadRouter(io) {
     return router
 }
 
-module.exports = uploadRouter
+export default uploadRouter

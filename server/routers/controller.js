@@ -53,7 +53,11 @@ async function unreadNotiCount(allNotifs, ownerStudentID) {
     })
 }
 
-module.exports.getSavedNotes = getSavedNotes
-module.exports.getNotifications = getNotifications
-module.exports.getRoot = getRoot
-module.exports.unreadNotiCount = unreadNotiCount
+const _getSavedNotes = getSavedNotes
+export { _getSavedNotes as getSavedNotes }
+const _getNotifications = getNotifications
+export { _getNotifications as getNotifications }
+const _getRoot = getRoot
+export { _getRoot as getRoot }
+const _unreadNotiCount = unreadNotiCount
+export { _unreadNotiCount as unreadNotiCount }

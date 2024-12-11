@@ -1,9 +1,9 @@
-const express = require('express')
-const Students = require('../schemas/students')
-const imgManage = require('../controllers/image-upload')
-const slugify = require('slugify')
-const uuidv4 = require("uuid").v4
-const router = express.Router()
+import { Router } from 'express'
+import Students from '../schemas/students.js'
+import { upload } from '../controllers/image-upload.js'
+import slugify from 'slugify'
+import { v4 as uuidv4 } from "uuid"
+const router = Router()
 
 /* 
 # Variables:
@@ -68,7 +68,7 @@ function signupRouter(io) {
                 let studentDocID = student._id
 
                 let savePath = `${studentDocID.toString()}/${profile_pic.name}`
-                let profilePicUrl = imgManage.upload(profile_pic, savePath)
+                let profilePicUrl = upload(profile_pic, savePath)
 
                 Students.findByIdAndUpdate(studentDocID, { profile_pic: (await profilePicUrl).toString() }).then(() => {
                     req.session.stdid = studentData.studentID // setting the session with the student ID
@@ -117,4 +117,4 @@ function signupRouter(io) {
     return router
 }
 
-module.exports = signupRouter
+export default signupRouter

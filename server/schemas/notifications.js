@@ -1,23 +1,23 @@
-const mongoose = require('mongoose')
+import { Schema, model } from 'mongoose'
 
 const baseOptions = {
     discriminatorKey: 'docType',
     collection: 'notifications'
 }
 
-const NotifsSchema = new mongoose.Schema({
+const NotifsSchema = new Schema({
     noteDocID: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'notes',
         required: true
     },
     commenterDocID: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'students',
         required: true,
     },
     feedbackDocID: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         required: true
     },
     ownerStudentID: String,
@@ -30,22 +30,22 @@ const NotifsSchema = new mongoose.Schema({
         default: Date.now
     }
 }, baseOptions)
-const NotifsModel = mongoose.model('notifications', NotifsSchema)
+const NotifsModel = model('notifications', NotifsSchema)
 
 
-const feedBackSchema = new mongoose.Schema({
+const feedBackSchema = new Schema({
     noteDocID: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'notes',
         required: true
     },
     commenterDocID: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'students',
         required: true,
     },
     feedbackDocID: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         required: true
     },
     ownerStudentID: String,
@@ -61,19 +61,19 @@ const feedBackSchema = new mongoose.Schema({
 const feedBackNotifs = NotifsModel.discriminator('feedback', feedBackSchema)
 
 
-const mentionSchema = new mongoose.Schema({
+const mentionSchema = new Schema({
     noteDocID: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'notes',
         required: true
     },
     commenterDocID: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'students',
         required: true,
     },
     feedbackDocID: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         required: true
     },
     ownerStudentID: String, // The person who is being mentioned
@@ -90,6 +90,8 @@ const mentionNotifs = NotifsModel.discriminator('mention', mentionSchema)
 
 
 
-module.exports.Notifs = NotifsModel
-module.exports.feedBackNotifs = feedBackNotifs
-module.exports.mentionNotifs = mentionNotifs
+export const Notifs = NotifsModel
+const _feedBackNotifs = feedBackNotifs
+export { _feedBackNotifs as feedBackNotifs }
+const _mentionNotifs = mentionNotifs
+export { _mentionNotifs as mentionNotifs }

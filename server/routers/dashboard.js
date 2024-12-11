@@ -1,10 +1,10 @@
-const express = require('express')
-const Students = require('../schemas/students')
-const Notes = require('../schemas/notes')
-const Alerts = require('../schemas/alerts')
-const allNotifs = require('../schemas/notifications').Notifs
-const { getSavedNotes, getNotifications, getRoot, unreadNotiCount } = require('./controller')
-const router = express.Router()
+import { Router } from 'express'
+import Students from '../schemas/students.js'
+import Notes from '../schemas/notes.js'
+import Alerts from '../schemas/alerts.js'
+import { Notifs as allNotifs } from '../schemas/notifications.js'
+import { getSavedNotes, getNotifications, getRoot, unreadNotiCount } from './controller.js'
+const router = Router()
 
 function dashboardRouter(io) {
 
@@ -75,5 +75,5 @@ function dashboardRouter(io) {
     return router
 }
 
-module.exports = dashboardRouter
+export default dashboardRouter
 
