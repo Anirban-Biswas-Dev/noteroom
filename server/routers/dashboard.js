@@ -3,13 +3,10 @@ const Students = require('../schemas/students')
 const Notes = require('../schemas/notes')
 const Alerts = require('../schemas/alerts')
 const allNotifs = require('../schemas/notifications').Notifs
-const feedbackNotifs = require("../schemas/notifications").feedBackNotifs
 const { getSavedNotes, getNotifications, getRoot, unreadNotiCount } = require('./controller')
 const router = express.Router()
 
 function dashboardRouter(io) {
-
-    
 
     async function addSaveNote(studentDocID, noteDocID) {
         await Students.updateOne(
@@ -20,7 +17,7 @@ function dashboardRouter(io) {
     }
 
     async function readNoti(notiID) {
-        await feedbackNotifs.updateOne(
+        await allNotifs.updateOne(
             { _id: notiID },
             { $set: { isRead: true } }
         )

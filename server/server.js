@@ -11,7 +11,7 @@ const bodyParser = require('body-parser')
 const fileUpload = require('express-fileupload')
 const archiver = require('archiver')
 const cors = require('cors')
-const MongoStore  = require('connect-mongo')
+const MongoStore = require('connect-mongo')
 
 const loginRouter = require('./routers/login')
 const userRouter = require('./routers/user')
@@ -92,6 +92,9 @@ app.get('/about-us', (req, res) => {
 app.get('/privacy-policy', (req, res) => {
     res.render('privacy-policy')
 })
+app.get("/test", (req, res) => {
+    res.render('test')
+})
 app.get('/signup2', (req, res) => {
     res.render('signup2')
 })
@@ -140,6 +143,29 @@ app.get('/search', async (req, res, next) => {
     const regex = new RegExp(searchTerm.split(' ').map(word => `(${word})`).join('.*'), 'i');
     let notes = await Notes.find({ title: { $regex: regex } }, { title: 1 })
     res.json(notes)
+})
+
+app.get('/searchUser', async (req, res) => {
+    if (req.query) {
+        let term = req.query.term
+        let students = await Students.aggregate([
+            {
+                $match: {
+                    displayname: { $regex: `^${term}`, $options: 'i' } // Ensure case-insensitive search
+                }
+            },
+            {
+                $project: {
+                    displayname: 1,
+                    username: 1,
+                    profile_pic: 1,
+                    _id: 0
+                }
+            }
+        ]);
+        
+        res.json(students)
+    }
 })
 
 app.get('/getnote', async (req, res, next) => {

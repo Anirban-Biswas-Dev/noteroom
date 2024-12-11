@@ -4,6 +4,7 @@ const Notes = require('../schemas/notes')
 const Students = require('../schemas/students')
 const feedBackNotifs = require('../schemas/notifications').feedBackNotifs
 const allNotifs = require('../schemas/notifications').Notifs
+const mentionNotifs = require('../schemas/notifications').mentionNotifs
 const Feedbacks = require('../schemas/feedbacks')
 const { getSavedNotes, getNotifications, getRoot, unreadNotiCount } = require('./controller')
 
@@ -45,6 +46,11 @@ function noteViewRouter(io) {
     async function addFeedbackNotifications(notiObj) {
         let feednoti = await feedBackNotifs.create(notiObj)
         return feednoti
+    }
+
+    async function addMentionNotifications(notiObj) {
+        let mentionoti = await mentionNotifs.create(notiObj)
+        return mentionoti
     }
 
     async function getStudentID(username) {
@@ -113,8 +119,30 @@ function noteViewRouter(io) {
                     notiID: /* The document ID of notification. This is used to remove specific notifications later */ feedbackNoti._id,
                     feedbackID /* This is the unique id of each feedback, used for redirection to that specific feedback*/: feedback._id
                 })
-            }
 
+                function checkMentions(feedbackText) {
+                    let mentions = /@[a-z0-9-]+-[a-z0-9]{8}/g
+                    let answers = feedbackText.match(mentions)
+                    if (answers) {
+                        let mentionedUsers = answers.map(m => m.replace('@', ''))
+                        return mentionedUsers
+                    } else {
+                        return []
+                    }
+                }
+                let mentions = checkMentions(feedbackText)
+                if (mentions.length != 0) {
+                    let studentIDs = (await Students.find({ username: { $in: mentions } }, { studentID: 1 })).map(data => data.studentID)
+                    studentIDs.map(async studentID => {
+                        await addMentionNotifications({
+                            noteDocID: noteDocID,
+                            commenterDocID: commenterDocID,
+                            feedbackDocID: feedback._id,
+                            ownerStudentID: studentID
+                        })
+                    })
+                }
+            }
         })
     })
 
