@@ -1,9 +1,9 @@
-const express = require('express')
-const router = express.Router()
-const Students = require('../schemas/students')
-const allNotifs = require('../schemas/notifications').Notifs
-const Notes = require('../schemas/notes')
-const { getSavedNotes, getNotifications, unreadNotiCount } = require('./controller')
+import { Router } from 'express'
+const router = Router()
+import Students from '../schemas/students.js'
+import { Notifs as allNotifs } from '../schemas/notifications.js'
+import Notes from '../schemas/notes.js'
+import { getSavedNotes, getNotifications, unreadNotiCount } from './controller.js'
 
 function userRouter(io) {
     /*
@@ -90,4 +90,4 @@ function userRouter(io) {
     return router
 }
 
-module.exports = userRouter
+export default userRouter

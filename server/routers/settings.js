@@ -1,9 +1,9 @@
-const express = require('express')
-const router = express.Router()
+import { Router } from 'express'
+const router = Router()
 
 function settingsRouter(io) {
     router.get('/', (req, res, next) => {
-        if(req.session.stdid) {
+        if (req.session.stdid) {
             res.render('settings')
         } else {
             res.redirect('/login')
@@ -13,4 +13,4 @@ function settingsRouter(io) {
     return router
 }
 
-module.exports = settingsRouter
+export default settingsRouter

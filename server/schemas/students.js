@@ -1,6 +1,6 @@
-const mongoose = require('mongoose')
+import { Schema, model } from 'mongoose'
 
-const studentsSchema = new mongoose.Schema({
+const studentsSchema = new Schema({
     profile_pic: {
         type: String, // I have to work on image saving in cloud and accessing those via url
         default: ""
@@ -23,7 +23,7 @@ const studentsSchema = new mongoose.Schema({
         required: true
     },
     studentID: {
-        type: String, 
+        type: String,
         required: true,
         immutable: true,
         unique: true
@@ -62,22 +62,22 @@ const studentsSchema = new mongoose.Schema({
         required: true
     },
     owned_notes: {
-        type: [mongoose.Schema.Types.ObjectId],
+        type: [Schema.Types.ObjectId],
         ref: 'notes',
         default: []
     },
     saved_notes: {
-        type: [mongoose.Schema.Types.ObjectId],
+        type: [Schema.Types.ObjectId],
         ref: 'notes',
         default: []
     },
     featured_notes: {
-        type: [mongoose.Schema.Types.ObjectId],
+        type: [Schema.Types.ObjectId],
         ref: 'notes',
         default: []
     },
     downloaded_notes: {
-        type: [mongoose.Schema.Types.ObjectId],
+        type: [Schema.Types.ObjectId],
         ref: 'notes',
         default: []
     },
@@ -87,6 +87,6 @@ const studentsSchema = new mongoose.Schema({
     }
 })
 
-const studentsModel = mongoose.model('students', studentsSchema)
+const studentsModel = model('students', studentsSchema)
 
-module.exports = studentsModel
+export default studentsModel

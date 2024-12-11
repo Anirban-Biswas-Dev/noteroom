@@ -1,13 +1,13 @@
-const mongoose = require('mongoose')
+import { Schema, model } from 'mongoose'
 
-const feedbackSchema = new mongoose.Schema({
+const feedbackSchema = new Schema({
     noteDocID: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         required: true,
         ref: 'notes'
     },
     commenterDocID: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         required: true,
         ref: 'students'
     },
@@ -21,6 +21,6 @@ const feedbackSchema = new mongoose.Schema({
     }
 })
 
-const feedbacksModel = mongoose.model('feedbacks', feedbackSchema)
+const feedbacksModel = model('feedbacks', feedbackSchema)
 
-module.exports = feedbacksModel
+export default feedbacksModel

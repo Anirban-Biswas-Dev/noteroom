@@ -1,6 +1,6 @@
-const express = require('express')
-const Students = require('../schemas/students')
-const router = express.Router()
+import { Router } from 'express'
+import Students from '../schemas/students.js'
+const router = Router()
 
 /* 
 # Cookies:
@@ -65,4 +65,4 @@ function loginRouter(io) {
     return router
 }
 
-module.exports = loginRouter
+export default loginRouter

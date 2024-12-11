@@ -1,36 +1,46 @@
-const express = require('express')
-const path = require('path')
-require('dotenv').config({ path: path.join(__dirname, '.env') })
+import express, { static as _static } from 'express'
+import { join, basename, dirname } from 'path'
+import { fileURLToPath } from 'url';
+import { config } from 'dotenv';
+import { createServer } from 'http';
+import { Server as SocketIOServer } from 'socket.io';
+
+import cookieParser from 'cookie-parser'
+import session from 'express-session'
+import { connect } from 'mongoose'
+import _pkg from 'body-parser';
+const { urlencoded } = _pkg;
+import fileUpload from 'express-fileupload'
+import archiver from 'archiver'
+import cors from 'cors'
+import pkg from 'connect-mongo';
+const { create } = pkg;
+
+import loginRouter from './routers/login.js'
+import userRouter from './routers/user.js'
+import signupRouter from './routers/sign-up.js'
+import errorHandler from './errorhandlers/errors.js'
+import uploadRouter from './routers/upload-note.js'
+import noteViewRouter from './routers/note-view.js'
+import dashboardRouter from './routers/dashboard.js'
+import serachProfileRouter from './routers/search-profile.js'
+import settingsRouter from './routers/settings.js'
+
+import Notes from './schemas/notes.js'
+import Students from './schemas/students.js'
+import Alerts from './schemas/alerts.js'
+import { getNotifications } from './routers/controller.js'
+import { Notifs as allNotifs } from './schemas/notifications.js'
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+config({ path: join(__dirname, '.env') });
+
 const app = express()
-const server = require('http').createServer(app)
-const io = require('socket.io')(server, { cors: { origin: '*' } })
-const cookieParser = require('cookie-parser')
-const session = require('express-session')
-const mongoose = require('mongoose')
-const bodyParser = require('body-parser')
-const fileUpload = require('express-fileupload')
-const archiver = require('archiver')
-const cors = require('cors')
-const MongoStore = require('connect-mongo')
-
-const loginRouter = require('./routers/login')
-const userRouter = require('./routers/user')
-const signupRouter = require('./routers/sign-up')
-const errorHandler = require('./errorhandlers/errors')
-const uploadRouter = require('./routers/upload-note')
-const noteViewRouter = require('./routers/note-view')
-const dashboardRouter = require('./routers/dashboard')
-const serachProfileRouter = require('./routers/search-profile')
-const settingsRouter = require('./routers/settings')
-
-const Notes = require('./schemas/notes')
-const Students = require('./schemas/students')
-const Alerts = require('./schemas/alerts')
-const { getNotifications } = require('./routers/controller')
-const allNotifs = require('./schemas/notifications').Notifs
-
+const server = createServer(app);
+const io = new SocketIOServer(server, { cors: { origin: '*' } });
 const url = process.env.MONGO_URI
-mongoose.connect(url).then(() => {
+connect(url).then(() => {
     console.log(`Connected to database information`);
 })
 
@@ -38,11 +48,11 @@ const port = process.env.PORT
 
 // Setting the view engine as EJS. And all the ejs files are stored in "/views" folder
 app.set('view engine', 'ejs')
-app.set('views', path.join(__dirname, '../views'))
+app.set('views', join(__dirname, '../views'))
 
 app.use(cors())
-app.use(express.static(path.join(__dirname, '../public'))) // Middleware for using static files. All are stored in "/public" folder
-app.use(bodyParser.urlencoded({
+app.use(_static(join(__dirname, '../public'))) // Middleware for using static files. All are stored in "/public" folder
+app.use(urlencoded({
     extended: true
 })) // Middleware for working with POST requests.
 // app.use(express.json());
@@ -50,7 +60,7 @@ app.use(session({
     secret: process.env.SECRET_KEY,
     resave: false,
     saveUninitialized: false,
-    store: MongoStore.create({
+    store: create({
         mongoUrl: url,
         ttl: 60 * 60 * 720
     }),
@@ -122,7 +132,7 @@ app.post('/download', async (req, res) => {
             let arrayBuffer = await response.arrayBuffer()
             let buffer = Buffer.from(arrayBuffer)
 
-            let fileName = path.basename(new URL(imageUrl).pathname);
+            let fileName = basename(new URL(imageUrl).pathname);
             archive.append(buffer, { name: fileName });
         } catch (err) {
             console.error(`Error fetching image: ${err.message}`);
@@ -157,7 +167,7 @@ app.get('/searchUser', async (req, res) => {
                 }
             }
         ]);
-        
+
         res.json(students)
     }
 })

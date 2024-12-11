@@ -1,12 +1,12 @@
-const express = require('express')
-const router = express.Router()
-const Notes = require('../schemas/notes')
-const Students = require('../schemas/students')
-const feedBackNotifs = require('../schemas/notifications').feedBackNotifs
-const allNotifs = require('../schemas/notifications').Notifs
-const mentionNotifs = require('../schemas/notifications').mentionNotifs
-const Feedbacks = require('../schemas/feedbacks')
-const { getSavedNotes, getNotifications, getRoot, unreadNotiCount } = require('./controller')
+import { Router } from 'express'
+const router = Router()
+import Notes from '../schemas/notes.js'
+import Students from '../schemas/students.js'
+import { feedBackNotifs } from '../schemas/notifications.js'
+import { Notifs as allNotifs } from '../schemas/notifications.js'
+import { mentionNotifs } from '../schemas/notifications.js'
+import Feedbacks from '../schemas/feedbacks.js'
+import { getSavedNotes, getNotifications, getRoot, unreadNotiCount } from './controller.js'
 
 /*
 # Variables: (commenter / owner)
@@ -188,4 +188,4 @@ function noteViewRouter(io) {
     return router
 }
 
-module.exports = noteViewRouter
+export default noteViewRouter
