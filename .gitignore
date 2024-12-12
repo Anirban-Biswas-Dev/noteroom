@@ -7,3 +7,4 @@ logs.log
 *.json
 /server/routers/db/
 /experiment/
+/dist
