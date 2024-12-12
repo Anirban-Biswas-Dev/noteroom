@@ -184,11 +184,10 @@ const tribute = new Tribute({
   },
   menuItemTemplate: function (item) {
     return `
-    <div style="display: flex; align-items: center; padding: 5px;">
-    <img src="${item.original.profile_pic}" style="width: 30px; height: 30px; border-radius: 50%; margin-right: 10px;">
-    <b style="font-size: 14px;">${item.original.displayname}</b>
-                <small style="font-size: 12px; color: #888;">&nbsp;(${item.original.username})</small>
-            </div>
+    <div class="mention-modal">
+    <img src="${item.original.profile_pic}" class="mention__user-pic">
+    <p class="mention__user-dname" >${item.original.displayname}</p>          
+    </div>
         `;
 
     },

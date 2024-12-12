@@ -198,6 +198,27 @@ body {
     letter-spacing: 0.02em;
 }
 
+/* User mention styling */
+
+.mention-modal{
+    display: flex;
+    align-items: center; 
+    padding: 5px;
+    gap: 15px;
+    min-width: 300px;
+}
+.mention__user-pic{
+    width: 35px; 
+    height: 35px; 
+    border-radius: 50%;
+    object-fit: cover; 
+}
+.mention__user-dname{
+    font-size: .85rem;
+    font-weight: 600;
+}
+
+
 .feedbacks-section {
     background-color: #f9f9f9;
     border: 1px solid #ddd;
