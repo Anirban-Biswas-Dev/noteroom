@@ -226,7 +226,7 @@ body {
     width: 100%;
 }
 
-/* .feedback-input textarea {
+.feedback-input textarea {
     width: 100%;
     border: 1px solid #ddd;
     border-radius: 8px;
@@ -235,7 +235,7 @@ body {
     resize: none;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     margin-bottom: 10px;
-} */
+}
 
 .feedback-input textarea:focus {
     outline: none;
@@ -476,6 +476,7 @@ body {
 .main__reply-msg{
     font-weight: 500;
 }
+
 .reply-msg{
     font-size: 15px;
     line-height: 17px;
@@ -483,6 +484,10 @@ body {
     color: #2F2F2F;
 }
 
+.main__reply-msg img {
+    max-width: 60%; /*this is only for pc, reduce on mobile */ 
+    height: auto; 
+}
 .main__engagement-opts{
     display: flex;
     align-items: center;
