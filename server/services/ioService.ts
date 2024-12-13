@@ -1,17 +1,5 @@
-import { Server as IOServer } from "socket.io";
-import { Notifs } from "../schemas/notifications.js";
-import { addSaveNote, deleteSavedNote, getOwner } from "./noteService.js";
-import { addFeedbackNoti, addMentionNoti, readNoti } from "./notificationService.js";
-import { Convert } from "./userService.js";
-import { addFeedback, IFeedBack } from "./feedbackService.js";
-import Students from "../schemas/students.js";
-
-export interface ISentFeedBack {
-    room: string,
-    feedbackText: string,
-    noteDocID: string,
-    commenterStudentID: string
-}
+import { addSaveNote, deleteSavedNote } from "./noteService.js";
+import { readNoti, deleteNoti } from "./notificationService.js";
 
 export async function noteSocketHandler(socket: any) {
     socket.on('save-note', async (studentDocID: string, noteDocID: string) => {
@@ -25,7 +13,7 @@ export async function noteSocketHandler(socket: any) {
 
 export async function notificationSocketHandler(socket: any) {
     socket.on('delete-noti', async (notiID: any) => {
-        await Notifs.deleteOne({ _id: notiID }) // Deleteing notification based on the ID given from the frontend
+        await deleteNoti(notiID)
     })
     socket.on("read-noti", async (notiID: string) => {
         await readNoti(notiID)
