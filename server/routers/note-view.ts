@@ -10,16 +10,7 @@ import { addFeedback, IFeedBack } from '../services/feedbackService.js'
 
 const router = Router()
 
-/*
-# Variables: (commenter / owner)
-    => noteDocID: note's document ID
-    => ownerDocID: note owner's studentDocID
-    => studentID -> commenterID: commenter's studentDocID
-    => commenterUsername
-    => commenterDisplayname
-    => ownerUsername
-    => commenterStudentID: commenter's studentID
-*/
+
 
 function noteViewRouter(io: Server) {
     io.on('connection', (socket) => {
@@ -60,7 +51,7 @@ function noteViewRouter(io: Server) {
                     ownerStudentID: ownerStudentID
                 }) // Save the feedback notifications in database
 
-                io.emit('feedback-given', { //* Feedback-notifications: This will go to everyuser, but the user with ownerUsername=recordName will keep it
+                io.emit('notification-feedback', { //* Feedback-notifications: This will go to everyuser, but the user with ownerUsername=recordName will keep it
                     noteID /* The note on which the feedback is given: to create a direct link to that note */: noteDocID,
                     nfnTitle /* The note's title on which the feedback is given: the link will contain the note's title */: feedback.noteDocID["title"],
                     isread: feedbackNoti["isRead"],

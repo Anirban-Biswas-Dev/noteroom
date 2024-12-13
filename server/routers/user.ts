@@ -6,16 +6,6 @@ import { Server } from 'socket.io'
 const router = Router()
 
 function userRouter(io: Server) {
-    /*
-    # Variables:
-        => studentID: The student-id given by the student while signing-up
-        => student: This has 2 different meaning
-        ~   1. When visiting someone else's profile, student variable holds the data if the visited profile's
-        ~   2. When visiting my own profile, student variable holds the data of the student's own profile
-        => root: This always indicates the self-profile, meaning the profile data of the logged-in user
-    */
-
-
     router.get('/:username?', async (req, res, next) => {
         if (req.params.username) {
             if (req.session["stdid"]) {

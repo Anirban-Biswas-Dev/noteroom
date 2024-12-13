@@ -1,29 +1,9 @@
 import { Router } from 'express'
-import Students from '../schemas/students.js'
+import { LogIn } from '../services/userService.js'
+import { Server } from 'socket.io'
 const router = Router()
 
-/* 
-# Cookies:
-    => stdid: session cookie generated with studentID
-    => recordID: student's studentDocID
-*/
-
-function loginRouter(io) {
-    async function extractLogin(email) {
-        let student = await Students.findOne({ email: email })
-        return new Promise((resolve, reject) => {
-            if (student) {
-                resolve({
-                    studentPass: student["password"],
-                    recordID: student["_id"],
-                    studentID: student["studentID"]
-                })
-            } else {
-                reject('No students found!')
-            }
-        })
-    }
-
+function loginRouter(io: Server) {
     router.get('/', (req, res) => {
         if (req.session["stdid"]) {
             res.redirect('dashboard')
@@ -38,7 +18,7 @@ function loginRouter(io) {
             let email = req.body.email
             let password = req.body.password
 
-            let student = await extractLogin(email)
+            let student = await LogIn.getProfile(email)
             if (password === student['studentPass']) {
                 req.session["stdid"] = student["studentID"] // setting the session with the student ID
                 res.cookie('recordID', student['recordID'], {
@@ -56,7 +36,6 @@ function loginRouter(io) {
                 io.emit('wrong-cred')
             }
         } catch (error) {
-            console.log(error)
             res.json({ message: 'no-email' })
             io.emit('no-email')
         }

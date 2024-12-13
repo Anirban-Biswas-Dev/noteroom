@@ -671,7 +671,7 @@ notiLinks.forEach(notiLink => {
 
 
 //* Event that will trigger when someone gives a feedback to a note: all pages, related to addNoti
-conSock.on('feedback-given', (feedbackData) => {
+conSock.on('notification-feedback', (feedbackData) => {
     /* 
     # Process: ARP Protocol structure
     ~   the event is handled by every user. the WS is sent with the feedback data and every browser checks, if the recordName

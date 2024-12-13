@@ -19,7 +19,7 @@ const { create } = pkg;
 import loginRouter from './routers/login.js'
 import userRouter from './routers/user.js'
 import signupRouter from './routers/sign-up.js'
-import errorHandler from './errorhandlers/errors.js'
+import errorHandler from './middlewares/errors.js'
 import uploadRouter from './routers/upload-note.js'
 import noteViewRouter from './routers/note-view.js'
 import dashboardRouter from './routers/dashboard.js'
@@ -29,10 +29,9 @@ import settingsRouter from './routers/settings.js'
 import Notes from './schemas/notes.js'
 import Students from './schemas/students.js'
 import Alerts from './schemas/alerts.js'
-import { getNotifications } from './routers/controller.js'
 import { Notifs as allNotifs } from './schemas/notifications.js'
+import { getNotifications } from './helpers/rootInfo.js';
 
-import { noteSocketHandler, notificationSocketHandler } from './services/ioService.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -193,7 +192,6 @@ app.get('/getnote', async (req, res, next) => {
         let savedNotes = await getSavedNotes(studentDocID)
         res.json(savedNotes)
     } else if (type === 'seg') {
-        // let { page, count }: { page: number, count: number } = req.query
         let page = req.query.page as unknown as number
         let count = req.query.count as unknown as number
         let skip: number = (page - 1) * count
@@ -207,8 +205,8 @@ app.get('/getnote', async (req, res, next) => {
 })
 
 app.get('/getNotifs', async (req, res) => {
-    let studentID = req.query.studentID
-    let notifs = await getNotifications(allNotifs, studentID)
+    let studentID = req.query.studentID?.toString()
+    let notifs = await getNotifications(studentID)
     res.json(notifs)
 })
 
