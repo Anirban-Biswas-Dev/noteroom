@@ -193,7 +193,7 @@ const tribute = new Tribute({
     },
     values: async (text, callback) => {
         try {
-            let response = await fetch(`/searchUser?term=${text}`)
+            let response = await fetch(`/api/searchUser?term=${text}`)
             if (!response.ok) console.log(`No network connection!`)
             let data = await response.json()
             callback(data)

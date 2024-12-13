@@ -390,7 +390,7 @@ async function download(noteID, noteTitle) {
         noteDetailes.append('noteID', noteID)
         noteDetailes.append('noteTitle', noteTitle)
 
-        let response = await fetch('/download', {
+        let response = await fetch('/api/download', {
             method: 'POST',
             body: noteDetailes
         })
@@ -530,7 +530,7 @@ async function searchNotes() {
     let searchTerm = document.querySelector('.search-bar').value
     if (searchTerm.length > 0) {
         status.style.display = 'flex' // Start of loading
-        let response = await fetch(`/search?q=${encodeURIComponent(searchTerm)}`) // 2
+        let response = await fetch(`/api/search?q=${encodeURIComponent(searchTerm)}`) // 2
         let notes = await response.json() // 3
         status.style.display = 'none' // End of loading
         if (notes.length > 0) {
