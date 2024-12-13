@@ -3,7 +3,7 @@ import Notes from "../schemas/notes.js";
 import { Notifs } from "../schemas/notifications.js";
 
 type rootStudentID = string
-enum ENotificatioType {
+enum ENotificationType {
     Feedback = 'feedback',
     Mention = 'mention'
 }
@@ -19,14 +19,14 @@ export async function getNotifications(studentID: rootStudentID) {
     let allNotifications = await Notifs.find().sort({ createdAt: -1 })
     let populatedNotifications = []
     allNotifications.map(doc => {
-        if (doc['docType'] === ENotificatioType.Feedback) {
+        if (doc['docType'] === ENotificationType.Feedback) {
             if (doc["ownerStudentID"] == studentID) {
                 populatedNotifications.push(doc.populate([
                     { path: 'noteDocID', select: 'title' },
                     { path: 'commenterDocID', select: 'displayname studentID username' }
                 ]))
             }
-        } else if (doc['docType'] === ENotificatioType.Mention) {
+        } else if (doc['docType'] === ENotificationType.Mention) {
             if (doc["mentionedStudentID"] == studentID) {
                 populatedNotifications.push(doc.populate([
                     { path: 'noteDocID', select: 'title' },

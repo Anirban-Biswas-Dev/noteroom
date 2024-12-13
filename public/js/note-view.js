@@ -50,20 +50,20 @@ try {
   let noteDocID = window.location.pathname.split("/")[2]; // Note's document ID
   let commenterStudentID = Cookies.get("studentID"); // Commenter's document ID
 
-    async function postFeedback() {
-        if (feedback.value.trim() !== "") {
-            socket.emit('feedback',
-                noteDocID, // room-name (unique noteDocID) 
-                feedback.value, // feedback-text 
-                noteDocID, // noteid 
-                commenterStudentID // commenter's student ID
-            )
-            document.querySelector('textarea[name="feedbackText"]').value = ''
-        }
-    }
+  async function postFeedback() {
+    let pathname = window.location.pathname
+    const feedbackData = new FormData()
+    feedbackData.append('noteDocID', noteDocID)
+    feedbackData.append('commenterStudentID', commenterStudentID)
+    feedbackData.append('feedbackContents', feedback.value)
+    await fetch(`${pathname.endsWith('/') ? pathname : pathname + '/'}postFeedback`, {
+      body: feedbackData,
+      method: 'post'
+    })
+  }
 
-    let postBtn = document.querySelector('.post-feedback')
-    postBtn.addEventListener('click', postFeedback)
+  let postBtn = document.querySelector('.post-feedback')
+  postBtn.addEventListener('click', postFeedback)
 } catch (error) {
     console.log(error.message)
 }
