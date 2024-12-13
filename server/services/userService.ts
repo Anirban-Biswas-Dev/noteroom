@@ -1,20 +1,6 @@
 import Students from "../schemas/students.js";
 import Notes from "../schemas/notes.js";
-
-export interface IStudent {
-    displayname: string,
-    email: string,
-    password: string,
-    studentID: string,
-    rollnumber: string,
-    collegesection: string,
-    collegeyear: string,
-    bio: string,
-    favouritesubject: string,
-    notfavsubject: string,
-    group: string,
-    username: string
-}
+import { IStudentDB } from "../types/database.types.js";
 
 export const Convert = {
     async getStudentID_username(username: string) {
@@ -53,7 +39,7 @@ export const SearchProfile = {
 
 
 export const SignUp = {
-    async addStudent(studentData: IStudent) {
+    async addStudent(studentData: IStudentDB) {
         let student = await Students.create(studentData)
         return student
     }

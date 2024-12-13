@@ -23,7 +23,7 @@ function dashboardRouter(io: Server) {
         if (req.session["stdid"]) {
             let alert = await getAlert()
 
-            //* Root Information
+            //=> Root Information
             let root = await profileInfo(req.session["stdid"])
             let notis = await getNotifications(req.session["stdid"])
             let unReadCount = await unreadNotiCount(req.session["stdid"])

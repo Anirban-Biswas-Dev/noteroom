@@ -12,7 +12,7 @@ export function checkMentions(feedbackText: string) {
     }
 }
 
-export function generateRandomUsername(displayname) {
+export function generateRandomUsername(displayname: string) {
     let sluggfied = slug(displayname)
     let uuid = uuidv4()
     let suffix = uuid.split("-")[0]

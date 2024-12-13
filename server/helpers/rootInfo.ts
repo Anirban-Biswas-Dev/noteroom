@@ -3,6 +3,10 @@ import Notes from "../schemas/notes.js";
 import { Notifs } from "../schemas/notifications.js";
 
 type rootStudentID = string
+enum ENotificatioType {
+    Feedback = 'feedback',
+    Mention = 'mention'
+}
 
 export async function getSavedNotes(studentID: rootStudentID) {
     let student = await Students.findOne({ studentID: studentID }, { saved_notes: 1 })
@@ -15,8 +19,15 @@ export async function getNotifications(studentID: rootStudentID) {
     let allNotifications = await Notifs.find().sort({ createdAt: -1 })
     let populatedNotifications = []
     allNotifications.map(doc => {
-        if (doc['docType'] === 'feedback' || doc['docType'] === 'mention') {
-            if (doc.ownerStudentID == studentID) {
+        if (doc['docType'] === ENotificatioType.Feedback) {
+            if (doc["ownerStudentID"] == studentID) {
+                populatedNotifications.push(doc.populate([
+                    { path: 'noteDocID', select: 'title' },
+                    { path: 'commenterDocID', select: 'displayname studentID username' }
+                ]))
+            }
+        } else if (doc['docType'] === ENotificatioType.Mention) {
+            if (doc["mentionedStudentID"] == studentID) {
                 populatedNotifications.push(doc.populate([
                     { path: 'noteDocID', select: 'title' },
                     { path: 'commenterDocID', select: 'displayname studentID username' }
@@ -27,9 +38,9 @@ export async function getNotifications(studentID: rootStudentID) {
         }
     })
 
-    let data = await Promise.all(populatedNotifications)
-    return data
+    return Promise.all(populatedNotifications);
 }
+
 
 export async function profileInfo(studentID: rootStudentID) {
     let profile = await Students.findOne({ studentID: studentID })

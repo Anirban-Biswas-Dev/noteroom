@@ -2,8 +2,9 @@ import { Router } from 'express'
 import Notes from '../schemas/notes.js'
 import { upload } from '../services/firebaseService.js'
 import { Server } from 'socket.io'
-import { addNote, INote } from '../services/noteService.js'
+import { addNote } from '../services/noteService.js'
 import { getNotifications, getSavedNotes, profileInfo, unreadNotiCount } from '../helpers/rootInfo.js'
+import { INoteDB } from '../types/database.types.js'
 const router = Router()
 
 
@@ -34,7 +35,7 @@ function uploadRouter(io: Server) {
             if (!req.files) {
                 res.send({ error: 'No files have been selected to publish' })
             } else {
-                let noteData: INote = {
+                let noteData: INoteDB = {
                     ownerDocID: req.cookies['recordID'],
                     subject: req.body['noteSubject'],
                     title: req.body['noteTitle'],

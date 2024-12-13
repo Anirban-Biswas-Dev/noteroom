@@ -30,7 +30,6 @@ function loginRouter(io: Server) {
                     maxAge: 1000 * 60 * 60 * 720
                 }) // setting a cookie with a value of the student ID
                 res.json({ url: '/dashboard' })
-                // res.json({ url: `/user` })
             } else {
                 res.json({ message: 'wrong-cred' })
                 io.emit('wrong-cred')

@@ -14,10 +14,13 @@ function serachProfileRouter(io: Server) {
                     res.json({ students })
                 } else {
                     let students = await SearchProfile.getRandomStudent(3)
+
+                    //=> Root information
                     let root = await profileInfo(req.session["stdid"])
                     let savedNotes = await getSavedNotes(req.session["stdid"])
                     let notis = await getNotifications(req.session["stdid"])
                     let unReadCount = await unreadNotiCount(req.session["stdid"])
+
                     res.render('search-profile', { students: students, root: root, savedNotes: savedNotes, notis: notis, unReadCount: unReadCount })
                 }
             } catch (error) {

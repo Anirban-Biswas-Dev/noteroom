@@ -1,3 +1,4 @@
+import { IFeedBackDB, IFeedbackNotificationDB, IMentionNotificationDB } from './../types/database.types.js';
 import { Router } from 'express'
 import Students from '../schemas/students.js'
 import { Server } from 'socket.io'
@@ -6,14 +7,13 @@ import { getNotifications, getSavedNotes, profileInfo, unreadNotiCount } from '.
 import { getNote, getOwner } from '../services/noteService.js'
 import { Convert } from '../services/userService.js'
 import { addFeedbackNoti, addMentionNoti } from '../services/notificationService.js'
-import { addFeedback, IFeedBack } from '../services/feedbackService.js'
+import { addFeedback } from '../services/feedbackService.js'
 import { IFeedBackNotification } from '../types/notifications.type.js'
 
 const router = Router()
 
 function noteViewRouter(io: Server) {
-    io.on('connection', (socket) => {
-
+    io.on('connection', (socket) => {        
         /* 
         # Process Sequence:
         ~   1. (ws) join-room: from client : request to join the note-room
@@ -31,10 +31,10 @@ function noteViewRouter(io: Server) {
 
         socket.on('feedback', async (room, feedbackText, noteDocID, commenterStudentID) => {
             let commenterDocID = await Convert.getDocumentID_studentid(commenterStudentID)
-            let ownerUsername = await getOwner(noteDocID)
+            let ownerUsername = (await getOwner({noteDocID}))["ownerDocID"]["username"]
             let ownerStudentID = await Convert.getStudentID_username(ownerUsername)
 
-            let feedbackData: IFeedBack = {
+            let feedbackData: IFeedBackDB = {
                 noteDocID: noteDocID,
                 commenterDocID: commenterDocID.toString(),
                 feedbackContents: feedbackText
@@ -44,25 +44,24 @@ function noteViewRouter(io: Server) {
 
 
             if (commenterStudentID != ownerStudentID) {
-                let feedbackNoti = await addFeedbackNoti({
+                let feedbackNotification_db: IFeedbackNotificationDB = {
                     noteDocID: noteDocID,
                     commenterDocID: commenterDocID.toString(),
                     feedbackDocID: feedback._id.toString(),
                     ownerStudentID: ownerStudentID
-                }) // Save the feedback notifications in database
+                }
+                let feedbackNoti = await addFeedbackNoti(feedbackNotification_db) // Save the feedback notifications in database
+
+
 
                 let feedbackNotification: IFeedBackNotification = { //* Feedback-notifications: This will go to everyuser, but the user with ownerUsername=recordName will keep it
-                    noteID /* The note on which the feedback is given: to create a direct link to that note */: noteDocID,
-                    nfnTitle /* The note's title on which the feedback is given: the link will contain the note's title */: feedback.noteDocID["title"],
+                    noteID : noteDocID,
+                    nfnTitle : feedback.noteDocID["title"],
                     isread: feedbackNoti["isRead"],
-
-                    commenterDisplayName /* The student's displayname who gave the feedback: the link will contain commenter's displayname */: feedback.commenterDocID["displayname"],
-                    commenterUserName /* The student's username who gave the feedback: for redirecting directly to the commenter's profile */: feedback.commenterDocID["username"],
-
-                    ownerStudentID /* The note-owner's studentID : varifing with studentID cookie to keep/drop notification */: ownerStudentID,
-
-                    notiID: /* The document ID of notification. This is used to remove specific notifications later */ feedbackNoti._id.toString(),
-                    feedbackID /* This is the unique id of each feedback, used for redirection to that specific feedback*/: feedback._id.toString()
+                    commenterDisplayName: feedback.commenterDocID["displayname"],
+                    ownerStudentID : ownerStudentID,
+                    notiID: feedbackNoti._id.toString(),
+                    feedbackID : feedback._id.toString()
                 } 
                 io.emit('notification-feedback', feedbackNotification)
                 
@@ -71,12 +70,13 @@ function noteViewRouter(io: Server) {
                 if (mentions.length != 0) {
                     let studentIDs = (await Students.find({ username: { $in: mentions } }, { studentID: 1 })).map(data => data.studentID)
                     studentIDs.map(async studentID => {
-                        await addMentionNoti({
+                        let mentionNotification: IMentionNotificationDB = {
                             noteDocID: noteDocID,
                             commenterDocID: commenterDocID.toString(),
                             feedbackDocID: feedback._id.toString(),
-                            ownerStudentID: studentID
-                        })
+                            mentionedStudentID: studentID
+                        }
+                        await addMentionNoti(mentionNotification)
                     })
                 }
             }
@@ -86,7 +86,7 @@ function noteViewRouter(io: Server) {
     router.get('/:noteID?', async (req, res, next) => {
         try {
             let noteDocID = req.params.noteID
-            let noteInformation = await getNote(noteDocID)
+            let noteInformation = await getNote({noteDocID})
             let root = await profileInfo(req.session["stdid"])
             let [note, owner, feedbacks] = [noteInformation['note'], noteInformation['owner'], noteInformation['feedbacks']]
             let mynote = 1 //* Varifing if a note is mine or not: corrently using for not allowing users to give feedbacks based on some situations (self-notes and viewing notes without being logged in)
@@ -117,7 +117,7 @@ function noteViewRouter(io: Server) {
     router.get('/:noteID/shared', async (req, res, next) => {
         let headers = req.headers['user-agent']
         let noteDocID = req.params.noteID
-        let note = (await getNote(noteDocID)).note
+        let note = (await getNote({noteDocID})).note
 
         if (headers.includes('facebook')) {
             res.render('shared', { note: note, req: req })

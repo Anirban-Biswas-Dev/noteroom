@@ -1,5 +1,14 @@
+/*
+=> Notes: This file will contain the interfaces and types for the data-objects that are used for general purpose notification services. 
+~         Like, the data structures sent via sockets or fetch requests.
+=> Naming Convention:
+~       Interface: I<notification-type>Notification
+*/
+
+
+
 /**
-* @description - This object is sent to the client
+* @description - This object is sent to the client via `notification-feedback` WS event
 */
 export interface IFeedBackNotification {
     noteID /* The note on which the feedback is given: to create a direct link to that note */: string,
@@ -7,7 +16,6 @@ export interface IFeedBackNotification {
     isread: string,
 
     commenterDisplayName /* The student's displayname who gave the feedback: the link will contain commenter's displayname */: string,
-    commenterUserName /* The student's username who gave the feedback: for redirecting directly to the commenter's profile */: string,
 
     ownerStudentID /* The note-owner's studentID : varifing with studentID cookie to keep/drop notification */: string,
 
@@ -16,4 +24,19 @@ export interface IFeedBackNotification {
 }
 
 
-// naming: I<notification-type>Notification
+/**
+* @description - This object is sent to the client via `notification-mention` WS event
+* @notice - This is currently not in use
+*/
+export interface IMentionNotification {
+    noteID /* The note on which the feedback is given: to create a direct link to that note */: string,
+    nfnTitle /* The note's title on which the feedback is given: the link will contain the note's title */: string,
+    isread: string,
+
+    commenterDisplayName /* The student's displayname who gave the feedback: the link will contain commenter's displayname */: string,
+
+    mentionedStudentID /* The note-owner's studentID : varifing with studentID cookie to keep/drop notification */: string,
+
+    notiID: /* The document ID of notification. This is used to perform specific tasks on notifications */ string,
+    feedbackID /* This is the unique id of each feedback, used for redirection to that specific feedback, used using # */: string
+}

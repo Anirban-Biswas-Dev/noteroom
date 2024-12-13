@@ -1,7 +1,8 @@
+import { IStudentDB } from './../types/database.types.js';
 import { Router } from 'express'
 import Students from '../schemas/students.js'
 import { upload } from '../services/firebaseService.js'
-import { IStudent, SignUp } from '../services/userService.js'
+import { SignUp } from '../services/userService.js'
 import { generateRandomUsername } from '../helpers/utils.js'
 import { Server } from 'socket.io'
 const router = Router()
@@ -20,7 +21,7 @@ function signupRouter(io: Server) {
     router.post('/', async (req, res, next) => {
         try {
             let identifier = generateRandomUsername(req.body.displayname.trim())
-            let studentData: IStudent = {
+            let studentData: IStudentDB = {
                 displayname: req.body.displayname.trim(),
                 email: req.body.email,
                 password: req.body.password,

@@ -1,11 +1,7 @@
 import { Notifs, feedBackNotifs, mentionNotifs } from "../schemas/notifications.js";
+import { IFeedbackNotificationDB, IMentionNotificationDB } from "../types/database.types.js";
 
-export interface IFeedbackNotificationRecord {
-    noteDocID: string,
-    feedbackDocID: string,
-    commenterDocID: string,
-    ownerStudentID: string
-}
+
 
 export async function readNoti(notiID: string) {
     await Notifs.updateOne({ _id: notiID }, { $set: { isRead: true } })
@@ -15,12 +11,12 @@ export async function deleteNoti(notiID: string) {
     await Notifs.deleteOne({ _id: notiID })
 }
 
-export async function addFeedbackNoti(notiData: IFeedbackNotificationRecord) {
+export async function addFeedbackNoti(notiData: IFeedbackNotificationDB) {
     let feednoti = await feedBackNotifs.create(notiData)
     return feednoti
 }
 
-export async function addMentionNoti(notiData: IFeedbackNotificationRecord) {
+export async function addMentionNoti(notiData: IMentionNotificationDB) {
     let mentionoti = await mentionNotifs.create(notiData)
     return mentionoti
 }

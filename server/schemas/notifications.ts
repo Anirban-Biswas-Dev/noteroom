@@ -6,21 +6,6 @@ const baseOptions = {
 }
 
 const NotifsSchema = new Schema({
-    noteDocID: {
-        type: Schema.Types.ObjectId,
-        ref: 'notes',
-        required: true
-    },
-    commenterDocID: {
-        type: Schema.Types.ObjectId,
-        ref: 'students',
-        required: true,
-    },
-    feedbackDocID: {
-        type: Schema.Types.ObjectId,
-        required: true
-    },
-    ownerStudentID: String,
     isRead: {
         type: Boolean,
         default: false
@@ -49,14 +34,6 @@ const feedBackSchema = new Schema({
         required: true
     },
     ownerStudentID: String,
-    isRead: {
-        type: Boolean,
-        default: false
-    },
-    createdAt: {
-        type: Date,
-        default: Date.now
-    }
 })
 const feedBackNotifs = NotifsModel.discriminator('feedback', feedBackSchema)
 
@@ -76,15 +53,7 @@ const mentionSchema = new Schema({
         type: Schema.Types.ObjectId,
         required: true
     },
-    ownerStudentID: String, // The person who is being mentioned
-    isRead: {
-        type: Boolean,
-        default: false
-    },
-    createdAt: {
-        type: Date,
-        default: Date.now
-    }
+    mentionedStudentID: String, // The person who is being mentioned
 })
 const mentionNotifs = NotifsModel.discriminator('mention', mentionSchema)
 

@@ -132,9 +132,7 @@
         <span class="remove-notification" onclick="deleteNoti('<%= noti._id %>')">&times;</span>
       </div>
       <div class="notification-msg">
-        <a href='/user/<%= noti.commenterDocID.username %>' class="commenter-prfl">
-          <%= noti.commenterDocID.displayname %>
-        </a><a href='/view/<%= noti.noteDocID._id %>/#<%= noti.feedbackDocID %>' class="notification-link-2 notiLink"> has given feedback on your notes! Check it out.</a>
+          <a href='/view/<%= noti.noteDocID._id %>/#<%= noti.feedbackDocID %>' class="notification-link-2 notiLink"><%= noti.commenterDocID.displayname %> has given feedback on your notes! Check it out.</a>
       </div>
     </div>
     <% } else { %>
@@ -157,9 +155,7 @@
           <span class="remove-notification" onclick="deleteNoti('<%= noti._id %>')">&times;</span>
         </div>
         <div class="notification-msg">
-          <a href='/user/<%= noti.commenterDocID.username %>' class="commenter-prfl">
-            <%= noti.commenterDocID.displayname %>
-          </a><a href='/view/<%= noti.noteDocID._id %>/#<%= noti.feedbackDocID %>' class="notification-link-2 notiLink"> has mentioned you.</a>
+            <a href='/view/<%= noti.noteDocID._id %>/#<%= noti.feedbackDocID %>' class="notification-link-2 notiLink"><%= noti.commenterDocID.displayname %> has mentioned you.</a>
         </div>
       </div>
     <% } %>
