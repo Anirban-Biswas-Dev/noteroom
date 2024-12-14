@@ -199,6 +199,55 @@ body {
 }
 
 /* User mention styling */
+.tribute-container {
+    max-height: 200px; 
+    overflow-y: auto; 
+    background-color: transparent; 
+    border-radius: 5px; 
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); 
+  }
+  
+  .tribute-container li {
+    list-style: none; 
+    padding: 8px 12px; 
+    cursor: pointer;
+    background-color: var(--light-gray);
+    font-size: 14px; 
+    color: #333; 
+    transition: background-color 0.1s ease;   }
+  
+  .tribute-container li.highlight {
+    background-color: #f0f4ff; 
+    color: #000; 
+  }
+  
+  .tribute-container li:hover {
+    background-color: #f0f4ff; 
+  }
+  .tribute-container {
+    scrollbar-width: thin; /* For Firefox */
+    scrollbar-color: #888 #f0f0f0; /* For Firefox: thumb and track colors */
+  }
+  
+  /* WebKit-based browsers (Chrome, Edge, Safari) */
+  .tribute-container::-webkit-scrollbar {
+    width: 8px; /* Width of the scrollbar */
+    height: 8px; /* Height of the scrollbar (for horizontal scrollbars) */
+  }
+  
+  .tribute-container::-webkit-scrollbar-thumb {
+    background: #b5b4b4; /* Scrollbar thumb color */
+    border-radius: 4px; /* Rounded corners for the thumb */
+  }
+  
+  .tribute-container::-webkit-scrollbar-thumb:hover {
+    background: #787878; /* Darker thumb color on hover */
+  }
+  
+  .tribute-container::-webkit-scrollbar-track {
+    background: #f0f0f0; /* Scrollbar track color */
+    border-radius: 4px; /* Optional: Rounded corners for the track */
+  }
 
 .mention-modal{
     display: flex;
