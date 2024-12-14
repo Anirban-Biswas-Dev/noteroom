@@ -73,14 +73,32 @@ export interface IFeedbackNotificationDB extends INoteNotifications {
     ownerStudentID: string
 }
 
+
+
 /**
 * @description - The `Mention` notification 
 * @param {string} noteDocID - The *documentID* of the note on which the feedback is given 
 * @param {string} feedbackDocID - The *documentID* of the feedback
+* @param {string} commenterDocID - The *documentID* of the commenter
 * @param {string} mentionedStudentID - The *studentID* of the mentioned user
 */
 export interface IMentionNotificationDB extends INoteNotifications {
     feedbackDocID: string,
     commenterDocID: string,
     mentionedStudentID: string
+}
+
+
+
+/**
+* @description - Under feedbacks, there will be *replies*. This is `Reply` notification
+* @param {string} noteDocID - The *documentID* of the note on which the reply is given 
+* @param {string} parentFeedbackDocID - The *documentID* of the feedback on which the reply is given
+* @param {string} commenterDocID - The *documentID* of the commenter
+* @param {string} ownerStudentID - The *documentID* of the owner of the note
+*/
+export interface IReplyNotificationDB extends INoteNotifications {
+    parentFeedbackDocID: string,
+    commenterDocID: string,
+    ownerStudentID: string
 }
