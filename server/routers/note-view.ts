@@ -79,9 +79,9 @@ function noteViewRouter(io: Server) {
         let feedbackNoti = await addFeedbackNoti(feedbackNotification_db)
         let feedbackNotification: IFeedBackNotification = { //* Feedback-notifications: This will go to everyuser, but the user with ownerUsername=recordName will keep it
             noteID : _noteDocID,
-            nfnTitle : feedback.noteDocID["title"],
+            nfnTitle : feedback["noteDocID"]["title"],
             isread: "false",
-            commenterDisplayName: feedback.commenterDocID["displayname"],
+            commenterDisplayName: feedback["commenterDocID"]["displayname"],
             ownerStudentID : _ownerStudentID,
             notiID: feedbackNoti._id.toString(),
             feedbackID : feedback._id.toString()

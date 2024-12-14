@@ -1,6 +1,6 @@
 import Students from '../schemas/students.js'
 import Notes from '../schemas/notes.js'
-import Feedbacks from '../schemas/feedbacks.js'
+import Comments from '../schemas/comments.js'
 import { INoteDB } from '../types/database.types.js'
 import { IManageUserNote, INoteDetails } from '../types/noteService.types.js'
 
@@ -34,7 +34,7 @@ export async function getNote({noteDocID}: IManageUserNote) {
     if (noteDocID) {
         let note = await Notes.findById(noteDocID, { title: 1, subject: 1, description: 1, ownerDocID: 1, content: 1 })
         let owner = await Students.findById(note.ownerDocID, { displayname: 1, studentID: 1, profile_pic: 1, username: 1 })
-        let feedbacks = await Feedbacks.find({ noteDocID: note._id })
+        let feedbacks = await Comments.find({ noteDocID: note._id })
             .populate('commenterDocID', 'displayname username studentID profile_pic').sort({ createdAt: -1 })
 
         let returnedNote: INoteDetails = { note: note, owner: owner, feedbacks: feedbacks }

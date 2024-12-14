@@ -1,5 +1,5 @@
 import Notes from "../schemas/notes.js";
-import Feedbacks from "../schemas/feedbacks.js";
+import {feedbacksModel as Feedbacks} from "../schemas/comments.js";
 import { IFeedBackDB } from "../types/database.types.js";
 
 
