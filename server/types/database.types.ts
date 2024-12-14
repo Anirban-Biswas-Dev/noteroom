@@ -26,17 +26,40 @@ export interface IStudentDB {
 }
 
 
+
 /**
 * @description - **Feedbacks Document**
+* @description - This is the standard data structure for a COMMENT on a note
+*/
+interface ICommentDB {
+    noteDocID: string,
+    feedbackContents: string
+}
+
+
+/**
+* @description - **Feedbacks Document** *Feedback* type
 * @description - When a feedback is got, this data will be added in the database 
 * @param {string} noteDocID - The *documentID* of the note on which the feedback is given 
 * @param {string} commenterDocID - The *documentID* of the commenter
 * @param {string} feedbackContents - The text of the feedback
 */
-export interface IFeedBackDB {
-    noteDocID: string,
+export interface IFeedBackDB extends ICommentDB {
     commenterDocID: string,
-    feedbackContents: string
+}
+
+
+/**
+* @description - **Feedbacks Document** *Reply* Type
+* @description - When a reply is got on a feedback, this data will be added in the database 
+* @param {string} noteDocID - The *documentID* of the note on which the reply is given 
+* @param {string} commenterDocID - The *documentID* of the replier
+* @param {string} feedbackContents - The text of the reply
+* @param {string} parentFeedbackDocID - The *documentID* of the feedback on which the reply is given
+*/
+export interface IReplyDB extends ICommentDB {
+    commenterDocID: string,
+    parentFeedbackDocID: string
 }
 
 
