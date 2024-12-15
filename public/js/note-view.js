@@ -17,7 +17,7 @@ socket.emit(
 
 //* Broadcasted feedback handler. The extented-feedback is broadcasted
 socket.on('add-feedback', (feedbackData) => {
-    manageNotes.addFeedback(feedbackData)
+  manageNotes.addFeedback(feedbackData)
 })
 
 const slides = document.querySelectorAll(".carousel-slide");
@@ -26,20 +26,20 @@ const prevButton = document.querySelector(".prev");
 let currentIndex = 0;
 
 function showSlide(index) {
-    const offset = -index * 100;
-    document.querySelector(
-        ".carousel-wrapper"
-    ).style.transform = `translateX(${offset}%)`;
+  const offset = -index * 100;
+  document.querySelector(
+    ".carousel-wrapper"
+  ).style.transform = `translateX(${offset}%)`;
 }
 
 nextButton.addEventListener("click", () => {
-    currentIndex = (currentIndex + 1) % slides.length;
-    showSlide(currentIndex);
+  currentIndex = (currentIndex + 1) % slides.length;
+  showSlide(currentIndex);
 });
 
 prevButton.addEventListener("click", () => {
-    currentIndex = (currentIndex - 1 + slides.length) % slides.length;
-    showSlide(currentIndex);
+  currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+  showSlide(currentIndex);
 });
 
 // Initially show the first slide
@@ -65,15 +65,15 @@ try {
   let postBtn = document.querySelector('.post-feedback')
   postBtn.addEventListener('click', postFeedback)
 } catch (error) {
-    console.log(error.message)
+  console.log(error.message)
 }
 
 let kickUser = document.querySelector('.kick')
 if (kickUser) {
-    setTimeout(() => {
-        alert('Please login to continue!')
-        kickUser.click()
-    }, 3000)
+  setTimeout(() => {
+    alert('Please login to continue!')
+    kickUser.click()
+  }, 3000)
 }
 
 // Custom smooth scrolling function
@@ -155,7 +155,7 @@ function smoothScrollTo(
 function highlightSection(element, highlightColor = "#F0F0F0") {
   const originalColor = getComputedStyle(element).backgroundColor; // 5
 
-    element.style.transition = 'background-color 0.3s ease';
+  element.style.transition = 'background-color 0.3s ease';
 
   // First blink (highlight color)
   element.style.backgroundColor = highlightColor;
@@ -168,12 +168,12 @@ function highlightSection(element, highlightColor = "#F0F0F0") {
       // Final highlight (highlight color)
       element.style.backgroundColor = highlightColor;
 
-            setTimeout(() => {
-                // Return to the original color
-                element.style.backgroundColor = originalColor;
-            }, 300);
-        }, 300);
+      setTimeout(() => {
+        // Return to the original color
+        element.style.backgroundColor = originalColor;
+      }, 300);
     }, 300);
+  }, 300);
 }
 
 const tribute = new Tribute({
@@ -190,17 +190,17 @@ const tribute = new Tribute({
     </div>
         `;
 
-    },
-    values: async (text, callback) => {
-        try {
-            let response = await fetch(`/api/searchUser?term=${text}`)
-            if (!response.ok) console.log(`No network connection!`)
-            let data = await response.json()
-            callback(data)
-        } catch (error) {
-            console.log(error)
-        }
+  },
+  values: async (text, callback) => {
+    try {
+      let response = await fetch(`/api/searchUser?term=${text}`)
+      if (!response.ok) console.log(`No network connection!`)
+      let data = await response.json()
+      callback(data)
+    } catch (error) {
+      console.log(error)
     }
+  }
 })
 tribute.attach(document.querySelector('#feedbackText'))
 
@@ -274,18 +274,35 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const commentList = document.querySelector(".cmnts-list");
   const cmntBtn = document.querySelector("#cmnt-btn");
-  
+
   // Function to post a main comment
-  const postMainComment = () => {
-      const commentHTML = editor.getHTML(); // this method has to be used for taking content from Toast UI editor
-      if (!commentHTML.trim()) return; // Preventing any empty comments
+  const pathname = window.location.pathname
+  const noteDocID = window.location.pathname.split("/")[2]; // Note's document ID
+  const commenterStudentID = Cookies.get("studentID"); // Commenter's document ID
 
-      // Main comment container
-      const mainCommentContainer = document.createElement('div');
-      mainCommentContainer.classList.add('main-cmnt-container');
+  const postMainComment = async () => {
+    const commentHTML = editor.getHTML(); // feedback text
+    if (!commentHTML.trim()) return; // Preventing any empty comments
 
-      // Now we add dynamic HTML template on the main comment
-      mainCommentContainer.innerHTML = `
+    const feedbackData = new FormData()
+    feedbackData.append('noteDocID', noteDocID)
+    feedbackData.append('commenterStudentID', commenterStudentID)
+    feedbackData.append('feedbackContents', commentHTML)
+
+    let response = await fetch(`${pathname.endsWith('/') ? pathname : pathname + '/'}postFeedback`, {
+      body: feedbackData,
+      method: 'post'
+    })
+    let data = await response.json()
+
+    if (!data) return
+
+    // Main comment container
+    const mainCommentContainer = document.createElement('div');
+    mainCommentContainer.classList.add('main-cmnt-container');
+
+    // Now we add dynamic HTML template on the main comment
+    mainCommentContainer.innerHTML = `
           <div class="main__author-threadline-wrapper">
                <img
                  src="${imgTemplate}"
@@ -329,35 +346,35 @@ document.addEventListener('DOMContentLoaded', () => {
              </div>
       `;
 
-      commentList.prepend(mainCommentContainer); // this adds the main comment at the top. Things will of course change when we'll have upvote downvote based ranking
-      adjustThreadLineHeights();
-      editor.setHTML(''); // reseting toast ui editor content
+    commentList.prepend(mainCommentContainer); // this adds the main comment at the top. Things will of course change when we'll have upvote downvote based ranking
+    adjustThreadLineHeights();
+    editor.setHTML(''); // reseting toast ui editor content
   };
 
   cmntBtn.addEventListener("click", postMainComment);
 
   // Function to setup thread reply listeners
 
-const setupThreadReplyListeners = () => {
-  // Use event delegation to handle clicks on the comment list
-  commentList.addEventListener('click', (event) => {
+  const setupThreadReplyListeners = () => {
+    // Use event delegation to handle clicks on the comment list
+    commentList.addEventListener('click', (event) => {
       // Handle opening the thread editor
       if (event.target.classList.contains('thread-opener')) {
-          const threadSection = event.target.closest('.main__cmnts-replies-wrapper').querySelector('.thread-section');
+        const threadSection = event.target.closest('.main__cmnts-replies-wrapper').querySelector('.thread-section');
 
-          // Remove any existing thread editors in other sections before adding a new one
-          document.querySelectorAll('.thread-editor-container').forEach(editor => {
-              editor.remove();
-          });
+        // Remove any existing thread editors in other sections before adding a new one
+        document.querySelectorAll('.thread-editor-container').forEach(editor => {
+          editor.remove();
+        });
 
-          // Check if thread editor already exists
-          let threadEditor = threadSection.querySelector('.thread-editor-container');
-          if (!threadEditor) {
-              threadEditor = document.createElement('div');
-              threadEditor.classList.add('thread-editor-container');
+        // Check if thread editor already exists
+        let threadEditor = threadSection.querySelector('.thread-editor-container');
+        if (!threadEditor) {
+          threadEditor = document.createElement('div');
+          threadEditor.classList.add('thread-editor-container');
 
-              // Add the HTML for the thread editor
-              threadEditor.innerHTML = `
+          // Add the HTML for the thread editor
+          threadEditor.innerHTML = `
                   <img class="tec__avatar-preview thread-avatar" src="${imgTemplate}">
                   <div class="thread-editor-wrapper">
                     <textarea placeholder="Write a comment..." class="thread-editor"></textarea>
@@ -369,26 +386,27 @@ const setupThreadReplyListeners = () => {
                   </div>
               `;
 
-              // Append the editor to the thread section
-              threadSection.appendChild(threadEditor);
-          }
+          // Append the editor to the thread section
+          threadSection.appendChild(threadEditor);
+        }
 
-          // Focus on the textarea of the newly created or existing editor
-          const textarea = threadEditor.querySelector('.thread-editor');
-          textarea.focus();
+        // Focus on the textarea of the newly created or existing editor
+        const textarea = threadEditor.querySelector('.thread-editor');
+        textarea.focus();
       }
 
       // Handle posting replies
       if (event.target.closest('.thread__cmnt-btn')) {
-          const textarea = event.target.closest('.thread-editor-container').querySelector('.thread-editor');
-          const replyContent = textarea.value.trim();
-          if (!replyContent) return; // Prevents posting empty replies
+        const textarea = event.target.closest('.thread-editor-container').querySelector('.thread-editor');
+        const replyContent = textarea.value.trim();
 
-          // this creates a reply message container
-          const replyMessage = document.createElement('div');
-          replyMessage.classList.add('thread-msg');
+        if (!replyContent) return; // Prevents posting empty replies
 
-          replyMessage.innerHTML = `
+        // this creates a reply message container
+        const replyMessage = document.createElement('div');
+        replyMessage.classList.add('thread-msg');
+
+        replyMessage.innerHTML = `
                   <img src="${imgTemplate}" alt="User Avatar" class="cmnt-author-img thread-avatar">
                   <div class="cmnt-body-3rows">
                       <div class="reply-info">
@@ -421,21 +439,34 @@ const setupThreadReplyListeners = () => {
                   </div>
               `;
 
-          const threadSection = event.target.closest('.thread-section');
+        const threadSection = event.target.closest('.thread-section');
+        const parentFeedbackDocID = threadSection.previousElementSibling.querySelector('.reply-info #parentFeedbackDocID').innerHTML
+        const replyData = new FormData()
+        replyData.append('noteDocID', noteDocID)
+        replyData.append('commenterStudentID', commenterStudentID)
+        replyData.append('replyContent', replyContent)
+        replyData.append('parentFeedbackDocID', parentFeedbackDocID)
+        replyData.append('reply', true)
 
-          // Insert the new reply message before the editor
-          threadSection.insertBefore(replyMessage, threadSection.querySelector('.thread-editor-container'));
+        fetch(`${pathname.endsWith('/') ? pathname : pathname + '/'}postFeedback`, {
+          body: replyData,
+          method: 'post'
+        }) 
 
-          adjustThreadLineHeights(); // Adjust thread height again
-          textarea.value = ''; 
+
+        // Insert the new reply message before the editor
+        threadSection.insertBefore(replyMessage, threadSection.querySelector('.thread-editor-container'));
+
+        adjustThreadLineHeights(); // Adjust thread height again
+        textarea.value = '';
       }
-  });
-};
+    });
+  };
 
-// Initialize setup when DOM is loaded
-document.addEventListener("DOMContentLoaded", () => {
+  // Initialize setup when DOM is loaded
+  document.addEventListener("DOMContentLoaded", () => {
     setupThreadReplyListeners();
-});
+  });
 
 
   setupThreadReplyListeners(); // Initialize reply listeners on page load
