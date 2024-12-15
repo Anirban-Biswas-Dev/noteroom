@@ -21,6 +21,11 @@ socket.on('add-feedback', (feedbackData) => {
   // console.log(feedbackData)
 })
 
+
+socket.on('add-reply', (replyData) => {
+  manageNotes.addReply(document.querySelector(`#thread-${replyData.parentFeedbackDocID._id}`), replyData)
+})
+
 function formatDate(date) {
   const formatter = new Intl.DateTimeFormat('en-US', {
     year: 'numeric',
@@ -277,15 +282,11 @@ document.addEventListener('DOMContentLoaded', () => {
     feedbackData.append('commenterStudentID', commenterStudentID)
     feedbackData.append('feedbackContents', commentHTML)
 
-    let response = await fetch(`${pathname.endsWith('/') ? pathname : pathname + '/'}postFeedback`, {
+    await fetch(`${pathname.endsWith('/') ? pathname : pathname + '/'}postFeedback`, {
       body: feedbackData,
       method: 'post'
     })
-    let data = await response.json()
 
-    if (!data) return
-
-    // manageNotes.addFeedback(data)
     adjustThreadLineHeights();
     editor.setHTML(''); // reseting toast ui editor content
   };
@@ -351,16 +352,13 @@ document.addEventListener('DOMContentLoaded', () => {
         replyData.append('parentFeedbackDocID', parentFeedbackDocID)
         replyData.append('reply', true)
 
-        let response = await fetch(`${pathname.endsWith('/') ? pathname : pathname + '/'}postFeedback`, {
+        await fetch(`${pathname.endsWith('/') ? pathname : pathname + '/'}postFeedback`, {
           body: replyData,
           method: 'post'
         })
-        let data = await response.json()
-        if (data.reply) {
-          manageNotes.addReply(threadSection, data)
-          adjustThreadLineHeights(); // Adjust thread height again
-          textarea.value = '';
-        }
+
+        adjustThreadLineHeights(); // Adjust thread height again
+        textarea.value = '';
       }
     });
   };

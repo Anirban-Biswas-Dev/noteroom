@@ -218,7 +218,7 @@
                   </div>
                 </div>
   
-                <div class="thread-section">
+                <div class="thread-section" id="thread-<%= feedback[0]._id %>">
                   <% if(feedback[1] && feedback[1].length > 0) { %>
                     <% feedback[1].map(reply => { %>
                       <div class="thread-msg">

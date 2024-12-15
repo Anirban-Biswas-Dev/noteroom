@@ -121,7 +121,8 @@ function noteViewRouter(io: Server) {
                 feedbackContents: req.body["replyContent"]
             } 
             let reply = await addReply(replyData)
-            res.json({ reply: reply })
+            // res.json({ reply: reply })
+            io.to(replyData.noteDocID).emit('add-reply', reply.toObject())
         }
         
     })
