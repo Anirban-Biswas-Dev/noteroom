@@ -7,7 +7,7 @@ import { getNotifications, getSavedNotes, profileInfo, unreadNotiCount } from '.
 import { getNote, getOwner } from '../services/noteService.js'
 import { Convert } from '../services/userService.js'
 import { addFeedbackNoti, addMentionNoti } from '../services/notificationService.js'
-import { addFeedback } from '../services/feedbackService.js'
+import { addFeedback, addReply } from '../services/feedbackService.js'
 import { IFeedBackNotification } from '../types/notificationService.type.js'
 
 const router = Router()
@@ -119,7 +119,8 @@ function noteViewRouter(io: Server) {
                 parentFeedbackDocID: req.body["parentFeedbackDocID"],
                 feedbackContents: req.body["replyContent"]
             } 
-            console.log(replyData)
+            let reply = await addReply(replyData)
+            res.json({ reply: reply })
         }
         
     })
