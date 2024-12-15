@@ -368,7 +368,7 @@ const manageNotes = { // I treat all the cards as notes
 							</div>
 						</div>` //* This feedback-card is used to broadcast the extented-feedback to all the users via websockets
 
-        document.querySelector('.feedbacks-list').insertAdjacentHTML('afterbegin', feedbackCard) // The feedback will be shown at the top while posting (not fetching)
+        // document.querySelector('.feedbacks-list').insertAdjacentHTML('afterbegin', feedbackCard) // The feedback will be shown at the top while posting (not fetching)
     }
 }
 
