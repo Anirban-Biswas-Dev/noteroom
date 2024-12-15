@@ -16,9 +16,10 @@ socket.emit(
 );
 
 //* Broadcasted feedback handler. The extented-feedback is broadcasted
-// socket.on('add-feedback', (feedbackData) => {
-//   manageNotes.addFeedback(feedbackData)
-// })
+socket.on('add-feedback', (feedbackData) => {
+  manageNotes.addFeedback(feedbackData)
+  // console.log(feedbackData)
+})
 
 function formatDate(date) {
   const formatter = new Intl.DateTimeFormat('en-US', {
@@ -284,7 +285,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!data) return
 
-    manageNotes.addFeedback(data)
+    // manageNotes.addFeedback(data)
     adjustThreadLineHeights();
     editor.setHTML(''); // reseting toast ui editor content
   };

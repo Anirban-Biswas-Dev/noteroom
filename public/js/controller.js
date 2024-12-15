@@ -339,7 +339,7 @@ const manageNotes = { // I treat all the cards as notes
                 ~ displayname
                 
         */
-        let date = new Date(feedbackData.feedback.createdAt)
+        let date = new Date(feedbackData.createdAt)
         const formatter = new Intl.DateTimeFormat('en-US', {
             year: 'numeric',
             month: 'long',
@@ -354,7 +354,7 @@ const manageNotes = { // I treat all the cards as notes
         <div class='main-cmnt-container'>
             <div class="main__author-threadline-wrapper">
                 <img
-                    src="${feedbackData.feedback.commenterDocID.profile_pic}"
+                    src="${feedbackData.commenterDocID.profile_pic}"
                     alt="User Avatar"
                     class="main__cmnt-author-img cmnt-author-img"
                 />
@@ -363,10 +363,10 @@ const manageNotes = { // I treat all the cards as notes
             <div class="main__cmnts-replies-wrapper">
                 <div class="main__body cmnt-body-3rows">
                     <div class="main__reply-info reply-info">
-                        <span class="main__author-name">${feedbackData.feedback.commenterDocID.displayname}</span>
+                        <span class="main__author-name">${feedbackData.commenterDocID.displayname}</span>
                         <span class="reply-date">${formattedDate}</span>
                     </div>
-                    <div class="main__reply-msg reply-msg">${feedbackData.feedback.feedbackContents}</div>
+                    <div class="main__reply-msg reply-msg">${feedbackData.feedbackContents}</div>
                     <div class="main__engagement-opts engagement-opts">
                         <div class="vote-container">
                             <div class="uv-container">
