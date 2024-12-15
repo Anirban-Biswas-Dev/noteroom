@@ -193,7 +193,7 @@ const tribute = new Tribute({
     }
   }
 })
-tribute.attach(document.querySelector('#feedbackText'))
+tribute.attach(document.querySelector('#editor'))
 
 
 
@@ -361,7 +361,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
           // Add the HTML for the thread editor
           threadEditor.innerHTML = `
-                  <img class="tec__avatar-preview thread-avatar" src="${imgTemplate}">
+                  <!--<img class="tec__avatar-preview thread-avatar">-->
                   <div class="thread-editor-wrapper">
                     <textarea placeholder="Write a comment..." class="thread-editor"></textarea>
                     <div class="thread-editor__action-opts">
@@ -389,7 +389,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!replyContent) return; // Prevents posting empty replies
 
         // this creates a reply message container
-        
+
 
         const threadSection = event.target.closest('.thread-section');
         const parentFeedbackDocID = threadSection.previousElementSibling.querySelector('.reply-info #parentFeedbackDocID').innerHTML
@@ -403,9 +403,9 @@ document.addEventListener('DOMContentLoaded', () => {
         let response = await fetch(`${pathname.endsWith('/') ? pathname : pathname + '/'}postFeedback`, {
           body: replyData,
           method: 'post'
-        }) 
+        })
         let data = await response.json()
-        if(data.reply) {
+        if (data.reply) {
           const replyMessage = document.createElement('div');
           replyMessage.classList.add('thread-msg');
           replyMessage.innerHTML = `
@@ -441,10 +441,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 `;
 
-                threadSection.insertBefore(replyMessage, threadSection.querySelector('.thread-editor-container'));
-        
-                adjustThreadLineHeights(); // Adjust thread height again
-                textarea.value = '';
+          threadSection.insertBefore(replyMessage, threadSection.querySelector('.thread-editor-container'));
+
+          adjustThreadLineHeights(); // Adjust thread height again
+          textarea.value = '';
         }
 
 

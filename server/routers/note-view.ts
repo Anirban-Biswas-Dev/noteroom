@@ -25,7 +25,7 @@ function noteViewRouter(io: Server) {
             let noteInformation = await getNote({noteDocID})
             let root = await profileInfo(req.session["stdid"])
             let [note, owner, feedbacks] = [noteInformation['note'], noteInformation['owner'], noteInformation['feedbacks']]
-            let mynote = 1 //* Varifing if a note is mine or not: corrently using for not allowing users to give feedbacks based on some situations (self-notes and viewing notes without being logged in)
+            let mynote: number; //* Varifing if a note is mine or not: corrently using for not allowing users to give feedbacks based on some situations (self-notes and viewing notes without being logged in)
             
             if (req.session["stdid"]) {
                 if (noteDocID) {
@@ -35,6 +35,7 @@ function noteViewRouter(io: Server) {
                     let unReadCount = await unreadNotiCount(req.session["stdid"])
 
                     if (note.ownerDocID == req.cookies['recordID']) {
+                        mynote = 1
                         res.render('note-view', { note: note, mynote: mynote, owner: owner, feedbacks: feedbacks, root: root, savedNotes: savedNotes, notis: notis, unReadCount: unReadCount }) // Specific notes: visiting my notes
                     } else {
                         mynote = 0
