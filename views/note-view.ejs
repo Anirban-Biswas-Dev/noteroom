@@ -55,15 +55,35 @@
     <!-- Anirban this is the note id.  -->
     <div class="middle-section">
       <div class="first-box">
-        <h2 class="section-title"><%= note.title %></h2>
-        <span class="subject">Subject: <%= note.subject %> </span>
-        <!-- Working on its design still -->
+        <div class="fb__col-1">
+          <img class="note-author-img" src="<%= owner.profile_pic %>" alt="Author Picture"   onclick="location.href='/user/<%= owner.username %>'"
+          />
+          <div class="fb__col-1-wrapper-1">
+          <span class="author-name">
+            <a href="/user/<%= owner.username %>">
+              <%= owner.displayname %>
+            </a>
+            <span class="studentusername" style="display: none"
+              ><%= owner.username %></span
+            >
+          </span>
+          <h1 class="section-title"><%= note.title %></h1>
+        </div>
+        </div>
+        <span style="display: none;" class="subject">Subject: <%= note.subject %> </span>
+        <div class="fb__col-2">
+          <!-- Am not doing much work with this one as I think you'll find a efficent way to handle this on both dashboard and noteview. The classes are the same for both pages, so the mechanism should be like earlier.  -->
+          <button class="save-note-btn">
+            <i class="fa-regular fa-bookmark"></i>
+            <i class="fa-solid fa-bookmark saved"></i>
+          </button>
+        </div>
+
         <% if(note.isFeatured) { %>
         <p class="featured-note">Featured Note</p>
         <% } %>
       </div>
       <div class="carousel-container">
-        <!-- The notes images will be taken from the backend as an array and will be added dynamically using a loop or by mapping -->
         <div class="carousel-wrapper">
           <span class="note-thumbnail" style="display: none;"><%= note.content[0] %></span>
           <% note.content.forEach(note => { %>
@@ -82,15 +102,6 @@
 
       <div class="third-box">
         <div class="author-info">
-          <img src="<%= owner.profile_pic %>" alt="Author Picture" />
-          <span class="author-name">
-            <a href="/user/<%= owner.username %>">
-              <%= owner.displayname %>
-            </a>
-            <span class="studentusername" style="display: none"
-              ><%= owner.username %></span
-            >
-          </span>
         </div>
         <div class="note-engagement">
           <svg

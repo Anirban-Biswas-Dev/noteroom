@@ -23,25 +23,95 @@ body {
 }
 
 .first-box {
+    width: 60%;
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    width: 100%;
+}
+.fb__col-1{
+    flex: 1;
+    display:  flex;
     align-items: center;
     justify-content: center;
-    width: 100%;
-
-    h2 {
-        font-weight: 450;
-        font-size: 2rem;
-        line-height: 42px;
-        letter-spacing: -0.06em;
-        padding: 15px 10px 15px 10px;
-    }
-
-    span {
-        font-size: 1.1rem;
-        padding: 0px 0px 10px 0px;
-    }
+    gap: 25px;
 }
+.fb__col-1-wrapper-1{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+}
+.section-title{
+    font-weight: 450;
+    font-size: 2rem;
+    line-height: 42px;
+    letter-spacing: -0.06em;
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 22px;
+}
+
+.note-author-img{
+    box-sizing: border-box;
+    width: 70px;
+    height: 70px;
+    border: 1px solid #000000;
+    border-radius: 100px;
+    object-fit: cover;
+    aspect-ratio: 1 / 1;
+    cursor: pointer;
+}
+
+.author-name {
+    width: 100%;
+    font-size: .9rem;
+    font-weight: 600;
+}
+.author-name a {
+    text-decoration: none;
+    color: var(--squid-ink);
+}
+.author-name a:hover{
+    text-decoration: underline;
+}
+.author-name a:visited{
+    color: var(--squid-ink);
+}
+
+.fb__col-2{
+    flex: 0 0 30%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 10px 15px; 
+}
+.save-note-btn {
+    background: #FFFFFF;
+    box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.15);
+    border-radius: 10px;
+    border: none;
+    padding: 8px 12px;
+    font-size: 1.6rem;
+    cursor: pointer;
+}  
+
+.save-note-btn i.fa-solid {
+  display: none; 
+}
+
+.save-note-btn.saved i.fa-regular {
+  display: none; 
+}
+.save-note-btn.saved i.fa-solid {
+  display: inline; 
+}
+
+.save-note-btn.active {
+  animation: bounce 0.6s ease;
+}
+
 
 /* **** Carousel ***** */
 .carousel-container {
@@ -52,9 +122,9 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    border: 2px solid #081C30;
     border-radius: 10px;
     padding: 10px;
+    border: none;
 }
 
 .carousel-wrapper {
@@ -86,8 +156,9 @@ body {
     z-index: 999;
     transition: background-color 0.3s ease;
     background: var(--light-gray);
-    border: 1px solid #07192D;
     border-radius: 8px;
+    border: none;
+    box-shadow: 0px 0px 9px rgba(0, 0, 0, 0.1);
 }
 
 .carousel-control.prev {
@@ -99,7 +170,7 @@ body {
 }
 
 .carousel-control:hover {
-    background-color: #d0cece;
+    background-color: #dcdcdc;
 }
 
 /* Third box */
@@ -115,32 +186,6 @@ body {
     display: flex;
     align-items: center;
 
-    img {
-        box-sizing: border-box;
-        width: 80px;
-        height: 80px;
-        border: 1px solid #000000;
-        border-radius: 100px;
-        object-fit: cover;
-        aspect-ratio: 1 / 1;
-    }
-}
-
-.author-name {
-    width: 100%;
-    font-size: 1.2rem;
-    font-weight: 600;
-    padding: 15px;
-}
-.author-name a {
-    text-decoration: none;
-    color: var(--squid-ink);
-}
-.author-name a:hover{
-    text-decoration: underline;
-}
-.author-name a:visited{
-    color: var(--squid-ink);
 }
 
 .note-engagement {
@@ -781,7 +826,7 @@ body {
         padding-bottom: 12vh
     }
     .first-box {
-        h2 {
+        h1 {
             font-weight: 500;
             font-size: 1.8rem;
         }
@@ -843,7 +888,7 @@ body {
         padding-top: 10vh; 
         padding-bottom: 15vh; 
     }
-    .first-box h2 {
+    .first-box h1 {
         font-weight: 500;
         font-size: 2rem; 
     }
@@ -903,7 +948,7 @@ body {
         padding-top: 15vh; 
         padding-bottom: 15vh;
     }
-    .first-box h2 {
+    .first-box h1 {
         font-weight: 500;
         font-size: 2.2rem; 
     }
