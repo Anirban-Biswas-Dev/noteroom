@@ -63,8 +63,8 @@ function noteViewRouter(io: Server) {
                 feedbackContents: req.body["feedbackContents"]
             }
             let feedback = await addFeedback(feedbackData) /* The extented-feedback document with commenter info */
-            res.send({ ok: true })
-            io.to(feedbackData.noteDocID).emit('add-feedback', feedback.toObject()) //* Adding feedback under the note view: Sending extented-feedback to all the users via websockets
+            res.send({ ok: true, feedback: feedback })
+            // io.to(feedbackData.noteDocID).emit('add-feedback', feedback.toObject()) //* Adding feedback under the note view: Sending extented-feedback to all the users via websockets
     
     
     

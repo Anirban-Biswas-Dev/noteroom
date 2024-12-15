@@ -16,9 +16,9 @@ socket.emit(
 );
 
 //* Broadcasted feedback handler. The extented-feedback is broadcasted
-socket.on('add-feedback', (feedbackData) => {
-  manageNotes.addFeedback(feedbackData)
-})
+// socket.on('add-feedback', (feedbackData) => {
+//   manageNotes.addFeedback(feedbackData)
+// })
 
 function formatDate(date) {
   const formatter = new Intl.DateTimeFormat('en-US', {
@@ -259,10 +259,6 @@ replyTextArea.forEach(function (textarea) {
 // Make these dynamic with backend plz :)
 
 document.addEventListener('DOMContentLoaded', () => {
-  const imgTemplate = "https://fakeimg.pl/600x600/ebebeb/000000?text=User&font=bebas"; // Placeholder for user avatar
-  const templateName = "Your Name"; // needs to be dynamic
-  const getCurrentDate = () => new Date().toLocaleString(); // store time plz  and let's use a library for proper time calculation. Our server is on singapore so see if there are any server sid timing calc inaccuracy. Let's have time in "8 Minues Ago/ 2 Hours ago" this format for a certain period. After sometime, then move it to Date specific. 
-
   const commentList = document.querySelector(".cmnts-list");
   const cmntBtn = document.querySelector("#cmnt-btn");
 
@@ -296,7 +292,7 @@ document.addEventListener('DOMContentLoaded', () => {
     mainCommentContainer.innerHTML = `
           <div class="main__author-threadline-wrapper">
                <img
-                 src="${imgTemplate}"
+                 src="${data.feedback.commenterDocID.profile_pic}"
                  alt="User Avatar"
                  class="main__cmnt-author-img cmnt-author-img"
                />
@@ -305,11 +301,10 @@ document.addEventListener('DOMContentLoaded', () => {
              <div class="main__cmnts-replies-wrapper">
                <div class="main__body cmnt-body-3rows">
                  <div class="main__reply-info reply-info">
-                   <span class="main__author-name">${templateName}</span>
-                   <span class="reply-date">${getCurrentDate()}</span>
+                   <span class="main__author-name">${data.feedback.commenterDocID.displayname}</span>
+                   <span class="reply-date">${formatDate(new Date(data.feedback.createdAt))}</span>
                  </div>
-                 <div class="main__reply-msg reply-msg">${commentHTML}
-                 </div>
+                 <div class="main__reply-msg reply-msg">${data.feedback.feedbackContents}</div>
                  <div class="main__engagement-opts engagement-opts">
                    <div class="vote-container">
                      <div class="uv-container">
