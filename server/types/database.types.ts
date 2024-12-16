@@ -78,6 +78,7 @@ export interface INoteDB {
 
 /**
 * @description - This is the standard structure for notificatins **related to notes** 
+* @description - For the note-owner, there will be 2 notifications: *feedbacks* and *reply*. They will be saved via `IFeedbackNotificationDB`. Cause for the note-owner, they are comments
 */
 interface INoteNotifications {
     noteDocID: string,
@@ -88,7 +89,7 @@ interface INoteNotifications {
 * @param {string} noteDocID - The *documentID* of the note on which the feedback is given 
 * @param {string} feedbackDocID - The *documentID* of the feedback
 * @param {string} commenterDocID - The *documentID* of the commenter
-* @param {string} ownerStudentID - The *documentID* of the owner of the note
+* @param {string} ownerStudentID - The *studentID* of the owner of the notification (for comments, either reply or feedbacks. This will the be the note owner's. Cause he will be getting the comment notification)
 */
 export interface IFeedbackNotificationDB extends INoteNotifications {
     feedbackDocID: string,
@@ -103,7 +104,7 @@ export interface IFeedbackNotificationDB extends INoteNotifications {
 * @param {string} noteDocID - The *documentID* of the note on which the feedback is given 
 * @param {string} feedbackDocID - The *documentID* of the feedback
 * @param {string} commenterDocID - The *documentID* of the commenter
-* @param {string} mentionedStudentID - The *studentID* of the mentioned user
+* @param {string} mentionedStudentID - The *studentID* of the mentioned user.
 */
 export interface IMentionNotificationDB extends INoteNotifications {
     feedbackDocID: string,
@@ -115,13 +116,13 @@ export interface IMentionNotificationDB extends INoteNotifications {
 
 /**
 * @description - Under feedbacks, there will be *replies*. This is `Reply` notification
+* @description - This is only for the user of a feedback. NOT FOR THE NOTE-OWNER. (Saying this to not mix reply notifications for a note-owner. For a note-owner, feedback and reply are same: commentsw)
 * @param {string} noteDocID - The *documentID* of the note on which the reply is given 
 * @param {string} parentFeedbackDocID - The *documentID* of the feedback on which the reply is given
 * @param {string} commenterDocID - The *documentID* of the commenter
-* @param {string} ownerStudentID - The *documentID* of the owner of the note
+* @param {string} ownerStudentID - The *studentID* of the owner of the notification. Here the user who gave the FEEDBACK on which the `commenter` replied
 */
 export interface IReplyNotificationDB extends INoteNotifications {
-    parentFeedbackDocID: string,
     commenterDocID: string,
     ownerStudentID: string
 }

@@ -19,6 +19,9 @@ function noteViewRouter(io: Server) {
         })
     })
 
+
+    
+    
     router.get('/:noteID?', async (req, res, next) => {
         try {
             let noteDocID = req.params.noteID
@@ -26,6 +29,7 @@ function noteViewRouter(io: Server) {
             let root = await profileInfo(req.session["stdid"])
             let [note, owner, feedbacks] = [noteInformation['note'], noteInformation['owner'], noteInformation['feedbacks']]
             let mynote: number; //* Varifing if a note is mine or not: corrently using for not allowing users to give feedbacks based on some situations (self-notes and viewing notes without being logged in)
+
             
             if (req.session["stdid"]) {
                 if (noteDocID) {
@@ -54,75 +58,91 @@ function noteViewRouter(io: Server) {
 
     router.post('/:noteID/postFeedback', async (req, res) => {
 
-        if(!req.body.reply) {
-            //# First save-send the feedback
-            let _commenterStudentID = req.body["commenterStudentID"]
-            let commenterDocID = (await Convert.getDocumentID_studentid(_commenterStudentID)).toString()
-            let feedbackData: IFeedBackDB = {
-                noteDocID: req.body["noteDocID"],
+        const _commenterStudentID = req.body["commenterStudentID"]
+        const commenterDocID = (await Convert.getDocumentID_studentid(_commenterStudentID)).toString()
+        const _noteDocID = req.body["noteDocID"]
+        const noteOwnerInfo = await getOwner({noteDocID: _noteDocID}) 
+        const _ownerStudentID = noteOwnerInfo["ownerDocID"]["studentID"].toString()
+
+        /**
+        * @description - Feedback and Reply will have the same notification structure: `IFeedBackNotification`. Reply and Feedback are basically feedbacks
+        * @param mainData - This is the mongoose comment document ( **feedback: addFeedback** | **reply: addReply** ) data got AFTER SAVING INTO DATABASE
+        */
+        async function sendFeedbackNotification(mainData: any) {
+            let notification_db: IFeedbackNotificationDB = {
+                noteDocID: _noteDocID,
                 commenterDocID: commenterDocID,
-                feedbackContents: req.body["feedbackContents"]
+                feedbackDocID: mainData._id.toString(),
+                ownerStudentID: _ownerStudentID
             }
-            let feedback = await addFeedback(feedbackData) /* The extented-feedback document with commenter info */
-            // res.send({ ok: true, feedback: feedback })
-            io.to(feedbackData.noteDocID).emit('add-feedback', feedback.toObject()) //* Adding feedback under the note view: Sending extented-feedback to all the users via websockets
-    
-    
-    
-    
-            let _noteDocID = feedbackData.noteDocID
-            let noteOwnerInfo = await getOwner({noteDocID: _noteDocID}) 
-            let _ownerStudentID = noteOwnerInfo["ownerDocID"]["studentID"].toString()
-    
-            //# Then create-save-send the feedback notification if the note-ownerstudentid is not same as commentestudentid
-            if (_ownerStudentID !== _commenterStudentID) {
-                let feedbackNotification_db: IFeedbackNotificationDB = {
-                    noteDocID: _noteDocID,
-                    commenterDocID: commenterDocID.toString(),
-                    feedbackDocID: feedback._id.toString(),
-                    ownerStudentID: _ownerStudentID
-                }
-                let feedbackNoti = await addFeedbackNoti(feedbackNotification_db)
-                let feedbackNotification: IFeedBackNotification = { //* Feedback-notifications: This will go to everyuser, but the user with ownerUsername=recordName will keep it
-                    noteID : _noteDocID,
-                    nfnTitle : feedback["noteDocID"]["title"],
-                    isread: "false",
-                    commenterDisplayName: feedback["commenterDocID"]["displayname"],
-                    ownerStudentID : _ownerStudentID,
-                    notiID: feedbackNoti._id.toString(),
-                    feedbackID : feedback._id.toString()
-                }
-                io.emit('notification-feedback', feedbackNotification)
+            let notidata = await addFeedbackNoti(notification_db)
+            let commentNotification: IFeedBackNotification = {
+                noteID: _noteDocID,
+                nfnTitle: mainData["noteDocID"]["title"],
+                isread: "false",
+                commenterDisplayName: mainData["commenterDocID"]["displayname"],
+                ownerStudentID: _ownerStudentID,
+                notiID: notidata._id.toString(),
+                feedbackID: notidata._id.toString()
             }
-    
-    
-    
-            //# Lastly check-create-send mention notification
-            let mentions = checkMentions(feedbackData.feedbackContents)
+            io.emit('notification-feedback', commentNotification)
+        }
+
+
+        /**
+        * @description - It will take the usernames to mention. Then send the notification
+        * @param mentions - A list of usernames to send mention notification
+        * @param mainData - The mongoose comment document ( **feedback: addFeedback** | **reply: addReply** ) data got AFTER SAVING INTO DATABASE
+        */
+        async function sendMentionNotification(mentions: any, mainData: any) {
             if (mentions.length != 0) {
                 let studentIDs = (await Students.find({ username: { $in: mentions } }, { studentID: 1 })).map(data => data.studentID)
                 studentIDs.map(async studentID => {
                     let mentionNotification: IMentionNotificationDB = {
                         noteDocID: _noteDocID,
                         commenterDocID: commenterDocID.toString(),
-                        feedbackDocID: feedback._id.toString(),
+                        feedbackDocID: mainData._id.toString(),
                         mentionedStudentID: studentID
                     }
                     await addMentionNoti(mentionNotification)
                 })
             }
-        } else {
-            let _commenterStudentID = req.body["commenterStudentID"]
-            let commenterDocID = (await Convert.getDocumentID_studentid(_commenterStudentID)).toString()
-            let replyData: IReplyDB = {
+        }
+
+
+        if(!req.body.reply) {
+            let feedbackData: IFeedBackDB = {
+                noteDocID: _noteDocID,
                 commenterDocID: commenterDocID,
-                noteDocID: req.body["noteDocID"],
+                feedbackContents: req.body["feedbackContents"]
+            }
+            let feedback = await addFeedback(feedbackData) /* The extented-feedback document with commenter info */
+            io.to(feedbackData.noteDocID).emit('add-feedback', feedback.toObject()) //* Adding feedback under the note view: Sending extented-feedback to all the users via websockets
+        
+            if (_ownerStudentID !== _commenterStudentID) {
+                sendFeedbackNotification(feedback)
+            }
+    
+    
+            let mentions = checkMentions(feedbackData.feedbackContents)
+            await sendMentionNotification(mentions, feedback)
+            
+        } else {
+            let replyData: IReplyDB = {
+                noteDocID: _noteDocID,
+                commenterDocID: commenterDocID,
+                feedbackContents: req.body["replyContent"],
                 parentFeedbackDocID: req.body["parentFeedbackDocID"],
-                feedbackContents: req.body["replyContent"]
             } 
             let reply = await addReply(replyData)
-            // res.json({ reply: reply })
             io.to(replyData.noteDocID).emit('add-reply', reply.toObject())
+
+            if(_ownerStudentID !== _commenterStudentID) {
+                sendFeedbackNotification(reply)
+            }
+
+            let mentions = checkMentions(replyData.feedbackContents)
+            await sendMentionNotification(mentions, reply)
         }
         
     })
