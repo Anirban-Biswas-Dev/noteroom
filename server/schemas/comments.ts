@@ -39,7 +39,7 @@ const replySchema = new Schema({
         required: true,
         ref: 'students'
     },
-    parentFeedbackDocId: { // The documentID of the feedback on which the reply the given
+    parentFeedbackDocID: { // The documentID of the feedback on which the reply the given
         type: Schema.Types.ObjectId,
         required: true,
         ref: 'feedbacks'

@@ -11,6 +11,9 @@ export async function deleteNoti(notiID: string) {
     await Notifs.deleteOne({ _id: notiID })
 }
 
+/**
+* @description - This is just for note-owner to add notificatios related to notes (**reply** or **feedback**) *commented many times 
+*/
 export async function addFeedbackNoti(notiData: IFeedbackNotificationDB) {
     let feednoti = await feedBackNotifs.create(notiData)
     return feednoti

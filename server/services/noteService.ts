@@ -1,6 +1,6 @@
 import Students from '../schemas/students.js'
 import Notes from '../schemas/notes.js'
-import Comments from '../schemas/comments.js'
+import Comments, { feedbacksModel as Feedbacks, replyModel as Reply} from '../schemas/comments.js'
 import { INoteDB } from '../types/database.types.js'
 import { IManageUserNote, INoteDetails } from '../types/noteService.types.js'
 
@@ -34,10 +34,17 @@ export async function getNote({noteDocID}: IManageUserNote) {
     if (noteDocID) {
         let note = await Notes.findById(noteDocID, { title: 1, subject: 1, description: 1, ownerDocID: 1, content: 1 })
         let owner = await Students.findById(note.ownerDocID, { displayname: 1, studentID: 1, profile_pic: 1, username: 1 })
-        let feedbacks = await Comments.find({ noteDocID: note._id })
+        let feedbacks = await Feedbacks.find({ noteDocID: note._id })
             .populate('commenterDocID', 'displayname username studentID profile_pic').sort({ createdAt: -1 })
 
-        let returnedNote: INoteDetails = { note: note, owner: owner, feedbacks: feedbacks }
+        let _extentedFeedbacks = feedbacks.map(async feedback => {
+            let reply = await Reply.find({ parentFeedbackDocID: feedback._id })
+                .populate('commenterDocID', 'username displayname profile_pic studentID')
+            return [feedback, reply]
+        })
+        let extendedFeedbacks = await Promise.all(_extentedFeedbacks)
+
+        let returnedNote: INoteDetails = { note: note, owner: owner, feedbacks: extendedFeedbacks }
         return returnedNote
     }
 }

@@ -1,5 +1,5 @@
 import express, { static as _static } from 'express'
-import { join, basename, dirname } from 'path'
+import { join, dirname } from 'path'
 import { fileURLToPath } from 'url';
 import { config } from 'dotenv';
 import { createServer } from 'http';
@@ -11,7 +11,6 @@ import { connect } from 'mongoose'
 import _pkg from 'body-parser';
 const { urlencoded } = _pkg;
 import fileUpload from 'express-fileupload'
-import archiver from 'archiver'
 import cors from 'cors'
 import pkg from 'connect-mongo';
 const { create } = pkg;
@@ -27,11 +26,8 @@ import serachProfileRouter from './routers/search-profile.js'
 import settingsRouter from './routers/settings.js'
 import apiRouter  from './services/apis.js';
 
-import Notes from './schemas/notes.js'
-import Students from './schemas/students.js'
 import Alerts from './schemas/alerts.js'
-import { Notifs as allNotifs } from './schemas/notifications.js'
-import { getNotifications } from './helpers/rootInfo.js';
+
 
 
 const __filename = fileURLToPath(import.meta.url);
