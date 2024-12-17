@@ -11,7 +11,7 @@ async function add_note(count) {
 	*/
 	let notesList = [];
     try {
-        let response = await fetch(`/getnote?type=seg&page=${page}&count=${count}`); // 1
+        let response = await fetch(`/api/getnote?type=seg&page=${page}&count=${count}`); // 1
         let notes = await response.json(); // 2
 
         if (notes.length !== 0) {
@@ -164,7 +164,7 @@ if ((navigate.type === 'navigate') || (navigate.type == 'reload')) {
 	let studentDocID = Cookies.get('recordID').split(':')[1].replaceAll('"', '')
 	let studentID = Cookies.get('studentID')
 
-	fetch(`/getNote?type=save&studentDocID=${studentDocID}`) // 1.1
+	fetch(`/api/getNote?type=save&studentDocID=${studentDocID}`) // 1.1
 		.then(response => response.json() )
 		.then(notes => {
 			notes.forEach(note => {
@@ -177,7 +177,7 @@ if ((navigate.type === 'navigate') || (navigate.type == 'reload')) {
 		})
 		.catch(error => console.log(error.message))
 
-	fetch(`/getNotifs?studentID=${studentID}`)
+	fetch(`/api/getNotifs?studentID=${studentID}`)
 		.then(response =>  response.json() )
 		.then(notifs => {
 			notifs.forEach(noti => {

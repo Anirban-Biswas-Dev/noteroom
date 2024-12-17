@@ -12,8 +12,8 @@ const studentsSchema = new Schema({
     email: {
         type: String,
         validate: {
-            validator: (email) => email.includes("@"),
-            message: (data) => `Email doesn't contain @`
+            validator: (email: any) => email.includes("@"),
+            message: (data: any) => `Email doesn't contain @`
         },
         unique: true,
         required: true

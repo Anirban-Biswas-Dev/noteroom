@@ -1,5 +1,5 @@
 import express, { static as _static } from 'express'
-import { join, basename, dirname } from 'path'
+import { join, dirname } from 'path'
 import { fileURLToPath } from 'url';
 import { config } from 'dotenv';
 import { createServer } from 'http';
@@ -11,7 +11,6 @@ import { connect } from 'mongoose'
 import _pkg from 'body-parser';
 const { urlencoded } = _pkg;
 import fileUpload from 'express-fileupload'
-import archiver from 'archiver'
 import cors from 'cors'
 import pkg from 'connect-mongo';
 const { create } = pkg;
@@ -19,18 +18,17 @@ const { create } = pkg;
 import loginRouter from './routers/login.js'
 import userRouter from './routers/user.js'
 import signupRouter from './routers/sign-up.js'
-import errorHandler from './errorhandlers/errors.js'
+import errorHandler from './middlewares/errors.js'
 import uploadRouter from './routers/upload-note.js'
 import noteViewRouter from './routers/note-view.js'
 import dashboardRouter from './routers/dashboard.js'
 import serachProfileRouter from './routers/search-profile.js'
 import settingsRouter from './routers/settings.js'
+import apiRouter  from './services/apis.js';
 
-import Notes from './schemas/notes.js'
-import Students from './schemas/students.js'
 import Alerts from './schemas/alerts.js'
-import { getNotifications } from './routers/controller.js'
-import { Notifs as allNotifs } from './schemas/notifications.js'
+
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -80,10 +78,11 @@ app.use('/view', noteViewRouter(io))
 app.use('/dashboard', dashboardRouter(io))
 app.use('/search-profile', serachProfileRouter(io))
 app.use('/settings', settingsRouter(io))
+app.use('/api', apiRouter(io))
 app.use(errorHandler) // Middleware for handling errors
 
 app.get('/logout', (req, res) => {
-    req.session.destroy()
+    req.session.destroy(null)
     res.clearCookie('stdid')
     res.clearCookie('recordID')
     res.redirect('/login')
@@ -112,104 +111,8 @@ app.get('/login2', (req, res) => {
     res.render('login2')
 })
 
-app.post('/download', async (req, res) => {
-    let noteID = req.body.noteID
-    let noteTitle = req.body.noteTitle
-
-    const noteLinks = (await Notes.findById(noteID, { content: 1 })).content
-
-    res.setHeader('Content-Type', 'application/zip');
-
-    const sanitizeFilename = (filename) => {
-        return filename.replace(/[^a-zA-Z0-9\.\-\_]/g, '_'); // Replace any invalid characters with an underscore
-    }
-    res.setHeader('Content-Disposition', `attachment; filename=${sanitizeFilename(noteTitle)}.zip`);
-
-    const archive = archiver('zip', { zlib: { level: 9 } });
-    archive.pipe(res);
-
-    for (let imageUrl of noteLinks) {
-        try {
-            const response = await fetch(imageUrl);
-            if (!response.ok) {
-                throw new Error(`Failed to fetch ${imageUrl}: ${response.statusText}`);
-            }
-
-            let arrayBuffer = await response.arrayBuffer()
-            let buffer = Buffer.from(arrayBuffer)
-
-            let fileName = basename(new URL(imageUrl).pathname);
-            archive.append(buffer, { name: fileName });
-        } catch (err) {
-            console.error(`Error fetching image: ${err.message}`);
-            return;
-        }
-    }
-    archive.finalize();
-})
-
-app.get('/search', async (req, res, next) => {
-    let searchTerm = req.query.q
-    const regex = new RegExp(searchTerm.split(' ').map(word => `(${word})`).join('.*'), 'i');
-    let notes = await Notes.find({ title: { $regex: regex } }, { title: 1 })
-    res.json(notes)
-})
-
-app.get('/searchUser', async (req, res) => {
-    if (req.query) {
-        let term = req.query.term
-        let students = await Students.aggregate([
-            {
-                $match: {
-                    displayname: { $regex: `^${term}`, $options: 'i' } // Ensure case-insensitive search
-                }
-            },
-            {
-                $project: {
-                    displayname: 1,
-                    username: 1,
-                    profile_pic: 1,
-                    _id: 0
-                }
-            }
-        ]);
-
-        res.json(students)
-    }
-})
-
-app.get('/getnote', async (req, res, next) => {
-    let type = req.query.type
-    async function getSavedNotes(studentDocID) {
-        let student = await Students.findById(studentDocID, { saved_notes: 1 })
-        let saved_notes_ids = student['saved_notes']
-        let notes = await Notes.find({ _id: { $in: saved_notes_ids } }, { title: 1 })
-        return notes
-    }
-    if (type === 'save') {
-        let studentDocID = req.query.studentDocID
-        let savedNotes = await getSavedNotes(studentDocID)
-        res.json(savedNotes)
-    } else if (type === 'seg') {
-        let { page, count } = req.query
-        let skip = (page - 1) * count
-        let notes = await Notes.find({}).sort({ createdAt: -1 }).skip(skip).limit(count).populate('ownerDocID', 'profile_pic displayname studentID')
-        if (notes.length != 0) {
-            res.json(notes)
-        } else {
-            res.json([])
-        }
-    }
-})
-
-app.get('/getNotifs', async (req, res) => {
-    let studentID = req.query.studentID
-    let notifs = await getNotifications(allNotifs, studentID)
-    res.json(notifs)
-})
-
 app.get('/message', async (req, res) => {
-    if (req.session && req.session.stdid == "1094a5ad-d519-4055-9e2b-0f0d9447da02") {
+    if (req.session && req.session["stdid"] == "1094a5ad-d519-4055-9e2b-0f0d9447da02") {
         if (req.query.message == undefined) {
             res.render('message')
         } else {

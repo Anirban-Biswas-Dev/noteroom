@@ -23,10 +23,6 @@ const notesSchema = new Schema({
         type: String,
         required: true
     },
-    tags: {
-        type: [String],
-        // required: true
-    },
     isFeatured: {
         type: Boolean,
         default: false
@@ -38,10 +34,6 @@ const notesSchema = new Schema({
     createdAt: {
         type: Date,
         required: true,
-        default: Date.now
-    },
-    updatedAt: {
-        type: Date,
         default: Date.now
     }
 })

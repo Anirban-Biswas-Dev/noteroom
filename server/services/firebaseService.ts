@@ -8,7 +8,7 @@ const __dirname = dirname(__filename);
 
 config({ path: join(__dirname, '../.env') });
 
-const serviceAccount = JSON.parse(process.env.FIREBASE_CLOUD_CRED);
+const serviceAccount = JSON.parse(process.env.FIREBASE_CLOUD_CRED!);
 
 firebaseAdmin.initializeApp({
     credential: firebaseAdmin.credential.cert(serviceAccount), // Correct call to `cert`
@@ -17,7 +17,7 @@ firebaseAdmin.initializeApp({
 
 let bucket = firebaseAdmin.storage().bucket();
 
-async function uploadImage(fileObject, fileName) {
+async function uploadImage(fileObject: any, fileName: any) {
     const file = bucket.file(fileName);
     const stream = file.createWriteStream({
         metadata: {
