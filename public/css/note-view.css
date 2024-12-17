@@ -24,24 +24,93 @@ body {
 
 .first-box {
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    width: 100%;
+}
+.fb__col-1{
+    flex: 1;
+    display:  flex;
     align-items: center;
     justify-content: center;
-    width: 100%;
-
-    h2 {
-        font-weight: 450;
-        font-size: 2rem;
-        line-height: 42px;
-        letter-spacing: -0.06em;
-        padding: 15px 10px 15px 10px;
-    }
-
-    span {
-        font-size: 1.1rem;
-        padding: 0px 0px 10px 0px;
-    }
+    gap: 25px;
 }
+.fb__col-1-wrapper-1{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+}
+.section-title{
+    font-weight: 450;
+    font-size: 2rem;
+    line-height: 42px;
+    letter-spacing: -0.06em;
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 22px;
+}
+
+.note-author-img{
+    box-sizing: border-box;
+    width: 70px;
+    height: 70px;
+    border: 1px solid #000000;
+    border-radius: 100px;
+    object-fit: cover;
+    aspect-ratio: 1 / 1;
+    cursor: pointer;
+}
+
+.author-name {
+    width: 100%;
+    font-size: .9rem;
+    font-weight: 600;
+}
+.author-name a {
+    text-decoration: none;
+    color: var(--squid-ink);
+}
+.author-name a:hover{
+    text-decoration: underline;
+}
+.author-name a:visited{
+    color: var(--squid-ink);
+}
+
+.fb__col-2{
+    flex: 0 0 30%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 10px 15px; 
+}
+.save-note-btn {
+    background: #FFFFFF;
+    box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.15);
+    border-radius: 10px;
+    border: none;
+    padding: 8px 12px;
+    font-size: 1.6rem;
+    cursor: pointer;
+}  
+
+.save-note-btn i.fa-solid {
+  display: none; 
+}
+
+.save-note-btn.saved i.fa-regular {
+  display: none; 
+}
+.save-note-btn.saved i.fa-solid {
+  display: inline; 
+}
+
+.save-note-btn.active {
+  animation: bounce 0.6s ease;
+}
+
 
 /* **** Carousel ***** */
 .carousel-container {
@@ -52,9 +121,9 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    border: 2px solid #081C30;
     border-radius: 10px;
     padding: 10px;
+    border: none;
 }
 
 .carousel-wrapper {
@@ -86,8 +155,9 @@ body {
     z-index: 999;
     transition: background-color 0.3s ease;
     background: var(--light-gray);
-    border: 1px solid #07192D;
     border-radius: 8px;
+    border: none;
+    box-shadow: 0px 0px 9px rgba(0, 0, 0, 0.1);
 }
 
 .carousel-control.prev {
@@ -99,105 +169,79 @@ body {
 }
 
 .carousel-control:hover {
-    background-color: #d0cece;
+    background-color: #dcdcdc;
 }
 
 /* Third box */
 .third-box {
-    width: 90%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-}
-
-.author-info {
-    display: flex;
-    align-items: center;
-
-    img {
-        box-sizing: border-box;
-        width: 80px;
-        height: 80px;
-        border: 1px solid #000000;
-        border-radius: 100px;
-        object-fit: cover;
-        aspect-ratio: 1 / 1;
-    }
-}
-
-.author-name {
     width: 100%;
-    font-size: 1.2rem;
-    font-weight: 600;
-    padding: 15px;
-}
-.author-name a {
-    text-decoration: none;
-    color: var(--squid-ink);
-}
-.author-name a:hover{
-    text-decoration: underline;
-}
-.author-name a:visited{
-    color: var(--squid-ink);
-}
-
-.note-engagement {
     display: flex;
-    align-items: center;
-    justify-content: space-evenly;
-    svg {
-        padding: 15px;
-        margin-left: 15px;
-        transform: scale(0.9);
-        transition: transform 0.2s ease-in-out;
-    }
+    align-items: flex-start;
+    padding: 10px;
+    gap: 10px;
+    padding-bottom: 30px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 1px;
+}
+.note-desc{
+    flex: 1;
+    min-width: 250px;
+    max-width: 900px;
 }
 
-.note-engagement svg:hover {
-    transform: scale(1);
-    cursor: pointer;
-}
-.note-engagement svg:active{
-    transform: scale(0.8);
-}
-
-.desc-box {
-    box-sizing: border-box;
-    border: 2px solid #000000;
-    border-radius: 10px;
-    padding: 50px 20px 50px 20px;
-    width: 90%;
-    min-height: fit-content;
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 20px;
-
-    h3 {
-        font-weight: 600;
-        font-size: 1.2rem;
-        line-height: 27px;
-        letter-spacing: -0.06em;
-        align-self: center;
-        padding: 5px 0px 10px 0px;
-    }
-
-    blockquote {
-        margin: 1em 0;
-        padding: 1em;
-        border-left: 5px solid #ccc; /* Adds a left border */
-        background-color: #f9f9f9; /* Light background */
-    }
-}
-
-.desc-box p {
-    font-weight: 400;
+.desc-label{
+    font-weight: 650;
     font-size: 1.1rem;
+    line-height: 27px;
+    letter-spacing: -0.06em;
+    align-self: center;
+    padding: 10px 0;
+}
+
+.desc-content{
     line-height: 1.5;
     letter-spacing: 0.02em;
 }
-
+.desc-content a {
+    color: var(--grayish-border);
+    text-decoration: underline;
+}
+.desc-content a:hover{
+    cursor: pointer;
+    text-decoration: none;
+}
+.desc-content a:active{
+    color: var(--squid-ink);
+}
+.note-engagement {
+    flex: 0 0 20%;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    gap: 15px;
+    padding: 10px;
+    /* svg {
+        padding: 15px;
+        transform: scale(0.9);
+        transition: transform 0.2s ease-in-out;
+    } */
+}
+.download-icon, .share-icon{
+    padding: 5px 10px;
+    background: var(--light-gray);
+    box-shadow: 0px 0px 6.5px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    width: 25px;
+    height: 25px;
+    transition: box-shadow 0.2s ease, background-color 0.1s ease;
+}
+.download-icon:hover, .share-icon:hover{
+    cursor: pointer;
+    box-shadow: none;
+}
+.download-icon:active, .share-icon:active{
+    background-color: #eef4fb;
+}
 /* User mention styling */
 .tribute-container {
     max-height: 200px; 
@@ -781,7 +825,7 @@ body {
         padding-bottom: 12vh
     }
     .first-box {
-        h2 {
+        h1 {
             font-weight: 500;
             font-size: 1.8rem;
         }
@@ -809,14 +853,6 @@ body {
         padding: 2vw;
         height: fit-content;
     }
-    .note-engagement svg{
-        padding: 2vw;
-        margin-left:0;
-        width: 20%;
-        height: auto;
-        min-width: 20px;
-        min-height: 20px;
-    }
     .desc-box{
         width: 95%;
         border: 1px solid #000000;
@@ -843,7 +879,7 @@ body {
         padding-top: 10vh; 
         padding-bottom: 15vh; 
     }
-    .first-box h2 {
+    .first-box h1 {
         font-weight: 500;
         font-size: 2rem; 
     }
@@ -868,14 +904,6 @@ body {
         font-size: .9rem;
         padding: 2.5vw;
         height: fit-content;
-    }
-    .note-engagement svg {
-        padding: 2.5vw; 
-        margin-left: 0;
-        width: 25%; 
-        height: auto;
-        min-width: 24px; 
-        min-height: 24px;
     }
     .desc-box {
         width: 98%; 
@@ -903,7 +931,7 @@ body {
         padding-top: 15vh; 
         padding-bottom: 15vh;
     }
-    .first-box h2 {
+    .first-box h1 {
         font-weight: 500;
         font-size: 2.2rem; 
     }
@@ -928,14 +956,6 @@ body {
         font-size: 1rem; 
         padding: 3vw;
         height: fit-content;
-    }
-    .note-engagement svg {
-        padding: 3vw;
-        margin-left: 0;
-        width: 28%; 
-        height: auto;
-        min-width: 28px; 
-        min-height: 28px;
     }
     .desc-box {
         width: 100%; 
