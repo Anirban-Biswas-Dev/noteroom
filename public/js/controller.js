@@ -772,13 +772,6 @@ notiLinks.forEach(notiLink => {
 
 //* Event that will trigger when someone gives a feedback to a note: all pages, related to addNoti
 conSock.on('notification-feedback', (feedbackData) => {
-    /* 
-    # Process: ARP Protocol structure
-    ~   the event is handled by every user. the WS is sent with the feedback data and every browser checks, if the recordName
-    ~   cookie which is the logged in user's unique username is as same as the note owner's username which is sent in the feedback
-    ~   object (1). If so, that means the noti. has found it's owner. the noti-data is added in LS|key=notis (2). then it is added
-    ~   in the right-panel (3). then the noti. button got shaked(mobile) (4).
-    */
     if (feedbackData.ownerStudentID == Cookies.get('studentID')) { // 1
         addNoti(feedbackData)
         manageDb.add('notis', feedbackData)

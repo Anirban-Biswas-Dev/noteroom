@@ -13,15 +13,6 @@ import { IFeedBackNotification } from '../types/notificationService.type.js'
 const router = Router()
 
 function noteViewRouter(io: Server) {
-    io.on('connection', (socket) => {        
-        socket.on('join-room', (room: string) => {
-            socket.join(room)
-        })
-    })
-
-
-    
-    
     router.get('/:noteID?', async (req, res, next) => {
         try {
             let noteDocID = req.params.noteID
