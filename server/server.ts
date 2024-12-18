@@ -119,7 +119,21 @@ app.get('/login2', (req, res) => {
     res.render('login2')
 })
 
+export let userSocketMap: Map<string, string> = new Map()
 io.on('connection', (socket) => {
+    let studentID = <string>socket.handshake.query.studentID
+    if (studentID) {
+        userSocketMap.set(studentID, socket.id)
+    }
+
+    socket.on('disconnect', () => {
+        userSocketMap.forEach((studentID, sockID) => {
+            if (sockID === socket.id) {
+                userSocketMap.delete(studentID)
+            }
+        })
+    })
+
     notificationIOHandler(io, socket)
     noteIOHandler(io, socket)
 })
