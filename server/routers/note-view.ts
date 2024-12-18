@@ -8,7 +8,8 @@ import { getNote, getOwner } from '../services/noteService.js'
 import { Convert } from '../services/userService.js'
 import { addFeedbackNoti, addMentionNoti } from '../services/notificationService.js'
 import { addFeedback, addReply } from '../services/feedbackService.js'
-import { IFeedBackNotification } from '../types/notificationService.type.js'
+import { IFeedBackNotification, IMentionNotification } from '../types/notificationService.type.js'
+import { userSocketMap } from '../server.js';
 
 const router = Router()
 
@@ -54,11 +55,14 @@ function noteViewRouter(io: Server) {
         const _noteDocID = req.body["noteDocID"]
         const noteOwnerInfo = await getOwner({noteDocID: _noteDocID}) 
         const _ownerStudentID = noteOwnerInfo["ownerDocID"]["studentID"].toString()
+        let ownerSocketID = userSocketMap.get(_ownerStudentID)
 
         /**
         * @description - Feedback and Reply will have the same notification structure: `IFeedBackNotification`. Reply and Feedback are basically feedbacks
         * @param mainData - This is the mongoose comment document ( **feedback: addFeedback** | **reply: addReply** ) data got AFTER SAVING INTO DATABASE
         */
+        //FIXME: feedback and mention notification sender are almost same, so I will optimize them more
+        //FIXME: maybe the ownerStudentID when sending notification is not useful now, cause cookie checking is gone
         async function sendFeedbackNotification(mainData: any) {
             let notification_db: IFeedbackNotificationDB = {
                 noteDocID: _noteDocID,
@@ -76,7 +80,7 @@ function noteViewRouter(io: Server) {
                 notiID: notidata._id.toString(),
                 feedbackID: notidata._id.toString()
             }
-            io.emit('notification-feedback', commentNotification)
+            io.to(ownerSocketID).emit('notification-feedback', commentNotification, "has given feedback on your notes! Check it out.")
         }
 
 
@@ -89,13 +93,24 @@ function noteViewRouter(io: Server) {
             if (mentions.length != 0) {
                 let studentIDs = (await Students.find({ username: { $in: mentions } }, { studentID: 1 })).map(data => data.studentID)
                 studentIDs.map(async studentID => {
-                    let mentionNotification: IMentionNotificationDB = {
+                    let mentionNotification_db: IMentionNotificationDB = {
                         noteDocID: _noteDocID,
                         commenterDocID: commenterDocID.toString(),
                         feedbackDocID: mainData._id.toString(),
                         mentionedStudentID: studentID
                     }
-                    await addMentionNoti(mentionNotification)
+                    let notidata = await addMentionNoti(mentionNotification_db)
+                    let mentionNotification: IMentionNotification = {
+                        noteID: _noteDocID,
+                        nfnTitle: mainData["noteDocID"]["title"],
+                        isread: "false",
+                        commenterDisplayName: mainData["commenterDocID"]["displayname"],
+                        mentionedStudentID: _ownerStudentID,
+                        notiID: notidata._id.toString(),
+                        feedbackID: notidata._id.toString(),
+                        mention: true
+                    }
+                    io.to(userSocketMap.get(studentID)).emit("notification-mention", mentionNotification, "has mentioned you")
                 })
             }
         }

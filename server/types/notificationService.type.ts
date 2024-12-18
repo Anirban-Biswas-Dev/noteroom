@@ -7,6 +7,7 @@
 
 
 
+//FIXME: These two interfaces are almost same, except one field. will make them more useable and short
 /**
 * @description - This object is sent to the client via `notification-feedback` WS event
 */
@@ -38,5 +39,6 @@ export interface IMentionNotification {
     mentionedStudentID /* The note-owner's studentID : varifing with studentID cookie to keep/drop notification */: string,
 
     notiID: /* The document ID of notification. This is used to perform specific tasks on notifications */ string,
-    feedbackID /* This is the unique id of each feedback, used for redirection to that specific feedback, used using # */: string
+    feedbackID /* This is the unique id of each feedback, used for redirection to that specific feedback, used using # */: string,
+    mention: boolean
 }

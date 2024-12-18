@@ -1,5 +1,5 @@
 const conHost = window.location.origin
-const conSock = io(conHost)
+const conSock = io(conHost, { query: { studentID: Cookies.get("studentID") } })
 
 //* Badge images: user-profile + search-profile
 let baseURL = 'https://storage.googleapis.com/noteroom-fb1a7.appspot.com/badges/'
@@ -287,7 +287,7 @@ const manageNotes = { // I treat all the cards as notes
      * @param {Object} feedbackData - { notiID, feedbackID, isread, noteID, nfnTitle, commenterUserName, commenterDisplayName }
      * @description - First checks if there is already a noti div with noti-notiID, if not, adds one
     */
-    addNoti: function (feedbackData) {
+    addNoti: function (feedbackData, message) {
         let notificationContainer = document.querySelector('.notifications-container')
         let existingNoti = document.querySelector(`#noti-${feedbackData.notiID}`)
 
@@ -309,7 +309,7 @@ const manageNotes = { // I treat all the cards as notes
                       <div class="notification-msg">
                         <a href='/user/${feedbackData.commenterUserName}' class="commenter-prfl">
                         ${feedbackData.commenterDisplayName}
-                        </a><a href='/view/${feedbackData.noteID}/#${feedbackData.feedbackID}' class="notification-link-2"> has given feedback on your notes! Check it out.</a>
+                        </a><a href='/view/${feedbackData.noteID}/#${feedbackData.feedbackID}' class="notification-link-2"> ${message}</a>
                       </div>
                   </div>`
             notificationContainer.insertAdjacentHTML('afterbegin', notificationHtml);
@@ -469,7 +469,8 @@ const manageNotes = { // I treat all the cards as notes
             threadSection.appendChild(threadEditor);
         }
         threadSection.querySelector('.thread-editor-container').insertAdjacentHTML('beforebegin', replyMessage);
-    }
+    },
+
 }
 
 
@@ -730,13 +731,13 @@ async function deleteNoti(id) {
 
 //* Adding notifications: all pages
 
-function addNoti(feedbackData) {
+function addNoti(feedbackData, message) {
     /* 
     # Process: The main function is manageNotes.addNoti. Related to feedback-given WS event
     ~   the noti. data is got via feedback-given WS event. the process handles the main addNoti funnction (1). then the number got increased
     ~   and shown in the noti. badge (2)
     */
-    manageNotes.addNoti(feedbackData) // 1
+    manageNotes.addNoti(feedbackData, message) // 1
     notificationCount++;
     updateNotificationBadge(); // 2
 }
@@ -771,23 +772,40 @@ notiLinks.forEach(notiLink => {
 
 
 //* Event that will trigger when someone gives a feedback to a note: all pages, related to addNoti
-conSock.on('notification-feedback', (feedbackData) => {
-    if (feedbackData.ownerStudentID == Cookies.get('studentID')) { // 1
-        addNoti(feedbackData)
-        manageDb.add('notis', feedbackData)
+//FIXME: Good but I will optimize these two event handler more
+conSock.on('notification-feedback', (feedbackData, message) => {
+    addNoti(feedbackData, message)
+    manageDb.add('notis', feedbackData)
 
-        const nftShake = document.querySelector('.mobile-nft-btn')
-        nftShake.classList.add('shake') // 4
-        setTimeout(() => {
-            nftShake.classList.remove('shake');
-        }, 300)
+    const nftShake = document.querySelector('.mobile-nft-btn')
+    nftShake.classList.add('shake') // 4
+    setTimeout(() => {
+        nftShake.classList.remove('shake');
+    }, 300)
 
-        try {
-            const audio = document.getElementById('notificationAudio');
-            audio.play();
-        } catch (error) {
-            console.error(error)
-        }
+    try {
+        const audio = document.getElementById('notificationAudio');
+        audio.play();
+    } catch (error) {
+        console.error(error)
+    }
+})
+
+conSock.on("notification-mention", (mentionData, message) => {
+    addNoti(mentionData, message)
+    manageDb.add('notis', mentionData)
+
+    const nftShake = document.querySelector('.mobile-nft-btn')
+    nftShake.classList.add('shake') // 4
+    setTimeout(() => {
+        nftShake.classList.remove('shake');
+    }, 300)
+
+    try {
+        const audio = document.getElementById('notificationAudio');
+        audio.play();
+    } catch (error) {
+        console.error(error)
     }
 })
 
