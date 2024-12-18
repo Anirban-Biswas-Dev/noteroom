@@ -85,10 +85,15 @@ app.use('/api', apiRouter(io))
 app.use(errorHandler) // Middleware for handling errors
 
 app.get('/logout', (req, res) => {
-    req.session.destroy(null)
-    res.clearCookie('stdid')
-    res.clearCookie('recordID')
-    res.redirect('/login')
+    req.session.destroy(error => {
+        res.clearCookie('studentID')
+        res.clearCookie('recordID')
+        if(!error) {
+            res.redirect('/login')
+        } else {
+            res.redirect('/login')
+        }
+    })
 })
 
 app.get('/', (req, res) => {
