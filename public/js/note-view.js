@@ -1,5 +1,5 @@
 const host = window.location.origin;
-const socket = io(host);
+const socket = io(host, { query: { studentID: Cookies.get("studentID") } });
 
 /*
 # Event Sequence:
@@ -18,7 +18,6 @@ socket.emit(
 //* Broadcasted feedback handler. The extented-feedback is broadcasted
 socket.on('add-feedback', (feedbackData) => {
   manageNotes.addFeedback(feedbackData)
-  // console.log(feedbackData)
 })
 
 

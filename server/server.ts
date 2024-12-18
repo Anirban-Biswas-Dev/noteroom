@@ -28,6 +28,9 @@ import apiRouter  from './services/apis.js';
 
 import Alerts from './schemas/alerts.js'
 
+import noteIOHandler from './services/io/ioNoteService.js';
+import notificationIOHandler from './services/io/ioNotifcationService.js';
+
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -109,6 +112,11 @@ app.get('/signup2', (req, res) => {
 })
 app.get('/login2', (req, res) => {
     res.render('login2')
+})
+
+io.on('connection', (socket) => {
+    notificationIOHandler(io, socket)
+    noteIOHandler(io, socket)
 })
 
 app.get('/message', async (req, res) => {
