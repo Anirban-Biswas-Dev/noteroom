@@ -135,7 +135,7 @@
           <a href='/view/<%= noti.noteDocID._id %>/#<%= noti.feedbackDocID %>' class="notification-link-2 notiLink"><%= noti.commenterDocID.displayname %> has given feedback on your notes! Check it out.</a>
       </div>
     </div>
-    <% } else { %>
+    <% } else if (noti.docType == "mention") { %>
       <div class="notification secondary-<%= noti.isRead %>" id="noti-<%= noti._id %>">
         <div class="first-row">
           <div class="frnt-wrapper">
@@ -156,6 +156,29 @@
         </div>
         <div class="notification-msg">
             <a href='/view/<%= noti.noteDocID._id %>/#<%= noti.feedbackDocID %>' class="notification-link-2 notiLink"><%= noti.commenterDocID.displayname %> has mentioned you.</a>
+        </div>
+      </div>
+    <% } else if(noti.docType == "reply") { %>
+      <div class="notification secondary-<%= noti.isRead %>" id="noti-<%= noti._id %>">
+        <div class="first-row">
+          <div class="frnt-wrapper">
+            <span class="isRead <%= noti.isRead %>"></span>
+            <a href='/view/<%= noti.noteDocID._id %>/#<%= noti.feedbackDocID %>' class="notification-link notiLink">
+              <span class="notification-title">
+                <% let title = noti.noteDocID.title %>
+                <% if(title.length > 30) { %>
+                <%= title.slice(0, 30) %>...
+                <% } else { %>
+                <%= title %>
+                <% } %>
+                <span style="display: none;"><%= formatDate(new Date(noti.createdAt)) %></span>
+              </span>
+            </a>
+          </div>
+          <span class="remove-notification" onclick="deleteNoti('<%= noti._id %>')">&times;</span>
+        </div>
+        <div class="notification-msg">
+            <a href='/view/<%= noti.noteDocID._id %>/#<%= noti.feedbackDocID %>' class="notification-link-2 notiLink"><%= noti.commenterDocID.displayname %> has replied to your comment</a>
         </div>
       </div>
     <% } %>

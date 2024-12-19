@@ -7,3 +7,4 @@ logs.log
 /server/routers/db/
 /experiment/
 /dist
+/.idea

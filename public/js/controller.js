@@ -809,6 +809,24 @@ conSock.on("notification-mention", (mentionData, message) => {
     }
 })
 
+conSock.on("notification-reply", (replyData, message) => {
+    addNoti(replyData, message)
+    manageDb.add('notis', replyData)
+
+    const nftShake = document.querySelector('.mobile-nft-btn')
+    nftShake.classList.add('shake') // 4
+    setTimeout(() => {
+        nftShake.classList.remove('shake');
+    }, 300)
+
+    try {
+        const audio = document.getElementById('notificationAudio');
+        audio.play();
+    } catch (error) {
+        console.error(error)
+    }
+})
+
 
 try {
     //* Mobile notification panel

@@ -124,5 +124,6 @@ export interface IMentionNotificationDB extends INoteNotifications {
 */
 export interface IReplyNotificationDB extends INoteNotifications {
     commenterDocID: string,
-    ownerStudentID: string
+    ownerStudentID: string,
+    parentFeedbackDocID: string
 }
