@@ -144,24 +144,25 @@ function noteViewRouter(io: Server) {
             io.to(replyData.noteDocID).emit('add-reply', reply.toObject())
             
             //CRITICAL: Optimize the notification sender
-            let _parentFeedbackDocID = reply["parentFeedbackDocID"]
-            let notification_db: IReplyNotificationDB = {
-                noteDocID: _noteDocID,
-                commenterDocID: reply["commenterDocID"]._id,
-                ownerStudentID: _parentFeedbackDocID["commenterDocID"].studentID,
-                parentFeedbackDocID: reply["parentFeedbackDocID"]._id
-            }
-            let replyNoti = await addReplyNoti(notification_db)
-            let replyNotification: IReplyNotification = {
-                noteID: _noteDocID,
-                notiID: replyNoti._id.toString(),
-                feedbackID: reply._id.toString(),
-                isread: "false",
-                nfnTitle: reply["noteDocID"]["title"],
-                commenterDisplayName: reply["commenterDocID"]["displayname"],
-                ownerStudentID: _ownerStudentID,
-            }
-            io.to(notification_db.ownerStudentID).emit("notification-reply", replyNotification, "replied to your comment")
+            //! Don't uncomment reply inplement unless the head is synced with the latest version
+            // let _parentFeedbackDocID = reply["parentFeedbackDocID"]
+            // let notification_db: IReplyNotificationDB = {
+            //     noteDocID: _noteDocID,
+            //     commenterDocID: reply["commenterDocID"]._id,
+            //     ownerStudentID: _parentFeedbackDocID["commenterDocID"].studentID,
+            //     parentFeedbackDocID: reply["parentFeedbackDocID"]._id
+            // }
+            // let replyNoti = await addReplyNoti(notification_db)
+            // let replyNotification: IReplyNotification = {
+            //     noteID: _noteDocID,
+            //     notiID: replyNoti._id.toString(),
+            //     feedbackID: reply._id.toString(),
+            //     isread: "false",
+            //     nfnTitle: reply["noteDocID"]["title"],
+            //     commenterDisplayName: reply["commenterDocID"]["displayname"],
+            //     ownerStudentID: _ownerStudentID,
+            // }
+            // io.to(notification_db.ownerStudentID).emit("notification-reply", replyNotification, "replied to your comment")
 
             if(_ownerStudentID !== _commenterStudentID) {
                 sendFeedbackNotification(reply)
