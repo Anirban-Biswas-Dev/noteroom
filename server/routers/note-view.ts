@@ -1,4 +1,4 @@
-import { IFeedBackDB, IFeedbackNotificationDB, IMentionNotificationDB, IReplyDB } from './../types/database.types.js';
+import { IFeedBackDB, IFeedbackNotificationDB, IMentionNotificationDB, IReplyDB, IReplyNotificationDB } from './../types/database.types.js';
 import { Router } from 'express'
 import Students from '../schemas/students.js'
 import { Server } from 'socket.io'
@@ -6,9 +6,9 @@ import { checkMentions } from '../helpers/utils.js'
 import { getNotifications, getSavedNotes, profileInfo, unreadNotiCount } from '../helpers/rootInfo.js'
 import { getNote, getOwner } from '../services/noteService.js'
 import { Convert } from '../services/userService.js'
-import { addFeedbackNoti, addMentionNoti } from '../services/notificationService.js'
+import { addFeedbackNoti, addMentionNoti, addReplyNoti } from '../services/notificationService.js'
 import { addFeedback, addReply } from '../services/feedbackService.js'
-import { IFeedBackNotification, IMentionNotification } from '../types/notificationService.type.js'
+import { IFeedBackNotification, IMentionNotification, IReplyNotification } from '../types/notificationService.type.js'
 import { userSocketMap } from '../server.js';
 
 const router = Router()
@@ -142,6 +142,26 @@ function noteViewRouter(io: Server) {
             } 
             let reply = await addReply(replyData)
             io.to(replyData.noteDocID).emit('add-reply', reply.toObject())
+            
+            //CRITICAL: Optimize the notification sender
+            let _parentFeedbackDocID = reply["parentFeedbackDocID"]
+            let notification_db: IReplyNotificationDB = {
+                noteDocID: _noteDocID,
+                commenterDocID: reply["commenterDocID"]._id,
+                ownerStudentID: _parentFeedbackDocID["commenterDocID"].studentID,
+                parentFeedbackDocID: reply["parentFeedbackDocID"]._id
+            }
+            let replyNoti = await addReplyNoti(notification_db)
+            let replyNotification: IReplyNotification = {
+                noteID: _noteDocID,
+                notiID: replyNoti._id.toString(),
+                feedbackID: reply._id.toString(),
+                isread: "false",
+                nfnTitle: reply["noteDocID"]["title"],
+                commenterDisplayName: reply["commenterDocID"]["displayname"],
+                ownerStudentID: _ownerStudentID,
+            }
+            io.to(notification_db.ownerStudentID).emit("notification-reply", replyNotification, "replied to your comment")
 
             if(_ownerStudentID !== _commenterStudentID) {
                 sendFeedbackNotification(reply)

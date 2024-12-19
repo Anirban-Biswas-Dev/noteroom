@@ -9,7 +9,6 @@ export const Convert = {
     },
     
     async getDocumentID_studentid(studentID: string) {
-        console.log(studentID)
         let documentID = (await Students.findOne({ studentID: studentID }, { _id: 1 }))["_id"]
         return documentID
     },

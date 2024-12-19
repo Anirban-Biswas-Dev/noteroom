@@ -34,7 +34,15 @@ export async function getNotifications(studentID: rootStudentID) {
                     { path: 'commenterDocID', select: 'displayname studentID username' }
                 ]))
             }
-        } else {
+        } else if (doc['docType'] === ENotificationType.Reply) {
+            if (doc["ownerStudentID"] == studentID) {
+                populatedNotifications.push(doc.populate([
+                    { path: 'noteDocID', select: 'title' },
+                    { path: 'commenterDocID', select: 'displayname studentID username' }
+                ]))
+            }
+        } 
+        else {
             populatedNotifications.push(doc)
         }
     })
