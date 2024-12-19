@@ -244,7 +244,7 @@
                         <img src="<%= reply.commenterDocID.profile_pic %>" alt="User Avatar" class="cmnt-author-img thread-avatar">
                         <div class="cmnt-body-3rows">
                           <div class="reply-info">
-                            <span class="main__author-name"><%= reply.commenterDocID.displayname %></span>
+                            <span class="main__author-name thread-author-name"><%= reply.commenterDocID.displayname %></span>
                             <span class="reply-date"><%= formatDate(new Date(reply.createdAt)) %></span>
                           </div>
                           <div class="reply-msg"><%= reply.feedbackContents %></div>

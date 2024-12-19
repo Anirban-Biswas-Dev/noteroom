@@ -856,7 +856,6 @@ body {
     .carousel-container{
         min-width: 200px;
         padding: 5px;
-        border: 1px solid #081C30;
     }
     .carousel-control{
         font-size: 1.2rem;
@@ -944,7 +943,6 @@ body {
     .carousel-container {
         min-width: 240px; 
         padding: 8px; 
-        border: 1px solid #081C30;
     }
     .carousel-control {
         font-size: 1.4rem; 
@@ -987,12 +985,6 @@ body {
         border-radius: 8px;
       }
 }
-    .feedback-section h2 {
-        font-size: 1.3rem; 
-    }
-    .feedback-author, .link_ {
-        font-size: .9rem;
-    }
 
 @media (min-width: 481px) and (max-width: 767px) {
     .middle-section {
@@ -1027,7 +1019,6 @@ body {
     .carousel-container {
         min-width: 260px; 
         padding: 10px; 
-        border: 1px solid #081C30;
     }
     .carousel-control {
         font-size: 1.6rem; 
@@ -1048,15 +1039,124 @@ body {
         padding: 5px 12px;
         border-radius: 12px;
     }
-    .feedback-section h2 {
-        font-size: 1.4rem; 
-    }
-    .feedback-author, .link_ {
-        font-size: 1rem; 
-    }
 }
 @media (min-width:1486px) and (max-width:1750px) {
      .middle-section{
         width: 50%;
      }
+}
+
+@media (max-width:360px) {
+    .editor{
+        font-size: 12px;
+    }
+    .cmnt-btn{
+        padding: 5px 10px;
+    }
+    .main-cmnt-container{
+        margin: 40px 0;
+    }
+    .main__author-threadline-wrapper{
+    flex: 0 0 12%; 
+    }
+    .main__cmnts-replies-wrapper{
+        padding: 0 5px;
+    }
+    .main__body{
+        padding: 5px;
+    }
+    .cmnt-body-3rows{
+        gap: 10px;
+    }
+    .main__author-name, .thread-author-name{
+        font-size: 10px;
+        margin: 0;
+        padding: 0 5px;
+    }
+    .reply-date{
+        font-size: 9px;
+    }
+    .reply-msg{
+        font-size: 12px;
+    }
+    .thread-section{
+        padding: 0;
+    }
+    .thread-msg{
+        gap: 5px;
+    }
+    .thread-avatar{
+        flex: 0 0 12%;
+        max-width: 50px;
+        max-height: 50px;
+    }
+    .thread-author-name{
+        padding: 0;
+        padding-right: 5px;
+    }
+    .thread-editor-wrapper{
+        max-width: 90%;
+    }
+    .thread-editor{
+        font-size: 12px;
+    }
+}
+
+@media (min-width:361px) and (max-width:480px) {
+    .editor {
+        font-size: 14px;
+    }
+    .cmnt-btn {
+        padding: 6px 12px;
+    }
+    .main-cmnt-container {
+        margin: 40px 0;
+    }
+    .main__author-threadline-wrapper {
+        flex: 0 0 12%;
+    }
+    .main__cmnts-replies-wrapper {
+        padding: 0 5px;
+    }
+    .main__body {
+        padding: 5px;
+    }
+    .cmnt-body-3rows {
+        gap: 12px;
+    }
+    .main__author-name, .thread-author-name {
+        font-size: 12px;
+        margin: 0;
+        padding: 0 8px;
+    }
+    .reply-date {
+        font-size: 11px;
+    }
+    .main__reply-msg{
+        padding-right: 10px;
+    }
+    .reply-msg {
+        font-size: 13px;
+        padding-right: 10px;
+    }
+    .thread-section {
+        padding: 0;
+    }
+    .thread-msg {
+        gap: 8px;
+    }
+    .thread-avatar {
+        flex: 0 0 10%;
+    }
+    .thread-author-name {
+        padding: 0;
+        padding-right: 8px;
+    }
+    .thread-editor-wrapper {
+        max-width: 90%;
+    }
+    .thread-editor {
+        font-size: 14px;
+    }
+    
 }
