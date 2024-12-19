@@ -42,3 +42,17 @@ export interface IMentionNotification {
     feedbackID /* This is the unique id of each feedback, used for redirection to that specific feedback, used using # */: string,
     mention: boolean
 }
+
+
+export interface IReplyNotification {
+    noteID: string,
+    nfnTitle: string,
+    isread: string,
+
+    commenterDisplayName: string,
+
+    ownerStudentID: string,
+
+    notiID: string,
+    feedbackID: string,
+}

@@ -5,7 +5,8 @@ import { Notifs } from "../schemas/notifications.js";
 type rootStudentID = string
 enum ENotificationType {
     Feedback = 'feedback',
-    Mention = 'mention'
+    Mention = 'mention',
+    Reply = 'reply'
 }
 
 export async function getSavedNotes(studentID: rootStudentID) {
