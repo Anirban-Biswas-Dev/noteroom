@@ -1,6 +1,6 @@
-const mongoose = require('mongoose')
+import { Schema, model } from 'mongoose'
 
-const alertsSchema = new mongoose.Schema({
+const alertsSchema = new Schema({
     message: {
         type: String,
         required: true
@@ -14,6 +14,6 @@ const alertsSchema = new mongoose.Schema({
 })
 
 
-const alertsModel = mongoose.model('alerts', alertsSchema)
+const alertsModel = model('alerts', alertsSchema)
 
-module.exports = alertsModel
+export default alertsModel
