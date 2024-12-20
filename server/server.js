@@ -177,7 +177,7 @@ app.get('/getnote', async (req, res, next) => {
     } else if (type === 'seg') {
         let { page, count } = req.query
         let skip = (page - 1) * count
-        let notes = await Notes.find({}).sort({ createdAt: -1 }).skip(skip).limit(count).populate('ownerDocID', 'profile_pic displayname studentID')
+        let notes = await Notes.find({ test: { $ne: true } }).sort({ createdAt: -1 }).skip(skip).limit(count).populate('ownerDocID', 'profile_pic displayname studentID')
         if (notes.length != 0) {
             res.json(notes)
         } else {
