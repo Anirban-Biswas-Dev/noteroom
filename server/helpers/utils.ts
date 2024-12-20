@@ -1,4 +1,6 @@
+import fileUpload from "express-fileupload"
 import slug from "slug"
+import sharp from "sharp"
 import { v4 as uuidv4 } from "uuid"
 
 export function checkMentions(feedbackText: string) {
@@ -22,4 +24,18 @@ export function generateRandomUsername(displayname: string) {
         userID: uuid,
         username: username
     }
+}
+
+
+export async function compressImage(fileObject: fileUpload.UploadedFile) {
+    let imageBuffer = fileObject.data
+    let imageType: "jpeg" | "png" = fileObject.mimetype === "image/jpeg" ? "jpeg" : "png"
+    let compressedBuffer = await sharp(imageBuffer)
+        [imageType](
+            imageType === "png" 
+            ? { quality: 70, compressionLevel: 9, adaptiveFiltering: true } 
+            : { quality: 70, progressive: true }
+        ).toBuffer()
+    let compressFileObject = Object.assign(fileObject, { buffer: compressedBuffer, size: compressedBuffer.length })
+    return compressFileObject
 }
