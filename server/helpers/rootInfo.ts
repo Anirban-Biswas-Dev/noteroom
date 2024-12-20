@@ -1,13 +1,10 @@
 import Students from "../schemas/students.js";
 import Notes from "../schemas/notes.js";
 import { Notifs } from "../schemas/notifications.js";
+import {ENotificationType} from "../types/notificationService.type.js";
 
 type rootStudentID = string
-enum ENotificationType {
-    Feedback = 'feedback',
-    Mention = 'mention',
-    Reply = 'reply'
-}
+
 
 export async function getSavedNotes(studentID: rootStudentID) {
     let student = await Students.findOne({ studentID: studentID }, { saved_notes: 1 })

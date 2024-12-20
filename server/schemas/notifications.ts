@@ -74,6 +74,10 @@ const replySchema = new Schema({
         type: Schema.Types.ObjectId,
         required: true
     },
+    feedbackDocID: {
+        type: Schema.Types.ObjectId,
+        required: true
+    },
     ownerStudentID: String, // The person who owns the note
 })
 const replyNotifs = NotifsModel.discriminator('reply', replySchema)
