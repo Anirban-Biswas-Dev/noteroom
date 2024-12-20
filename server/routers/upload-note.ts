@@ -5,6 +5,8 @@ import { Server } from 'socket.io'
 import { addNote } from '../services/noteService.js'
 import { getNotifications, getSavedNotes, profileInfo, unreadNotiCount } from '../helpers/rootInfo.js'
 import { INoteDB } from '../types/database.types.js'
+import { compressImage } from '../helpers/utils.js'
+import fileUpload from 'express-fileupload'
 const router = Router()
 
 
@@ -45,7 +47,10 @@ function uploadRouter(io: Server) {
                 let note = await addNote(noteData) //* Adding all the record of a note except the content links in the database
                 let noteDocId = note._id
 
-                let allFiles = Object.values(req.files) //* Getting all the file objects from the requests
+                let fileObjects = <fileUpload.UploadedFile[]>Object.values(req.files) //* Getting all the file objects from the requests
+                let compressedFileObjects = fileObjects.map(file => compressImage(file))
+                let allFiles = await Promise.all(compressedFileObjects)
+
 
                 let allFilePaths = [] //* These are the raw file paths that will be directly used in the note-view
 

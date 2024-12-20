@@ -21,7 +21,7 @@ async function uploadImage(fileObject: any, fileName: any) {
     const file = bucket.file(fileName);
     const stream = file.createWriteStream({
         metadata: {
-            contentType: 'image/png',
+            contentType: fileObject.mimetype,
         }
     });
 
@@ -38,7 +38,7 @@ async function uploadImage(fileObject: any, fileName: any) {
             resolve(publicUrl);
         });
 
-        stream.end(fileObject.data); // Storing the actual file buffer to Firebase
+        stream.end(fileObject.buffer || fileObject.data); // Storing the actual file buffer to Firebase
     });
 }
 
