@@ -1,15 +1,26 @@
-import { IFeedBackDB, IFeedbackNotificationDB, IMentionNotificationDB, IReplyDB, IReplyNotificationDB } from './../types/database.types.js';
-import { Router } from 'express'
+import {
+    IFeedBackDB,
+    IFeedbackNotificationDB,
+    IMentionNotificationDB,
+    IReplyDB,
+    IReplyNotificationDB
+} from './../types/database.types.js';
+import {Router} from 'express'
 import Students from '../schemas/students.js'
-import { Server } from 'socket.io'
-import { checkMentions } from '../helpers/utils.js'
-import { getNotifications, getSavedNotes, profileInfo, unreadNotiCount } from '../helpers/rootInfo.js'
-import { getNote, getOwner } from '../services/noteService.js'
-import { Convert } from '../services/userService.js'
-import { addFeedbackNoti, addMentionNoti, addReplyNoti } from '../services/notificationService.js'
-import { addFeedback, addReply } from '../services/feedbackService.js'
-import { IFeedBackNotification, IMentionNotification, IReplyNotification } from '../types/notificationService.type.js'
-import { userSocketMap } from '../server.js';
+import {Server} from 'socket.io'
+import {checkMentions} from '../helpers/utils.js'
+import {getNotifications, getSavedNotes, profileInfo, unreadNotiCount} from '../helpers/rootInfo.js'
+import {getNote, getOwner} from '../services/noteService.js'
+import {Convert} from '../services/userService.js'
+import {addFeedbackNoti, addMentionNoti, addReplyNoti} from '../services/notificationService.js'
+import {addFeedback, addReply} from '../services/feedbackService.js'
+import {
+    ENotificationType,
+    IFeedBackNotification,
+    IMentionNotification,
+    IReplyNotification
+} from '../types/notificationService.type.js'
+import {userSocketMap} from '../server.js';
 
 const router = Router()
 
@@ -47,7 +58,6 @@ function noteViewRouter(io: Server) {
         }
     })
 
-
     router.post('/:noteID/postFeedback', async (req, res) => {
 
         const _commenterStudentID = req.body["commenterStudentID"]
@@ -58,29 +68,54 @@ function noteViewRouter(io: Server) {
         let ownerSocketID = userSocketMap.get(_ownerStudentID)
 
         /**
-        * @description - Feedback and Reply will have the same notification structure: `IFeedBackNotification`. Reply and Feedback are basically feedbacks
-        * @param mainData - This is the mongoose comment document ( **feedback: addFeedback** | **reply: addReply** ) data got AFTER SAVING INTO DATABASE
-        */
-        //FIXME: feedback and mention notification sender are almost same, so I will optimize them more
-        //FIXME: maybe the ownerStudentID when sending notification is not useful now, cause cookie checking is gone
-        async function sendFeedbackNotification(mainData: any) {
-            let notification_db: IFeedbackNotificationDB = {
+         * @param notificationType - The type of notification (currently `reply` or `feedback`)
+         * @param baseDocument - This is the extented notification document given by the service after saving it in the database. This is used for creating notification object that will be sent via WS
+         */
+        async function sendCommentNotification(notificationType: ENotificationType, baseDocument: any) {
+            let baseData = {
                 noteDocID: _noteDocID,
-                commenterDocID: commenterDocID,
-                feedbackDocID: mainData._id.toString(),
-                ownerStudentID: _ownerStudentID
+                feedbackDocID: baseDocument._id.toString()
             }
-            let notidata = await addFeedbackNoti(notification_db)
-            let commentNotification: IFeedBackNotification = {
-                noteID: _noteDocID,
-                nfnTitle: mainData["noteDocID"]["title"],
+
+            let baseNotificationData = Object.assign(baseData, {
                 isread: "false",
-                commenterDisplayName: mainData["commenterDocID"]["displayname"],
-                ownerStudentID: _ownerStudentID,
-                notiID: notidata._id.toString(),
-                feedbackID: notidata._id.toString()
+                nfnTitle: baseDocument["noteDocID"]["title"],
+                commenterDisplayName: baseDocument["commenterDocID"]["displayname"],
+                feedbackID: baseDocument._id.toString()
+            })
+
+            switch (notificationType) {
+                case ENotificationType.Feedback:
+                    let feedback_notification_db: IFeedbackNotificationDB = {...baseData,
+                            commenterDocID: commenterDocID,
+                            ownerStudentID: _ownerStudentID
+                    }
+                    let feedback_notidata = await addFeedbackNoti(feedback_notification_db)
+                    let feedback_notification: IFeedBackNotification = {...baseNotificationData,
+                        notiID: feedback_notidata._id.toString(),
+                        ownerStudentID: _ownerStudentID,
+                        noteID: _noteDocID
+                    }
+                    io.to(ownerSocketID).emit('notification-feedback', feedback_notification, "has given feedback on your notes! Check it out.")
+                    break
+
+                case ENotificationType.Reply:
+                    let reply_notification_db: IReplyNotificationDB = {...baseData,
+                            commenterDocID: baseDocument["commenterDocID"]._id.toString(),
+                            ownerStudentID: baseDocument["parentFeedbackDocID"]["commenterDocID"].studentID.toString(),
+                            parentFeedbackDocID: baseDocument["parentFeedbackDocID"]._id.toString()
+                    }
+                    let reply_notidata = await addReplyNoti(reply_notification_db)
+                    let reply_notification: IReplyNotification = {...baseNotificationData,
+                        notiID: reply_notidata._id.toString(),
+                        ownerStudentID: _ownerStudentID,
+                        noteID: _noteDocID
+                    }
+
+                    io.to(userSocketMap.get(reply_notification_db.ownerStudentID)).emit("notification-reply", reply_notification, "replied to your comment")
+                    break
             }
-            io.to(ownerSocketID).emit('notification-feedback', commentNotification, "has given feedback on your notes! Check it out.")
+
         }
 
 
@@ -89,7 +124,7 @@ function noteViewRouter(io: Server) {
         * @param mentions - A list of usernames to send mention notification
         * @param mainData - The mongoose comment document ( **feedback: addFeedback** | **reply: addReply** ) data got AFTER SAVING INTO DATABASE
         */
-        async function sendMentionNotification(mentions: any, mainData: any) {
+        async function sendMentionNotification(mentions: string[], mainData: any) {
             if (mentions.length != 0) {
                 let studentIDs = (await Students.find({ username: { $in: mentions } }, { studentID: 1 })).map(data => data.studentID)
                 studentIDs.map(async studentID => {
@@ -100,6 +135,7 @@ function noteViewRouter(io: Server) {
                         mentionedStudentID: studentID
                     }
                     let notidata = await addMentionNoti(mentionNotification_db)
+
                     let mentionNotification: IMentionNotification = {
                         noteID: _noteDocID,
                         nfnTitle: mainData["noteDocID"]["title"],
@@ -107,7 +143,7 @@ function noteViewRouter(io: Server) {
                         commenterDisplayName: mainData["commenterDocID"]["displayname"],
                         mentionedStudentID: _ownerStudentID,
                         notiID: notidata._id.toString(),
-                        feedbackID: notidata._id.toString(),
+                        feedbackID: mainData._id.toString(),
                         mention: true
                     }
                     io.to(userSocketMap.get(studentID)).emit("notification-mention", mentionNotification, "has mentioned you")
@@ -126,7 +162,7 @@ function noteViewRouter(io: Server) {
             io.to(feedbackData.noteDocID).emit('add-feedback', feedback.toObject()) //* Adding feedback under the note view: Sending extented-feedback to all the users via websockets
         
             if (_ownerStudentID !== _commenterStudentID) {
-                sendFeedbackNotification(feedback)
+                await sendCommentNotification(ENotificationType.Feedback, feedback)
             }
     
     
@@ -142,30 +178,10 @@ function noteViewRouter(io: Server) {
             } 
             let reply = await addReply(replyData)
             io.to(replyData.noteDocID).emit('add-reply', reply.toObject())
-            
-            //CRITICAL: Optimize the notification sender
-            //! Don't uncomment reply inplement unless the head is synced with the latest version
-            // let _parentFeedbackDocID = reply["parentFeedbackDocID"]
-            // let notification_db: IReplyNotificationDB = {
-            //     noteDocID: _noteDocID,
-            //     commenterDocID: reply["commenterDocID"]._id,
-            //     ownerStudentID: _parentFeedbackDocID["commenterDocID"].studentID,
-            //     parentFeedbackDocID: reply["parentFeedbackDocID"]._id
-            // }
-            // let replyNoti = await addReplyNoti(notification_db)
-            // let replyNotification: IReplyNotification = {
-            //     noteID: _noteDocID,
-            //     notiID: replyNoti._id.toString(),
-            //     feedbackID: reply._id.toString(),
-            //     isread: "false",
-            //     nfnTitle: reply["noteDocID"]["title"],
-            //     commenterDisplayName: reply["commenterDocID"]["displayname"],
-            //     ownerStudentID: _ownerStudentID,
-            // }
-            // io.to(notification_db.ownerStudentID).emit("notification-reply", replyNotification, "replied to your comment")
 
             if(_ownerStudentID !== _commenterStudentID) {
-                sendFeedbackNotification(reply)
+                await sendCommentNotification(ENotificationType.Feedback, reply)
+                await sendCommentNotification(ENotificationType.Reply, reply)
             }
 
             let mentions = checkMentions(replyData.feedbackContents)
