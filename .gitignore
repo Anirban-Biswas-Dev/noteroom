@@ -4,7 +4,6 @@ node_modules/
 test.*
 logs.log
 /server/controllers/logger.js
-*.json
 /server/routers/db/
 /experiment/
 /dist
