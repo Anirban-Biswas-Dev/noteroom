@@ -212,7 +212,7 @@
                     <span class="main__author-name"><%= feedback[0].commenterDocID.displayname %></span>
                     <span class="reply-date"><%= formatDate(new Date(feedback[0].createdAt)) %></span>
                   </div>
-                  <div class="main__reply-msg reply-msg"><%= feedback[0].feedbackContents %></div>
+                  <div class="main__reply-msg reply-msg"><%- feedback[0].feedbackContents %></div>
                   <div class="main__engagement-opts engagement-opts">
                     <div class="vote-container">
                       <div class="uv-container">
@@ -247,7 +247,7 @@
                             <span class="main__author-name thread-author-name"><%= reply.commenterDocID.displayname %></span>
                             <span class="reply-date"><%= formatDate(new Date(reply.createdAt)) %></span>
                           </div>
-                          <div class="reply-msg"><%= reply.feedbackContents %></div>
+                          <div class="reply-msg"><%- reply.feedbackContents %></div>
                           <div class="main__engagement-opts engagement-opts">
                             <div class="vote-container">
                               <div class="uv-container">
