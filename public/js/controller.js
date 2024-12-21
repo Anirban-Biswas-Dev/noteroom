@@ -364,6 +364,7 @@ const manageNotes = { // I treat all the cards as notes
                 <div class="main__body cmnt-body-3rows">
                     <div class="main__reply-info reply-info">
                         <span id="parentFeedbackDocID" style="display: none;">${feedbackData._id }</span>
+                        <span id="commenterUsername" style="display: none;">${ feedbackData.commenterDocID.username }</span>
                         <span class="main__author-name">${feedbackData.commenterDocID.displayname}</span>
                         <span class="reply-date">${formattedDate}</span>
                     </div>
@@ -418,6 +419,7 @@ const manageNotes = { // I treat all the cards as notes
             <img src="${replyData.commenterDocID.profile_pic}" alt="User Avatar" class="cmnt-author-img thread-avatar">
             <div class="cmnt-body-3rows">
                 <div class="reply-info">
+                    <span id="commenterUsername" style="display: none;">${ replyData.commenterDocID.username }</span>
                     <span class="main__author-name">${replyData.commenterDocID.displayname}</span>
                     <span class="reply-date">${formattedDate}</span>
                 </div>
