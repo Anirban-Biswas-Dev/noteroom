@@ -299,6 +299,7 @@ document.addEventListener('DOMContentLoaded', () => {
     commentList.addEventListener('click', async (event) => {
       // Handle opening the thread editor
       if (event.target.classList.contains('thread-opener')) {
+        let parentCommenterUsername = event.target.parentElement.parentElement?.querySelector(".reply-info #commenterUsername").textContent
         const threadSection = event.target.closest('.main__cmnts-replies-wrapper').querySelector('.thread-section');
 
         // Remove any existing thread editors in other sections before adding a new one
@@ -316,7 +317,7 @@ document.addEventListener('DOMContentLoaded', () => {
           threadEditor.innerHTML = `
                   <!--<img class="tec__avatar-preview thread-avatar">-->
                   <div class="thread-editor-wrapper">
-                    <textarea placeholder="Write a comment..." class="thread-editor"></textarea>
+                    <textarea placeholder="Write a comment..." class="thread-editor">@${parentCommenterUsername} </textarea>
                     <div class="thread-editor__action-opts">
                       <svg id="threadCmntBtn" class="thread__cmnt-btn" width="18px" height="18px" viewBox="0 0 256 256" id="Flat" xmlns="http://www.w3.org/2000/svg">
                         <path d="M231.626,128a16.015,16.015,0,0,1-8.18262,13.96094L54.53027,236.55273a15.87654,15.87654,0,0,1-18.14648-1.74023,15.87132,15.87132,0,0,1-4.74024-17.60156L60.64746,136H136a8,8,0,0,0,0-16H60.64746L31.64355,38.78906A16.00042,16.00042,0,0,1,54.5293,19.44727l168.915,94.59179A16.01613,16.01613,0,0,1,231.626,128Z"/>
@@ -331,6 +332,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Focus on the textarea of the newly created or existing editor
         const textarea = threadEditor.querySelector('.thread-editor');
+        textarea.selectionStart = textarea.selectionEnd = textarea.value.length;
         textarea.focus();
       }
 
