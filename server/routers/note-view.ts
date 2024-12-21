@@ -179,10 +179,11 @@ function noteViewRouter(io: Server) {
             let reply = await addReply(replyData)
             io.to(replyData.noteDocID).emit('add-reply', reply.toObject())
 
-            if(_ownerStudentID !== _commenterStudentID) {
-                await sendCommentNotification(ENotificationType.Feedback, reply)
-                await sendCommentNotification(ENotificationType.Reply, reply)
-            }
+            //! Don't uncomment this unless the head is synced with the latest version
+            // if(_ownerStudentID !== _commenterStudentID) {
+            //     await sendCommentNotification(ENotificationType.Feedback, reply)
+            //     await sendCommentNotification(ENotificationType.Reply, reply)
+            // }
 
             let mentions = checkMentions(replyData.feedbackContents)
             await sendMentionNotification(mentions, reply)
