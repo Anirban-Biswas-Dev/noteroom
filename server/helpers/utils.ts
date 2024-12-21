@@ -14,6 +14,19 @@ export function checkMentions(feedbackText: string) {
     }
 }
 
+export function replaceMentions(feedbackText: string, displaynames: string[]) {
+    let mentions = checkMentions(feedbackText).map(username => `@${username}`)
+    let i = 0
+    mentions.map(mention => {
+        feedbackText = feedbackText.replace(mention, `
+            <a href="/user/${mention.replace(`@`, ``)}" style="color: #ffffff; background-color: #007bff; border-radius: 5px; padding: 2px 4px; font-weight: bold;">
+                @${displaynames[i]}
+            </a>`)
+        i += 1
+    })
+    return feedbackText
+}
+
 export function generateRandomUsername(displayname: string) {
     let sluggfied = slug(displayname)
     let uuid = uuidv4()

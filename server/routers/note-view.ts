@@ -8,7 +8,7 @@ import {
 import {Router} from 'express'
 import Students from '../schemas/students.js'
 import {Server} from 'socket.io'
-import {checkMentions} from '../helpers/utils.js'
+import {checkMentions, replaceMentions} from '../helpers/utils.js'
 import {getNotifications, getSavedNotes, profileInfo, unreadNotiCount} from '../helpers/rootInfo.js'
 import {getNote, getOwner} from '../services/noteService.js'
 import {Convert} from '../services/userService.js'
@@ -152,11 +152,23 @@ function noteViewRouter(io: Server) {
         }
 
 
+        async function replaceFeedbackText(feedbackText: string) {
+            let mentions = checkMentions(feedbackText)
+            if (mentions.length !== 0) {
+                let displayNames = (await Students.find({ username: { $in: mentions } }, { displayname: 1 })).map(data => data.displayname.toString())
+                return replaceMentions(feedbackText, displayNames)
+            } else {
+                return feedbackText
+            }
+        }
+
+
         if(!req.body.reply) {
+            let _feedbackContents = req.body["feedbackContents"]
             let feedbackData: IFeedBackDB = {
                 noteDocID: _noteDocID,
                 commenterDocID: commenterDocID,
-                feedbackContents: req.body["feedbackContents"]
+                feedbackContents: await replaceFeedbackText(_feedbackContents)
             }
             let feedback = await addFeedback(feedbackData) /* The extented-feedback document with commenter info */
             io.to(feedbackData.noteDocID).emit('add-feedback', feedback.toObject()) //* Adding feedback under the note view: Sending extented-feedback to all the users via websockets
@@ -166,14 +178,15 @@ function noteViewRouter(io: Server) {
             }
     
     
-            let mentions = checkMentions(feedbackData.feedbackContents)
+            let mentions = checkMentions(_feedbackContents)
             await sendMentionNotification(mentions, feedback)
             
         } else {
+            let _replyContent = req.body["replyContent"]
             let replyData: IReplyDB = {
                 noteDocID: _noteDocID,
                 commenterDocID: commenterDocID,
-                feedbackContents: req.body["replyContent"],
+                feedbackContents: await replaceFeedbackText(_replyContent),
                 parentFeedbackDocID: req.body["parentFeedbackDocID"],
             } 
             let reply = await addReply(replyData)
@@ -185,7 +198,7 @@ function noteViewRouter(io: Server) {
             //     await sendCommentNotification(ENotificationType.Reply, reply)
             // }
 
-            let mentions = checkMentions(replyData.feedbackContents)
+            let mentions = checkMentions(_replyContent)
             await sendMentionNotification(mentions, reply)
         }
         
