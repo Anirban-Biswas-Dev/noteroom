@@ -97,9 +97,8 @@ app.get('/logout', (req, res) => {
 })
 
 app.get('/', (req, res) => {
-    res.redirect('home')
+    res.render('home')
 })
-
 app.get('/support', (req, res) => {
     res.render('support')
 })
