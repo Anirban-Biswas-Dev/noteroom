@@ -2,21 +2,19 @@ import {Router} from 'express'
 import {LogIn} from '../services/userService.js'
 import {Server} from 'socket.io'
 import {verifyToken} from "../services/googleAuth.js";
+import { setSession } from '../helpers/utils.js';
+import { config } from 'dotenv';
+import {dirname, join} from 'path';
+import {fileURLToPath} from "url";
+import * as process from "node:process";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+config({ path: join(__dirname, '../.env') })
 
 const router = Router()
-const client_id = "325870811550-0c3n1c09gb0mncb0h4s5ocvuacdd935k.apps.googleusercontent.com"
-
-function setSession({ recordID, studentID }, req: any, res: any) {
-    req["session"]["stdid"] = studentID // setting the session with the student ID
-    res["cookie"]('recordID', recordID, {
-        secure: false,
-        maxAge: 1000 * 60 * 60 * 720
-    }) // setting a cookie with a value of the document ID of the user
-    res["cookie"]('studentID', studentID, {
-        secure: false,
-        maxAge: 1000 * 60 * 60 * 720
-    })
-}
+const client_id = process.env.GOOGLE_CLIENT_ID
 
 function loginRouter(io: Server) {
     router.get('/', (req, res) => {
@@ -61,6 +59,8 @@ function loginRouter(io: Server) {
                     res.json({ message: 'wrong-cred' })
                     io.emit('wrong-cred')
                 }
+            } else {
+                io.emit('wrong-cred')
             }
         } catch (error) {
             res.json({ message: 'no-email' })

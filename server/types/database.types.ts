@@ -13,16 +13,17 @@
 export interface IStudentDB {
     displayname: string,
     email: string,
-    password: string,
+    password: string | null,
     studentID: string,
-    rollnumber: string,
-    collegesection: string,
-    collegeyear: string,
-    bio: string,
-    favouritesubject: string,
-    notfavsubject: string,
-    group: string,
-    username: string
+    rollnumber?: string,
+    collegesection?: string,
+    collegeyear?: string,
+    bio?: string,
+    favouritesubject?: string,
+    notfavsubject?: string,
+    group?: string,
+    username: string,
+    authProvider: string | null
 }
 
 
