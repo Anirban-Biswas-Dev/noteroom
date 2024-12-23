@@ -11,15 +11,18 @@ function show_warning() {
 }
 
 socket.on('wrong-cred', function() {
+    document.querySelector('#login-spinner').style.display = "none"
     setupErrorPopup("Sorry! Credentials are not accepted")
     show_warning()
 })
 
 socket.on('no-email', function() {
+    document.querySelector('#login-spinner').style.display = "none"
     setupErrorPopup("Sorry! No student account is associated with that email account")
     show_warning()
 })
 
+// google auth handler
 function handleCredentialResponse(response) {
     const id_token = response.credential;
     let idData = new FormData()
@@ -31,9 +34,15 @@ function handleCredentialResponse(response) {
     })
         .then(response => response.json())
         .then(data => {
-            data.message ? setupErrorPopup(data.message) : data.redirect ? window.location.href = data.redirect : "" 
+            data.message ? (function(){
+                setupErrorPopup(data.message)
+                document.querySelector('#login-spinner').style.display = "none"
+            })() : data.redirect ? window.location.href = data.redirect : ""
         })
-        .catch(error => setupErrorPopup(error.message))
+        .catch(error => (function (){
+            document.querySelector('#login-spinner').style.display = "none";
+            setupErrorPopup("Sorry! Something went wrong with the server. Please try again a bit later!")
+        })())
         
     document.querySelector('#login-spinner').style.display = "flex";
 }
@@ -41,29 +50,25 @@ function handleCredentialResponse(response) {
 
 
 document.addEventListener('DOMContentLoaded', function() {
-    const togglePassword = document.querySelector('.toggle-password');
+    const togglePassword = document.querySelector('#togglePassword');
     const password = document.querySelector('input[name="password"]');
 
-    let showState = false
 
     if (togglePassword && password) {
-        togglePassword.addEventListener('click', function() {
-            showState = !showState
-
-            showState ? (function (){
-                document.querySelector('#show-pass').classList.remove("fa-eye")
-                document.querySelector('#show-pass').classList.add("fa-eye-slash")
-            })() : (function () {
-                document.querySelector('#show-pass').classList.remove("fa-eye-slash")
-                document.querySelector('#show-pass').classList.add("fa-eye")
-            })()
-
+        togglePassword.addEventListener('click', function () {
             const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+
             password.setAttribute('type', type);
+
+            const icon = this.querySelector('i');
+            icon.classList.toggle('fa-eye');
+            icon.classList.toggle('fa-eye-slash');
         });
+
     }
 });
 
+// noteroom-auth handler
 document.querySelector('.primary-btn').addEventListener('click', function() {
     let email = document.querySelector('input[name="email"]').value
     let password = document.querySelector('input[name="password"]').value
