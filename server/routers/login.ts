@@ -1,7 +1,22 @@
-import { Router } from 'express'
-import { LogIn } from '../services/userService.js'
-import { Server } from 'socket.io'
+import {Router} from 'express'
+import {LogIn} from '../services/userService.js'
+import {Server} from 'socket.io'
+import {verifyToken} from "../services/googleAuth.js";
+
 const router = Router()
+const client_id = "325870811550-0c3n1c09gb0mncb0h4s5ocvuacdd935k.apps.googleusercontent.com"
+
+function setSession({ recordID, studentID }, req: any, res: any) {
+    req["session"]["stdid"] = studentID // setting the session with the student ID
+    res["cookie"]('recordID', recordID, {
+        secure: false,
+        maxAge: 1000 * 60 * 60 * 720
+    }) // setting a cookie with a value of the document ID of the user
+    res["cookie"]('studentID', studentID, {
+        secure: false,
+        maxAge: 1000 * 60 * 60 * 720
+    })
+}
 
 function loginRouter(io: Server) {
     router.get('/', (req, res) => {
@@ -13,26 +28,39 @@ function loginRouter(io: Server) {
         }
     })
 
-    router.post('/', async (req, res) => {
+    router.post('/auth/google', async (req, res) => {
+        try {
+            let { id_token } = req.body
+
+            let userData = await verifyToken(client_id, id_token)
+            let email = userData.email
+            let user = await LogIn.getProfile(email)
+            
+            if(user["authProvider"] !== null) {
+                setSession({recordID: user['recordID'], studentID: user["studentID"]}, req, res)
+                res.send({ redirect: '/dashboard' })
+            } else {
+                res.json({message: 'Sorry! No student account is associated with that email account'})
+            }
+        } catch (error) {
+            res.json({message: error})
+        }
+    })
+
+    router.post('/', async (req, res, next) => {
         try {
             let email = req.body.email
             let password = req.body.password
 
             let student = await LogIn.getProfile(email)
-            if (password === student['studentPass']) {
-                req.session["stdid"] = student["studentID"] // setting the session with the student ID
-                res.cookie('recordID', student['recordID'], {
-                    secure: false,
-                    maxAge: 1000 * 60 * 60 * 720
-                }) // setting a cookie with a value of the document ID of the user
-                res.cookie('studentID', student['studentID'], {
-                    secure: false,
-                    maxAge: 1000 * 60 * 60 * 720
-                }) // setting a cookie with a value of the student ID
-                res.json({ url: '/dashboard' })
-            } else {
-                res.json({ message: 'wrong-cred' })
-                io.emit('wrong-cred')
+            if(student["authProvider"] === null) {
+                if (password === student['studentPass']) {
+                    setSession({recordID: student['recordID'], studentID: student["studentID"]}, req, res)
+                    res.json({ url: '/dashboard' })
+                } else {
+                    res.json({ message: 'wrong-cred' })
+                    io.emit('wrong-cred')
+                }
             }
         } catch (error) {
             res.json({ message: 'no-email' })
