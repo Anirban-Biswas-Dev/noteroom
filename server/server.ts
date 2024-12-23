@@ -97,7 +97,7 @@ app.get('/logout', (req, res) => {
 })
 
 app.get('/', (req, res) => {
-    res.redirect('/login')
+    res.redirect('home')
 })
 
 app.get('/support', (req, res) => {
@@ -109,18 +109,10 @@ app.get('/about-us', (req, res) => {
 app.get('/privacy-policy', (req, res) => {
     res.render('privacy-policy')
 })
-app.get("/test", (req, res) => {
-    res.render('test')
-})
 app.get('/signup2', (req, res) => {
     res.render('signup2')
 })
-app.get('/login2', (req, res) => {
-    res.render('login2')
-})
-app.get('/home', (req, res) => {
-    res.render('home')
-})
+
 
 export let userSocketMap: Map<string, string> = new Map()
 io.on('connection', (socket) => {

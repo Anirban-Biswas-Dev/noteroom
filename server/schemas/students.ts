@@ -39,6 +39,10 @@ const studentsSchema = new Schema({
     collegeyear: {
         type: String
     },
+    authProvider: {
+        type: [String, null],
+        default: null
+    },
     bio: {
         type: String,
         minLength: 0,
