@@ -20,7 +20,7 @@ const studentsSchema = new Schema({
     },
     password: {
         type: String,
-        required: true
+        default: null
     },
     studentID: {
         type: String,
@@ -30,14 +30,20 @@ const studentsSchema = new Schema({
     },
     rollnumber: {
         type: String,
-        required: true,
+        // required: true,
+        default: "-"
     },
     collegesection: {
         type: String,
         default: "Not selected"
     },
     collegeyear: {
-        type: String
+        type: String,
+        default: "-"
+    },
+    authProvider: {
+        type: String,
+        default: null
     },
     bio: {
         type: String,
@@ -54,7 +60,8 @@ const studentsSchema = new Schema({
         default: "Not selected"
     },
     group: {
-        type: String
+        type: String,
+        default: "-"
     },
     username: {
         type: String,

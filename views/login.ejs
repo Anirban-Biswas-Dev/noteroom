@@ -3,38 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Page</title>
-    <link rel="stylesheet" href="/css/login.css">
+    <title>Log In to Your NoteRoom Account</title>
+    <meta name="description" content="Access your notes, collaborate with others, and manage your study materials. Secure and easy login.">
+    <meta name="keywords" content="login, NoteRoom, student notes, study, collaborate, secure login">
+    <meta name="author" content="Noteroom Team">
+    <link rel="stylesheet" href="/css/signup-login.css"> 
 	<link rel="stylesheet" href="/css/error-popup.css" />
     <script src="https://cdn.socket.io/socket.io-3.0.1.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css"> 
+    <link href="https://fonts.googleapis.com/css2?family=Jaldi:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
     <script src="https://cdn.socket.io/socket.io-3.0.1.min.js"></script>
-    <link rel="stylesheet" href="/css/bar-loader.css"> <!-- See login.js for file linking process -->
+    <link rel="stylesheet" href="/css/bar-loader.css">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <!-- tooltips cdn of tippy.js -->
     <script src="https://unpkg.com/@popperjs/core@2"></script>
     <script src="https://unpkg.com/tippy.js@6"></script>
+	<script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/animations/scale.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
 </head>
-<body>
-    <%- include('side-panel', { block: 'big-loader' }) %>
-    <div class="login-container">
-        <img src="https://storage.googleapis.com/noteroom-fb1a7.appspot.com/badges/draft-logo-of-noteroom.png" alt="Logo of NoteRoom">
-        <h2>Login to NoteRoom</h2>
-        <p class="message" id="message" style="color: black;"></p>
-        <input type="email" name="email" placeholder="Email Account" class="email" required data-tippy-content="Your email account used during signing up">
-        <br>
-        <div class="password-container">
-            <input type="password" name="password" placeholder="Password" class="password" required data-tippy-content="Please contact us through support if you forgot your password" >
-            <span class="toggle-password">Show</span>
+<body class="flex-center-evenly flex-inverse gradient-2">
+    <div class="main-container flex-column-center">
+        <div class="brand-section flex-column-center">
+            <img src="assets\apple-touch-icon.png" alt="NoteRoom" class="brand__site-logo">
+            <p class="brand__logo-title">NoteRoom</p>
+            <h2 class="brand__main-heading">Login to NoteRoom</h2>
+            <p class="txt-gray-light-bold">Welcome back! Pick up where left off</p>
         </div>
-        <br>
-        <button type="submit" name="submit" class="login-button">Login</button>
-        <p  style="color: black;">Don't have an account? <a href="/sign-up">Sign Up</a></p>
-        <a href="/support">Need Help?</a>
+        <div class="acquisition-container flex-column-center">
+            <!-- Google Sign up options -->
+<!--            <button type="button" class="google-btn" >-->
+<!--                Login with Google-->
+<!--            </button>-->
+            <div id="g_id_onload"
+                 data-client_id="325870811550-0c3n1c09gb0mncb0h4s5ocvuacdd935k.apps.googleusercontent.com"
+                 data-callback="handleCredentialResponse"
+                 data-auto_prompt="false">
+            </div>
+            <div class="g_id_signin"
+                 data-type="standard"
+                 data-size="large"
+                 data-theme="outline"
+                 data-text="sign_in_with"
+                 data-shape="rectangular"
+                 data-logo_alignment="left">
+            </div>
+
+            <div class="separator flex-center-evenly">
+                <span class="line"></span>
+                <span class="txt-gray-light-bold">Or</span>
+                <span class="line"></span>
+            </div>
+
+            <div class="custom-form flex-column-center">
+            
+                <input type="email" name="email" placeholder="Email (required)" class="custom__input-field" required data-tippy-content="Enter your valid email address.">
+            
+                <div class="password-container">
+                    <input type="password" id="password" name="password" placeholder="NoteRoom Password" class="custom__input-field custom__input-field--marginless" required data-tippy-content="Forgot password? Reach out through support page kindly.">
+                    <button type="button" id="togglePassword" class="toggle-password">
+                        <i class="fa-solid fa-eye" id="show-pass"></i>
+                    </button>
+                </div>
+
+                <button class="primary-btn flex-center-evenly">Login
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="login-spinner" style="display: none"></span> <!--Maybe add the spinner, this is the bootstrap one, I just wanted to see how that works. Make yours like this, it will be easy to handle.-->
+                    <!-- once the js file is available, this loader needs to be displayed on submission of details -->
+                    <div class="btn-loader"></div>
+                </button>
+            </div>
+            
+        </div>
+        <p class="redirecting-msg">Don't have an account? <a href="/sign-up" class="redirect-link">Create Today</a></p>
     </div>
-	<%- include('side-panel', { block: 'error-popup' }) %>
+
+    <img class="focus-img" src="\images\Login-hero-image.png" alt="Two friends talking about NoteRoom">
+
+    <%- include('side-panel', { block: 'error-popup' }) %>
+
 
     <script src="/js/controller.js"></script>
     <script src="/js/login.js"></script>
