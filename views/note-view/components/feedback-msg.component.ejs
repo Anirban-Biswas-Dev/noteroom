@@ -1,0 +1,32 @@
+<div class="main-cmnt-container">
+    <div class="main__author-threadline-wrapper">
+        <img
+            src="<%= feedback[0].commenterDocID.profile_pic %>"
+            alt="User Avatar"
+            class="main__cmnt-author-img cmnt-author-img"
+        />
+        <div class="thread-line"></div>
+    </div>
+
+    <div class="main__cmnts-replies-wrapper">
+        <div class="main__body cmnt-body-3rows">
+            <div class="main__reply-info reply-info">
+                <span id="parentFeedbackDocID" style="display: none;"><%= feedback[0]._id %></span>
+                <span id="commenterUsername" style="display: none;"><%= feedback[0].commenterDocID.username %></span>
+                <span class="main__author-name"><%= feedback[0].commenterDocID.displayname %></span>
+                <span class="reply-date"><%= formatDate(new Date(feedback[0].createdAt)) %></span>
+            </div>
+            <div class="main__reply-msg reply-msg"><%- feedback[0].feedbackContents %></div>
+            <%- include('comment-engagement.component.ejs') %>
+        </div>
+
+        <div class="thread-section" id="thread-<%= feedback[0]._id %>">
+            <% if(feedback[1] && feedback[1].length > 0) { %>
+                <% feedback[1].map(reply => { %>
+                    <%- include('thread-msg.component.ejs', { reply: reply, formatDate: formatDate }) %>
+                <% }) %>
+                    <%- include('thread-editor.component.ejs') %>
+            <% } %>
+        </div>
+    </div>
+</div>
