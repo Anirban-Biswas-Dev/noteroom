@@ -1,0 +1,97 @@
+	<!DOCTYPE html>
+	<html lang="en">
+	<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<link rel="icon" href="">
+	<link rel="stylesheet" href="/css/main-pages.css" />
+	<link rel="stylesheet" href="/css/dashboard.css" />
+	<link rel="stylesheet" href="/css/loaders.css" />
+	<link rel="stylesheet" href="/css/share-note.css" />
+	<link rel="stylesheet" href="/css/error-popup.css" />
+	<link rel="preconnect" href="https://fonts.googleapis.com" />
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+	<link
+		href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+		rel="stylesheet"
+	/>
+	<link 
+		href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" 
+		rel="stylesheet"
+	>
+	<script
+		src="https://kit.fontawesome.com/be4b1d4185.js"
+		crossorigin="anonymous"
+	></script>
+	<script src="https://cdn.socket.io/socket.io-3.0.1.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dexie@latest/dist/dexie.min.js"></script>
+	<link rel="apple-touch-icon" sizes="180x180" href="\assets\apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="\assets\favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="\assets\favicon-16x16.png">
+	<link rel="icon" type="image/png" href="\assets\android-chrome-192x192.png">
+	<link rel="manifest" href="/site.webmanifest">
+	<title>Dashboard</title>
+	</head>
+	<body>
+	<%- include('../side-panel', { block: 'left-panel' }) %>
+	<%- include('../side-panel', { block: 'search-bar' }) %>
+
+	<div class="middle-section">
+		<div class="feed-container">
+			<% if (alert !== undefined) { %>
+				<% if (alert.type == 'alert') { %>
+					<div class="error">
+						<div class="error__icon">
+							<svg xmlns="http://www.w3.org/2000/svg" width="24" viewBox="0 0 24 24" height="24" fill="none"><path fill="#393a37" d="m13 13h-2v-6h2zm0 4h-2v-2h2zm-1-15c-1.3132 0-2.61358.25866-3.82683.7612-1.21326.50255-2.31565 1.23915-3.24424 2.16773-1.87536 1.87537-2.92893 4.41891-2.92893 7.07107 0 2.6522 1.05357 5.1957 2.92893 7.0711.92859.9286 2.03098 1.6651 3.24424 2.1677 1.21325.5025 2.51363.7612 3.82683.7612 2.6522 0 5.1957-1.0536 7.0711-2.9289 1.8753-1.8754 2.9289-4.4189 2.9289-7.0711 0-1.3132-.2587-2.61358-.7612-3.82683-.5026-1.21326-1.2391-2.31565-2.1677-3.24424-.9286-.92858-2.031-1.66518-3.2443-2.16773-1.2132-.50254-2.5136-.7612-3.8268-.7612z"></path></svg>
+						</div>
+						<div class="error__title"><%- alert.message %></div>
+						<div class="error__close"><svg xmlns="http://www.w3.org/2000/svg" width="20" viewBox="0 0 20 20" height="20"><path fill="#393a37" d="m15.8333 5.34166-1.175-1.175-4.6583 4.65834-4.65833-4.65834-1.175 1.175 4.65833 4.65834-4.65833 4.6583 1.175 1.175 4.65833-4.6583 4.6583 4.6583 1.175-1.175-4.6583-4.6583z"></path></svg></div>
+					</div>
+				<% } else { %>
+					<div class="error success" id="<%= alert.type %>">
+						<div class="error__icon">
+							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path fill="#28a745" d="M12 2c-5.52285 0-10 4.47715-10 10s4.47715 10 10 10 10-4.4771 10-10-4.4771-10-10-10zm-1.41421 14.8284-4.24264-4.2426 1.41421-1.4142 2.82843 2.8284 6.364-6.364 1.4142 1.4142-7.77861 7.7786z"/></svg>
+						</div>
+						<div class="error__title"><%- alert.message %></div>
+						<div class="error__close"><svg xmlns="http://www.w3.org/2000/svg" width="20" viewBox="0 0 20 20" height="20"><path fill="#393a37" d="m15.8333 5.34166-1.175-1.175-4.6583 4.65834-4.65833-4.65834-1.175 1.175 4.65833 4.65834-4.65833 4.6583 1.175 1.175 4.65833-4.6583 4.6583 4.6583 1.175-1.175-4.6583-4.6583z"></path></svg></div>
+					</div>
+				<% } %>
+			<% } %>
+
+		
+		<% if(notes.length != 0) { %> 
+			<% let savedNotesIDs = []
+			savedNotes.forEach(note => { 
+				savedNotesIDs.push(note._id.toString()) 
+			})
+			%> 
+			<% notes.forEach(note => { %>
+					<%- include('components/feed-note-card.component.ejs', {note: note, savedNotesIDs: savedNotesIDs}) %>
+			<% }) %>
+		<% } %>
+		</div>
+		<p class="fetch-loading" style="display: none;">Fetching...</p>
+		<p class="finish" style="display: none;">You covered all of that? You're a talent🫡!!!</p>
+	</div>
+
+	<%- include('../side-panel', { block: 'right-panel' }) %>
+	<%- include('../side-panel', { block: 'mbl-ctrl-panel' }) %>
+
+	<audio id="notificationAudio" src="/sounds/notification-ping-sound.mp3" preload="auto"></audio>
+	<!-- Mobile Bottom Control Bar -->
+	
+	<div class="background-overlay"></div>
+
+	<%- include('../side-panel', { block: 'share-note' }) %>
+	<%- include('../side-panel', { block: 'downloading-loader' }) %>
+	<%- include('../side-panel', { block: 'error-popup' }) %>
+
+	<canvas id="confettiCanvas"></canvas>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.10.4/gsap.min.js"></script>
+
+	<script src="/js/controller.js"></script>
+	<script src="/js/dashboard.js"></script>
+	</body>
+	</html>
