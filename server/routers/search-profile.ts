@@ -21,7 +21,7 @@ function serachProfileRouter(io: Server) {
                     let notis = await getNotifications(req.session["stdid"])
                     let unReadCount = await unreadNotiCount(req.session["stdid"])
 
-                    res.render('search-profile', { students: students, root: root, savedNotes: savedNotes, notis: notis, unReadCount: unReadCount })
+                    res.render('search-profile/search-profile', { students: students, root: root, savedNotes: savedNotes, notis: notis, unReadCount: unReadCount })
                 }
             } catch (error) {
                 console.log(error)
