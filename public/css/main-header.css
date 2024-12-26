@@ -1,0 +1,235 @@
+/* The primary header that has login and sign up button */
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  backdrop-filter: blur(10px);
+  width: 100%;
+  min-height: 60px;
+}
+
+.header__container-1 {
+  width: 100%;
+  justify-content: space-between;
+  padding: 10px 20px;
+}
+.header__logo {
+  gap: 10px;
+}
+
+.header__logo img {
+  max-height: 50px;
+}
+.header__logo--subtitle {
+  font-size: 1.1rem;
+  line-height: 38px;
+  letter-spacing: 0.01em;
+  font-weight: 500;
+}
+
+.header__nav {
+  display: flex;
+  justify-content: center;
+  flex: 1;
+}
+
+.nav-list {
+  list-style: none;
+  display: flex;
+  gap: 50px;
+}
+
+.nav-list li a {
+  text-decoration: none;
+  color: black;
+  font-weight: 500;
+  font-size: 1rem;
+  line-height: 23px;
+  letter-spacing: -0.02em;
+  padding: 8px 10px;
+  transition: border ease;
+}
+
+.nav-list li a:hover {
+  border-bottom: var(--border-thick);
+  border-color: var(--squid-ink);
+}
+
+/* this class is added on the active tab as needed */
+.nav-list li a .active-tab {
+  border-bottom: var(--border-thick);
+  border-color: var(--squid-ink);
+}
+/* Auth Buttons */
+.auth-buttons {
+  display: flex;
+  gap: 15px;
+}
+
+.header__btn {
+  background-color: transparent;
+  border: var(--border-thin);
+  border-color: var(--squid-ink);
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-weight: 500;
+  font-size: 1rem;
+  line-height: 21px;
+  letter-spacing: -0.02em;
+}
+
+.header__btn.login {
+  color: var(--squid-ink);
+  border-color: rgba(0, 0, 0, 0.2);
+  transition: all var(--duration-med) ease;
+}
+
+.header__btn.login:hover {
+  border-color: rgba(0, 0, 0, 0.5);
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.header__btn.login:active {
+  background-color: rgba(0, 0, 0, 0.1);
+  box-shadow: inset 0px 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.header__btn.create-account {
+  background: var(--squid-ink);
+  color: white;
+  transition: background-color var(--duration-med) ease,
+    box-shadow var(--duration-med) ease, color var(--duration-fast) ease;
+}
+
+.header__btn.create-account:hover {
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+  background-color: var(--neon-blue-light);
+  color: var(--squid-ink);
+}
+
+.header__btn.create-account:active {
+  background-color: var(--neon-blue);
+  box-shadow: inset 0px 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* || Mobile Nav Related */
+.menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+}
+/* MObile Nav Dropdown */
+
+.mobile-menu {
+  position: fixed;
+  pointer-events: none;
+  transform: translateY(10px);
+  opacity: 0;
+  top: 60px;
+  height: fit-content;
+  width: 100vw;
+  background: white;
+  box-shadow: -4px 0 6px rgba(0, 0, 0, 0.1);
+  padding: 20px 0;
+  text-align: center;
+  z-index: 1000;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  border-bottom-right-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+
+.mobile-nav-list li {
+  width: 100%;
+  list-style: none;
+  padding: 10px 0px;
+}
+.mobile-nav-list li a {
+  padding: 5px;
+  color: var(--squid-ink);
+  text-decoration: none;
+}
+
+.mobile-nav-list li a:hover {
+  text-decoration: underline;
+}
+.mobile-nav-list li a:active {
+  text-decoration: underline;
+}
+
+.mobile-nav-list .mobile-nav-signup-btn {
+  padding: 10px 15px;
+  color: white;
+  width: 90%;
+  max-width: 400px;
+  border: var(--border-thin);
+  border-color: var(--squid-ink);
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.8rem;
+  line-height: 21px;
+  letter-spacing: -0.02em;
+  background: var(--squid-ink);
+  transition: background-color var(--duration-med) ease,
+    box-shadow var(--duration-med) ease, color var(--duration-fast) ease;
+}
+.mobile-nav-signup-btn:hover {
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+  background-color: var(--neon-blue-light);
+  color: var(--squid-ink);
+}
+
+/* This class is picked via js selector upon click event to show/hide the menu with subtle transition */
+.show-menu {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+@media (max-width: 1000px) {
+  .menu-toggle {
+    display: flex;
+  }
+  .nav-pc {
+    display: none;
+  }
+  .header__btn.create-account {
+    display: none;
+  }
+}
+@media (max-width: 360px) {
+  .header__logo img {
+    width: 30px;
+    height: auto;
+  }
+  .header__logo--subtitle {
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+  .header__btn.login {
+    padding: 5px 10px;
+    font-size: 0.8rem;
+  }
+  .mobile-nav-list li a {
+    font-size: 0.85rem;
+  }
+}
+@media (min-width: 361px) and (max-width: 480px) {
+  .header__logo img {
+    width: 40px;
+    height: auto;
+  }
+  .header__logo--subtitle {
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+  .header__btn.login {
+    padding: 5px 10px;
+    font-size: 0.85rem;
+  }
+  .mobile-nav-list li a {
+    font-size: 0.9rem;
+  }
+}

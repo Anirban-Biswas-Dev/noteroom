@@ -118,6 +118,9 @@ app.get('/signup2', (req, res) => {
 app.get('/login2', (req, res) => {
     res.render('login2')
 })
+app.get('/home', (req, res) => {
+    res.render('home')
+})
 
 export let userSocketMap: Map<string, string> = new Map()
 io.on('connection', (socket) => {
