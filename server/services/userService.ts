@@ -52,10 +52,11 @@ export const LogIn = {
                 resolve({
                     studentPass: student["password"],
                     recordID: student["_id"],
-                    studentID: student["studentID"]
+                    studentID: student["studentID"],
+                    authProvider: student["authProvider"]
                 })
             } else {
-                reject('No students found!')
+                reject('Sorry! No student account is associated with that email account')
             }
         })
     }

@@ -115,9 +115,7 @@ app.get("/test", (req, res) => {
 app.get('/signup2', (req, res) => {
     res.render('signup2')
 })
-app.get('/login2', (req, res) => {
-    res.render('login2')
-})
+
 app.get('/home', (req, res) => {
     res.render('home')
 })
