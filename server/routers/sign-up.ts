@@ -2,7 +2,7 @@ import { IStudentDB } from './../types/database.types.js';
 import { Router } from 'express'
 import Students from '../schemas/students.js'
 import { upload } from '../services/firebaseService.js'
-import { SignUp } from '../services/userService.js'
+import { Convert, SignUp } from '../services/userService.js'
 import { generateRandomUsername, setSession } from '../helpers/utils.js'
 import { Server } from 'socket.io'
 import { verifyToken } from '../services/googleAuth.js';
@@ -20,9 +20,9 @@ config({ path: join(__dirname, '../.env') })
 const client_id = process.env.GOOGLE_CLIENT_ID
 
 function signupRouter(io: Server) {
-    router.get('/', (req, res) => {
+    router.get('/', async (req, res) => {
         if (req.session["stdid"]) {
-            res.redirect(`/user/${req.session["stdid"]}`)
+            res.redirect(`/dashboard`)
         } else {
             res.status(200)
             res.render('sign-up')
