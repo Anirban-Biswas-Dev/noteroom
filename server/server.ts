@@ -97,9 +97,8 @@ app.get('/logout', (req, res) => {
 })
 
 app.get('/', (req, res) => {
-    res.redirect('home')
+    res.render('home')
 })
-
 app.get('/support', (req, res) => {
     res.render('support')
 })
@@ -108,6 +107,9 @@ app.get('/about-us', (req, res) => {
 })
 app.get('/privacy-policy', (req, res) => {
     res.render('privacy-policy')
+})
+app.get('/onboarding', (req, res) => {
+    res.render('onboarding')
 })
 
 
