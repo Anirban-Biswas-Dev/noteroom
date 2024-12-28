@@ -21,9 +21,8 @@ export interface IManageUserNote {
 /**
  * @description - For getting note details of a specific note, this is the standard structure 
 * @param {Object} note - Basically this will contain an object of the note's details fetched from the db
-* @param {Object} owner - This is contain the owner's metadata for showing it in noteview
+* @param {Object} owner - This will contain the owner's metadata for showing it in noteview
 * @param {Object} feedbacks - This will contain the list of objects that will contain each feedbacks' metadata
-* @using - Now used in `note-view`
 */
 export interface INoteDetails {
     note: any,
