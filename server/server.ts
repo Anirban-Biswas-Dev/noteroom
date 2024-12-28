@@ -108,6 +108,9 @@ app.get('/about-us', (req, res) => {
 app.get('/privacy-policy', (req, res) => {
     res.render('privacy-policy')
 })
+app.get('/onboarding', (req, res) => {
+    res.render('onboarding')
+})
 
 
 export let userSocketMap: Map<string, string> = new Map()
