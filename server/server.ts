@@ -120,6 +120,10 @@ app.get('/home', (req, res) => {
     res.render('home')
 })
 
+app.get('/onboarding', (req, res) => {
+    res.render('onboarding')
+})
+
 export let userSocketMap: Map<string, string> = new Map()
 io.on('connection', (socket) => {
     let studentID = <string>socket.handshake.query.studentID
