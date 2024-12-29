@@ -3,6 +3,8 @@ import Notes from '../schemas/notes.js'
 import Comments, { feedbacksModel as Feedbacks, replyModel as Reply} from '../schemas/comments.js'
 import { INoteDB } from '../types/database.types.js'
 import { IManageUserNote, INoteDetails } from '../types/noteService.types.js'
+import { Notifs } from '../schemas/notifications.js'
+import { deleteNoteImages } from './firebaseService.js'
 
 
 export async function addNote(noteData: INoteDB) {
@@ -13,6 +15,31 @@ export async function addNote(noteData: INoteDB) {
         { upsert: true, new: true }
     )
     return note
+}
+
+
+/**
+* @description - Deleting a note will delete **the noteDocID from owned_notes**, **comments related to that noteDocID**, **notifications related to that noteDocID**, **images from firebase**
+*/
+export async function deleteNote({studentDocID, noteDocID}: IManageUserNote) {
+    try {
+        await Notes.deleteOne({ _id: noteDocID })
+        await Students.updateOne(
+            { _id: studentDocID },
+            { $pull: { owned_notes: noteDocID } }
+        )
+        await Comments.deleteMany({ _id: noteDocID })
+    
+        let noteNotifs = await Notifs.find({ docType: { $in: ["note-feedback", "note-reply", "note-mention"] } })
+        let noteSpecificNotifsDocIDs = noteNotifs.filter(noti => noti["noteDocID"].toString() === noteDocID).map(noti => noti["_id"])
+        await Notifs.deleteMany({ _id: { $in: noteSpecificNotifsDocIDs } })
+    
+        await deleteNoteImages({ studentDocID, noteDocID })
+
+        return true
+    } catch (error) {
+        return false
+    }
 }
 
 export async function addSaveNote({ studentDocID, noteDocID }: IManageUserNote) {
