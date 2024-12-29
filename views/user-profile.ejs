@@ -140,7 +140,7 @@
         <div class="notes-container visible-container">
             <% if(notes != 0) { %>
                 <% for (const note of notes) { %>
-                    <div class="note-card">
+                    <div class="note-card" id="owned-note-<%= note._id %>">
                         <a href="/view/<%= note._id %>">
                             <h3>
                                 <% let title = note.title %>
@@ -150,12 +150,12 @@
 									<%= title %>
 								<% } %>
                             </h3>
-                            <% let description = note.description %>
+                            <!-- <% let description = note.description %>
                             <% if(description.length > 40) { %>
                                 <p><%= description.slice(0, 40) %>...</p>
                             <% } else { %>
                                 <p><%= description %></p>
-                            <% } %>
+                            <% } %> -->
                             <img src="<%= note.content[0] %>" alt="No thumbnail?!">
                         </a>
                     </div>
@@ -186,12 +186,12 @@
 									<%= title %>
 								<% } %>
                             </h3>
-                            <% let description = note.description; %>
+                            <!-- <% let description = note.description; %>
                             <% if (description.length > 40) { %>
                                 <p><%= description.slice(0, 40) %>...</p>
                             <% } else { %>
                                 <p><%= description %></p>
-                            <% } %>
+                            <% } %> -->
                             <img src="<%= note.content[0] %>" alt="No thumbnail?!">
                         </a>
                     </div>

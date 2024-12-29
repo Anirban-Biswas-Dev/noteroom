@@ -2,7 +2,7 @@ import { Schema, model } from 'mongoose'
 
 const baseOptions = {
     discriminatorKey: 'docType',
-    collection: 'notifications'
+    collection: 'notifs'
 }
 
 const NotifsSchema = new Schema({
@@ -15,7 +15,7 @@ const NotifsSchema = new Schema({
         default: Date.now
     }
 }, baseOptions)
-const NotifsModel = model('notifications', NotifsSchema)
+const NotifsModel = model('notifs', NotifsSchema)
 
 
 const feedBackSchema = new Schema({
@@ -35,7 +35,7 @@ const feedBackSchema = new Schema({
     },
     ownerStudentID: String,
 })
-const feedBackNotifs = NotifsModel.discriminator('feedback', feedBackSchema)
+const feedBackNotifs = NotifsModel.discriminator('note-feedback', feedBackSchema)
 
 
 const mentionSchema = new Schema({
@@ -55,7 +55,7 @@ const mentionSchema = new Schema({
     },
     mentionedStudentID: String, // The person who is being mentioned
 }) 
-const mentionNotifs = NotifsModel.discriminator('mention', mentionSchema)
+const mentionNotifs = NotifsModel.discriminator('note-mention', mentionSchema)
 
 
 
@@ -80,7 +80,7 @@ const replySchema = new Schema({
     },
     ownerStudentID: String, // The person who owns the note
 })
-const replyNotifs = NotifsModel.discriminator('reply', replySchema)
+const replyNotifs = NotifsModel.discriminator('note-reply', replySchema)
 
 
 

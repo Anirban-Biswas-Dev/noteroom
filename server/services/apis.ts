@@ -5,6 +5,8 @@ import Notes from "../schemas/notes.js";
 import Students from "../schemas/students.js";
 import archiver from "archiver";
 import { getNotifications } from "../helpers/rootInfo.js";
+import { deleteNote } from "./noteService.js";
+import { Convert } from "./userService.js";
 
 const router = Router()
 
@@ -43,6 +45,15 @@ export default function apiRouter(io: Server) {
             }
         }
         archive.finalize();
+    })
+
+
+    router.delete("/note/delete/:noteDocID", async (req, res) => {
+        let noteDocID = req.params.noteDocID
+        let studentDocID = (await Convert.getDocumentID_studentid(req.session["stdid"])).toString()
+        let deleted = await deleteNote({ studentDocID, noteDocID })
+        
+        res.send({ deleted: deleted })
     })
 
 

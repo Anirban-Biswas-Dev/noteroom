@@ -7,9 +7,9 @@
 
 
 export enum ENotificationType {
-    Feedback = 'feedback',
-    Mention = 'mention',
-    Reply = 'reply'
+    Feedback = 'note-feedback',
+    Mention = 'note-mention',
+    Reply = 'note-reply'
 }
 
 

@@ -112,7 +112,7 @@
             } 
             %>
     <% notis.forEach(noti => { %>
-    <% if(noti.docType == 'feedback' ) { %>
+    <% if(noti.docType == 'note-feedback' ) { %>
     <div class="notification secondary-<%= noti.isRead %>" id="noti-<%= noti._id %>">
       <div class="first-row">
         <div class="frnt-wrapper">
@@ -135,7 +135,7 @@
           <a href='/view/<%= noti.noteDocID._id %>/#<%= noti.feedbackDocID %>' class="notification-link-2 notiLink"><%= noti.commenterDocID.displayname %> has given feedback on your notes! Check it out.</a>
       </div>
     </div>
-    <% } else if (noti.docType == "mention") { %>
+    <% } else if (noti.docType == "note-mention") { %>
       <div class="notification secondary-<%= noti.isRead %>" id="noti-<%= noti._id %>">
         <div class="first-row">
           <div class="frnt-wrapper">
@@ -158,7 +158,7 @@
             <a href='/view/<%= noti.noteDocID._id %>/#<%= noti.feedbackDocID %>' class="notification-link-2 notiLink"><%= noti.commenterDocID.displayname %> has mentioned you.</a>
         </div>
       </div>
-    <% } else if(noti.docType == "reply") { %>
+    <% } else if(noti.docType == "note-reply") { %>
       <div class="notification secondary-<%= noti.isRead %>" id="noti-<%= noti._id %>">
         <div class="first-row">
           <div class="frnt-wrapper">
