@@ -1,6 +1,17 @@
-// ************ Slider Moving Codes ***********
 
-// ************ Improved Slider Transition Logic ***********
+const userOnboarding = {
+    district: '',
+    collegeName: '',
+    collegeYear: '',
+    collegeRoll: '',
+    group: '',
+    favSub: '',
+    nonFavSub:''
+}
+
+
+
+// ************ Slider Moving Codes ***********
 
 // Select necessary elements
 const slides = document.querySelectorAll('.slide');
@@ -69,3 +80,92 @@ continueButtons.forEach((button) => {
 
 // Initialize progress bar on page load
 updateProgressBar();
+
+
+/**
+ * Initializes the district selection functionality.
+ * Ensures only one option is selected at a time and updates the global userOnboarding object.
+ * Manages the activation state of the first "move section" button for the district selection.
+ */
+function initializeDistrictSelection() {
+    const options = document.querySelectorAll('.college-option');
+    const continueButtons = document.querySelectorAll('.move-section-btn');
+
+    // Initially disable all continue buttons
+    continueButtons.forEach(button => button.classList.add('req-field-not-selected'));
+
+    // Add event listeners to each district option for selection/deselection
+    options.forEach(option => {
+        option.addEventListener('click', () => {
+            // Remove the selected state from all options
+            options.forEach(opt => opt.classList.remove('clg-selected'));
+
+            // Add the selected state to the clicked option
+            option.classList.add('clg-selected');
+
+            // Update the global userOnboarding object with the selected district
+            const selectedDistrict = option.querySelector('.clg-label').innerText;
+            userOnboarding.district = selectedDistrict;
+
+            // Update the UI to show the correct checkmark visibility
+            options.forEach(opt => {
+                const checkmark = opt.querySelector('.clg-opt-checkmark');
+                checkmark.style.display = opt.classList.contains('clg-selected') ? 'block' : 'none';
+            });
+
+            // Enable only the first continue button
+            continueButtons[0].classList.remove('req-field-not-selected');
+
+            // Detailed logs for debugging
+            console.log('District Selected:', userOnboarding.district);
+            console.log('Updated userOnboarding Object:', userOnboarding);
+        });
+    });
+
+    // Add event listeners to all move section buttons
+    continueButtons.forEach((button, index) => {
+        button.addEventListener('click', (event) => {
+            // Prevent action if the button is inactive
+            if (button.classList.contains('req-field-not-selected')) {
+                event.preventDefault();
+                console.log(`Button ${index} is inactive. Cannot proceed.`);
+                alert('Please complete the required field before proceeding.');
+                return;
+            }
+
+            // Log for when the button is active and clicked
+            console.log(`Button ${index} clicked. Proceeding to the next section.`);
+            console.log('Current userOnboarding Object:', userOnboarding);
+
+            const tokiClgQtn = document.getElementById('tokiClgQtn')
+            tokiClgQtn.textContent = `Which college in ${userOnboarding.district} do you attend?` 
+        });
+    });
+}
+
+// Initialize the functionality
+initializeDistrictSelection();
+
+
+/**
+ * Disables all buttons with the 'req-field-not-selected' class.
+ * Ensures no actions are triggered on these buttons.
+ */
+function initializeButtonDisabling() {
+    const buttons = document.querySelectorAll('.move-section-btn');
+
+    buttons.forEach(button => {
+        button.addEventListener('click', (event) => {
+            if (button.classList.contains('req-field-not-selected')) {
+                event.preventDefault(); // Prevent default behavior
+                event.stopPropagation(); // Stop further event propagation
+                console.log('Button is disabled. Action blocked.');
+            }
+        });
+    });
+}
+
+// Initialize the disabling functionality
+initializeButtonDisabling();
+
+

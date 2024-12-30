@@ -149,7 +149,7 @@ body {
     font-weight: 600;
     font-size: 1.05rem;
     line-height: 22px;
-    letter-spacing: -0.06em;
+    letter-spacing: -0.03em;
     color: rgba(0, 0, 0, 0.82);
     text-align: center;
 }
@@ -168,45 +168,81 @@ body {
 }
 
 .college-option{
+    position: relative;
     width:100%;
     height: fit-content;
     padding: 15px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid #000000;
+    background-color: white;
+    border: 1px solid #BED4FC;
     border-radius: 10px;
-    transition: background-color var(--duration-fast) ease;
+    transition: box-shadow var(--duration-fast) ease, font-wieght var(--duration-fast) ease;
 }
 
 .college-option:hover{
     cursor: pointer;
-    background-color: rgba(255, 255, 255, 0.5);
+    box-shadow: #c2d6fc 0px 2px 4px 0px;
+    .clg-label{
+        font-weight: 600;
+    }
 }
 
 .clg-label{
-    font-weight: 600;
-    font-size: 1rem;
+    font-weight: 500;
+    font-size: .9rem;
     line-height: 22px;
-    letter-spacing: -0.06em;
+    letter-spacing: -0.01em;
 }
 
 .clg-selected{
-    background: white;
+    box-shadow: #BED4FC 0px 2px 8px 0px;
 }
+
+.clg-opt-checkmark{
+    display: none;
+    position: absolute;
+    right: 15px;
+    width: 15px;
+    height: auto;
+}
+
 
 .move-section-ctrl-container{
     width: 60%;
     justify-content: flex-end;
 }
 
-.move-section-btn{
+/* This is visually make it look like the button is inactive */
+
+.move-section-btn {
     padding: 12px 25px;
     background: var(--squid-ink);
-    border: 1px solid #2C2C2C;
+    border: none;
     border-radius: 8px;
     color: white;
     font-weight: 400;
     font-size: 1rem;
     line-height: 100%;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease; /* Smooth transition */
 }
+
+.move-section-btn:active {
+    transform: scale(0.98); /* Slight scale effect on click */
+}
+
+.req-field-not-selected {
+    background-color: #E5E5E5;
+    color: #B1B1B1;
+    cursor: not-allowed;
+    transition: background-color 0.2s ease, color 0.2s ease; /* Smooth transition */
+}
+
+/* || Slide 2 College Selection */
+
+.slide-2--toki-text-msg{
+    font-size: .8rem;
+}
+
