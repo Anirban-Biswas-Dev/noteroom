@@ -245,4 +245,76 @@ body {
 .slide-2--toki-text-msg{
     font-size: .8rem;
 }
+.clg-selection-wrapper {
+    width: 100%;
+    max-width: 700px;
+    background-color: white;
+    border: 1px solid rgba(7, 25, 45, 0.2); 
+    border-radius: 20px;
+    padding: 20px; 
+}
 
+.clg-selection-grid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); 
+    gap: 15px; 
+    justify-content: center; 
+    align-items: center;
+}
+
+.clg-selection__card { 
+    position: relative;
+    gap: 8px; 
+    justify-content: center;
+    background-color: white;
+    padding: 12px; 
+    height: 120px; 
+    border: 1px solid #BED4FC;
+    border-radius: 8px;
+    transition: box-shadow var(--duration-med) ease;
+}
+
+.clg-selection__card:hover {
+    box-shadow: #c2d6fc 0px 2px 4px 0px;
+    cursor: pointer;
+
+}
+
+.clg-selection__card--logo {
+    width: 40px; 
+    height: auto; 
+}
+
+.clg-label {
+    width: 100%;
+    font-size: 0.8rem; 
+    text-align: center;
+    letter-spacing: -0.03em; 
+    color: rgba(0, 0, 0, 0.85); 
+}
+
+.clg-select-icon{
+    position: absolute;
+    top: -5px;
+    right: -10px;
+}
+
+.clg-selected-2{
+    border-color: #1D8102;
+}
+
+@media (max-width: 768px) {
+    .clg-selection-grid {
+        grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+    }
+    .clg-selection__card {
+        height: 100px; 
+    }
+    .clg-selection__card--logo {
+        width: 30px; 
+    }
+    .clg-label {
+        font-size: 0.8rem; 
+    }
+}
