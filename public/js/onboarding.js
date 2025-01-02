@@ -1,14 +1,14 @@
+// import {districtCollegeData} from "/js/onboarding-data";
 
 const userOnboarding = {
     district: '',
-    collegeName: '',
+    collegeId: '',
     collegeYear: '',
     collegeRoll: '',
     group: '',
     favSub: '',
     nonFavSub:''
 }
-
 
 
 // ************ Slider Moving Codes ***********
@@ -89,7 +89,6 @@ updateProgressBar();
  */
 function initializeDistrictSelection() {
     const options = document.querySelectorAll('.college-option');
-    const continueButtons = document.querySelectorAll('.move-section-btn');
 
     // Initially disable all continue buttons
     continueButtons.forEach(button => button.classList.add('req-field-not-selected'));
@@ -168,4 +167,110 @@ function initializeButtonDisabling() {
 // Initialize the disabling functionality
 initializeButtonDisabling();
 
+// Function to dynamically load colleges based on the selected district
+function loadCollegesForDistrict() {
+    const collegeContainer = document.querySelector('.clg-selection-grid');
+    collegeContainer.innerHTML = ""; // Clear previous options
+
+    const selectedDistrict = userOnboarding.district;
+
+    if (!selectedDistrict || !districtCollegeData[selectedDistrict]) {
+        collegeContainer.innerHTML = "<p>No colleges available for the selected district.</p>";
+        return;
+    }
+
+    // Generate and append college options
+    const colleges = districtCollegeData[selectedDistrict];
+    colleges.forEach(college => {
+        const collegeHTML = `
+            <div class="clg-selection__card flex-col-center" data-college-id="${college.id}">
+                <img 
+                    class="clg-selection__card--logo"
+                    src="images/onboarding-assets/College-logos/${college.logo}" 
+                    alt="${college.name}">
+                <p class="clg-label">${college.name}</p>
+                <svg width="20" height="20" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" class="clg-select-icon" style="display: none;">
+                    <g clip-path="url(#clip0_1844_2149)">
+                        <circle cx="14" cy="14" r="14" fill="#1D8102"/> <!-- Green circle -->
+                        <path d="M20.0564 8.62512L11.744 16.9376L7.94357 13.1371C7.49539 12.689 6.76887 12.689 6.32069 13.1371C5.8726 13.5853 5.8726 14.3118 6.32069 14.76L10.9326 19.3719C11.1567 19.5959 11.4503 19.708 11.744 19.708C12.0377 19.708 12.3314 19.5959 12.5555 19.3719L21.6793 10.2481C22.1274 9.79992 22.1274 9.07339 21.6793 8.62521C21.2311 8.17703 20.5045 8.17703 20.0564 8.62512Z" fill="white"/> <!-- Checkmark -->
+                    </g>
+                    <defs>
+                        <clipPath id="clip0_1844_2149">
+                            <rect width="28" height="28" fill="white"/>
+                        </clipPath>
+                    </defs>
+                </svg>
+            </div>
+        `;
+        collegeContainer.innerHTML += collegeHTML;
+    });
+
+    console.log(`Loaded colleges for district: ${selectedDistrict}`);
+}
+
+// Function to handle college selection
+function handleCollegeSelection() {
+    const collegeCards = document.querySelectorAll('.clg-selection__card');
+    const continueButton = document.querySelectorAll('.move-section-btn')[1];
+
+    collegeCards.forEach(card => {
+        card.addEventListener('click', () => {
+            // Deselect any previously selected college
+            collegeCards.forEach(card => {
+                card.classList.remove('user-selected-clg');
+                card.querySelector('.clg-select-icon').style.display = 'none';
+            });
+
+            // Select the clicked college
+            card.classList.add('user-selected-clg');
+            card.querySelector('.clg-select-icon').style.display = 'block';
+
+            // Update userOnboarding with the selected college
+            const collegeId = card.getAttribute('data-college-id');
+            const collegeName = card.querySelector('.clg-label').textContent;
+            userOnboarding.collegeId = collegeId;
+            userOnboarding.collegeName = collegeName;
+            console.log(`Selected College: ${collegeName}, ID: ${collegeId}`);
+
+            // Enable the second continue button
+            continueButton.classList.remove('req-field-not-selected');
+        });
+    });
+}
+
+// Function to handle the second continue button click
+function storeCollegeSelection() {
+    const continueButton = document.querySelectorAll('.move-section-btn')[1];
+
+    if (continueButton) {
+        continueButton.addEventListener('click', () => {
+            if (!userOnboarding.collegeName) {
+                alert("Please select a college before proceeding.");
+                return;
+            }
+
+            console.log("User onboarding data:", userOnboarding);
+            // Proceed to the next step or functionality
+        });
+    }
+}
+
+// Add event listener to the first "Continue" button to load colleges
+if (continueButtons[0]) {
+    continueButtons[0].addEventListener('click', () => {
+        if (!userOnboarding.district) {
+            alert("Please select a district before proceeding.");
+            return;
+        }
+
+        // Load colleges for the selected district
+        loadCollegesForDistrict();
+
+        // Attach event listeners for college selection
+        handleCollegeSelection();
+    });
+}
+
+// Initialize the second "Continue" button functionality
+storeCollegeSelection();
 

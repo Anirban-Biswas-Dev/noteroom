@@ -257,50 +257,52 @@ body {
 .clg-selection-grid {
     width: 100%;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); 
-    gap: 15px; 
-    justify-content: center; 
-    align-items: center;
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    gap: 15px;
+    justify-content: center;
+    align-items: stretch; /* Ensures all cards have equal height */
 }
 
-.clg-selection__card { 
+.clg-selection__card {
     position: relative;
-    gap: 8px; 
-    justify-content: center;
+    justify-content: flex-start; 
     background-color: white;
-    padding: 12px; 
-    height: 120px; 
+    padding: 10px 5px;
+    height: 130px;
     border: 1px solid #BED4FC;
     border-radius: 8px;
     transition: box-shadow var(--duration-med) ease;
+    gap: 5px; /* Adjusted gap for even spacing between elements */
 }
 
 .clg-selection__card:hover {
     box-shadow: #c2d6fc 0px 2px 4px 0px;
     cursor: pointer;
-
 }
 
 .clg-selection__card--logo {
-    width: 40px; 
-    height: auto; 
+    width: 40px;
+    height: 40px; 
+    object-fit: contain; 
+    margin-top: auto; 
 }
 
 .clg-label {
-    width: 100%;
-    font-size: 0.8rem; 
+    margin-top: auto; 
+    font-size: 0.7rem;
     text-align: center;
-    letter-spacing: -0.03em; 
-    color: rgba(0, 0, 0, 0.85); 
+    letter-spacing: -0.03em;
+    color: rgba(0, 0, 0, 0.85);
+    line-height: 1.2; 
 }
 
-.clg-select-icon{
+.clg-select-icon {
     position: absolute;
     top: -5px;
     right: -10px;
 }
 
-.clg-selected-2{
+.user-selected-clg{
     border-color: #1D8102;
 }
 
