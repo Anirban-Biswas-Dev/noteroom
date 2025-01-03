@@ -51,6 +51,46 @@ body {
   align-items: center;
 }
 
+.input-wrapper{
+    position: relative;
+    align-items: unset;
+}
+
+.floating-input-field{
+    padding: 8px 5px;
+    border: none;
+    background-color: transparent;
+    border-bottom: 1px solid var(--squid-ink); 
+    font-size: .9rem;
+    font-weight: 300;
+    transition: var(--duration-def) ease; 
+}
+
+.floating-input-field:focus{
+    outline: none;
+    border-color: var(--neon-blue);
+    box-shadow: 0 1px 0 0 var(--neon-blue);
+}
+
+.input-floating-label{
+    position:absolute;
+    height: 100%;
+    font-weight: 500;
+    font-size: 15px;
+    line-height: 18px;
+    letter-spacing: -0.03em;
+    display: flex;
+    height: fit-content;
+    padding: 8px 0;
+    align-items: center;
+    transition: var(--duration-def) ease;
+}
+
+.floating-input-field:focus + .input-floating-label,
+.floating-input-field:not(:placeholder-shown) + .input-floating-label {
+    transform:translateY(-27px);
+}
+
 /* || Main Container Section */
 
 .main-container{
@@ -252,6 +292,7 @@ body {
     border: 1px solid rgba(7, 25, 45, 0.2); 
     border-radius: 20px;
     padding: 20px; 
+    gap: 30px;
 }
 
 .clg-selection-grid {
@@ -319,4 +360,9 @@ body {
     .clg-label {
         font-size: 0.8rem; 
     }
+}
+
+.clg-selection--other-input-wrapper{
+   width: 80%;
+   padding: 10px;
 }
