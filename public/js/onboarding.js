@@ -88,7 +88,7 @@ updateProgressBar();
  * Manages the activation state of the first "move section" button for the district selection.
  */
 function initializeDistrictSelection() {
-    const options = document.querySelectorAll('.college-option');
+    const options = document.querySelectorAll('.dist-option');
 
     // Initially disable all continue buttons
     continueButtons.forEach(button => button.classList.add('req-field-not-selected'));
@@ -97,19 +97,19 @@ function initializeDistrictSelection() {
     options.forEach(option => {
         option.addEventListener('click', () => {
             // Remove the selected state from all options
-            options.forEach(opt => opt.classList.remove('clg-selected'));
+            options.forEach(opt => opt.classList.remove('dist-selected'));
 
             // Add the selected state to the clicked option
-            option.classList.add('clg-selected');
+            option.classList.add('dist-selected');
 
             // Update the global userOnboarding object with the selected district
-            const selectedDistrict = option.querySelector('.clg-label').innerText;
+            const selectedDistrict = option.querySelector('.dist-label').innerText;
             userOnboarding.district = selectedDistrict;
 
             // Update the UI to show the correct checkmark visibility
             options.forEach(opt => {
-                const checkmark = opt.querySelector('.clg-opt-checkmark');
-                checkmark.style.display = opt.classList.contains('clg-selected') ? 'block' : 'none';
+                const checkmark = opt.querySelector('.dist-opt-checkmark');
+                checkmark.style.display = opt.classList.contains('dist-selected') ? 'block' : 'none';
             });
 
             // Enable only the first continue button

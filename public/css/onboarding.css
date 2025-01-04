@@ -200,14 +200,14 @@ body {
     gap: 50px;
 }
 
-.clg-options-grid{
+.dist-options-grid{
     display: grid;
     grid-template-columns: 225px 225px;
     grid-template-rows: repeat(4, auto);
     gap: 15px;
 }
 
-.college-option{
+.dist-option{
     position: relative;
     width:100%;
     height: fit-content;
@@ -221,26 +221,26 @@ body {
     transition: box-shadow var(--duration-fast) ease, font-wieght var(--duration-fast) ease;
 }
 
-.college-option:hover{
+.dist-option:hover{
     cursor: pointer;
     box-shadow: #c2d6fc 0px 2px 4px 0px;
-    .clg-label{
+    .dist-label{
         font-weight: 600;
     }
 }
 
-.clg-label{
+.dist-label{
     font-weight: 500;
     font-size: .9rem;
     line-height: 22px;
     letter-spacing: -0.01em;
 }
 
-.clg-selected{
+.dist-selected{
     box-shadow: #BED4FC 0px 2px 8px 0px;
 }
 
-.clg-opt-checkmark{
+.dist-opt-checkmark{
     display: none;
     position: absolute;
     right: 15px;
@@ -357,7 +357,7 @@ body {
     .clg-selection__card--logo {
         width: 30px; 
     }
-    .clg-label {
+    .dist-label {
         font-size: 0.8rem; 
     }
 }
