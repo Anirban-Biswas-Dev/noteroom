@@ -174,11 +174,6 @@ function loadCollegesForDistrict() {
 
     const selectedDistrict = userOnboarding.district;
 
-    if (!selectedDistrict || !districtCollegeData[selectedDistrict]) {
-        collegeContainer.innerHTML = "<p>No colleges available for the selected district.</p>";
-        return;
-    }
-
     // Generate and append college options
     const colleges = districtCollegeData[selectedDistrict];
     colleges.forEach(college => {
@@ -211,10 +206,17 @@ function loadCollegesForDistrict() {
 // Function to handle college selection
 function handleCollegeSelection() {
     const collegeCards = document.querySelectorAll('.clg-selection__card');
+    const otherInputField = document.getElementById('other-college');
     const continueButton = document.querySelectorAll('.move-section-btn')[1];
 
+    // Enable mutual exclusivity for college cards and the "Other" input
     collegeCards.forEach(card => {
         card.addEventListener('click', () => {
+            // Deselect "Other" input if a college is selected
+            otherInputField.value = "";
+            otherInputField.removeAttribute('disabled'); // Ensure the input is enabled for future use
+            userOnboarding.collegeName = ""; // Clear any previously entered other college name
+
             // Deselect any previously selected college
             collegeCards.forEach(card => {
                 card.classList.remove('user-selected-clg');
@@ -230,11 +232,43 @@ function handleCollegeSelection() {
             const collegeName = card.querySelector('.clg-label').textContent;
             userOnboarding.collegeId = collegeId;
             userOnboarding.collegeName = collegeName;
+
             console.log(`Selected College: ${collegeName}, ID: ${collegeId}`);
 
             // Enable the second continue button
             continueButton.classList.remove('req-field-not-selected');
         });
+    });
+
+    // Handle "Other" input field focus and typing
+    otherInputField.addEventListener('input', () => {
+        const otherCollegeName = otherInputField.value.trim();
+
+        if (otherCollegeName) {
+            // Deselect all college cards if "Other" is being filled
+            collegeCards.forEach(card => {
+                card.classList.remove('user-selected-clg');
+                card.querySelector('.clg-select-icon').style.display = 'none';
+            });
+
+            // Update userOnboarding with the "Other" college name
+            userOnboarding.collegeId = null; // Clear any selected college ID
+            userOnboarding.collegeName = otherCollegeName;
+
+            console.log(`Entered Other College: ${otherCollegeName}`);
+
+            // Enable the second continue button
+            continueButton.classList.remove('req-field-not-selected');
+        } else {
+            // If "Other" input is cleared, disable the continue button again
+            userOnboarding.collegeName = "";
+            continueButton.classList.add('req-field-not-selected');
+        }
+    });
+
+    // Ensure the "Other" input field is always enabled and focusable
+    otherInputField.addEventListener('focus', () => {
+        otherInputField.removeAttribute('disabled'); // Ensure the input can be focused
     });
 }
 
@@ -245,7 +279,7 @@ function storeCollegeSelection() {
     if (continueButton) {
         continueButton.addEventListener('click', () => {
             if (!userOnboarding.collegeName) {
-                alert("Please select a college before proceeding.");
+                alert("Please select a college or enter one in 'Other' before proceeding.");
                 return;
             }
 
@@ -255,7 +289,7 @@ function storeCollegeSelection() {
     }
 }
 
-// Add event listener to the first "Continue" button to load colleges
+// Example: Attach event listener to the first "Continue" button to load colleges
 if (continueButtons[0]) {
     continueButtons[0].addEventListener('click', () => {
         if (!userOnboarding.district) {
@@ -273,4 +307,5 @@ if (continueButtons[0]) {
 
 // Initialize the second "Continue" button functionality
 storeCollegeSelection();
+
 
