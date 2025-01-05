@@ -1,0 +1,18 @@
+<div class="carousel-container">
+  <div class="carousel-wrapper">
+    <span class="note-thumbnail" style="display: none">
+      <%= note.content[0] %>
+    </span>
+    <% note.content.forEach(note => { %>
+    <div class="carousel-slide">
+      <img src="<%= note %>" class="image-links" />
+    </div>
+    <% }) %>
+  </div>
+  <button class="carousel-control prev">
+    <i class="fa-solid fa-arrow-left"></i>
+  </button>
+  <button class="carousel-control next">
+    <i class="fa-solid fa-arrow-right"></i>
+  </button>
+</div>
