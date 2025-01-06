@@ -367,12 +367,82 @@ body {
    padding: 10px;
 }
 
+.interactive-container--gap-low{
+    gap: 10px;
+}
+.prfl-pic-wrapper{
+    width: 100%;
+    max-width: 650px;
+    padding: 10px;
+}
+
+.upload-prfl-pic-box{
+    width: 100%;
+    padding: 40px 10px;
+    gap: 15px;
+    background: #FFFFFF;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    border: 1px dashed #e1e1e2;
+    cursor: pointer;
+    transition: background-color var(--duration-fast) ease ;
+}
+.upload-prfl-pic-box:hover{
+    background-color: #f5f8fd;   
+}
+
+/* Upload section icon */
+.fa-image{
+    font-size: 1.5rem;
+    color: #666; 
+}
+
+.upload-prfl-pic-msg{
+    font-size: .8rem;
+    text-decoration: underline;
+    color: var(--squid-ink-light);
+    letter-spacing: 0.01rem;
+    cursor:pointer;
+}
+
+.img-preview-wrapper{
+    width: 100%;
+    max-width: 600px;
+    gap: 25px;
+    align-items: center;
+    justify-content: unset;
+}
+.uploaded-img-preview{
+    width: 125px;
+    height: 125px;
+    border-radius: 8px;
+    object-fit: cover;
+    aspect-ratio: 1 / 1;
+}
+
+.choose-another-pic-btn{
+    padding: 8px 10px;
+    font-size: .8rem;
+    border-radius: 5px;
+    border: none;
+    letter-spacing: -0.03rem;
+    font-weight: var(--fw-regular);
+    color: var(--squid-ink);
+    background-color: var(--light-gray);
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 4px;
+    transition: background-color var(--duration-med) ease;
+}
+.choose-another-pic-btn:hover{
+    background-color: rgb(235, 235, 235);
+}
+
 .slide-4-input-options-roll-grp{
     width: 100%;
     justify-content: center;
     max-width: 600px;
 }
 
+/* || Reusable Dropdown Options */
 label.dropdown-field {
     border-radius: 2px;
     width: 100%;

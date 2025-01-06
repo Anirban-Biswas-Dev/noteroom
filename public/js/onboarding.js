@@ -528,3 +528,77 @@ f: {
 	}
 }}
 window.onload = form.f.init.register
+
+
+// Function to handle group, year, and roll number inputs for this slide
+function handleGroupYearRollSelection() {
+    const groupDropdown = document.querySelector('#img_category_options'); // Group dropdown options
+    const yearDropdown = document.querySelectorAll('#img_category_options')[1]; // Year dropdown options
+    const rollInputField = document.getElementById('college-roll'); // Roll number input field
+    const continueButton = document.querySelectorAll('.move-section-btn')[2]; // Third slide's continue button
+
+    let groupSelected = false;
+    let yearSelected = false;
+    let rollEntered = false;
+
+    // Function to check if all fields are completed and enable the continue button
+    function checkAllFieldsCompleted() {
+        if (groupSelected && yearSelected && rollEntered) {
+            continueButton.classList.remove('req-field-not-selected');
+        } else {
+            continueButton.classList.add('req-field-not-selected');
+        }
+    }
+
+    // Handle group dropdown selection
+    groupDropdown.addEventListener('click', (e) => {
+        if (e.target.classList.contains('dropdown-option')) {
+            const groupValue = e.target.getAttribute('data-value');
+            userOnboarding.group = groupValue; // Push group value to the onboarding object
+            document.querySelector('#img_category .selected').textContent = groupValue; // Update selected text
+            groupSelected = true;
+            console.log(`Group Selected: ${groupValue}`);
+            checkAllFieldsCompleted(); // Check if other fields are completed
+        }
+    });
+
+    // Handle year dropdown selection
+    yearDropdown.addEventListener('click', (e) => {
+        if (e.target.classList.contains('dropdown-option')) {
+            const yearValue = e.target.getAttribute('data-value');
+            userOnboarding.collegeYear = yearValue; // Push year value to the onboarding object
+            document.querySelectorAll('#img_category .selected')[1].textContent = yearValue; // Update selected text for year
+            yearSelected = true;
+            console.log(`Year Selected: ${yearValue}`);
+            checkAllFieldsCompleted(); // Check if other fields are completed
+        }
+    });
+
+    // Handle roll number input
+    rollInputField.addEventListener('input', () => {
+        const rollValue = rollInputField.value.trim();
+        if (rollValue && /^[0-9]{1,3}$/.test(rollValue)) { // Ensure roll is a max of 3 digits
+            userOnboarding.collegeRoll = rollValue; // Push roll value to the onboarding object
+            rollEntered = true;
+            console.log(`Roll Number Entered: ${rollValue}`);
+        } else {
+            userOnboarding.collegeRoll = ""; // Reset roll value if input is invalid
+            rollEntered = false;
+        }
+        checkAllFieldsCompleted(); // Check if other fields are completed
+    });
+
+    // Initialize the continue button click logic
+    continueButton.addEventListener('click', () => {
+        if (!groupSelected || !yearSelected || !rollEntered) {
+            alert("Please complete all the fields before proceeding.");
+            return;
+        }
+
+        console.log("User Onboarding Data:", userOnboarding);
+        // Placeholder for next-step logic
+    });
+}
+
+// Call the function to attach the event listeners for this slide
+handleGroupYearRollSelection();

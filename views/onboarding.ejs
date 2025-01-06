@@ -160,7 +160,22 @@
                                 <p class="toki-text-msg">Almost there!</p>
                         </div>
                     </div>
-                    <div class="interactive-container flex-col-center">
+                    <div class="interactive-container flex-col-center interactive-container--gap-low">
+                        <!-- Initially this will be shown to select images. Rafi handle the image selection and based on that push to the userOnboarding array and also adjust the req-field-not-selected related requirements to let them select next button -->
+                        <div class="prfl-pic-wrapper flex-col-center">
+                            <div class="upload-prfl-pic-box flex-col-center">
+                                <i class="fa-regular fa-image"></i>
+                                <p class="upload-prfl-pic-msg">Choose your profile picture</p>
+                            </div>
+                        <!-- I'm keeping commented for now, but the button inside will allow to select different img incase they don't like their chosen img -->
+                        <!-- Then this will be displayed for img preview -->
+                            <!-- <div class="img-preview-wrapper flex-row-center">
+                                <img src="\images\NoteRoom Caricature Cartoonic  - Anirban.jpg.png" alt="Your Image" class="uploaded-img-preview">
+                                
+                                <button class="choose-another-pic-btn">Choose Another</button>
+                            </div> -->
+                        </div>
+
                         <div class="slide-4-input-options-roll-grp flex-row-center">
                             <label id="img_category_label"class="dropdown-field"for="img_category"data-value="">
                                 <span>Which group you're in?</span>
