@@ -84,6 +84,29 @@ const replyNotifs = NotifsModel.discriminator('note-reply', replySchema)
 
 
 
+const voteSchema = new Schema({
+    noteDocID: {
+        type: Schema.Types.ObjectId,
+        ref: 'notes',
+        required: true
+    },
+    voteDocID: {
+        type: Schema.Types.ObjectId,
+        ref: 'votes',
+        required: true
+    },
+    voterDocID: {
+        type: Schema.Types.ObjectId,
+        ref: 'students',
+        required: true
+    },
+    ownerStudentID: String
+})
+const votesNotifs = NotifsModel.discriminator('note-vote', voteSchema)
+
+
+
+
 export const Notifs = NotifsModel
 const _feedBackNotifs = feedBackNotifs
 export { _feedBackNotifs as feedBackNotifs }
@@ -91,3 +114,5 @@ const _mentionNotifs = mentionNotifs
 export { _mentionNotifs as mentionNotifs }
 const _replyNotifs = replyNotifs
 export { _replyNotifs as replyNotifs }
+const _votesNotifs = votesNotifs
+export { _votesNotifs as votesNotifs }

@@ -25,6 +25,26 @@ socket.on('add-reply', (replyData) => {
   manageNotes.addReply(document.querySelector(`#thread-${replyData.parentFeedbackDocID._id}`), replyData)
 })
 
+
+async function upvote(noteDocID) {
+  const voterStudentID = Cookies.get("studentID")
+
+  let voteData = new FormData()
+  voteData.append('noteDocID', noteDocID)
+  voteData.append('voterStudentID', voterStudentID)
+
+  let response = await fetch(`/view/${noteDocID}/vote?type=upvote`, {
+    body: voteData,
+    method: 'post'
+  })
+  let data = await response.json()
+  data.ok ? (function () {
+    console.log(`saved!`)
+  })() : (function () {
+    console.log(`got a problem`)
+  })()
+}
+
 function formatDate(date) {
   const formatter = new Intl.DateTimeFormat('en-US', {
     year: 'numeric',

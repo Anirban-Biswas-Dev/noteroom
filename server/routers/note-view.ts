@@ -21,6 +21,7 @@ import {
     IReplyNotification
 } from '../types/notificationService.type.js'
 import {userSocketMap} from '../server.js';
+import addVote from '../services/voting.js';
 
 const router = Router()
 
@@ -200,6 +201,22 @@ function noteViewRouter(io: Server) {
 
             let mentions = checkMentions(_replyContent)
             await sendMentionNotification(mentions, reply)
+        }
+        
+    })
+
+    router.post('/:noteID/vote', async (req, res) => {
+        try {
+            let voteType = <"upvote" | "downvote">req.query["type"]
+            let noteDocID = req.body["noteDocID"]
+            let _voterStudentID = req.body["voterStudentID"]
+            let voterStudentDocID = (await Convert.getDocumentID_studentid(_voterStudentID)).toString()
+            
+            await addVote({ voteType, noteDocID, voterStudentDocID })
+            res.json({ok: true})
+            
+        } catch (error) {
+            res.json({ ok: false })
         }
         
     })
