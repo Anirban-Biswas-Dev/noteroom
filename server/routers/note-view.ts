@@ -12,14 +12,12 @@ import {checkMentions, replaceMentions} from '../helpers/utils.js'
 import {getNotifications, getSavedNotes, profileInfo, unreadNotiCount} from '../helpers/rootInfo.js'
 import {getNote, getOwner} from '../services/noteService.js'
 import {Convert} from '../services/userService.js'
-import {addFeedbackNoti, addMentionNoti, addReplyNoti} from '../services/notificationService.js'
+import {addFeedbackNoti, addMentionNoti} from '../services/notificationService.js'
 import {addFeedback, addReply} from '../services/feedbackService.js'
 import {
     ENotificationType,
     IFeedBackNotification,
-    IMentionNotification,
-    IReplyNotification
-} from '../types/notificationService.type.js'
+    IMentionNotification} from '../types/notificationService.type.js'
 import {userSocketMap} from '../server.js';
 import addVote from '../services/voting.js';
 
@@ -99,24 +97,7 @@ function noteViewRouter(io: Server) {
                     }
                     io.to(ownerSocketID).emit('notification-feedback', feedback_notification, "has given feedback on your notes! Check it out.")
                     break
-
-                case ENotificationType.Reply:
-                    let reply_notification_db: IReplyNotificationDB = {...baseData,
-                            commenterDocID: baseDocument["commenterDocID"]._id.toString(),
-                            ownerStudentID: baseDocument["parentFeedbackDocID"]["commenterDocID"].studentID.toString(),
-                            parentFeedbackDocID: baseDocument["parentFeedbackDocID"]._id.toString()
-                    }
-                    let reply_notidata = await addReplyNoti(reply_notification_db)
-                    let reply_notification: IReplyNotification = {...baseNotificationData,
-                        notiID: reply_notidata._id.toString(),
-                        ownerStudentID: _ownerStudentID,
-                        noteID: _noteDocID
-                    }
-
-                    io.to(userSocketMap.get(reply_notification_db.ownerStudentID)).emit("notification-reply", reply_notification, "replied to your comment")
-                    break
             }
-
         }
 
 
@@ -193,12 +174,6 @@ function noteViewRouter(io: Server) {
             let reply = await addReply(replyData)
             io.to(replyData.noteDocID).emit('add-reply', reply.toObject())
 
-            //! Don't uncomment this unless the head is synced with the latest version
-            // if(_ownerStudentID !== _commenterStudentID) {
-            //     await sendCommentNotification(ENotificationType.Feedback, reply)
-            //     await sendCommentNotification(ENotificationType.Reply, reply)
-            // }
-
             let mentions = checkMentions(_replyContent)
             await sendMentionNotification(mentions, reply)
         }
@@ -214,7 +189,7 @@ function noteViewRouter(io: Server) {
             
             await addVote({ voteType, noteDocID, voterStudentDocID })
             res.json({ok: true})
-            
+
         } catch (error) {
             res.json({ ok: false })
         }
