@@ -21,7 +21,7 @@ import {
     IReplyNotification
 } from '../types/notificationService.type.js'
 import {userSocketMap} from '../server.js';
-import addVote from '../services/voting.js';
+import addVote from '../services/voteService.js';
 
 const router = Router()
 
@@ -213,6 +213,10 @@ function noteViewRouter(io: Server) {
             let voterStudentDocID = (await Convert.getDocumentID_studentid(_voterStudentID)).toString()
             
             await addVote({ voteType, noteDocID, voterStudentDocID })
+            io.to(noteDocID).emit('increment-upvote')
+
+            //TODO: send notification to the owner of the note about the upvotes
+
             res.json({ok: true})
             
         } catch (error) {

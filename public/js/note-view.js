@@ -25,6 +25,11 @@ socket.on('add-reply', (replyData) => {
   manageNotes.addReply(document.querySelector(`#thread-${replyData.parentFeedbackDocID._id}`), replyData)
 })
 
+socket.on('increment-upvote', function () {
+  let uvCount = document.querySelector('.uv-count')
+  document.querySelector('.uv-count').innerHTML = parseInt(uvCount.innerHTML) + 1
+})
+
 
 async function upvote(noteDocID) {
   const voterStudentID = Cookies.get("studentID")

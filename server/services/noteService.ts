@@ -59,7 +59,7 @@ export async function deleteSavedNote({ studentDocID, noteDocID }: IManageUserNo
 
 export async function getNote({noteDocID}: IManageUserNote) {
     if (noteDocID) {
-        let note = await Notes.findById(noteDocID, { title: 1, subject: 1, description: 1, ownerDocID: 1, content: 1 })
+        let note = await Notes.findById(noteDocID, { title: 1, subject: 1, description: 1, ownerDocID: 1, content: 1, upvoteCount: 1 })
         let owner = await Students.findById(note.ownerDocID, { displayname: 1, studentID: 1, profile_pic: 1, username: 1 })
         let feedbacks = await Feedbacks.find({ noteDocID: note._id })
             .populate('commenterDocID', 'displayname username studentID profile_pic').sort({ createdAt: -1 })
