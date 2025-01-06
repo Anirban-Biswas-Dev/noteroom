@@ -21,6 +21,7 @@ import {
     IReplyNotification
 } from '../types/notificationService.type.js'
 import {userSocketMap} from '../server.js';
+import addVote from '../services/voteService.js';
 
 const router = Router()
 
@@ -43,15 +44,15 @@ function noteViewRouter(io: Server) {
 
                     if (note.ownerDocID == req.cookies['recordID']) {
                         mynote = 1
-                        res.render('note-view', { note: note, mynote: mynote, owner: owner, feedbacks: feedbacks, root: root, savedNotes: savedNotes, notis: notis, unReadCount: unReadCount }) // Specific notes: visiting my notes
+                        res.render('note-view/note-view', { note: note, mynote: mynote, owner: owner, feedbacks: feedbacks, root: root, savedNotes: savedNotes, notis: notis, unReadCount: unReadCount }) // Specific notes: visiting my notes
                     } else {
                         mynote = 0
-                        res.render('note-view', { note: note, mynote: mynote, owner: owner, feedbacks: feedbacks, root: root, savedNotes: savedNotes, notis: notis, unReadCount: unReadCount }) // Specific notes: visiting others notes
+                        res.render('note-view/note-view', { note: note, mynote: mynote, owner: owner, feedbacks: feedbacks, root: root, savedNotes: savedNotes, notis: notis, unReadCount: unReadCount }) // Specific notes: visiting others notes
                     }
                 }
             } else {
                 mynote = 3 // Non-sessioned users
-                res.render('note-view', { note: note, mynote: mynote, owner: owner, feedbacks: feedbacks, root: owner }) // Specific notes: visiting notes without being logged in
+                res.render('note-view/note-view', { note: note, mynote: mynote, owner: owner, feedbacks: feedbacks, root: owner }) // Specific notes: visiting notes without being logged in
             }
         } catch (error) {
             next(error)
@@ -200,6 +201,26 @@ function noteViewRouter(io: Server) {
 
             let mentions = checkMentions(_replyContent)
             await sendMentionNotification(mentions, reply)
+        }
+        
+    })
+
+    router.post('/:noteID/vote', async (req, res) => {
+        try {
+            let voteType = <"upvote" | "downvote">req.query["type"]
+            let noteDocID = req.body["noteDocID"]
+            let _voterStudentID = req.body["voterStudentID"]
+            let voterStudentDocID = (await Convert.getDocumentID_studentid(_voterStudentID)).toString()
+            
+            await addVote({ voteType, noteDocID, voterStudentDocID })
+            io.to(noteDocID).emit('increment-upvote')
+
+            //TODO: send notification to the owner of the note about the upvotes
+
+            res.json({ok: true})
+            
+        } catch (error) {
+            res.json({ ok: false })
         }
         
     })

@@ -79,6 +79,14 @@ export interface IReplyDB extends ICommentDB {
 
 
 
+export interface IVoteDB {
+    noteDocID: string,
+    voterStudentDocID: string,
+    voteType: "upvote" | "downvote"
+}
+
+
+
 
 /* ------------------- Notifications Section ------------------- */
 

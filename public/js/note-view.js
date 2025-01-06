@@ -25,6 +25,31 @@ socket.on('add-reply', (replyData) => {
   manageNotes.addReply(document.querySelector(`#thread-${replyData.parentFeedbackDocID._id}`), replyData)
 })
 
+socket.on('increment-upvote', function () {
+  let uvCount = document.querySelector('.uv-count')
+  document.querySelector('.uv-count').innerHTML = parseInt(uvCount.innerHTML) + 1
+})
+
+
+async function upvote(noteDocID) {
+  const voterStudentID = Cookies.get("studentID")
+
+  let voteData = new FormData()
+  voteData.append('noteDocID', noteDocID)
+  voteData.append('voterStudentID', voterStudentID)
+
+  let response = await fetch(`/view/${noteDocID}/vote?type=upvote`, {
+    body: voteData,
+    method: 'post'
+  })
+  let data = await response.json()
+  data.ok ? (function () {
+    console.log(`saved!`)
+  })() : (function () {
+    console.log(`got a problem`)
+  })()
+}
+
 function formatDate(date) {
   const formatter = new Intl.DateTimeFormat('en-US', {
     year: 'numeric',
@@ -317,7 +342,8 @@ document.addEventListener('DOMContentLoaded', () => {
           threadEditor.innerHTML = `
                   <!--<img class="tec__avatar-preview thread-avatar">-->
                   <div class="thread-editor-wrapper">
-                    <textarea placeholder="Write a comment..." class="thread-editor">@${parentCommenterUsername} </textarea>
+                    <span id='mentioneduser' style="display: inline-block; background-color: #e3f2fd; color: #1e88e5; padding: 5px 10px; border-radius: 12px; font-weight: bold; font-size: 14px; font-family: Arial, sans-serif;">@${parentCommenterUsername}</span>
+                    <textarea placeholder="Write a comment..." class="thread-editor"></textarea>
                     <div class="thread-editor__action-opts">
                       <svg id="threadCmntBtn" class="thread__cmnt-btn" width="18px" height="18px" viewBox="0 0 256 256" id="Flat" xmlns="http://www.w3.org/2000/svg">
                         <path d="M231.626,128a16.015,16.015,0,0,1-8.18262,13.96094L54.53027,236.55273a15.87654,15.87654,0,0,1-18.14648-1.74023,15.87132,15.87132,0,0,1-4.74024-17.60156L60.64746,136H136a8,8,0,0,0,0-16H60.64746L31.64355,38.78906A16.00042,16.00042,0,0,1,54.5293,19.44727l168.915,94.59179A16.01613,16.01613,0,0,1,231.626,128Z"/>
@@ -339,7 +365,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // Handle posting replies
       if (event.target.closest('.thread__cmnt-btn')) {
         const textarea = event.target.closest('.thread-editor-container').querySelector('.thread-editor');
-        const replyContent = textarea.value.trim();
+        const replyContent = document.querySelector('#mentioneduser').innerHTML + textarea.value.trim();
 
         if (!replyContent) return; // Prevents posting empty replies
 
