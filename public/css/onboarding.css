@@ -200,14 +200,14 @@ body {
     gap: 50px;
 }
 
-.clg-options-grid{
+.dist-options-grid{
     display: grid;
     grid-template-columns: 225px 225px;
     grid-template-rows: repeat(4, auto);
     gap: 15px;
 }
 
-.college-option{
+.dist-option{
     position: relative;
     width:100%;
     height: fit-content;
@@ -221,26 +221,26 @@ body {
     transition: box-shadow var(--duration-fast) ease, font-wieght var(--duration-fast) ease;
 }
 
-.college-option:hover{
+.dist-option:hover{
     cursor: pointer;
     box-shadow: #c2d6fc 0px 2px 4px 0px;
-    .clg-label{
+    .dist-label{
         font-weight: 600;
     }
 }
 
-.clg-label{
+.dist-label{
     font-weight: 500;
     font-size: .9rem;
     line-height: 22px;
     letter-spacing: -0.01em;
 }
 
-.clg-selected{
+.dist-selected{
     box-shadow: #BED4FC 0px 2px 8px 0px;
 }
 
-.clg-opt-checkmark{
+.dist-opt-checkmark{
     display: none;
     position: absolute;
     right: 15px;
@@ -357,7 +357,7 @@ body {
     .clg-selection__card--logo {
         width: 30px; 
     }
-    .clg-label {
+    .dist-label {
         font-size: 0.8rem; 
     }
 }
@@ -365,4 +365,227 @@ body {
 .clg-selection--other-input-wrapper{
    width: 80%;
    padding: 10px;
+}
+
+.interactive-container--gap-low{
+    gap: 10px;
+}
+.prfl-pic-wrapper{
+    width: 100%;
+    max-width: 650px;
+    padding: 10px;
+}
+
+.upload-prfl-pic-box{
+    width: 100%;
+    padding: 40px 10px;
+    gap: 15px;
+    background: #FFFFFF;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    border: 1px dashed #e1e1e2;
+    cursor: pointer;
+    transition: background-color var(--duration-fast) ease ;
+}
+.upload-prfl-pic-box:hover{
+    background-color: #f5f8fd;   
+}
+
+/* Upload section icon */
+.fa-image{
+    font-size: 1.5rem;
+    color: #666; 
+}
+
+.upload-prfl-pic-msg{
+    font-size: .8rem;
+    text-decoration: underline;
+    color: var(--squid-ink-light);
+    letter-spacing: 0.01rem;
+    cursor:pointer;
+}
+
+.img-preview-wrapper{
+    width: 100%;
+    max-width: 600px;
+    gap: 25px;
+    align-items: center;
+    justify-content: unset;
+}
+.uploaded-img-preview{
+    width: 125px;
+    height: 125px;
+    border-radius: 8px;
+    object-fit: cover;
+    aspect-ratio: 1 / 1;
+}
+
+.choose-another-pic-btn{
+    padding: 8px 10px;
+    font-size: .8rem;
+    border-radius: 5px;
+    border: none;
+    letter-spacing: -0.03rem;
+    font-weight: var(--fw-regular);
+    color: var(--squid-ink);
+    background-color: var(--light-gray);
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 4px;
+    transition: background-color var(--duration-med) ease;
+}
+.choose-another-pic-btn:hover{
+    background-color: rgb(235, 235, 235);
+}
+
+.slide-4-input-options-roll-grp{
+    width: 100%;
+    justify-content: center;
+    max-width: 600px;
+}
+
+/* || Reusable Dropdown Options */
+label.dropdown-field {
+    border-radius: 2px;
+    width: 100%;
+    color: var(--squid-ink-light);
+    display: block;
+    margin: 10px;
+    padding: 8px;
+    opacity: 0;
+    position: relative;
+    transition-property: opacity;
+    z-index: 1;
+}
+
+label.dropdown-field span {
+    color: inherit;
+    display: block;
+    height: 20px;
+    font-weight: 500;
+    font-size: 15px;
+    letter-spacing: -0.03em;
+    line-height: 20px;
+    left: 9px;
+    pointer-events: none;
+    position: absolute;
+    top: 32px;
+    transform: scale(1) translateY(0);
+    transition-property: color, font-size, top;
+    z-index: 1;
+}
+
+label.dropdown-field span.required::after {
+    color: inherit;
+    content: "*";
+    display: block;
+    height: 20px;
+    left: -20px;
+    line-height: 20px;
+    position: absolute;
+    text-align: center;
+    top: 0;
+    width: 20px;
+}
+
+label.dropdown-field.error span {
+    color: #F02318;
+}
+
+label.dropdown-field .psuedo_select {
+    background: rgba(255, 255, 255, 0);
+    position: relative;
+    color: #666;
+    border-bottom: 1px solid var(--squid-ink); 
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 18px;
+    letter-spacing: -0.03em;
+    height: 24px;
+    margin: 24px 32px 0 0;
+    min-width: 250px;
+    padding-top: 24px;
+    outline: 0;
+    z-index: 1;
+}
+
+label.dropdown-field .psuedo_select:focus{
+    box-shadow: 0 1px 0 0 var(--neon-blue);
+    border-bottom: 1px solid var(--squid-ink); 
+}
+
+label.dropdown-field .psuedo_select::after {
+    background: url("data:image/svg+xml;utf8,<svg fill='#666' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'> <path d='M7.41 7.84L12 12.42l4.59-4.58L18 9.25l-6 6-6-6z'/> <path d='M0-.75h24v24H0z' fill='none'/> </svg>") no-repeat;
+    content: "";
+    height: 24px;
+    width: 24px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    transition-property: background-color;
+}
+
+label.dropdown-field .psuedo_select .selected {
+    height: 24px;
+    left: 1px;
+    line-height: 24px;
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    transform: translateY(24px);
+    transition-property: opacity, transform;
+    will-change: transform;
+}
+
+label.dropdown-field .psuedo_select ul {
+    background: #fff;
+    box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.14);
+    display: block;
+    height: 0;
+    list-style: none;
+    margin-top: 2px;
+    opacity: 0;
+    overflow: hidden;
+    padding: 0 1px;
+    pointer-events: none;
+    transition-property: height, opacity;
+    width: 100%;
+    z-index: 2;
+}
+
+label.dropdown-field .psuedo_select ul li {
+    height: 32px;
+    padding: 8px 4px;
+}
+
+label.dropdown-field .deselect {
+    height: 100vh;
+    left: 0;
+    position: fixed;
+    top: 0;
+    width: 100vw;
+    z-index: -1;
+}
+
+label.dropdown-field.focused {
+    color: var(--neon-blue);
+}
+
+label.dropdown-field.focused .psuedo_select {
+    border-color: var(--neon-blue);
+}
+
+label.dropdown-field.focused .psuedo_select::after {
+    background: url("data:image/svg+xml;utf8,<svg fill='#007BED' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'> <path d='M7.41 7.84L12 12.42l4.59-4.58L18 9.25l-6 6-6-6z'/> <path d='M0-.75h24v24H0z' fill='none'/> </svg>") no-repeat;
+}
+
+label.dropdown-field.focused .psuedo_select ul {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.user-clg-roll--input-wrapper{
+    width: 100%;
+    /* padding: 0 15px; */
+    padding-right: 25px;
+    max-width: 596px;
 }
