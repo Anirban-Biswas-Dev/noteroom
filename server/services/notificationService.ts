@@ -1,4 +1,4 @@
-import { Notifs, feedBackNotifs, mentionNotifs } from "../schemas/notifications.js";
+import { Notifs, feedBackNotifs, mentionNotifs, replyNotifs } from "../schemas/notifications.js";
 import { IFeedbackNotificationDB, IMentionNotificationDB, IReplyNotificationDB } from "../types/database.types.js";
 
 
@@ -24,5 +24,9 @@ export async function addMentionNoti(notiData: IMentionNotificationDB) {
     return mentionoti
 }
 
+export async function addReplyNoti(replyData: IReplyNotificationDB) {
+    let replynoti = await replyNotifs.create(replyData)
+    return replynoti
+}
 
 // naming: add<notification-type>Noti
