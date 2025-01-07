@@ -55,10 +55,20 @@ export interface IReplyNotification extends ICommentNotification{
 /**
 * @description - This object is sent to the client via `notification-mention` WS event
 */
-//fixme: check if the `mentionStudentID` is needed or not, it is maybe as same as ownerStudntID
-//fixme: check if the `mention` field is needed or not
+//FIXME: check if the `mentionStudentID` is needed or not, it is maybe as same as ownerStudntID
+//FIXME: check if the `mention` field is needed or not
 export interface IMentionNotification extends ICommentNotification{
     mentionedStudentID: string,
     mention: boolean
 }
 
+
+/**
+* @description - This object is sent to the client via `notification-upvote` WS event
+*/
+export interface IUpVoteNotification {
+    noteID: string,
+    nfnTitle: string,
+    isread: string,
+    notiID: string,
+}

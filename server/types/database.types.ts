@@ -137,3 +137,11 @@ export interface IReplyNotificationDB extends ICommentNotificationDB {
     ownerStudentID: string,
     parentFeedbackDocID: string,
 }
+
+
+export interface IUpVoteNotificationDB {
+    noteDocID: string,
+    voteDocID: string,
+    voterDocID: string,
+    ownerStudentID: string
+}
