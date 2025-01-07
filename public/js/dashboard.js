@@ -2,6 +2,9 @@ const host = window.location.origin
 const socket = io(host)
 
 
+
+
+
 //* Function to get paginated notes
 let page = 2
 async function add_note(count) {

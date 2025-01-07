@@ -363,8 +363,8 @@ const manageNotes = { // I treat all the cards as notes
             <div class="main__cmnts-replies-wrapper">
                 <div class="main__body cmnt-body-3rows">
                     <div class="main__reply-info reply-info">
-                        <span id="parentFeedbackDocID" style="display: none;">${feedbackData._id }</span>
-                        <span id="commenterUsername" style="display: none;">${ feedbackData.commenterDocID.username }</span>
+                        <span id="parentFeedbackDocID" style="display: none;">${feedbackData._id}</span>
+                        <span id="commenterUsername" style="display: none;">${feedbackData.commenterDocID.username}</span>
                         <span class="main__author-name">${feedbackData.commenterDocID.displayname}</span>
                         <span class="reply-date">${formattedDate}</span>
                     </div>
@@ -397,11 +397,11 @@ const manageNotes = { // I treat all the cards as notes
             </div>
         </div>
       `;
-      document.querySelector(".cmnts-list").insertAdjacentHTML('afterbegin', feedbackCard)
+        document.querySelector(".cmnts-list").insertAdjacentHTML('afterbegin', feedbackCard)
     },
 
 
-    addReply: function(threadSection, replyData) {
+    addReply: function (threadSection, replyData) {
         console.log(threadSection)
         let date = new Date(replyData.createdAt)
         const formatter = new Intl.DateTimeFormat('en-US', {
@@ -419,7 +419,7 @@ const manageNotes = { // I treat all the cards as notes
             <img src="${replyData.commenterDocID.profile_pic}" alt="User Avatar" class="cmnt-author-img thread-avatar">
             <div class="cmnt-body-3rows">
                 <div class="reply-info">
-                    <span id="commenterUsername" style="display: none;">${ replyData.commenterDocID.username }</span>
+                    <span id="commenterUsername" style="display: none;">${replyData.commenterDocID.username}</span>
                     <span class="main__author-name">${replyData.commenterDocID.displayname}</span>
                     <span class="reply-date">${formattedDate}</span>
                 </div>
@@ -451,10 +451,10 @@ const manageNotes = { // I treat all the cards as notes
         `;
         let threadEditor = threadSection.querySelector('.thread-editor-container');
         if (!threadEditor) {
-            
+
             threadEditor = document.createElement('div');
             threadEditor.classList.add('thread-editor-container');
-            
+
             // Add the HTML for the thread editor
             threadEditor.innerHTML = `
             <!--<img class="tec__avatar-preview thread-avatar">-->
@@ -467,7 +467,7 @@ const manageNotes = { // I treat all the cards as notes
                 </div>
             </div>
             `;
-            
+
             threadSection.appendChild(threadEditor);
         }
         threadSection.querySelector('.thread-editor-container').insertAdjacentHTML('beforebegin', replyMessage);
@@ -710,9 +710,9 @@ try {
 
 
 let notificationCount = document.getElementById('notification-count').textContent;
-if(notificationCount <= 0) {
+if (notificationCount <= 0) {
     document.getElementById('notification-count').style.display = 'none'
-} 
+}
 
 //* Delete notifications: all pages
 async function deleteNoti(id) {

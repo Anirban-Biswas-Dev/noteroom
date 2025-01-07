@@ -22,8 +22,8 @@ export enum ENotificationType {
  * @param notiID - The `documentID` of the notification. This can be got after saving the necessary notification using **INoteNotificationDB**
  * @param feedbackID - The `documentID` of the feedback/reply. This can be got after saving the necessary feedback/reply using **ICommentDB**
  */
-//fixme:check if the `isread` is actually needed or not. if needed then make it a boolean
-//fixme:the noteID is not needed anymore, cause the note-title won't contain the note's url
+//FIXME:check if the `isread` is actually needed or not. if needed then make it a boolean
+//FIXME:the noteID is not needed anymore, cause the note-title won't contain the note's url
 export interface ICommentNotification {
     noteID: string,
     nfnTitle: string,
@@ -35,7 +35,7 @@ export interface ICommentNotification {
     feedbackID: string
 }
 
-//fixme:maybe the ownerStudentID is not needed anymore as the cookie checking for notification is deprecated
+//FIXME:maybe the ownerStudentID is not needed anymore as the cookie checking for notification is deprecated
 /**
 * @description - This object is sent to the client via `notification-feedback` WS event.
  * @description - The feedback and the reply notification data are same, so they can be sent with the same web-socket event

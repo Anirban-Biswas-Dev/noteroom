@@ -30,6 +30,10 @@ socket.on('increment-upvote', function () {
   document.querySelector('.uv-count').innerHTML = parseInt(uvCount.innerHTML) + 1
 })
 
+socket.on('notification-upvote', function (message) {
+  console.log(message)
+})
+
 
 async function upvote(noteDocID) {
   const voterStudentID = Cookies.get("studentID")
