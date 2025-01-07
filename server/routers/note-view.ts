@@ -156,7 +156,7 @@ function noteViewRouter(io: Server) {
         async function replaceFeedbackText(feedbackText: string) {
             let mentions = checkMentions(feedbackText)
             if (mentions.length !== 0) {
-                let displayNames = (await Students.find({ username: { $in: mentions } }, { displayname: 1 })).map(data => data.displayname.toString())
+                let displayNames = (await Students.find({ username: { $in: mentions } }, { displayname: 1 })).map(data => data.displayname.toString()).reverse()
                 return replaceMentions(feedbackText, displayNames)
             } else {
                 return feedbackText
