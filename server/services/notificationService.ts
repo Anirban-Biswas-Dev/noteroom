@@ -1,5 +1,5 @@
 import { Notifs, feedBackNotifs, mentionNotifs, replyNotifs, votesNotifs } from "../schemas/notifications.js";
-import { IFeedbackNotificationDB, IMentionNotificationDB, IReplyNotificationDB, IUpVoteNotificationDB, IVoteDB } from "../types/database.types.js";
+import { IFeedbackNotificationDB, IMentionNotificationDB, IReplyNotificationDB, IUpVoteNotificationDB } from "../types/database.types.js";
 
 
 

@@ -185,15 +185,18 @@ if ((navigate.type === 'navigate') || (navigate.type == 'reload')) {
 		.then(response =>  response.json() )
 		.then(notifs => {
 			notifs.forEach(noti => {
-				let notiData = {
+				let isVote = noti.docType === "note-vote" ? true : false
+				let _notiData = {
 					notiID: noti._id,
-					feedbackID: noti.feedbackDocID,
 					isread: noti.isRead,
 					noteID: noti.noteDocID._id,
-					nfnTitle: noti.noteDocID.title,
+					nfnTitle: noti.noteDocID.title
+				}
+				let notiData = !isVote ? { ..._notiData, 
+					feedbackID: noti.feedbackDocID,
 					commenterUserName: noti.commenterDocID.username,
 					commenterDisplayName: noti.commenterDocID.displayname
-				}
+				} : _notiData
 				manageDb.add('notis', notiData)
 			})
 		})

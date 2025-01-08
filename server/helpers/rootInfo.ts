@@ -38,6 +38,12 @@ export async function getNotifications(studentID: rootStudentID) {
                     { path: 'commenterDocID', select: 'displayname studentID username' }
                 ]))
             }
+        } else if (doc['docType'] === ENotificationType.UpVote) {
+            if (doc["ownerStudentID"] == studentID) {
+                populatedNotifications.push(doc.populate([
+                    { path: 'noteDocID', select: 'title' },
+                ]))
+            }
         } 
         else {
             populatedNotifications.push(doc)

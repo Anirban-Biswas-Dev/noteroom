@@ -292,13 +292,14 @@ const manageNotes = { // I treat all the cards as notes
         let existingNoti = document.querySelector(`#noti-${feedbackData.notiID}`)
 
         if (!existingNoti) {
+            let isVote = feedbackData.vote ? true : false
             let notificationHtml = `
                   <div class="notification secondary-${feedbackData.isread}" id="noti-${feedbackData.notiID}">
-                      <span class='feedback-id' style="display: none;">${feedbackData.feedbackID}</span>
+                      ${!isVote ? `<span class='feedback-id' style='display: none;'>${feedbackData.feedbackID}</span>` : ""} 
                       <div class="first-row">
                       <div class="frnt-wrapper">
                       <span class="isRead ${feedbackData.isread}"></span>
-                        <a href='/view/${feedbackData.noteID}/#${feedbackData.feedbackID}' class="notification-link">
+                        <a href='/view/${feedbackData.noteID}/${!isVote ? `#${feedbackData.feedbackID}` : ''}' class="notification-link">
                           <span class="notification-title">
                           ${truncatedTitle(feedbackData.nfnTitle)}
                           </span>
@@ -307,9 +308,12 @@ const manageNotes = { // I treat all the cards as notes
                         <span class="remove-notification" onclick="deleteNoti('${feedbackData.notiID}')">&times;</span>
                       </div>
                       <div class="notification-msg">
-                        <a href='/user/${feedbackData.commenterUserName}' class="commenter-prfl">
-                        ${feedbackData.commenterDisplayName}
-                        </a><a href='/view/${feedbackData.noteID}/#${feedbackData.feedbackID}' class="notification-link-2"> ${message}</a>
+                        ${!isVote ? `
+                            <a href='/user/${feedbackData.commenterUserName}' class="commenter-prfl">${feedbackData.commenterDisplayName}</a>
+                            <a href='/view/${feedbackData.noteID}/#${feedbackData.feedbackID}' class="notification-link-2"> ${message}</a>
+                        ` : `<a href='/view/${feedbackData.noteID}' class="notification-link-2"> ${message}</a>`
+                        } 
+                        
                       </div>
                   </div>`
             notificationContainer.insertAdjacentHTML('afterbegin', notificationHtml);
@@ -829,6 +833,23 @@ conSock.on("notification-reply", (replyData, message) => {
     }
 })
 
+conSock.on("notification-upvote", (replyData, message) => {
+    addNoti(replyData, message)
+    manageDb.add('notis', replyData)
+
+    const nftShake = document.querySelector('.mobile-nft-btn')
+    nftShake.classList.add('shake') // 4
+    setTimeout(() => {
+        nftShake.classList.remove('shake');
+    }, 300)
+
+    try {
+        const audio = document.getElementById('notificationAudio');
+        audio.play();
+    } catch (error) {
+        console.error(error)
+    }
+})
 
 try {
     //* Mobile notification panel

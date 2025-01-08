@@ -9,7 +9,8 @@
 export enum ENotificationType {
     Feedback = 'note-feedback',
     Mention = 'note-mention',
-    Reply = 'note-reply'
+    Reply = 'note-reply',
+    UpVote = 'note-vote'
 }
 
 
@@ -71,4 +72,5 @@ export interface IUpVoteNotification {
     nfnTitle: string,
     isread: string,
     notiID: string,
+    vote: boolean
 }

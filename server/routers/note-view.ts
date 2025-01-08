@@ -221,29 +221,30 @@ function noteViewRouter(io: Server) {
             let voterStudentDocID = (await Convert.getDocumentID_studentid(_voterStudentID)).toString()
             
             let voteData = await addVote({ voteType, noteDocID, voterStudentDocID })
+            let upvoteCount = voteData["noteDocID"]["upvoteCount"]
             io.to(noteDocID).emit('increment-upvote')
             
-            //TODO: send notification to the owner of the note about the upvotes
-            let notification_data: IUpVoteNotificationDB = {
-                noteDocID: noteDocID,
-                voteDocID: voteData._id.toString(),
-                voterDocID: voterStudentDocID,
-                ownerStudentID: _ownerStudentID
-            }
-            let notification_db = await addVoteNoti(notification_data)
-            let io_notification_data: IUpVoteNotification = {
-                isread: "false",
-                notiID: notification_db._id.toString(),
-                noteID: noteDocID,
-                nfnTitle: voteData["noteDocID"]["title"]
-            }
-
-            io.to(ownerSocketID).emit('notification-upvote', io_notification_data)
-            
+            upvoteCount % 5 === 0 || upvoteCount === 1 ? (async function() {
+                let notification_data: IUpVoteNotificationDB = {
+                    noteDocID: noteDocID,
+                    voteDocID: voteData._id.toString(),
+                    voterDocID: voterStudentDocID,
+                    ownerStudentID: _ownerStudentID
+                }
+                let notification_db = await addVoteNoti(notification_data)
+                let io_notification_data: IUpVoteNotification = {
+                    isread: "false",
+                    notiID: notification_db._id.toString(),
+                    noteID: noteDocID,
+                    nfnTitle: voteData["noteDocID"]["title"],
+                    vote: true
+                }
+                io.to(ownerSocketID).emit('notification-upvote', io_notification_data, `${upvoteCount} upvotes!! Just got an upvote!`)
+            })() : false
+                        
             res.json({ok: true})
             
         } catch (error) {
-            console.log(error)
             res.json({ ok: false })
         }
         
