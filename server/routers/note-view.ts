@@ -214,6 +214,8 @@ function noteViewRouter(io: Server) {
         const _ownerStudentID = noteOwnerInfo["ownerDocID"]["studentID"].toString()
         let ownerSocketID = userSocketMap.get(_ownerStudentID)
 
+        let isFromDasboard = req.body["fromDashboard"] === "true" ? true : false
+
         try {
             let voteType = <"upvote" | "downvote">req.query["type"]
             let noteDocID = req.body["noteDocID"]
@@ -222,7 +224,8 @@ function noteViewRouter(io: Server) {
             
             let voteData = await addVote({ voteType, noteDocID, voterStudentDocID })
             let upvoteCount = voteData["noteDocID"]["upvoteCount"]
-            io.to(noteDocID).emit('increment-upvote')
+
+            isFromDasboard ? io.emit('increment-upvote-dashboard', noteDocID) : io.to(noteDocID).emit('increment-upvote')
             
             upvoteCount % 5 === 0 || upvoteCount === 1 ? (async function() {
                 let notification_data: IUpVoteNotificationDB = {
@@ -239,6 +242,9 @@ function noteViewRouter(io: Server) {
                     nfnTitle: voteData["noteDocID"]["title"],
                     vote: true
                 }
+
+                //BUG: this ownerSocketID is maybe got from controller.js, so upvote notifications are not handled by the dashboard. 
+                //FIXME: main problem is, every js creates a new socket.id, so everytime it changes. have to make it parmanent. and that will be set when logged in
                 io.to(ownerSocketID).emit('notification-upvote', io_notification_data, `${upvoteCount} upvotes!! Just got an upvote!`)
             })() : false
                         
