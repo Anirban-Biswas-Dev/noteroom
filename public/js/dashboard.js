@@ -1,5 +1,5 @@
 const host = window.location.origin
-const socket = io(host, { query: { studentID: Cookies.get("studentID") } })
+const socket = io(host)
 
 
 socket.on('increment-upvote-dashboard', function (noteDocID) {
