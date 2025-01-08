@@ -9,7 +9,8 @@
 export enum ENotificationType {
     Feedback = 'note-feedback',
     Mention = 'note-mention',
-    Reply = 'note-reply'
+    Reply = 'note-reply',
+    UpVote = 'note-vote'
 }
 
 
@@ -22,8 +23,8 @@ export enum ENotificationType {
  * @param notiID - The `documentID` of the notification. This can be got after saving the necessary notification using **INoteNotificationDB**
  * @param feedbackID - The `documentID` of the feedback/reply. This can be got after saving the necessary feedback/reply using **ICommentDB**
  */
-//fixme:check if the `isread` is actually needed or not. if needed then make it a boolean
-//fixme:the noteID is not needed anymore, cause the note-title won't contain the note's url
+//FIXME:check if the `isread` is actually needed or not. if needed then make it a boolean
+//FIXME:the noteID is not needed anymore, cause the note-title won't contain the note's url
 export interface ICommentNotification {
     noteID: string,
     nfnTitle: string,
@@ -35,7 +36,7 @@ export interface ICommentNotification {
     feedbackID: string
 }
 
-//fixme:maybe the ownerStudentID is not needed anymore as the cookie checking for notification is deprecated
+//FIXME:maybe the ownerStudentID is not needed anymore as the cookie checking for notification is deprecated
 /**
 * @description - This object is sent to the client via `notification-feedback` WS event.
  * @description - The feedback and the reply notification data are same, so they can be sent with the same web-socket event
@@ -55,10 +56,21 @@ export interface IReplyNotification extends ICommentNotification{
 /**
 * @description - This object is sent to the client via `notification-mention` WS event
 */
-//fixme: check if the `mentionStudentID` is needed or not, it is maybe as same as ownerStudntID
-//fixme: check if the `mention` field is needed or not
+//FIXME: check if the `mentionStudentID` is needed or not, it is maybe as same as ownerStudntID
+//FIXME: check if the `mention` field is needed or not
 export interface IMentionNotification extends ICommentNotification{
     mentionedStudentID: string,
     mention: boolean
 }
 
+
+/**
+* @description - This object is sent to the client via `notification-upvote` WS event
+*/
+export interface IUpVoteNotification {
+    noteID: string,
+    nfnTitle: string,
+    isread: string,
+    notiID: string,
+    vote: boolean
+}

@@ -365,7 +365,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // Handle posting replies
       if (event.target.closest('.thread__cmnt-btn')) {
         const textarea = event.target.closest('.thread-editor-container').querySelector('.thread-editor');
-        const replyContent = document.querySelector('#mentioneduser').innerHTML + textarea.value.trim();
+        const replyContent = document.querySelector('#mentioneduser').innerHTML + " " + textarea.value.trim();
 
         if (!replyContent) return; // Prevents posting empty replies
 

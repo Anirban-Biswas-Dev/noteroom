@@ -292,13 +292,14 @@ const manageNotes = { // I treat all the cards as notes
         let existingNoti = document.querySelector(`#noti-${feedbackData.notiID}`)
 
         if (!existingNoti) {
+            let isVote = feedbackData.vote ? true : false
             let notificationHtml = `
                   <div class="notification secondary-${feedbackData.isread}" id="noti-${feedbackData.notiID}">
-                      <span class='feedback-id' style="display: none;">${feedbackData.feedbackID}</span>
+                      ${!isVote ? `<span class='feedback-id' style='display: none;'>${feedbackData.feedbackID}</span>` : ""} 
                       <div class="first-row">
                       <div class="frnt-wrapper">
                       <span class="isRead ${feedbackData.isread}"></span>
-                        <a href='/view/${feedbackData.noteID}/#${feedbackData.feedbackID}' class="notification-link">
+                        <a href='/view/${feedbackData.noteID}/${!isVote ? `#${feedbackData.feedbackID}` : ''}' class="notification-link">
                           <span class="notification-title">
                           ${truncatedTitle(feedbackData.nfnTitle)}
                           </span>
@@ -307,9 +308,12 @@ const manageNotes = { // I treat all the cards as notes
                         <span class="remove-notification" onclick="deleteNoti('${feedbackData.notiID}')">&times;</span>
                       </div>
                       <div class="notification-msg">
-                        <a href='/user/${feedbackData.commenterUserName}' class="commenter-prfl">
-                        ${feedbackData.commenterDisplayName}
-                        </a><a href='/view/${feedbackData.noteID}/#${feedbackData.feedbackID}' class="notification-link-2"> ${message}</a>
+                        ${!isVote ? `
+                            <a href='/user/${feedbackData.commenterUserName}' class="commenter-prfl">${feedbackData.commenterDisplayName}</a>
+                            <a href='/view/${feedbackData.noteID}/#${feedbackData.feedbackID}' class="notification-link-2"> ${message}</a>
+                        ` : `<a href='/view/${feedbackData.noteID}' class="notification-link-2"> ${message}</a>`
+                        } 
+                        
                       </div>
                   </div>`
             notificationContainer.insertAdjacentHTML('afterbegin', notificationHtml);
@@ -363,8 +367,8 @@ const manageNotes = { // I treat all the cards as notes
             <div class="main__cmnts-replies-wrapper">
                 <div class="main__body cmnt-body-3rows">
                     <div class="main__reply-info reply-info">
-                        <span id="parentFeedbackDocID" style="display: none;">${feedbackData._id }</span>
-                        <span id="commenterUsername" style="display: none;">${ feedbackData.commenterDocID.username }</span>
+                        <span id="parentFeedbackDocID" style="display: none;">${feedbackData._id}</span>
+                        <span id="commenterUsername" style="display: none;">${feedbackData.commenterDocID.username}</span>
                         <span class="main__author-name">${feedbackData.commenterDocID.displayname}</span>
                         <span class="reply-date">${formattedDate}</span>
                     </div>
@@ -397,11 +401,11 @@ const manageNotes = { // I treat all the cards as notes
             </div>
         </div>
       `;
-      document.querySelector(".cmnts-list").insertAdjacentHTML('afterbegin', feedbackCard)
+        document.querySelector(".cmnts-list").insertAdjacentHTML('afterbegin', feedbackCard)
     },
 
 
-    addReply: function(threadSection, replyData) {
+    addReply: function (threadSection, replyData) {
         console.log(threadSection)
         let date = new Date(replyData.createdAt)
         const formatter = new Intl.DateTimeFormat('en-US', {
@@ -419,7 +423,7 @@ const manageNotes = { // I treat all the cards as notes
             <img src="${replyData.commenterDocID.profile_pic}" alt="User Avatar" class="cmnt-author-img thread-avatar">
             <div class="cmnt-body-3rows">
                 <div class="reply-info">
-                    <span id="commenterUsername" style="display: none;">${ replyData.commenterDocID.username }</span>
+                    <span id="commenterUsername" style="display: none;">${replyData.commenterDocID.username}</span>
                     <span class="main__author-name">${replyData.commenterDocID.displayname}</span>
                     <span class="reply-date">${formattedDate}</span>
                 </div>
@@ -451,10 +455,10 @@ const manageNotes = { // I treat all the cards as notes
         `;
         let threadEditor = threadSection.querySelector('.thread-editor-container');
         if (!threadEditor) {
-            
+
             threadEditor = document.createElement('div');
             threadEditor.classList.add('thread-editor-container');
-            
+
             // Add the HTML for the thread editor
             threadEditor.innerHTML = `
             <!--<img class="tec__avatar-preview thread-avatar">-->
@@ -467,7 +471,7 @@ const manageNotes = { // I treat all the cards as notes
                 </div>
             </div>
             `;
-            
+
             threadSection.appendChild(threadEditor);
         }
         threadSection.querySelector('.thread-editor-container').insertAdjacentHTML('beforebegin', replyMessage);
@@ -710,9 +714,9 @@ try {
 
 
 let notificationCount = document.getElementById('notification-count').textContent;
-if(notificationCount <= 0) {
+if (notificationCount <= 0) {
     document.getElementById('notification-count').style.display = 'none'
-} 
+}
 
 //* Delete notifications: all pages
 async function deleteNoti(id) {
@@ -829,6 +833,23 @@ conSock.on("notification-reply", (replyData, message) => {
     }
 })
 
+conSock.on("notification-upvote", (replyData, message) => {
+    addNoti(replyData, message)
+    manageDb.add('notis', replyData)
+
+    const nftShake = document.querySelector('.mobile-nft-btn')
+    nftShake.classList.add('shake') // 4
+    setTimeout(() => {
+        nftShake.classList.remove('shake');
+    }, 300)
+
+    try {
+        const audio = document.getElementById('notificationAudio');
+        audio.play();
+    } catch (error) {
+        console.error(error)
+    }
+})
 
 try {
     //* Mobile notification panel

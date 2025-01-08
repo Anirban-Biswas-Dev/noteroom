@@ -3,7 +3,9 @@ import {
     IFeedbackNotificationDB,
     IMentionNotificationDB,
     IReplyDB,
-    IReplyNotificationDB
+    IReplyNotificationDB,
+    IUpVoteNotificationDB,
+    IVoteDB
 } from './../types/database.types.js';
 import {Router} from 'express'
 import Students from '../schemas/students.js'
@@ -12,13 +14,14 @@ import {checkMentions, replaceMentions} from '../helpers/utils.js'
 import {getNotifications, getSavedNotes, profileInfo, unreadNotiCount} from '../helpers/rootInfo.js'
 import {getNote, getOwner} from '../services/noteService.js'
 import {Convert} from '../services/userService.js'
-import {addFeedbackNoti, addMentionNoti, addReplyNoti} from '../services/notificationService.js'
+import {addFeedbackNoti, addMentionNoti, addReplyNoti, addVoteNoti} from '../services/notificationService.js'
 import {addFeedback, addReply} from '../services/feedbackService.js'
 import {
     ENotificationType,
     IFeedBackNotification,
     IMentionNotification,
-    IReplyNotification
+    IReplyNotification,
+    IUpVoteNotification
 } from '../types/notificationService.type.js'
 import {userSocketMap} from '../server.js';
 import addVote from '../services/voteService.js';
@@ -156,7 +159,7 @@ function noteViewRouter(io: Server) {
         async function replaceFeedbackText(feedbackText: string) {
             let mentions = checkMentions(feedbackText)
             if (mentions.length !== 0) {
-                let displayNames = (await Students.find({ username: { $in: mentions } }, { displayname: 1 })).map(data => data.displayname.toString())
+                let displayNames = (await Students.find({ username: { $in: mentions } }, { displayname: 1 })).map(data => data.displayname.toString()).reverse()
                 return replaceMentions(feedbackText, displayNames)
             } else {
                 return feedbackText
@@ -206,17 +209,39 @@ function noteViewRouter(io: Server) {
     })
 
     router.post('/:noteID/vote', async (req, res) => {
+        const _noteDocID = req.params.noteID
+        const noteOwnerInfo = await getOwner({noteDocID: _noteDocID}) 
+        const _ownerStudentID = noteOwnerInfo["ownerDocID"]["studentID"].toString()
+        let ownerSocketID = userSocketMap.get(_ownerStudentID)
+
         try {
             let voteType = <"upvote" | "downvote">req.query["type"]
             let noteDocID = req.body["noteDocID"]
             let _voterStudentID = req.body["voterStudentID"]
             let voterStudentDocID = (await Convert.getDocumentID_studentid(_voterStudentID)).toString()
             
-            await addVote({ voteType, noteDocID, voterStudentDocID })
+            let voteData = await addVote({ voteType, noteDocID, voterStudentDocID })
+            let upvoteCount = voteData["noteDocID"]["upvoteCount"]
             io.to(noteDocID).emit('increment-upvote')
-
-            //TODO: send notification to the owner of the note about the upvotes
-
+            
+            upvoteCount % 5 === 0 || upvoteCount === 1 ? (async function() {
+                let notification_data: IUpVoteNotificationDB = {
+                    noteDocID: noteDocID,
+                    voteDocID: voteData._id.toString(),
+                    voterDocID: voterStudentDocID,
+                    ownerStudentID: _ownerStudentID
+                }
+                let notification_db = await addVoteNoti(notification_data)
+                let io_notification_data: IUpVoteNotification = {
+                    isread: "false",
+                    notiID: notification_db._id.toString(),
+                    noteID: noteDocID,
+                    nfnTitle: voteData["noteDocID"]["title"],
+                    vote: true
+                }
+                io.to(ownerSocketID).emit('notification-upvote', io_notification_data, `${upvoteCount} upvotes!! Just got an upvote!`)
+            })() : false
+                        
             res.json({ok: true})
             
         } catch (error) {
