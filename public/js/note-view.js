@@ -38,16 +38,10 @@ async function upvote(noteDocID) {
   voteData.append('noteDocID', noteDocID)
   voteData.append('voterStudentID', voterStudentID)
 
-  let response = await fetch(`/view/${noteDocID}/vote?type=upvote`, {
+  await fetch(`/view/${noteDocID}/vote?type=upvote`, {
     body: voteData,
     method: 'post'
   })
-  let data = await response.json()
-  data.ok ? (function () {
-    console.log(`saved!`)
-  })() : (function () {
-    console.log(`got a problem`)
-  })()
 }
 
 function formatDate(date) {

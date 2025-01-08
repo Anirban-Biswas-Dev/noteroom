@@ -201,7 +201,7 @@
           <span class="remove-notification" onclick="deleteNoti('<%= noti._id %>')">&times;</span>
         </div>
         <div class="notification-msg">
-            <a href='/view/<%= noti.noteDocID._id %>/' class="notification-link-2 notiLink">Just got an upvote!!</a>
+            <a href='/view/<%= noti.noteDocID._id %>/' class="notification-link-2 notiLink"><%= noti.noteDocID.upvoteCount %> upvotes!! Just got an upvote!!</a>
         </div>
       </div>
     <% } %>

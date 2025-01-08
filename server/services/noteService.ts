@@ -77,7 +77,7 @@ export async function getNote({noteDocID}: IManageUserNote) {
 }
 
 export async function getAllNotes() {
-    let notes = await Notes.find({}, { ownerDocID: 1, title: 1, content: 1, feedbackCount: 1 })
+    let notes = await Notes.find({}, { ownerDocID: 1, title: 1, content: 1, feedbackCount: 1, upvoteCount: 1 })
         .sort({ createdAt: -1 })
         .limit(3)
         .populate('ownerDocID', 'profile_pic displayname studentID username')

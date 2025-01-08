@@ -24,7 +24,7 @@ function dashboardRouter(io: Server) {
             let allNotes = await getAllNotes()
             let savedNotes = await getSavedNotes(req.session["stdid"])
 
-            res.render('dashboard', { root: root, notis: notis, notes: allNotes, savedNotes: savedNotes, alert: alert, unReadCount: unReadCount })
+            res.render('dashboard/dashboard', { root: root, notis: notis, notes: allNotes, savedNotes: savedNotes, alert: alert, unReadCount: unReadCount })
         } else {
             res.redirect('login')
         }

@@ -121,7 +121,7 @@ io.on('connection', (socket) => {
     }
 
     socket.on('disconnect', () => {
-        userSocketMap.forEach((studentID, sockID) => {
+        userSocketMap.forEach((sockID, studentID) => {
             if (sockID === socket.id) {
                 userSocketMap.delete(studentID)
             }
