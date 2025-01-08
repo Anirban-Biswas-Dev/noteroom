@@ -2,6 +2,29 @@ const host = window.location.origin
 const socket = io(host)
 
 
+socket.on('increment-upvote-dashboard', function (noteDocID) {
+	let noteCard = document.querySelector(`#note-${noteDocID}`)
+	noteCard !== null ? (function() {
+		let uvCount = noteCard.querySelector(".uv-count")
+		noteCard.querySelector(".uv-count").innerHTML = parseInt(uvCount.innerHTML) + 1
+	})() : false
+})
+  
+
+async function upvote(noteDocID) {
+	console.log(noteDocID)
+	const voterStudentID = Cookies.get("studentID")
+
+	let voteData = new FormData()
+	voteData.append('noteDocID', noteDocID)
+	voteData.append('voterStudentID', voterStudentID)
+	voteData.append('fromDashboard', "true")
+
+	await fetch(`/view/${noteDocID}/vote?type=upvote`, {
+		body: voteData,
+		method: 'post'
+	})
+}
 
 
 
@@ -27,7 +50,8 @@ async function add_note(count) {
                     profile_pic: note.ownerDocID.profile_pic,
                     noteTitle: note.title,
                     ownerID: note.ownerDocID.studentID,
-                    ownerDisplayName: note.ownerDocID.displayname
+                    ownerDisplayName: note.ownerDocID.displayname,
+					upvoteCount: note.upvoteCount
                 };
                 notesList.push(noteData); // 3
             });

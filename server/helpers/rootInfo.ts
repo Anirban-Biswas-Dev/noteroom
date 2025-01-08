@@ -41,7 +41,7 @@ export async function getNotifications(studentID: rootStudentID) {
         } else if (doc['docType'] === ENotificationType.UpVote) {
             if (doc["ownerStudentID"] == studentID) {
                 populatedNotifications.push(doc.populate([
-                    { path: 'noteDocID', select: 'title' },
+                    { path: 'noteDocID', select: 'title upvoteCount' },
                 ]))
             }
         } 
