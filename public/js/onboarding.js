@@ -7,6 +7,7 @@ const userOnboarding = {
   bio: "",
   favSub: "",
   nonFavSub: "",
+  profilePic: ""
 };
 
 // ************ Slider Moving Codes ***********
@@ -117,8 +118,8 @@ function initializeDistrictSelection() {
       continueButtons[0].classList.remove("req-field-not-selected");
 
       // Detailed logs for debugging
-      console.log("District Selected:", userOnboarding.district);
-      console.log("Updated userOnboarding Object:", userOnboarding);
+      //console.log("District Selected:", userOnboarding.district);
+      //console.log("Updated userOnboarding Object:", userOnboarding);
     });
   });
 
@@ -128,12 +129,12 @@ function initializeDistrictSelection() {
       // Prevent action if the button is inactive
       if (button.classList.contains("req-field-not-selected")) {
         event.preventDefault();
-        console.log(`Button ${index} is inactive. Cannot proceed.`);
+        //console.log(`Button ${index} is inactive. Cannot proceed.`);
       }
 
       // Log for when the button is active and clicked
-      console.log(`Button ${index} clicked. Proceeding to the next section.`);
-      console.log("Current userOnboarding Object:", userOnboarding);
+      //console.log(`Button ${index} clicked. Proceeding to the next section.`);
+      //console.log("Current userOnboarding Object:", userOnboarding);
 
       const tokiClgQtn = document.getElementById("tokiClgQtn");
       tokiClgQtn.textContent = `Which college in ${userOnboarding.district} do you attend?`;
@@ -156,7 +157,7 @@ function initializeButtonDisabling() {
       if (button.classList.contains("req-field-not-selected")) {
         event.preventDefault(); // Prevent default behavior
         event.stopPropagation(); // Stop further event propagation
-        console.log("Button is disabled. Action blocked.");
+        //console.log("Button is disabled. Action blocked.");
       }
     });
   });
@@ -198,7 +199,7 @@ function loadCollegesForDistrict() {
     collegeContainer.innerHTML += collegeHTML;
   });
 
-  console.log(`Loaded colleges for district: ${selectedDistrict}`);
+  //console.log(`Loaded colleges for district: ${selectedDistrict}`);
 }
 
 // Function to handle college selection
@@ -231,7 +232,7 @@ function handleCollegeSelection() {
       userOnboarding.collegeId = collegeId;
       userOnboarding.collegeName = collegeName;
 
-      console.log(`Selected College: ${collegeName}, ID: ${collegeId}`);
+      //console.log(`Selected College: ${collegeName}, ID: ${collegeId}`);
 
       // Enable the second continue button
       continueButton.classList.remove("req-field-not-selected");
@@ -253,7 +254,7 @@ function handleCollegeSelection() {
       userOnboarding.collegeId = null; // Clear any selected college ID
       userOnboarding.collegeName = otherCollegeName;
 
-      console.log(`Entered Other College: ${otherCollegeName}`);
+      //console.log(`Entered Other College: ${otherCollegeName}`);
 
       // Enable the second continue button
       continueButton.classList.remove("req-field-not-selected");
@@ -283,7 +284,7 @@ function storeCollegeSelection() {
         return;
       }
 
-      console.log("User onboarding data:", userOnboarding);
+      //console.log("User onboarding data:", userOnboarding);
       // Proceed to the next step or functionality
     });
   }
@@ -336,7 +337,7 @@ function handleGroupYearRollSelection() {
       document.querySelector("#img_category .selected").textContent =
         groupValue; // Update selected text
       groupSelected = true;
-      console.log(`Group Selected: ${groupValue}`);
+      //console.log(`Group Selected: ${groupValue}`);
       checkAllFieldsCompleted(); // Check if other fields are completed
     }
   });
@@ -349,7 +350,7 @@ function handleGroupYearRollSelection() {
       document.querySelectorAll("#img_category .selected")[1].textContent =
         yearValue; // Update selected text for year
       yearSelected = true;
-      console.log(`Year Selected: ${yearValue}`);
+      //console.log(`Year Selected: ${yearValue}`);
       checkAllFieldsCompleted(); // Check if other fields are completed
     }
   });
@@ -361,7 +362,7 @@ function handleGroupYearRollSelection() {
       // Ensure roll is a max of 3 digits
       userOnboarding.collegeRoll = rollValue; // Push roll value to the onboarding object
       rollEntered = true;
-      console.log(`Roll Number Entered: ${rollValue}`);
+      //console.log(`Roll Number Entered: ${rollValue}`);
     } else {
       userOnboarding.collegeRoll = ""; // Reset roll value if input is invalid
       rollEntered = false;
@@ -376,7 +377,7 @@ function handleGroupYearRollSelection() {
       return;
     }
 
-    console.log("User Onboarding Data:", userOnboarding);
+    //console.log("User Onboarding Data:", userOnboarding);
     // Placeholder for next-step logic
   });
 }
@@ -434,7 +435,7 @@ function loadSubjects() {
     subjectContainer.innerHTML += subjectHTML;
   });
 
-  console.log(`Loaded subjects for group: ${group}`);
+  //console.log(`Loaded subjects for group: ${group}`);
 
   handleSubjectAndBioSelection();
 }
@@ -477,7 +478,7 @@ function handleSubjectAndBioSelection() {
     userOnboarding.nonFavSub = "";
     favSubjectSelected = false;
     nonFavSubjectSelected = false;
-    console.log("All selections cleared. Start fresh.");
+    //console.log("All selections cleared. Start fresh.");
   }
 
   // Subject selection handling
@@ -490,7 +491,7 @@ function handleSubjectAndBioSelection() {
         card.classList.add("selected-fav-subj");
         userOnboarding.favSub = subjectName;
         favSubjectSelected = true;
-        console.log(`Favorite Subject Selected: ${subjectName}`);
+        //console.log(`Favorite Subject Selected: ${subjectName}`);
       } else if (
         !nonFavSubjectSelected &&
         !card.classList.contains("selected-fav-subj")
@@ -499,7 +500,7 @@ function handleSubjectAndBioSelection() {
         card.classList.add("selected-non-fav-subj");
         userOnboarding.nonFavSub = subjectName;
         nonFavSubjectSelected = true;
-        console.log(`Non-Favorite Subject Selected: ${subjectName}`);
+        //console.log(`Non-Favorite Subject Selected: ${subjectName}`);
       } else {
         // If both favorite and non-favorite are selected, restart selection
         clearAllSelections();
@@ -508,9 +509,9 @@ function handleSubjectAndBioSelection() {
         card.classList.add("selected-fav-subj");
         userOnboarding.favSub = subjectName;
         favSubjectSelected = true;
-        console.log(
-          `Restarted Selection. New Favorite Subject: ${subjectName}`
-        );
+        //console.log(
+        //   `Restarted Selection. New Favorite Subject: ${subjectName}`
+        // );
       }
 
       // Update the continue button state
@@ -538,7 +539,21 @@ function handleSubjectAndBioSelection() {
 
     // Store bio in the onboarding object
     userOnboarding.bio = bioTextarea.value.trim();
-    console.log("User Onboarding Data:", userOnboarding);
+
+    let onboardData = new FormData()
+    Object.entries(userOnboarding).forEach(entry => {
+      onboardData.append(entry[0], entry[1])
+    })
+    fetch('/sign-up/onboard', {
+      body: onboardData,
+      method: 'post'
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log('data')
+      })
+    
+
 
     // Placeholder for next-step logic
   });
@@ -751,7 +766,7 @@ var util = {
                       nested_nested_child.tagName == "LI"
                     ) {
                       size += util.f.getSize(nested_nested_child, "height");
-                      console.log("size: " + size);
+                      //console.log("size: " + size);
                     }
                   }
                   util.f.addStyle(
@@ -845,3 +860,21 @@ var util = {
     },
   };
 window.onload = form.f.init.register;
+
+document.querySelector('#profile-pic-selector').addEventListener('click', function() {
+    let imageSelctor = document.querySelector('#profile-picture')
+    imageSelctor.click()
+})
+document.querySelector('#profile-picture').addEventListener('change', function(event) {
+    let profilePic = event.target.files[0]
+    userOnboarding.profilePic = profilePic
+    let selectedProfilePic = document.querySelector('#selected-profile-pic')
+    if(profilePic) {
+        document.querySelector('#profile-picture-preview').style.display = 'flex'
+        let blobUrl = URL.createObjectURL(profilePic)
+        selectedProfilePic.src = blobUrl
+        selectedProfilePic.onload = function() {
+            URL.revokeObjectURL(selectedProfilePic.src);
+        }
+    }
+});

@@ -29,7 +29,7 @@ function signupRouter(io: Server) {
         }
     })
 
-    //critical: there is no folder created for a student when using google-auth or noteroom-auth. when the onboard will be done, profile picture will be added in firebase in a user-folder
+    //CRITICAL: there is no folder created for a student when using google-auth or noteroom-auth. when the onboard will be done, profile picture will be added in firebase in a user-folder
     router.post('/auth/google', async (req, res) => {
         try {
             let { id_token } = req.body
@@ -132,6 +132,28 @@ function signupRouter(io: Server) {
             } else {
                 res.send({ message: error.message })
             }
+        }
+    })
+
+    router.post('/onboard', async (req, res, next) => {
+        try {
+            let profile_pic = Object.values(req.files)[0]
+            console.log(profile_pic)
+            let onboardData = { //* Onboarding data
+                district: req.body['district'],
+                collegeID: req.body['collegeId'] === 'null' ? req.body["collegeName"] : parseInt(req.body["collegeId"]),
+                collegeyear: req.body['collegeYear'],
+                group: req.body['group'],
+                bio: req.body['bio'],
+                favouritesubject: req.body['favSub'],
+                notfavsubject: req.body['nonFavSub'],
+                profile_pic: profile_pic
+            }
+            console.log(onboardData)
+            res.json({ ok: true })
+        } catch (error) {
+            res.json({ ok: false })
+            console.log(error)
         }
     })
 

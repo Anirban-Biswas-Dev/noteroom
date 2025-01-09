@@ -91,6 +91,14 @@ const studentsSchema = new Schema({
     badge: {
         type: String,
         default: "No Badge"
+    },
+    district: {
+        type: String,
+        required: true
+    },
+    collegeID: {
+        type: Schema.Types.Mixed, //* Either the college name (custom one) or the college ID (pre-defined one)
+        required: true
     }
 })
 

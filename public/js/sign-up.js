@@ -70,20 +70,25 @@ socket.on('duplicate-value', (duplicate_field) => {
 // });
 
 // let profile = null
+// document.querySelector('#profile-pic-selector').addEventListener('click', function() {
+//     let imageSelctor = document.querySelector('#profile-picture')
+//     imageSelctor.click()
+// })
 // document.querySelector('#profile-picture').addEventListener('change', function(event) {
-//     let profilePic = event.target.files[0]
-//     profile = profilePic
-//     let profilePreview = document.querySelector('#profile-picture-preview')
-//     if(profilePic) {
-//         let blobUrl = URL.createObjectURL(profilePic)
-//         profilePreview.src = blobUrl
-//         document.querySelector('.profile-picture-upload').style.display = 'none';
-//         profilePreview.style.display = 'block'
-//         profilePreview.onload = function() {
-//             URL.revokeObjectURL(profilePreview.src);
-//             document.querySelector('.profile-pic-preview-placeholder').style.display = 'flex';
-//         }
-//     }
+//     // let profilePic = event.target.files[0]
+//     // profile = profilePic
+//     // let profilePreview = document.querySelector('#profile-picture-preview')
+//     // if(profilePic) {
+//     //     let blobUrl = URL.createObjectURL(profilePic)
+//     //     profilePreview.src = blobUrl
+//     //     document.querySelector('.profile-picture-upload').style.display = 'none';
+//     //     profilePreview.style.display = 'block'
+//     //     profilePreview.onload = function() {
+//     //         URL.revokeObjectURL(profilePreview.src);
+//     //         document.querySelector('.profile-pic-preview-placeholder').style.display = 'flex';
+//     //     }
+//     // }
+//     console.log(`Hello world`)
 // });
 
 // google auth handler
