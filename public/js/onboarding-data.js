@@ -288,3 +288,33 @@ const districtCollegeData = {
     },
   ],
 };
+
+
+const subjectsData = {
+  general: [
+      { name: "Bangla", icon: "bangla.png" },
+      { name: "English", icon: "english.png" },
+      { name: "ICT", icon: "ict.png" },
+      { name: "Statistics", icon: "statistics.png" }
+  ],
+  science: [
+      { name: "Math", icon: "math.png" },
+      { name: "Biology", icon: "biology.png" },
+      { name: "Physics", icon: "physics.png" },
+      { name: "Botany", icon: "botany.png" },
+      { name: "Zoology", icon: "zoology.png" }
+  ],
+  commerce: [
+      { name: "Management", icon: "management.png" },
+      { name: "Finance", icon: "finance.png" },
+      { name: "Accounting", icon: "accounting.png" },
+      { name: "Economics", icon: "economics.png" } // Shared with arts
+  ],
+  arts: [
+      { name: "Logic", icon: "logic.png" },
+      { name: "Islam History", icon: "islam-history.png" },
+      { name: "History", icon: "history.png" },
+      { name: "Civics", icon: "civics.png" },
+      { name: "Economics", icon: "economics.png" } // Shared with commerce
+  ]
+};
