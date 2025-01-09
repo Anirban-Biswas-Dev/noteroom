@@ -106,7 +106,7 @@ function signupRouter(io: Server) {
             // } else {
             //     throw new Error('Profile picture not found')
             // }
-        //fixme: try to enhance the error handling and follow some more structured and generalized way
+        //FIXME: try to enhance the error handling and follow some more structured and generalized way
         } catch (error) {
             if (error.code === 11000) {
                 let duplicate_field = Object.keys(error.keyValue)[0] // Sending the first duplicated field name to the client-side to show an error

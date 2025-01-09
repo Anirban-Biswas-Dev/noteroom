@@ -82,7 +82,7 @@ export interface IReplyDB extends ICommentDB {
 export interface IVoteDB {
     noteDocID: string,
     voterStudentDocID: string,
-    voteType: "upvote" | "downvote"
+    voteType: "upvote" | "downvote",
 }
 
 
@@ -136,4 +136,12 @@ export interface IMentionNotificationDB extends ICommentNotificationDB {
 export interface IReplyNotificationDB extends ICommentNotificationDB {
     ownerStudentID: string,
     parentFeedbackDocID: string,
+}
+
+
+export interface IUpVoteNotificationDB {
+    noteDocID: string,
+    voteDocID: string,
+    voterDocID: string,
+    ownerStudentID: string
 }

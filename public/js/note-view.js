@@ -38,16 +38,10 @@ async function upvote(noteDocID) {
   voteData.append('noteDocID', noteDocID)
   voteData.append('voterStudentID', voterStudentID)
 
-  let response = await fetch(`/view/${noteDocID}/vote?type=upvote`, {
+  await fetch(`/view/${noteDocID}/vote?type=upvote`, {
     body: voteData,
     method: 'post'
   })
-  let data = await response.json()
-  data.ok ? (function () {
-    console.log(`saved!`)
-  })() : (function () {
-    console.log(`got a problem`)
-  })()
 }
 
 function formatDate(date) {
@@ -365,7 +359,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // Handle posting replies
       if (event.target.closest('.thread__cmnt-btn')) {
         const textarea = event.target.closest('.thread-editor-container').querySelector('.thread-editor');
-        const replyContent = document.querySelector('#mentioneduser').innerHTML + textarea.value.trim();
+        const replyContent = document.querySelector('#mentioneduser').innerHTML + " " + textarea.value.trim();
 
         if (!replyContent) return; // Prevents posting empty replies
 
