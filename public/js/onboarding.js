@@ -550,11 +550,9 @@ function handleSubjectAndBioSelection() {
     })
       .then(response => response.json())
       .then(data => {
-        console.log('data')
+        data.url ? window.location.href = data.url : setupErrorPopup(data.message)
       })
     
-
-
     // Placeholder for next-step logic
   });
 
