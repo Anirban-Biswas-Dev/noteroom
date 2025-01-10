@@ -30,6 +30,7 @@ import Alerts from './schemas/alerts.js'
 
 import noteIOHandler from './services/io/ioNoteService.js';
 import notificationIOHandler from './services/io/ioNotifcationService.js';
+import checkOnboarded from './middlewares/onBoardingChecker.js';
 
 
 
@@ -74,12 +75,12 @@ app.use(session({
 app.use(cookieParser()) // Middleware for working with cookies
 app.use(fileUpload()) // Middleware for working with files
 app.use('/login', loginRouter(io))
-app.use('/user', userRouter(io))
+app.use('/user', await checkOnboarded(false), userRouter(io))
 app.use('/sign-up', signupRouter(io))
-app.use('/upload', uploadRouter(io))
-app.use('/view', noteViewRouter(io))
-app.use('/dashboard', dashboardRouter(io))
-app.use('/search-profile', serachProfileRouter(io))
+app.use('/upload', await checkOnboarded(false), uploadRouter(io))
+app.use('/view', await checkOnboarded(false), noteViewRouter(io))
+app.use('/dashboard',await checkOnboarded(false), dashboardRouter(io))
+app.use('/search-profile', await checkOnboarded(false), serachProfileRouter(io))
 app.use('/settings', settingsRouter(io))
 app.use('/api', apiRouter(io))
 app.use(errorHandler) // Middleware for handling errors
@@ -108,9 +109,7 @@ app.get('/about-us', (req, res) => {
 app.get('/privacy-policy', (req, res) => {
     res.render('privacy-policy')
 })
-app.get('/onboarding', (req, res) => {
-    res.render('onboarding')
-})
+app.get('/onboarding', await checkOnboarded(true))
 
 
 export let userSocketMap: Map<string, string> = new Map()
