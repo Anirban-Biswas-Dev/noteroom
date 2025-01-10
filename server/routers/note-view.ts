@@ -66,6 +66,7 @@ function noteViewRouter(io: Server) {
 
         const _commenterStudentID = req.body["commenterStudentID"]
         const commenterDocID = (await Convert.getDocumentID_studentid(_commenterStudentID)).toString()
+        const commenterUsername = await Convert.getUserName_studentid(_commenterStudentID)
         const _noteDocID = req.body["noteDocID"]
         const noteOwnerInfo = await getOwner({noteDocID: _noteDocID}) 
         const _ownerStudentID = noteOwnerInfo["ownerDocID"]["studentID"].toString()
@@ -183,7 +184,7 @@ function noteViewRouter(io: Server) {
     
     
             let mentions = checkMentions(_feedbackContents)
-            await sendMentionNotification(mentions, feedback)
+            await sendMentionNotification(mentions[0] === commenterUsername ? mentions.slice(1) : mentions, feedback)
             
         } else {
             let _replyContent = req.body["replyContent"]
@@ -203,7 +204,7 @@ function noteViewRouter(io: Server) {
             // }
 
             let mentions = checkMentions(_replyContent)
-            await sendMentionNotification(mentions, reply)
+            await sendMentionNotification(mentions[0] === commenterUsername ? mentions.slice(1) : mentions, reply)
         }
         
     })
