@@ -1,7 +1,7 @@
 import { Server } from "socket.io";
-import { addFeedbackNoti, addMentionNoti, addReplyNoti, deleteNoti, readNoti } from "../notificationService.js";
-import { IFeedBackDB, IFeedbackNotificationDB, IMentionNotificationDB, IReplyDB, IReplyNotificationDB } from "../../types/database.types.js";
-import { IFeedBackNotification, IMentionNotification, IReplyNotification } from "../../types/notificationService.type.js";
+import { addFeedbackNoti, addMentionNoti, addReplyNoti, addVoteNoti, deleteNoti, readNoti } from "../notificationService.js";
+import { IFeedbackNotificationDB, IMentionNotificationDB, IReplyNotificationDB, IUpVoteNotificationDB } from "../../types/database.types.js";
+import { IFeedBackNotification, IMentionNotification, IReplyNotification, IUpVoteNotification } from "../../types/notificationService.type.js";
 import { userSocketMap } from "../../server.js";
 import Students from "../../schemas/students.js";
 
@@ -17,8 +17,8 @@ export default function notificationIOHandler(io: Server, socket: any) {
 /**
 * @description - 1. Create a notification document from reply/feedback data, 2. Create a notification object to send via WS, 3. Send the notification with appropiate event name 
 */
-//TODO: clarify each studentID's role
-//TODO: clarify globals
+//NICE-TO-HAVE: clarify each studentID's role
+//NICE-TO-HAVE: clarify globals
 export function NotificationSender(io: Server, globals?: any) {
     return {
         async sendFeedbackNotification(feedbackDocument: any) {
@@ -66,6 +66,30 @@ export function NotificationSender(io: Server, globals?: any) {
             }
             io.to(userSocketMap.get(notification_db.ownerStudentID)).emit("notification-reply", notification_io, "replied to your comment")
         },
+
+        async sendVoteNotification(voteDocument: any) {
+            let upvoteCount = globals.upvoteCount
+            let noteDocID = globals.noteDocID
+            let ownerStudentID = globals.ownerStudentID
+
+            let notification_data: IUpVoteNotificationDB = {
+                noteDocID: noteDocID,
+                voteDocID: voteDocument._id.toString(),
+                voterDocID: globals.voterStudentDocID,
+                ownerStudentID: ownerStudentID
+            }
+            let notification_document = await addVoteNoti(notification_data)
+            
+            let notification_io: IUpVoteNotification = {
+                isread: "false",
+                notiID: notification_document._id.toString(),
+                noteID: noteDocID,
+                nfnTitle: voteDocument["noteDocID"]["title"],
+                vote: true
+            }
+
+            io.to(userSocketMap.get(ownerStudentID)).emit('notification-upvote', notification_io, `${upvoteCount} upvotes!! Just got an upvote!`)
+        },
         
         /**
         * @param baseDocument - This will be the feedback/reply data on which the mentions will be filtered
@@ -99,9 +123,5 @@ export function NotificationSender(io: Server, globals?: any) {
                 })
             }
         },
-
-        async sendVoteNotification() {
-
-        }
     }
 }
