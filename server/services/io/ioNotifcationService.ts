@@ -1,5 +1,9 @@
 import { Server } from "socket.io";
-import { deleteNoti, readNoti } from "../notificationService.js";
+import { addFeedbackNoti, addMentionNoti, addReplyNoti, deleteNoti, readNoti } from "../notificationService.js";
+import { IFeedBackDB, IFeedbackNotificationDB, IMentionNotificationDB, IReplyDB, IReplyNotificationDB } from "../../types/database.types.js";
+import { IFeedBackNotification, IMentionNotification, IReplyNotification } from "../../types/notificationService.type.js";
+import { userSocketMap } from "../../server.js";
+import Students from "../../schemas/students.js";
 
 export default function notificationIOHandler(io: Server, socket: any) {
     socket.on('delete-noti', async (notiID: any) => {
@@ -8,4 +12,96 @@ export default function notificationIOHandler(io: Server, socket: any) {
     socket.on("read-noti", async (notiID: string) => {
         await readNoti(notiID)
     })
+}
+
+/**
+* @description - 1. Create a notification document from reply/feedback data, 2. Create a notification object to send via WS, 3. Send the notification with appropiate event name 
+*/
+//TODO: clarify each studentID's role
+//TODO: clarify globals
+export function NotificationSender(io: Server, globals?: any) {
+    return {
+        async sendFeedbackNotification(feedbackDocument: any) {
+            let ownerStudentID = globals.ownerStudentID
+            let ownerSocketID = userSocketMap.get(ownerStudentID)
+            
+            let notification_db: IFeedbackNotificationDB = {
+                commenterDocID: globals.commenterDocID,
+                feedbackDocID: feedbackDocument._id.toString(),
+                noteDocID: globals.noteDocID,
+                ownerStudentID: ownerStudentID
+            }
+            let notification_document = await addFeedbackNoti(notification_db)
+    
+            let notification_io: IFeedBackNotification = {
+                noteID: globals.noteDocID,
+                notiID: notification_document["_id"].toString(),
+                feedbackID: feedbackDocument["_id"].toString(),
+                ownerStudentID: ownerStudentID,
+                commenterDisplayName: feedbackDocument["commenterDocID"]["displayname"],
+                nfnTitle: feedbackDocument["noteDocID"]["title"],
+                isread: "false",
+            } 
+            io.to(ownerSocketID).emit('notification-feedback', notification_io, "has given feedback on your notes! Check it out.")
+        },
+        
+        async sendReplyNotification(replyDocument: any) {
+            let notification_db: IReplyNotificationDB = {
+                noteDocID: globals.noteDocID,
+                commenterDocID: replyDocument["commenterDocID"]._id.toString(),
+                ownerStudentID: replyDocument["parentFeedbackDocID"]["commenterDocID"].studentID, //* The student who gave the main feedback
+                feedbackDocID: replyDocument["_id"].toString(),
+                parentFeedbackDocID: replyDocument["parentFeedbackDocID"]._id.toString()
+            }
+            let notification_document = await addReplyNoti(notification_db)
+
+            let notification_io: IReplyNotification = {
+                noteID: globals.noteDocID,
+                notiID: notification_document["_id"].toString(),
+                feedbackID: replyDocument["_id"].toString(),
+                ownerStudentID: "",
+                isread: "false",
+                nfnTitle: replyDocument["noteDocID"]["title"],
+                commenterDisplayName: replyDocument["commenterDocID"]["displayname"]
+            }
+            io.to(userSocketMap.get(notification_db.ownerStudentID)).emit("notification-reply", notification_io, "replied to your comment")
+        },
+        
+        /**
+        * @param baseDocument - This will be the feedback/reply data on which the mentions will be filtered
+        * @param mentions - A list of usernames
+        */
+        async sendMentionNotification(mentions: string[], baseDocument: any) {
+            if (mentions.length !== 0) {
+                let mentionedStudentIDs = (await Students.find({ username: { $in: mentions } }, { studentID: 1 })).map(data => data.studentID)
+                mentionedStudentIDs.map(async studentID => {
+                    if (globals.commenterStudentID !== studentID) {
+                        let notification_db: IMentionNotificationDB = {
+                            noteDocID: globals.noteDocID,
+                            commenterDocID: globals.commenterDocID,
+                            feedbackDocID: baseDocument["_id"].toString(),
+                            mentionedStudentID: studentID
+                        }
+                        let notification_document = await addMentionNoti(notification_db)
+    
+                        let notification_io: IMentionNotification = {
+                            noteID: globals.noteDocID,
+                            notiID: notification_document["_id"].toString(),
+                            feedbackID: baseDocument["_id"].toString(),
+                            mentionedStudentID: studentID,
+                            commenterDisplayName: baseDocument["commenterDocID"]["displayname"],
+                            nfnTitle: baseDocument["noteDocID"]["title"],
+                            isread: "false",
+                            mention: true
+                        }
+                        io.to(userSocketMap.get(studentID)).emit("notification-mention", notification_io, "has mentioned you")
+                    }
+                })
+            }
+        },
+
+        async sendVoteNotification() {
+
+        }
+    }
 }

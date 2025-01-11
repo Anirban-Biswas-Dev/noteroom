@@ -1,8 +1,0 @@
-Done:
-	1. Upvote from dashboard and note-view
-	2. Optimized the notification handlers, every page can capture notifications and show them
-	3. Onboard logic, but still need some optimization
-
-Need:
-	1. Upvote filled arrow state
-	2. Save button saved state

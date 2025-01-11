@@ -8,7 +8,14 @@ export async function addFeedback(feedbackData: IFeedBackDB) {
     let feedback = await Feedbacks.create(feedbackData)
     let extendedFeedback = await Feedbacks.findById(feedback._id)
         .populate('commenterDocID', 'displayname username studentID profile_pic')
-        .populate('noteDocID', 'title')
+        .populate({
+            path: 'noteDocID',
+            select: 'ownerDocID title',
+            populate: {
+                path: 'ownerDocID',
+                select: 'studentID username'
+            }
+        })
 
     return extendedFeedback
 }
