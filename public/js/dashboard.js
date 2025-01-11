@@ -1,6 +1,33 @@
 const host = window.location.origin
 const socket = io(host)
 
+
+socket.on('increment-upvote-dashboard', function (noteDocID) {
+	let noteCard = document.querySelector(`#note-${noteDocID}`)
+	noteCard !== null ? (function() {
+		let uvCount = noteCard.querySelector(".uv-count")
+		noteCard.querySelector(".uv-count").innerHTML = parseInt(uvCount.innerHTML) + 1
+	})() : false
+})
+  
+
+async function upvote(noteDocID) {
+	console.log(noteDocID)
+	const voterStudentID = Cookies.get("studentID")
+
+	let voteData = new FormData()
+	voteData.append('noteDocID', noteDocID)
+	voteData.append('voterStudentID', voterStudentID)
+	voteData.append('fromDashboard', "true")
+
+	await fetch(`/view/${noteDocID}/vote?type=upvote`, {
+		body: voteData,
+		method: 'post'
+	})
+}
+
+
+
 //* Function to get paginated notes
 let page = 2
 async function add_note(count) {
@@ -23,7 +50,8 @@ async function add_note(count) {
                     profile_pic: note.ownerDocID.profile_pic,
                     noteTitle: note.title,
                     ownerID: note.ownerDocID.studentID,
-                    ownerDisplayName: note.ownerDocID.displayname
+                    ownerDisplayName: note.ownerDocID.displayname,
+					upvoteCount: note.upvoteCount
                 };
                 notesList.push(noteData); // 3
             });
@@ -181,15 +209,18 @@ if ((navigate.type === 'navigate') || (navigate.type == 'reload')) {
 		.then(response =>  response.json() )
 		.then(notifs => {
 			notifs.forEach(noti => {
-				let notiData = {
+				let isVote = noti.docType === "note-vote" ? true : false
+				let _notiData = {
 					notiID: noti._id,
-					feedbackID: noti.feedbackDocID,
 					isread: noti.isRead,
 					noteID: noti.noteDocID._id,
-					nfnTitle: noti.noteDocID.title,
+					nfnTitle: noti.noteDocID.title
+				}
+				let notiData = !isVote ? { ..._notiData, 
+					feedbackID: noti.feedbackDocID,
 					commenterUserName: noti.commenterDocID.username,
 					commenterDisplayName: noti.commenterDocID.displayname
-				}
+				} : _notiData
 				manageDb.add('notis', notiData)
 			})
 		})

@@ -4,95 +4,95 @@ const socket = io(host)
 socket.emit('connection')
 
 function show_warning() {
-    document.querySelector('input.email').value = ""
-    document.querySelector('input.password').value = ""
-    document.querySelector('input.email').style.border = "2px solid red"
-    document.querySelector('input.password').style.border = "2px solid red"
+    document.querySelector('input[name="email"]').value = ""
+    document.querySelector('input[name="password"]').value = ""
+    document.querySelector('input[name="email"]').style.border = "2px solid red"
+    document.querySelector('input[name="password"]').style.border = "2px solid red"
 }
 
 socket.on('wrong-cred', function() {
-    hideLoader(true)
+    document.querySelector('#login-spinner').style.display = "none"
     setupErrorPopup("Sorry! Credentials are not accepted")
     show_warning()
 })
 
 socket.on('no-email', function() {
-    hideLoader(true)
+    document.querySelector('#login-spinner').style.display = "none"
     setupErrorPopup("Sorry! No student account is associated with that email account")
     show_warning()
 })
 
+// google auth handler
+function handleCredentialResponse(response) {
+    const id_token = response.credential;
+    let idData = new FormData()
+    idData.append("id_token", id_token)
+
+    fetch("/login/auth/google", {
+        method: "post",
+        body: idData,
+    })
+        .then(response => response.json())
+        .then(data => {
+            data.message ? (function(){
+                setupErrorPopup(data.message)
+                document.querySelector('#login-spinner').style.display = "none"
+            })() : data.redirect ? window.location.href = data.redirect : ""
+        })
+        .catch(error => (function (){
+            document.querySelector('#login-spinner').style.display = "none";
+            setupErrorPopup("Sorry! Something went wrong with the server. Please try again a bit later!")
+        })())
+        
+    document.querySelector('#login-spinner').style.display = "flex";
+}
+
+
+
 document.addEventListener('DOMContentLoaded', function() {
-    const togglePassword = document.querySelector('.toggle-password');
-    const password = document.querySelector('.password');
+    const togglePassword = document.querySelector('#togglePassword');
+    const password = document.querySelector('input[name="password"]');
+
 
     if (togglePassword && password) {
-        togglePassword.addEventListener('click', function() {
+        togglePassword.addEventListener('click', function () {
             const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+
             password.setAttribute('type', type);
-            this.textContent = this.textContent === 'Show' ? 'Hide' : 'Show';
+
+            const icon = this.querySelector('i');
+            icon.classList.toggle('fa-eye');
+            icon.classList.toggle('fa-eye-slash');
         });
+
     }
 });
 
-document.querySelector('.login-button').addEventListener('click', function() {
-    let email = document.querySelector('.email').value
-    let password = document.querySelector('.password').value
+// noteroom-auth handler
+document.querySelector('.primary-btn').addEventListener('click', function() {
+    let email = document.querySelector('input[name="email"]').value
+    let password = document.querySelector('input[name="password"]').value
+    let loginSpinner = document.querySelector('#login-spinner')
 
     if(email && password) {
         let formData = new FormData()
         formData.append('email', email)
         formData.append('password', password)
-    
-        const style = document.createElement('style')
-        style.id = 'temp'
-        style.innerHTML = `
-            body {
-                margin: 0;
-                padding: 0;
-                width: 100vw;
-                height: 100vh;
-                overflow: hidden;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                background: #07192d;
-            }
-            `;
-        
+
         fetch('/login', {
             method: 'POST',
             body: formData
         }).then(response => { return response.json() })
-            .then(data => { 
+            .then(data => {
                 if(data.url) {
-                    hideLoader()
-                    window.location.href = data.url 
+                    loginSpinner.style.display = 'none'
+                    window.location.href = data.url
                 } else {
-                    hideLoader(true)
-                    setupErrorPopup(data.message)
+                    loginSpinner.style.display = 'none'
                 }
             })
             .catch(error => { console.error(error) })
-    
-        document.head.appendChild(style);
-        showLoader()
-    }
+        }
 
+        loginSpinner.style.display = 'flex'
 })
-
-function showLoader() {
-    document.querySelector('.login-container').style.display = 'none'
-    document.querySelector('.content-loader').style.display = 'block'
-}
-
-function hideLoader(restore=false) {
-    if(!restore) {
-        document.querySelector('.content-loader').style.display = 'none'
-    } else {
-        document.querySelector('.content-loader').style.display = 'none'
-        document.querySelector('.login-container').style.display = 'block'
-        document.querySelector('style#temp').remove()
-    }
-}
-

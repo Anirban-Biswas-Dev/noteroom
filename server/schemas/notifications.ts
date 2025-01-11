@@ -2,7 +2,7 @@ import { Schema, model } from 'mongoose'
 
 const baseOptions = {
     discriminatorKey: 'docType',
-    collection: 'notifications'
+    collection: 'notifs'
 }
 
 const NotifsSchema = new Schema({
@@ -15,7 +15,7 @@ const NotifsSchema = new Schema({
         default: Date.now
     }
 }, baseOptions)
-const NotifsModel = model('notifications', NotifsSchema)
+const NotifsModel = model('notifs', NotifsSchema)
 
 
 const feedBackSchema = new Schema({
@@ -35,7 +35,7 @@ const feedBackSchema = new Schema({
     },
     ownerStudentID: String,
 })
-const feedBackNotifs = NotifsModel.discriminator('feedback', feedBackSchema)
+const feedBackNotifs = NotifsModel.discriminator('note-feedback', feedBackSchema)
 
 
 const mentionSchema = new Schema({
@@ -54,8 +54,56 @@ const mentionSchema = new Schema({
         required: true
     },
     mentionedStudentID: String, // The person who is being mentioned
+}) 
+const mentionNotifs = NotifsModel.discriminator('note-mention', mentionSchema)
+
+
+
+const replySchema = new Schema({
+    noteDocID: {
+        type: Schema.Types.ObjectId,
+        ref: 'notes',
+        required: true
+    },
+    commenterDocID: {
+        type: Schema.Types.ObjectId,
+        ref: 'students',
+        required: true,
+    },
+    parentFeedbackDocID: { // This is needed for sending notification to the user who gave the feedback
+        type: Schema.Types.ObjectId,
+        required: true
+    },
+    feedbackDocID: {
+        type: Schema.Types.ObjectId,
+        required: true
+    },
+    ownerStudentID: String, // The person who owns the note
 })
-const mentionNotifs = NotifsModel.discriminator('mention', mentionSchema)
+const replyNotifs = NotifsModel.discriminator('note-reply', replySchema)
+
+
+
+const voteSchema = new Schema({
+    noteDocID: {
+        type: Schema.Types.ObjectId,
+        ref: 'notes',
+        required: true
+    },
+    voteDocID: {
+        type: Schema.Types.ObjectId,
+        ref: 'votes',
+        required: true
+    },
+    voterDocID: {
+        type: Schema.Types.ObjectId,
+        ref: 'students',
+        required: true
+    },
+    ownerStudentID: String
+})
+const votesNotifs = NotifsModel.discriminator('note-vote', voteSchema)
+
 
 
 
@@ -64,3 +112,7 @@ const _feedBackNotifs = feedBackNotifs
 export { _feedBackNotifs as feedBackNotifs }
 const _mentionNotifs = mentionNotifs
 export { _mentionNotifs as mentionNotifs }
+const _replyNotifs = replyNotifs
+export { _replyNotifs as replyNotifs }
+const _votesNotifs = votesNotifs
+export { _votesNotifs as votesNotifs }

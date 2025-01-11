@@ -209,11 +209,11 @@ const manageNotes = { // I treat all the cards as notes
                               </div>
                               <div class="note-engagement">
                             <div class="vote-container">
-                                <div class="uv-container">
+                                <div class="uv-container" onclick="upvote('${noteData.noteID}')">
                                     <svg class="uv-icon" width="18" height="19" viewBox="0 0 22 23" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M20.293 10.2935L19.5859 11.0006L20.293 10.2935ZM10.2929 1.70717L9.58575 1.00008L10.2929 1.70717ZM9.58575 1.00008L0.999862 9.58646L2.41412 11.0006L11 2.41425L9.58575 1.00008ZM2.41412 13.0006H6V11.0006H2.41412V13.0006ZM6 13.0006V19.5H8V13.0006H6ZM9.5 23H12.5V21H9.5V23ZM16 19.5V13.0006H14V19.5H16ZM16 13.0006H19.5859V11.0006H16V13.0006ZM21.0001 9.58646L12.4143 1.00008L11 2.41425L19.5859 11.0006L21.0001 9.58646ZM19.5859 13.0006C21.3677 13.0006 22.26 10.8464 21.0001 9.58646L19.5859 11.0006L19.5859 11.0006V13.0006ZM16 13.0006L16 13.0006V11.0006C14.8954 11.0006 14 11.8961 14 13.0006H16ZM12.5 23C14.433 23 16 21.433 16 19.5H14C14 20.3284 13.3284 21 12.5 21V23ZM6 19.5C6 21.433 7.567 23 9.5 23V21C8.67157 21 8 20.3284 8 19.5H6ZM6 13.0006L6 13.0006H8C8 11.8961 7.10457 11.0006 6 11.0006V13.0006ZM0.999862 9.58646C-0.260013 10.8464 0.632334 13.0006 2.41412 13.0006V11.0006L2.41412 11.0006L0.999862 9.58646ZM11 2.41425L11 2.41425L12.4143 1.00008C11.6332 0.218978 10.3668 0.218978 9.58575 1.00008L11 2.41425Z" fill="black"/>
                                         </svg>									
-                                    <span class="uv-count">0</span>
+                                    <span class="uv-count">${noteData.upvoteCount}</span>
                                 </div>
                                 <div class="divider-uv-dv"></div>
                                 <div class="dv-container">
@@ -287,18 +287,19 @@ const manageNotes = { // I treat all the cards as notes
      * @param {Object} feedbackData - { notiID, feedbackID, isread, noteID, nfnTitle, commenterUserName, commenterDisplayName }
      * @description - First checks if there is already a noti div with noti-notiID, if not, adds one
     */
-    addNoti: function (feedbackData) {
+    addNoti: function (feedbackData, message) {
         let notificationContainer = document.querySelector('.notifications-container')
         let existingNoti = document.querySelector(`#noti-${feedbackData.notiID}`)
 
         if (!existingNoti) {
+            let isVote = feedbackData.vote ? true : false
             let notificationHtml = `
                   <div class="notification secondary-${feedbackData.isread}" id="noti-${feedbackData.notiID}">
-                      <span class='feedback-id' style="display: none;">${feedbackData.feedbackID}</span>
+                      ${!isVote ? `<span class='feedback-id' style='display: none;'>${feedbackData.feedbackID}</span>` : ""} 
                       <div class="first-row">
                       <div class="frnt-wrapper">
                       <span class="isRead ${feedbackData.isread}"></span>
-                        <a href='/view/${feedbackData.noteID}/#${feedbackData.feedbackID}' class="notification-link">
+                        <a href='/view/${feedbackData.noteID}/${!isVote ? `#${feedbackData.feedbackID}` : ''}' class="notification-link">
                           <span class="notification-title">
                           ${truncatedTitle(feedbackData.nfnTitle)}
                           </span>
@@ -307,9 +308,12 @@ const manageNotes = { // I treat all the cards as notes
                         <span class="remove-notification" onclick="deleteNoti('${feedbackData.notiID}')">&times;</span>
                       </div>
                       <div class="notification-msg">
-                        <a href='/user/${feedbackData.commenterUserName}' class="commenter-prfl">
-                        ${feedbackData.commenterDisplayName}
-                        </a><a href='/view/${feedbackData.noteID}/#${feedbackData.feedbackID}' class="notification-link-2"> has given feedback on your notes! Check it out.</a>
+                        ${!isVote ? `
+                            <a href='/user/${feedbackData.commenterUserName}' class="commenter-prfl">${feedbackData.commenterDisplayName}</a>
+                            <a href='/view/${feedbackData.noteID}/#${feedbackData.feedbackID}' class="notification-link-2"> ${message}</a>
+                        ` : `<a href='/view/${feedbackData.noteID}' class="notification-link-2"> ${message}</a>`
+                        } 
+                        
                       </div>
                   </div>`
             notificationContainer.insertAdjacentHTML('afterbegin', notificationHtml);
@@ -342,7 +346,7 @@ const manageNotes = { // I treat all the cards as notes
         let date = new Date(feedbackData.createdAt)
         const formatter = new Intl.DateTimeFormat('en-US', {
             year: 'numeric',
-            month: 'long',
+            month: 'short',
             day: 'numeric',
             hour: '2-digit',
             minute: '2-digit',
@@ -350,26 +354,129 @@ const manageNotes = { // I treat all the cards as notes
             hour12: true
         });
         const formattedDate = formatter.format(date);
-        let feedbackCard = `<div class="feedback" id="${feedbackData._id}">
-							<div class="feedback-header">
-                            	<span class="feedback-id" style="display: none;">${feedbackData._id}</span>
-								<img src="${feedbackData.commenterDocID.profile_pic}" alt="User Avatar" class="feedback-avatar">
-								<div class="feedback-author-info">
-									<a href='/user/${feedbackData.commenterDocID.username}'><h4 class="feedback-author">${feedbackData.commenterDocID.displayname}</h4></a>
-									<span class="feedback-date">${formattedDate}</span>
-								</div>
-							</div>
-							<div class="feedback-body">
-									<p>${feedbackData.feedbackContents}</p>
-							</div>
-							<div class="feedback-actions">
-								<!-- <button type="button" class="btn-reply">Reply</button> -->
-								<!-- <button type="button" class="btn-like">Like</button> -->
-							</div>
-						</div>` //* This feedback-card is used to broadcast the extented-feedback to all the users via websockets
+        let feedbackCard = `
+        <div class='main-cmnt-container'>
+            <div class="main__author-threadline-wrapper">
+                <img
+                    src="${feedbackData.commenterDocID.profile_pic}"
+                    alt="User Avatar"
+                    class="main__cmnt-author-img cmnt-author-img"
+                />
+                <div class="thread-line"></div>
+             </div>
+            <div class="main__cmnts-replies-wrapper">
+                <div class="main__body cmnt-body-3rows">
+                    <div class="main__reply-info reply-info">
+                        <span id="parentFeedbackDocID" style="display: none;">${feedbackData._id}</span>
+                        <span id="commenterUsername" style="display: none;">${feedbackData.commenterDocID.username}</span>
+                        <span class="main__author-name">${feedbackData.commenterDocID.displayname}</span>
+                        <span class="reply-date">${formattedDate}</span>
+                    </div>
+                    <div class="main__reply-msg reply-msg">${feedbackData.feedbackContents}</div>
+                    <div class="main__engagement-opts engagement-opts">
+                        <div class="vote-container">
+                            <div class="uv-container">
+                                <svg class="uv-icon" width="15" height="16" viewBox="0 0 22 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M20.293 10.2935L19.5859 11.0006L20.293 10.2935ZM10.2929 1.70717L9.58575 1.00008L10.2929 1.70717ZM9.58575 1.00008L0.999862 9.58646L2.41412 11.0006L11 2.41425L9.58575 1.00008ZM2.41412 13.0006H6V11.0006H2.41412V13.0006ZM6 13.0006V19.5H8V13.0006H6ZM9.5 23H12.5V21H9.5V23ZM16 19.5V13.0006H14V19.5H16ZM16 13.0006H19.5859V11.0006H16V13.0006ZM21.0001 9.58646L12.4143 1.00008L11 2.41425L19.5859 11.0006L21.0001 9.58646ZM19.5859 13.0006C21.3677 13.0006 22.26 10.8464 21.0001 9.58646L19.5859 11.0006L19.5859 11.0006V13.0006ZM16 13.0006L16 13.0006V11.0006C14.8954 11.0006 14 11.8961 14 13.0006H16ZM12.5 23C14.433 23 16 21.433 16 19.5H14C14 20.3284 13.3284 21 12.5 21V23ZM6 19.5C6 21.433 7.567 23 9.5 23V21C8.67157 21 8 20.3284 8 19.5H6ZM6 13.0006L6 13.0006H8C8 11.8961 7.10457 11.0006 6 11.0006V13.0006ZM0.999862 9.58646C-0.260013 10.8464 0.632334 13.0006 2.41412 13.0006V11.0006L2.41412 11.0006L0.999862 9.58646ZM11 2.41425L11 2.41425L12.4143 1.00008C11.6332 0.218978 10.3668 0.218978 9.58575 1.00008L11 2.41425Z" fill="black"/>
+                                    </svg>									
+                                <span class="uv-count">0</span>
+                            </div>
+                            <div class="divider-uv-dv"></div>
+                            <div class="dv-container">
+                                <svg class="dv-icon" width="15" height="16" viewBox="0 0 22 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1.72696 13.8523L2.42297 13.1343L1.72696 13.8523ZM11.8598 22.2816L12.5779 22.9776L11.8598 22.2816ZM12.5779 22.9776L21.0288 14.2583L19.5926 12.8664L11.1418 21.5856L12.5779 22.9776ZM19.5614 10.8666L15.976 10.9226L16.0072 12.9223L19.5926 12.8664L19.5614 10.8666ZM15.976 10.9226L15.8746 4.42398L13.8748 4.45518L13.9762 10.9538L15.976 10.9226ZM12.3204 0.979002L9.3208 1.0258L9.352 3.02556L12.3516 2.97876L12.3204 0.979002ZM5.87582 4.57998L5.97721 11.0786L7.97697 11.0474L7.87558 4.54878L5.87582 4.57998ZM5.97721 11.0786L2.39177 11.1345L2.42297 13.1343L6.00841 13.0783L5.97721 11.0786ZM1.03095 14.5703L9.74973 23.0217L11.1418 21.5856L2.42297 13.1343L1.03095 14.5703ZM2.39177 11.1345C0.6102 11.1623 -0.24843 13.3302 1.03095 14.5703L2.42297 13.1343L2.42297 13.1343L2.39177 11.1345ZM5.97721 11.0786L5.97721 11.0786L6.00841 13.0783C7.11285 13.0611 7.9942 12.1518 7.97697 11.0474L5.97721 11.0786ZM9.3208 1.0258C7.38804 1.05596 5.84567 2.64721 5.87582 4.57998L7.87558 4.54878C7.86266 3.72045 8.52367 3.03848 9.352 3.02556L9.3208 1.0258ZM15.8746 4.42398C15.8445 2.49122 14.2532 0.948848 12.3204 0.979002L12.3516 2.97876C13.18 2.96584 13.8619 3.62685 13.8748 4.45518L15.8746 4.42398ZM15.976 10.9226L15.976 10.9226L13.9762 10.9538C13.9935 12.0582 14.9028 12.9395 16.0072 12.9223L15.976 10.9226ZM21.0288 14.2583C22.2689 12.9789 21.343 10.8388 19.5614 10.8666L19.5926 12.8664L19.5926 12.8664L21.0288 14.2583ZM11.1418 21.5856L11.1418 21.5856L9.74973 23.0217C10.5429 23.7905 11.8091 23.7708 12.5779 22.9776L11.1418 21.5856Z" fill="black"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <svg 
+                            class="reply-icon thread-opener"
+                            data-tippy-content="Reply"
+                            width="25" height="24" viewBox="0 0 22 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M18.7186 12.9452C18.7186 13.401 18.5375 13.8382 18.2152 14.1605C17.8929 14.4829 17.4557 14.6639 16.9999 14.6639H6.68747L3.25 18.1014V4.35155C3.25 3.89571 3.43108 3.45854 3.75341 3.13622C4.07573 2.81389 4.5129 2.63281 4.96873 2.63281H16.9999C17.4557 2.63281 17.8929 2.81389 18.2152 3.13622C18.5375 3.45854 18.7186 3.89571 18.7186 4.35155V12.9452Z" stroke="#1E1E1E" stroke-width="1.14582" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>                    
+                    </div>
+                </div>
 
-        document.querySelector('.feedbacks-list').insertAdjacentHTML('afterbegin', feedbackCard) // The feedback will be shown at the top while posting (not fetching)
-    }
+                <div class="thread-section" id="thread-${feedbackData._id}"></div>
+            </div>
+        </div>
+      `;
+        document.querySelector(".cmnts-list").insertAdjacentHTML('afterbegin', feedbackCard)
+    },
+
+
+    addReply: function (threadSection, replyData) {
+        console.log(threadSection)
+        let date = new Date(replyData.createdAt)
+        const formatter = new Intl.DateTimeFormat('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            timeZone: 'Asia/Dhaka',
+            hour12: true
+        });
+        const formattedDate = formatter.format(date);
+        replyMessage = `
+        <div class='thread-msg'>
+            <img src="${replyData.commenterDocID.profile_pic}" alt="User Avatar" class="cmnt-author-img thread-avatar">
+            <div class="cmnt-body-3rows">
+                <div class="reply-info">
+                    <span id="commenterUsername" style="display: none;">${replyData.commenterDocID.username}</span>
+                    <span class="main__author-name">${replyData.commenterDocID.displayname}</span>
+                    <span class="reply-date">${formattedDate}</span>
+                </div>
+                <div class="reply-msg">${replyData.feedbackContents}</div>
+                <div class="main__engagement-opts engagement-opts">
+                <div class="vote-container">
+                    <div class="uv-container">
+                        <svg class="uv-icon" width="15" height="16" viewBox="0 0 22 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20.293 10.2935L19.5859 11.0006L20.293 10.2935ZM10.2929 1.70717L9.58575 1.00008L10.2929 1.70717ZM9.58575 1.00008L0.999862 9.58646L2.41412 11.0006L11 2.41425L9.58575 1.00008ZM2.41412 13.0006H6V11.0006H2.41412V13.0006ZM6 13.0006V19.5H8V13.0006H6ZM9.5 23H12.5V21H9.5V23ZM16 19.5V13.0006H14V19.5H16ZM16 13.0006H19.5859V11.0006H16V13.0006ZM21.0001 9.58646L12.4143 1.00008L11 2.41425L19.5859 11.0006L21.0001 9.58646ZM19.5859 13.0006C21.3677 13.0006 22.26 10.8464 21.0001 9.58646L19.5859 11.0006L19.5859 11.0006V13.0006ZM16 13.0006L16 13.0006V11.0006C14.8954 11.0006 14 11.8961 14 13.0006H16ZM12.5 23C14.433 23 16 21.433 16 19.5H14C14 20.3284 13.3284 21 12.5 21V23ZM6 19.5C6 21.433 7.567 23 9.5 23V21C8.67157 21 8 20.3284 8 19.5H6ZM6 13.0006L6 13.0006H8C8 11.8961 7.10457 11.0006 6 11.0006V13.0006ZM0.999862 9.58646C-0.260013 10.8464 0.632334 13.0006 2.41412 13.0006V11.0006L2.41412 11.0006L0.999862 9.58646ZM11 2.41425L11 2.41425L12.4143 1.00008C11.6332 0.218978 10.3668 0.218978 9.58575 1.00008L11 2.41425Z" fill="black"/>
+                            </svg>									
+                        <span class="uv-count">0</span>
+                    </div>
+                    <div class="divider-uv-dv"></div>
+                    <div class="dv-container">
+                        <svg class="dv-icon" width="15" height="16" viewBox="0 0 22 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M1.72696 13.8523L2.42297 13.1343L1.72696 13.8523ZM11.8598 22.2816L12.5779 22.9776L11.8598 22.2816ZM12.5779 22.9776L21.0288 14.2583L19.5926 12.8664L11.1418 21.5856L12.5779 22.9776ZM19.5614 10.8666L15.976 10.9226L16.0072 12.9223L19.5926 12.8664L19.5614 10.8666ZM15.976 10.9226L15.8746 4.42398L13.8748 4.45518L13.9762 10.9538L15.976 10.9226ZM12.3204 0.979002L9.3208 1.0258L9.352 3.02556L12.3516 2.97876L12.3204 0.979002ZM5.87582 4.57998L5.97721 11.0786L7.97697 11.0474L7.87558 4.54878L5.87582 4.57998ZM5.97721 11.0786L2.39177 11.1345L2.42297 13.1343L6.00841 13.0783L5.97721 11.0786ZM1.03095 14.5703L9.74973 23.0217L11.1418 21.5856L2.42297 13.1343L1.03095 14.5703ZM2.39177 11.1345C0.6102 11.1623 -0.24843 13.3302 1.03095 14.5703L2.42297 13.1343L2.42297 13.1343L2.39177 11.1345ZM5.97721 11.0786L5.97721 11.0786L6.00841 13.0783C7.11285 13.0611 7.9942 12.1518 7.97697 11.0474L5.97721 11.0786ZM9.3208 1.0258C7.38804 1.05596 5.84567 2.64721 5.87582 4.57998L7.87558 4.54878C7.86266 3.72045 8.52367 3.03848 9.352 3.02556L9.3208 1.0258ZM15.8746 4.42398C15.8445 2.49122 14.2532 0.948848 12.3204 0.979002L12.3516 2.97876C13.18 2.96584 13.8619 3.62685 13.8748 4.45518L15.8746 4.42398ZM15.976 10.9226L15.976 10.9226L13.9762 10.9538C13.9935 12.0582 14.9028 12.9395 16.0072 12.9223L15.976 10.9226ZM21.0288 14.2583C22.2689 12.9789 21.343 10.8388 19.5614 10.8666L19.5926 12.8664L19.5926 12.8664L21.0288 14.2583ZM11.1418 21.5856L11.1418 21.5856L9.74973 23.0217C10.5429 23.7905 11.8091 23.7708 12.5779 22.9776L11.1418 21.5856Z" fill="black"/>
+                        </svg>
+                    </div>
+                </div>
+                <svg 
+                class="reply-icon thread-opener"
+                data-tippy-content="Reply"
+                width="25" height="24" viewBox="0 0 22 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M18.7186 12.9452C18.7186 13.401 18.5375 13.8382 18.2152 14.1605C17.8929 14.4829 17.4557 14.6639 16.9999 14.6639H6.68747L3.25 18.1014V4.35155C3.25 3.89571 3.43108 3.45854 3.75341 3.13622C4.07573 2.81389 4.5129 2.63281 4.96873 2.63281H16.9999C17.4557 2.63281 17.8929 2.81389 18.2152 3.13622C18.5375 3.45854 18.7186 3.89571 18.7186 4.35155V12.9452Z" stroke="#1E1E1E" stroke-width="1.14582" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>                    
+                </div>
+            </div>
+        </div>
+        `;
+        let threadEditor = threadSection.querySelector('.thread-editor-container');
+        if (!threadEditor) {
+
+            threadEditor = document.createElement('div');
+            threadEditor.classList.add('thread-editor-container');
+
+            // Add the HTML for the thread editor
+            threadEditor.innerHTML = `
+            <!--<img class="tec__avatar-preview thread-avatar">-->
+            <div class="thread-editor-wrapper">
+                <textarea placeholder="Write a comment..." class="thread-editor"></textarea>
+                <div class="thread-editor__action-opts">
+                    <svg id="threadCmntBtn" class="thread__cmnt-btn" width="18px" height="18px" viewBox="0 0 256 256" id="Flat" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M231.626,128a16.015,16.015,0,0,1-8.18262,13.96094L54.53027,236.55273a15.87654,15.87654,0,0,1-18.14648-1.74023,15.87132,15.87132,0,0,1-4.74024-17.60156L60.64746,136H136a8,8,0,0,0,0-16H60.64746L31.64355,38.78906A16.00042,16.00042,0,0,1,54.5293,19.44727l168.915,94.59179A16.01613,16.01613,0,0,1,231.626,128Z"/>
+                    </svg>
+                </div>
+            </div>
+            `;
+
+            threadSection.appendChild(threadEditor);
+        }
+        threadSection.querySelector('.thread-editor-container').insertAdjacentHTML('beforebegin', replyMessage);
+    },
+
 }
 
 
@@ -607,9 +714,9 @@ try {
 
 
 let notificationCount = document.getElementById('notification-count').textContent;
-if(notificationCount <= 0) {
+if (notificationCount <= 0) {
     document.getElementById('notification-count').style.display = 'none'
-} 
+}
 
 //* Delete notifications: all pages
 async function deleteNoti(id) {
@@ -630,13 +737,13 @@ async function deleteNoti(id) {
 
 //* Adding notifications: all pages
 
-function addNoti(feedbackData) {
+function addNoti(feedbackData, message) {
     /* 
     # Process: The main function is manageNotes.addNoti. Related to feedback-given WS event
     ~   the noti. data is got via feedback-given WS event. the process handles the main addNoti funnction (1). then the number got increased
     ~   and shown in the noti. badge (2)
     */
-    manageNotes.addNoti(feedbackData) // 1
+    manageNotes.addNoti(feedbackData, message) // 1
     notificationCount++;
     updateNotificationBadge(); // 2
 }
@@ -671,33 +778,78 @@ notiLinks.forEach(notiLink => {
 
 
 //* Event that will trigger when someone gives a feedback to a note: all pages, related to addNoti
-conSock.on('notification-feedback', (feedbackData) => {
-    /* 
-    # Process: ARP Protocol structure
-    ~   the event is handled by every user. the WS is sent with the feedback data and every browser checks, if the recordName
-    ~   cookie which is the logged in user's unique username is as same as the note owner's username which is sent in the feedback
-    ~   object (1). If so, that means the noti. has found it's owner. the noti-data is added in LS|key=notis (2). then it is added
-    ~   in the right-panel (3). then the noti. button got shaked(mobile) (4).
-    */
-    if (feedbackData.ownerStudentID == Cookies.get('studentID')) { // 1
-        addNoti(feedbackData)
-        manageDb.add('notis', feedbackData)
+//FIXME: Good but I will optimize these two event handler more
+// conSock.on('notification-feedback', (feedbackData, message) => {
+//     addNoti(feedbackData, message)
+//     manageDb.add('notis', feedbackData)
 
-        const nftShake = document.querySelector('.mobile-nft-btn')
-        nftShake.classList.add('shake') // 4
-        setTimeout(() => {
-            nftShake.classList.remove('shake');
-        }, 300)
+//     const nftShake = document.querySelector('.mobile-nft-btn')
+//     nftShake.classList.add('shake') // 4
+//     setTimeout(() => {
+//         nftShake.classList.remove('shake');
+//     }, 300)
 
-        try {
-            const audio = document.getElementById('notificationAudio');
-            audio.play();
-        } catch (error) {
-            console.error(error)
-        }
-    }
-})
+//     try {
+//         const audio = document.getElementById('notificationAudio');
+//         audio.play();
+//     } catch (error) {
+//         console.error(error)
+//     }
+// })
 
+// conSock.on("notification-mention", (mentionData, message) => {
+//     addNoti(mentionData, message)
+//     manageDb.add('notis', mentionData)
+
+//     const nftShake = document.querySelector('.mobile-nft-btn')
+//     nftShake.classList.add('shake') // 4
+//     setTimeout(() => {
+//         nftShake.classList.remove('shake');
+//     }, 300)
+
+//     try {
+//         const audio = document.getElementById('notificationAudio');
+//         audio.play();
+//     } catch (error) {
+//         console.error(error)
+//     }
+// })
+
+// conSock.on("notification-reply", (replyData, message) => {
+//     addNoti(replyData, message)
+//     manageDb.add('notis', replyData)
+
+//     const nftShake = document.querySelector('.mobile-nft-btn')
+//     nftShake.classList.add('shake') // 4
+//     setTimeout(() => {
+//         nftShake.classList.remove('shake');
+//     }, 300)
+
+//     try {
+//         const audio = document.getElementById('notificationAudio');
+//         audio.play();
+//     } catch (error) {
+//         console.error(error)
+//     }
+// })
+
+// conSock.on("notification-upvote", (replyData, message) => {
+//     addNoti(replyData, message)
+//     manageDb.add('notis', replyData)
+
+//     const nftShake = document.querySelector('.mobile-nft-btn')
+//     nftShake.classList.add('shake') // 4
+//     setTimeout(() => {
+//         nftShake.classList.remove('shake');
+//     }, 300)
+
+//     try {
+//         const audio = document.getElementById('notificationAudio');
+//         audio.play();
+//     } catch (error) {
+//         console.error(error)
+//     }
+// })
 
 try {
     //* Mobile notification panel

@@ -2,6 +2,7 @@ import { join, dirname } from 'path';
 import { config } from 'dotenv';
 import { fileURLToPath } from 'url';
 import firebaseAdmin from 'firebase-admin'; // Default import for firebase-admin
+import { IManageUserNote } from '../types/noteService.types.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -21,7 +22,7 @@ async function uploadImage(fileObject: any, fileName: any) {
     const file = bucket.file(fileName);
     const stream = file.createWriteStream({
         metadata: {
-            contentType: 'image/png',
+            contentType: fileObject.mimetype,
         }
     });
 
@@ -38,8 +39,18 @@ async function uploadImage(fileObject: any, fileName: any) {
             resolve(publicUrl);
         });
 
-        stream.end(fileObject.data); // Storing the actual file buffer to Firebase
+        stream.end(fileObject.buffer || fileObject.data); // Storing the actual file buffer to Firebase
     });
 }
 
+async function deleteNoteFolder({ studentDocID, noteDocID }: IManageUserNote) {
+    let noteFolder = `${studentDocID}/${noteDocID}`
+    let [files] = await bucket.getFiles({ prefix: noteFolder })
+    if (files.length !== 0) {
+        await Promise.all(files.map(file => file.delete()))
+    }
+}
+
+
 export const upload = uploadImage;
+export const deleteNoteImages = deleteNoteFolder

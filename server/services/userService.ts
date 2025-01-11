@@ -9,7 +9,6 @@ export const Convert = {
     },
     
     async getDocumentID_studentid(studentID: string) {
-        console.log(studentID)
         let documentID = (await Students.findOne({ studentID: studentID }, { _id: 1 }))["_id"]
         return documentID
     },
@@ -53,10 +52,11 @@ export const LogIn = {
                 resolve({
                     studentPass: student["password"],
                     recordID: student["_id"],
-                    studentID: student["studentID"]
+                    studentID: student["studentID"],
+                    authProvider: student["authProvider"]
                 })
             } else {
-                reject('No students found!')
+                reject('Sorry! No student account is associated with that email account')
             }
         })
     }

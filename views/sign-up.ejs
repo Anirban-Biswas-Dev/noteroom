@@ -3,117 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign-Up Page</title>
-    <link rel="stylesheet" href="/css/sign-up.css"> 
+    <title>Join Noteroom - Your Ultimate Student Community of Bangladesh</title>
+    <meta name="description" content="Create your Noteroom account to share notes, collaborate with classmates, and stay organized with your studies. Join the community and make learning easier today!">
+    <meta name="keywords" content="Noteroom sign up, student collaboration platform, share notes online, study groups, online study platform, academic collaboration, group teaching sessions, student notes sharing">
+    <meta name="author" content="Noteroom Team">
+    <link rel="stylesheet" href="/css/signup-login.css"> 
 	<link rel="stylesheet" href="/css/error-popup.css" />
     <script src="https://cdn.socket.io/socket.io-3.0.1.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Jaldi:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
     <script src="https://cdn.socket.io/socket.io-3.0.1.min.js"></script>
     <link rel="stylesheet" href="/css/bar-loader.css">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <!-- tooltips cdn of tippy.js -->
     <script src="https://unpkg.com/@popperjs/core@2"></script>
     <script src="https://unpkg.com/tippy.js@6"></script>
 	<script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/animations/scale.css">
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
 </head>
-<body>
-    <p class="message" id="message"></p>
-    <%- include('side-panel', { block: 'big-loader' }) %>
-    <div class="signup-container">
-        
-        <img src="https://storage.googleapis.com/noteroom-fb1a7.appspot.com/badges/draft-logo-of-noteroom.png" alt="Logo of NoteRoom">
-        <h2>Sign Up</h2>
-        <div class="message-container">
-            <p id="step-message">Welcome!Let's get started.</p>
+<body class="flex-center-evenly">
+    <div class="main-container flex-column-center">
+        <div class="brand-section flex-column-center">
+            <img src="assets\apple-touch-icon.png" alt="NoteRoom" class="brand__site-logo">
+            <p class="brand__logo-title">NoteRoom</p>
+            <h2 class="brand__main-heading">Create a new account</h2>
+            <p class="txt-gray-light-bold">Join the country’s top note-sharing platform to connect, share, and download notes</p>
         </div>
-        <div class="progress-container">
-            <div class="progress-bar"></div>
-        </div>
-            <!-- Step 1: Profile Picture & Basic Info -->
-            <div class="step active" id="step-1">
-                <div class="profile-picture-upload">
-                    <label for="profile-picture" class="profile-picture-label" data-tippy-content="Please upload a clear profile photo for authentication.">
-                        <div class="profile-picture-placeholder">
-                            <span><i class="fa-solid fa-camera"></i></span>
-                        </div>
-                    </label>
-                    <input type="file" id="profile-picture" name="profile-picture" class="profile-picture-input" accept="image/*" required>
-                    <p class="instructions">Please upload a clear image of yourself for authentication purposes.</p>
-                </div>
+        <div class="acquisition-container flex-column-center">
+            <!-- Google Sign up options -->
+            <!-- <button type="button" class="google-btn" >
+                Sign Up with Google
+            </button> -->
+            <div id="g_id_onload"
+                 data-client_id="325870811550-0c3n1c09gb0mncb0h4s5ocvuacdd935k.apps.googleusercontent.com"
+                 data-callback="handleCredentialResponse"
+                 data-auto_prompt="false">
+            </div>
+            <div class="g_id_signin"
+                 data-type="standard"
+                 data-size="large"
+                 data-theme="outline"
+                 data-text="sign_in_with"
+                 data-shape="rectangular"
+                 data-logo_alignment="left">
+            </div>
+
+            <div class="separator flex-center-evenly">
+                <span class="line"></span>
+                <span class="txt-gray-light-bold">Or</span>
+                <span class="line"></span>
+            </div>
+
+            <div class="custom-form flex-column-center">
                 
-                <div class="profile-pic-preview-placeholder">
-                    <img alt="Profile Picture" style="display: none;" id="profile-picture-preview" class="profile-picture-preview">
-                    <p class="prfl-pic-success-msg">Successfully uploaded Image!</p>
-                </div>
-                
-                <input type="text" name="displayname" placeholder="Your Name (required)" class="input-field" required data-tippy-content="Enter your name: First Name space Last Name (e.g. John Doe)">
+                <input type="text" name="displayname" placeholder="Your Name" class="custom__input-field" required data-tippy-content="Enter your name (e.g. John Doe)">
             
-                <input type="email" name="email" placeholder="Email (required)" class="input-field" required data-tippy-content="Enter your valid email address.">
+                <input type="email" name="email" placeholder="Email (required)" class="custom__input-field" required data-tippy-content="Enter your valid email address.">
             
                 <div class="password-container">
-                    <input type="password" id="password" name="password" placeholder="Password (required)" class="input-field" required data-tippy-content="Use a strong yet memorable password.">
+                    <input type="password" id="password" name="password" placeholder="Set a password" class="custom__input-field custom__input-field--marginless" required data-tippy-content="Use a strong yet memorable password.">
                     <button type="button" id="togglePassword" class="toggle-password">
                         <i class="fa-solid fa-eye"></i>
                     </button>
                 </div>
-                
-                <button type="button" class="next-button">Next</button>
-                <p style="color: black;">Already have an account? <a href="/login">Login</a></p>
+
+                <button class="primary-btn flex-center-evenly">Sign Up
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="login-spinner" style="display: none"></span> <!--Maybe add the spinner, this is the bootstrap one, I just wanted to see how that works. Make yours like this, it will be easy to handle.-->
+                    <!-- once the js file is available, this leaoder needs to be displayed on submission of details -->
+                    <div class="btn-loader"></div>
+                </button>
             </div>
             
-
-            <!-- Step 2: College Information -->
-            <div class="step" id="step-2">
-                <input type="text" name="rollnumber" placeholder="Class Roll (required)" class="input-field" required data-tippy-content="Use the last 3 digit e.g. 422">
-                <select name="collegesection" class="input-field" required data-tippy-content="A-E for Science, F-G for Arts" >
-                    <option value="Not selected">College Section</option>
-                    <option value="A">A</option>
-                    <option value="B">B</option>
-                    <option value="C">C</option>
-                    <option value="D">D</option>
-                    <option value="E">E</option>
-                    <option value="F">F</option>
-                    <option value="G">G</option>
-                </select>
-                <select name="collegeyear" class="input-field" required>
-                    <option value="Not selected">Select College Year</option>
-                    <option value="1st Year👶">1st Year👶</option>
-                    <option value="2nd Year😎">2nd Year😎</option>
-                  </select>
-                <textarea name="bio" placeholder="Add a bio" class="input-field" required data-tippy-content="Tell something about yourself. This makes people interested in you." ></textarea>
-                <button type="button" class="next-button clg-information">Next</button>
-                <button type="button" class="back-button">Back</button>
-            </div>
-
-            <!-- Step 3: Academic Preferences -->
-            <div class="step" id="step-3">
-                <select name="group" class="input-field">
-                    <option value="Science">Science</option>
-                    <option value="Arts">Arts</option>
-                </select>
-                <input type="text" name="favouritesubject" placeholder="Favorite Subject" class="input-field">
-                <input type="text" name="notfavsubject" placeholder="Not-so-Favorite Subject" class="input-field" data-tippy-content="Only one subject please🫡" >
-                <button type="button" class="next-button">Next</button>
-                <button type="button" class="back-button">Back</button>
-            </div>
-
-            <!-- Step 4: Final Information -->
-            <div class="step" id="step-4">
-                <input type="text" style="display: none;" name="username" class="input-field" required disabled data-tippy-content="Auto-generated">
-                <p>*Please double-check your information before submitting. You won't be able to edit your details for the first month after signing up (unless you contact support team). Make sure everything is accurate!</p>
-                <div class="privacy-policy">
-                    <input type="checkbox" id="privacy-policy" name="privacy-policy" checked>
-                    <label for="privacy-policy">I agree to the <a href="#privacy-policy" target="_blank">Privacy Policy</a>.</label>
-                </div>
-                <button class="submit-button">Sign Up</button>              
-                <button type="button" class="back-button">Back</button>
-            </div>
+        </div>
+        <p class="redirecting-msg">Already have an account? <a href="/login" class="redirect-link">Login</a></p>
     </div>
-	<%- include('side-panel', { block: 'error-popup' }) %>
+
+    <img class="focus-img" src="\images\sign-up-enhancer.png" alt="Two friends talking about NoteRoom">
+
+    <%- include('side-panel', { block: 'error-popup' }) %>
+
+	<script src="/js/notificationHandler.js"></script>
     <script src="/js/controller.js"></script>
     <script src="/js/sign-up.js"></script>
     <script src="/js/utils.js"></script>

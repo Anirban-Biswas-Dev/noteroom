@@ -2,7 +2,7 @@ import { Schema, model } from 'mongoose'
 
 const studentsSchema = new Schema({
     profile_pic: {
-        type: String, // I have to work on image saving in cloud and accessing those via url
+        type: String,
         default: ""
     },
     displayname: {
@@ -20,7 +20,7 @@ const studentsSchema = new Schema({
     },
     password: {
         type: String,
-        required: true
+        default: null
     },
     studentID: {
         type: String,
@@ -30,14 +30,19 @@ const studentsSchema = new Schema({
     },
     rollnumber: {
         type: String,
-        required: true,
+        unique: false
     },
     collegesection: {
         type: String,
         default: "Not selected"
     },
     collegeyear: {
-        type: String
+        type: String,
+        default: "-"
+    },
+    authProvider: {
+        type: String,
+        default: null
     },
     bio: {
         type: String,
@@ -54,7 +59,8 @@ const studentsSchema = new Schema({
         default: "Not selected"
     },
     group: {
-        type: String
+        type: String,
+        default: "-"
     },
     username: {
         type: String,
@@ -84,6 +90,14 @@ const studentsSchema = new Schema({
     badge: {
         type: String,
         default: "No Badge"
+    },
+    district: {
+        type: String,
+        default: ""
+    },
+    collegeID: {
+        type: Schema.Types.Mixed, //* Either the college name (custom one) or the college ID (pre-defined one)
+        default: null
     }
 })
 

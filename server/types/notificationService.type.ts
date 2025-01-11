@@ -6,37 +6,71 @@
 */
 
 
-
-/**
-* @description - This object is sent to the client via `notification-feedback` WS event
-*/
-export interface IFeedBackNotification {
-    noteID /* The note on which the feedback is given: to create a direct link to that note */: string,
-    nfnTitle /* The note's title on which the feedback is given: the link will contain the note's title */: string,
-    isread: string,
-
-    commenterDisplayName /* The student's displayname who gave the feedback: the link will contain commenter's displayname */: string,
-
-    ownerStudentID /* The note-owner's studentID : varifing with studentID cookie to keep/drop notification */: string,
-
-    notiID: /* The document ID of notification. This is used to perform specific tasks on notifications */ string,
-    feedbackID /* This is the unique id of each feedback, used for redirection to that specific feedback, used using # */: string
+export enum ENotificationType {
+    Feedback = 'note-feedback',
+    Mention = 'note-mention',
+    Reply = 'note-reply',
+    UpVote = 'note-vote'
 }
 
 
 /**
-* @description - This object is sent to the client via `notification-mention` WS event
-* @notice - This is currently not in use
-*/
-export interface IMentionNotification {
-    noteID /* The note on which the feedback is given: to create a direct link to that note */: string,
-    nfnTitle /* The note's title on which the feedback is given: the link will contain the note's title */: string,
+ * @description - This is the ideal structure for notifications **related to notes** which will be sent via web-socket to the clients
+ * @param noteID - The `documentID` of the note in which the feedback/reply is given
+ * @param nfnTitle - The `title` of the note
+ * @param isread - The `state` of the notification (read/unread). This is a string with a value of either "true" or "false"
+ * @param commenterDisplayName - The `displayname` of user who gave the feedback/reply
+ * @param notiID - The `documentID` of the notification. This can be got after saving the necessary notification using **INoteNotificationDB**
+ * @param feedbackID - The `documentID` of the feedback/reply. This can be got after saving the necessary feedback/reply using **ICommentDB**
+ */
+//FIXME:check if the `isread` is actually needed or not. if needed then make it a boolean
+//FIXME:the noteID is not needed anymore, cause the note-title won't contain the note's url
+export interface ICommentNotification {
+    noteID: string,
+    nfnTitle: string,
     isread: string,
 
-    commenterDisplayName /* The student's displayname who gave the feedback: the link will contain commenter's displayname */: string,
+    commenterDisplayName: string,
 
-    mentionedStudentID /* The note-owner's studentID : varifing with studentID cookie to keep/drop notification */: string,
+    notiID: string,
+    feedbackID: string
+}
 
-    notiID: /* The document ID of notification. This is used to perform specific tasks on notifications */ string,
-    feedbackID /* This is the unique id of each feedback, used for redirection to that specific feedback, used using # */: string
+//FIXME:maybe the ownerStudentID is not needed anymore as the cookie checking for notification is deprecated
+/**
+* @description - This object is sent to the client via `notification-feedback` WS event.
+ * @description - The feedback and the reply notification data are same, so they can be sent with the same web-socket event
+*/
+export interface IFeedBackNotification extends ICommentNotification{
+    ownerStudentID /* The note-owner's studentID : varifing with studentID cookie to keep/drop notification */: string,
+}
+
+/**
+ * @description - This object is sent to the client via `notification-reply` WS event
+ * @description - This notification data is for the user **whose feedback is replied**.
+ */
+export interface IReplyNotification extends ICommentNotification{
+    ownerStudentID: string,
+}
+
+/**
+* @description - This object is sent to the client via `notification-mention` WS event
+*/
+//FIXME: check if the `mentionedStudentID` is needed or not, it is maybe as same as ownerStudntID
+//FIXME: check if the `mention` field is needed or not
+export interface IMentionNotification extends ICommentNotification{
+    mentionedStudentID: string,
+    mention: boolean
+}
+
+
+/**
+* @description - This object is sent to the client via `notification-upvote` WS event
+*/
+export interface IUpVoteNotification {
+    noteID: string,
+    nfnTitle: string,
+    isread: string,
+    notiID: string,
+    vote: boolean
 }

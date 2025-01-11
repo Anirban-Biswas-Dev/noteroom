@@ -1,5 +1,5 @@
 import express, { static as _static } from 'express'
-import { join, basename, dirname } from 'path'
+import { join, dirname } from 'path'
 import { fileURLToPath } from 'url';
 import { config } from 'dotenv';
 import { createServer } from 'http';
@@ -11,7 +11,6 @@ import { connect } from 'mongoose'
 import _pkg from 'body-parser';
 const { urlencoded } = _pkg;
 import fileUpload from 'express-fileupload'
-import archiver from 'archiver'
 import cors from 'cors'
 import pkg from 'connect-mongo';
 const { create } = pkg;
@@ -27,11 +26,12 @@ import serachProfileRouter from './routers/search-profile.js'
 import settingsRouter from './routers/settings.js'
 import apiRouter  from './services/apis.js';
 
-import Notes from './schemas/notes.js'
-import Students from './schemas/students.js'
 import Alerts from './schemas/alerts.js'
-import { Notifs as allNotifs } from './schemas/notifications.js'
-import { getNotifications } from './helpers/rootInfo.js';
+
+import noteIOHandler from './services/io/ioNoteService.js';
+import notificationIOHandler from './services/io/ioNotifcationService.js';
+import checkOnboarded from './middlewares/onBoardingChecker.js';
+
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -75,27 +75,31 @@ app.use(session({
 app.use(cookieParser()) // Middleware for working with cookies
 app.use(fileUpload()) // Middleware for working with files
 app.use('/login', loginRouter(io))
-app.use('/user', userRouter(io))
+app.use('/user', await checkOnboarded(false), userRouter(io))
 app.use('/sign-up', signupRouter(io))
-app.use('/upload', uploadRouter(io))
-app.use('/view', noteViewRouter(io))
-app.use('/dashboard', dashboardRouter(io))
-app.use('/search-profile', serachProfileRouter(io))
+app.use('/upload', await checkOnboarded(false), uploadRouter(io))
+app.use('/view', await checkOnboarded(false), noteViewRouter(io))
+app.use('/dashboard',await checkOnboarded(false), dashboardRouter(io))
+app.use('/search-profile', await checkOnboarded(false), serachProfileRouter(io))
 app.use('/settings', settingsRouter(io))
 app.use('/api', apiRouter(io))
 app.use(errorHandler) // Middleware for handling errors
 
 app.get('/logout', (req, res) => {
-    req.session.destroy(null)
-    res.clearCookie('stdid')
-    res.clearCookie('recordID')
-    res.redirect('/login')
+    req.session.destroy(error => {
+        res.clearCookie('studentID')
+        res.clearCookie('recordID')
+        if(!error) {
+            res.redirect('/login')
+        } else {
+            res.redirect('/login')
+        }
+    })
 })
 
 app.get('/', (req, res) => {
-    res.redirect('/login')
+    res.render('home')
 })
-
 app.get('/support', (req, res) => {
     res.render('support')
 })
@@ -105,14 +109,26 @@ app.get('/about-us', (req, res) => {
 app.get('/privacy-policy', (req, res) => {
     res.render('privacy-policy')
 })
-app.get("/test", (req, res) => {
-    res.render('test')
-})
-app.get('/signup2', (req, res) => {
-    res.render('signup2')
-})
-app.get('/login2', (req, res) => {
-    res.render('login2')
+app.get('/onboarding', await checkOnboarded(true))
+
+
+export let userSocketMap: Map<string, string> = new Map()
+io.on('connection', (socket) => {
+    let studentID = <string>socket.handshake.query.studentID
+    if (studentID) {
+        userSocketMap.set(studentID, socket.id)
+    }
+
+    socket.on('disconnect', () => {
+        userSocketMap.forEach((sockID, studentID) => {
+            if (sockID === socket.id) {
+                userSocketMap.delete(studentID)
+            }
+        })
+    })
+
+    notificationIOHandler(io, socket)
+    noteIOHandler(io, socket)
 })
 
 app.get('/message', async (req, res) => {

@@ -85,7 +85,7 @@
       <path d="M49.4475 39.4709C49.4475 45.2615 44.7747 49.9417 39.0279 49.9417C33.2811 49.9417 28.6083 45.2615 28.6083 39.4709C28.6083 33.6802 33.2811 29 39.0279 29C44.7747 29 49.4475 33.6802 49.4475 39.4709Z" stroke="#07192D" stroke-width="4" />
       <path d="M3.32248 34.8098C9.00331 27.6792 21.1727 27.069 23.5029 28.6011C25.833 30.1332 25.833 30.9126 23.5029 37.9542C21.1727 44.9958 28.1617 47.278 23.5029 47.3074C18.844 47.3367 0.216087 47.3074 0.216087 47.3074C0.216087 47.3074 -1.22218 40.5142 3.32248 34.8098Z" fill="#07192D" />
     </svg>
-    <a href='/user/<%= root.username %>'><img src="<%= root.profile_pic %>" class="profile-pic" /></a>
+    <a href='/user/<%= root.username %>'><img src="<%= root.profile_pic %>" class="profile-pic" id="root-profile-pic"/></a>
     <i class="fa-solid fa-gear settings-icon" onclick="window.location.href = '/settings'"></i>
   </div>
   <p class="sub-header">
@@ -112,7 +112,7 @@
             } 
             %>
     <% notis.forEach(noti => { %>
-    <% if(noti.docType == 'feedback' ) { %>
+    <% if(noti.docType == 'note-feedback' ) { %>
     <div class="notification secondary-<%= noti.isRead %>" id="noti-<%= noti._id %>">
       <div class="first-row">
         <div class="frnt-wrapper">
@@ -135,7 +135,7 @@
           <a href='/view/<%= noti.noteDocID._id %>/#<%= noti.feedbackDocID %>' class="notification-link-2 notiLink"><%= noti.commenterDocID.displayname %> has given feedback on your notes! Check it out.</a>
       </div>
     </div>
-    <% } else { %>
+    <% } else if (noti.docType == "note-mention") { %>
       <div class="notification secondary-<%= noti.isRead %>" id="noti-<%= noti._id %>">
         <div class="first-row">
           <div class="frnt-wrapper">
@@ -156,6 +156,52 @@
         </div>
         <div class="notification-msg">
             <a href='/view/<%= noti.noteDocID._id %>/#<%= noti.feedbackDocID %>' class="notification-link-2 notiLink"><%= noti.commenterDocID.displayname %> has mentioned you.</a>
+        </div>
+      </div>
+    <% } else if(noti.docType == "note-reply") { %>
+      <div class="notification secondary-<%= noti.isRead %>" id="noti-<%= noti._id %>">
+        <div class="first-row">
+          <div class="frnt-wrapper">
+            <span class="isRead <%= noti.isRead %>"></span>
+            <a href='/view/<%= noti.noteDocID._id %>/#<%= noti.feedbackDocID %>' class="notification-link notiLink">
+              <span class="notification-title">
+                <% let title = noti.noteDocID.title %>
+                <% if(title.length > 30) { %>
+                <%= title.slice(0, 30) %>...
+                <% } else { %>
+                <%= title %>
+                <% } %>
+                <span style="display: none;"><%= formatDate(new Date(noti.createdAt)) %></span>
+              </span>
+            </a>
+          </div>
+          <span class="remove-notification" onclick="deleteNoti('<%= noti._id %>')">&times;</span>
+        </div>
+        <div class="notification-msg">
+            <a href='/view/<%= noti.noteDocID._id %>/#<%= noti.feedbackDocID %>' class="notification-link-2 notiLink"><%= noti.commenterDocID.displayname %> has replied to your comment</a>
+        </div>
+      </div>
+    <% } else if (noti.docType === "note-vote") { %>
+      <div class="notification secondary-<%= noti.isRead %>" id="noti-<%= noti._id %>">
+        <div class="first-row">
+          <div class="frnt-wrapper">
+            <span class="isRead <%= noti.isRead %>"></span>
+            <a href='/view/<%= noti.noteDocID._id %>/' class="notification-link notiLink">
+              <span class="notification-title">
+                <% let title = noti.noteDocID.title %>
+                <% if(title.length > 30) { %>
+                <%= title.slice(0, 30) %>...
+                <% } else { %>
+                <%= title %>
+                <% } %>
+                <span style="display: none;"><%= formatDate(new Date(noti.createdAt)) %></span>
+              </span>
+            </a>
+          </div>
+          <span class="remove-notification" onclick="deleteNoti('<%= noti._id %>')">&times;</span>
+        </div>
+        <div class="notification-msg">
+            <a href='/view/<%= noti.noteDocID._id %>/' class="notification-link-2 notiLink"><%= noti.noteDocID.upvoteCount %> upvotes!! Just got an upvote!!</a>
         </div>
       </div>
     <% } %>

@@ -1,0 +1,17 @@
+<% let isMainComment = commentType === "main" ? true : false %>
+<% let comment = isMainComment ? feedback[0] : reply %>
+
+<div class="<%= isMainComment ? "main__body" : "" %> cmnt-body-3rows">
+    <div class="<%= isMainComment ? "main__reply-info" : "" %> reply-info">
+        <% if(isMainComment) { %>
+            <span id="parentFeedbackDocID" style="display: none;"><%= feedback[0]._id %></span>
+        <% } %>
+        <span id="commenterUsername" style="display: none;"><%= comment.commenterDocID.username %></span> 
+        <span class="main__author-name"><%= comment.commenterDocID.displayname %></span>
+        <span class="reply-date"><%= formatDate(new Date(comment.createdAt)) %></span>
+    </div>
+    <div class="<% isMainComment ? "main__reply-msg" : "" %> reply-msg"><%- comment.feedbackContents %></div>
+
+      <!-- COMPONENT: comment engagement -->
+    <%- include('comment-engagements')  %>
+</div>

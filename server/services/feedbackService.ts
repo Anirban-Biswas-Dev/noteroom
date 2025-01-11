@@ -1,6 +1,6 @@
 import Notes from "../schemas/notes.js";
-import Feedbacks from "../schemas/feedbacks.js";
-import { IFeedBackDB } from "../types/database.types.js";
+import {feedbacksModel as Feedbacks, replyModel as Reply} from "../schemas/comments.js";
+import { IFeedBackDB, IReplyDB } from "../types/database.types.js";
 
 
 export async function addFeedback(feedbackData: IFeedBackDB) {
@@ -8,8 +8,31 @@ export async function addFeedback(feedbackData: IFeedBackDB) {
     let feedback = await Feedbacks.create(feedbackData)
     let extendedFeedback = await Feedbacks.findById(feedback._id)
         .populate('commenterDocID', 'displayname username studentID profile_pic')
-        .populate('noteDocID', 'title')
-    // Populating with some basic info of the commenter and the notes to send that to all the users via websockets
+        .populate({
+            path: 'noteDocID',
+            select: 'ownerDocID title',
+            populate: {
+                path: 'ownerDocID',
+                select: 'studentID username'
+            }
+        })
 
     return extendedFeedback
+}
+
+export async function addReply(replyData: IReplyDB) {
+    await Notes.findByIdAndUpdate(replyData.noteDocID, { $inc: { feedbackCount: 1 } })
+    let reply = await Reply.create(replyData)
+    let extentedReply = await Reply.findById(reply._id)
+        .populate('commenterDocID', 'displayname username studentID profile_pic')
+        .populate({
+            path: 'parentFeedbackDocID',
+            select: 'commenterDocID',
+            populate: {
+                path: 'commenterDocID',
+                select: 'studentID username'
+            }
+        })
+        .populate('noteDocID', 'title')
+    return extentedReply
 }

@@ -7,7 +7,7 @@ function badgeStyling() {
     let userBadge = document.querySelector('.top-voice-badge').textContent.trim();
     const badgeElement = document.querySelector('.top-voice-badge');
     const badgeLogo = document.querySelector('img.badge-logo')
-    
+
     function add_label(subject) {
         if (!(subject == undefined)) {
             badgeElement.innerHTML = `Top ${subject} voice`;
@@ -16,8 +16,8 @@ function badgeStyling() {
             badgeLogo.src = imageObject['No Badge']
         }
     }
-    
-    switch(userBadge) {
+
+    switch (userBadge) {
         case "Chemistry":
             add_label("Chemistry")
             break
@@ -48,6 +48,26 @@ function badgeStyling() {
 
 badgeStyling();
 
+
+//* The delete note eventhandler
+// document.addEventListener('click', function (event) {
+//     if (event.target.classList.contains('delete-note')) {
+//         let noteDocID = event.target.getAttribute('data-id')
+//         fetch(`/api/note/delete/${noteDocID}`, {
+//             method: 'delete'
+//         })
+//             .then(response => response.json())
+//             .then(data => {
+//                 if (data.deleted) {
+//                     console.log(`Note deleted`)
+//                     document.querySelector(`#owned-note-${noteDocID}`).remove()
+//                 }
+//                 else console.log(`Something went wrong!`)
+//             })
+//     }
+// })
+
+
 // ********** Nav Bar for User Notes And Saved Notes *********
 const userNotes = document.querySelector('.notes-container');
 const userSavedNotes = document.querySelector('.sv-notes-container');
@@ -67,7 +87,7 @@ try {
     userSavedNotesBtn.addEventListener('click', () => {
         toggleSections(userSavedNotesBtn, userNotesBtn, userSavedNotes, userNotes);
     });
-    
+
     userNotesBtn.addEventListener('click', () => {
         toggleSections(userNotesBtn, userSavedNotesBtn, userNotes, userSavedNotes);
     });

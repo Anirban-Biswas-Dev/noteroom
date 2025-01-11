@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/css/main-pages.css" />
+    <link rel="stylesheet" href="/css/note-view.css" />
+    <link rel="stylesheet" href="/css/loaders.css" />
+    <link rel="stylesheet" href="/css/share-note.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+      rel="stylesheet"
+    />
+    <link 
+      href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" 
+      rel="stylesheet"
+    >
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/tributejs/5.1.3/tribute.min.css"
+    />
+    <script
+      src="https://kit.fontawesome.com/be4b1d4185.js"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
+    <script src="https://cdn.socket.io/socket.io-3.0.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dexie@latest/dist/dexie.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tributejs/5.1.3/tribute.min.js"></script>
+
+    <!-- Text Editor - Toast for now - We can use quill for later mention feature and also tiptap for react support -->
+    <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.css">
+    <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.js"></script>
+
+    <script src="https://unpkg.com/@popperjs/core@2"></script>
+    <script src="https://unpkg.com/tippy.js@6"></script>
+	  <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/animations/scale.css">
+
+    <!-- Meta Details -->
+    <title><%= note.title %></title>
+  </head>
+  <body>
+    <% if(mynote == 3) { %>
+      <a href="/login" style="display: none;" class="kick"></a>
+    <% } %>
+    <% if(mynote != 3) { %>
+      <%- include('../side-panel', { block: 'left-panel' }) %>
+      <%- include('../side-panel', { block: 'search-bar' }) %>
+    <% } %>
+
+    <span class="note-id" style="display: none"><%= note._id %></span>
+    <div class="middle-section">
+      <div class="first-box">
+        <div class="fb__col-1">
+          <img class="note-author-img" src="<%= owner.profile_pic %>" alt="Author Picture" onclick="location.href='/user/<%= owner.username %>'" />
+          <div class="fb__col-1-wrapper-1">
+            <span class="author-name">
+              <a href="/user/<%= owner.username %>">
+                <%= owner.displayname %>
+              </a>
+              <span class="studentusername" style="display: none"><%= owner.username %></span>
+            </span>
+            <h1 class="section-title"><%= note.title %></h1>
+          </div>
+        </div>
+        <span style="display: none;" class="subject">Subject: <%= note.subject %> </span>
+
+        <div class="fb__col-2">
+          <!-- TODO: Add the same save note logic as dashboard one -->
+          <button class="save-note-btn">
+            <i class="fa-regular fa-bookmark"></i>
+            <i class="fa-solid fa-bookmark saved"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- COMPONENT: note image carousel -->
+      <%- include('components/note-images', { note: note }) %>
+
+      <div class="third-box">
+        <div class="third-box__row-1">
+          <h3 class="desc-label">Description</h3>
+          
+          <!-- COMPONENT: note engagements -->
+          <%- include('components/note-engagements', { note: note }) %>
+        </div>
+        <div class="desc-content" ><%- note.description %></div>
+      </div>
+
+      <div class="cmnts-section">
+        <% function formatDate(date) { 
+            const formatter = new Intl.DateTimeFormat('en-US', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit',
+              timeZone: 'Asia/Dhaka', 
+              hour12: true 
+            });
+          const formattedDate = formatter.format(date);
+          return formattedDate
+        } %>
+
+        <!-- COMPONENT: main comment box -->
+        <%- include('components/comment-box', { type: 'main'}) %>
+        
+        <div class="cmnts-list">
+          <% feedbacks.forEach(feedback => { %>
+            <div class="main-cmnt-container">
+              <div class="main__author-threadline-wrapper">
+                <img src="<%= feedback[0].commenterDocID.profile_pic %>" alt="User Avatar" class="main__cmnt-author-img cmnt-author-img" />
+                <div class="thread-line"></div>
+              </div>
+
+              <div class="main__cmnts-replies-wrapper">
+
+                <!-- COMPONENT: main feedback text [without profilepic] -->
+                <%- include('components/comment-message', { commentType: "main", feedback: feedback, formatDate: formatDate }) %>
+                
+                <div class="thread-section" id="thread-<%= feedback[0]._id %>">
+
+                  <% if(feedback[1] && feedback[1].length > 0) { %>
+                    <% feedback[1].map(reply => { %>
+                    <div class="thread-msg">
+                      <img src="<%= reply.commenterDocID.profile_pic %>" alt="User Avatar" class="cmnt-author-img thread-avatar">
+
+                      <!-- COMPONENT: replies text [without profilepic] -->
+                      <%- include('components/comment-message', { commentType: "reply", reply: reply, formatDate: formatDate }) %>
+                    </div>
+                    <% }) %>
+
+                  <!-- COMPONENT: reply comment box -->
+                  <%- include('components/comment-box', { type: 'reply'}) %>
+                  <% } %>
+
+                </div>
+              </div>
+            </div>
+          <% }) %>
+          
+        </div>
+      </div>
+    </div>
+    <% if(mynote != 3) { %>
+      <%- include('../side-panel', { block: 'right-panel' }) %>
+    <% } %>
+    <%- include('../side-panel', { block: 'mbl-ctrl-panel' }) %>
+
+	  <audio id="notificationAudio" src="/sounds/notification-ping-sound.mp3" preload="auto"></audio>
+    <div class="background-overlay"></div>
+
+    <%- include('../side-panel', { block: 'share-note' }) %>
+    <%- include('../side-panel', { block: 'downloading-loader' }) %>
+    
+	  <script src="/js/notificationHandler.js"></script>
+    <script src="/js/controller.js"></script>
+    <script src="/js/note-view.js"></script>
+    <script>
+ 
+    </script>
+  </body>
+</html>

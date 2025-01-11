@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Onboarding</title>
+
+    <link rel="stylesheet" href="/css/onboarding.css" />
+	<link rel="stylesheet" href="/css/error-popup.css" />
+	<link rel="preconnect" href="https://fonts.googleapis.com" />
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+	<link
+		href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+		rel="stylesheet"
+	/>
+	<link 
+		href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" 
+		rel="stylesheet"
+	>
+	<script
+		src="https://kit.fontawesome.com/be4b1d4185.js"
+		crossorigin="anonymous"
+	></script>
+
+	<link rel="apple-touch-icon" sizes="180x180" href="\assets\apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="\assets\favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="\assets\favicon-16x16.png">
+	<link rel="icon" type="image/png" href="\assets\android-chrome-192x192.png">
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
+	<link rel="manifest" href="/site.webmanifest">
+</head>
+<body>
+    <div class="main-container flex-col-center">
+        <!-- This contains the progress bar and back button of slides -->
+        <div class="main-container__row-1 flex-row-center">
+            <i class="fa-solid fa-arrow-left"></i>
+            <div class="progress-container">
+                <div class="progress-bar"></div>
+            </div>
+        </div>
+        <!-- These are the slide containers and will be slided as all of them are sliders -->
+        <div class="main-container__row-2 flex-col-center">
+            <div class="slide-container">
+                <!-- Slide 1 -->
+                <div class="slide active" id="slide-1">
+                    <div class="toki-msg-container flex-row-center">
+                        <img class="toki-img toki-img__1" src="\images\onboarding-assets\toki-slide-1.png" alt="Toki msg 1">
+                        <div class="toki-msg">
+                            <svg class="toki-msg__background" width="297" height="50" viewBox="0 0 297 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M16 11C16 5.7533 20.2533 1.5 25.5 1.5H285.5C290.747 1.5 295 5.75329 295 11V39C295 44.2467 290.747 48.5 285.5 48.5H22.6266C18.9668 48.5 16 45.5331 16 41.8733C16 37.4195 13.1743 33.4562 8.9638 32.0043L3.37995 30.0788L10.3503 25.512C13.8759 23.2022 16 19.2711 16 15.0563V11Z" stroke="black" stroke-width="3"/>
+                                </svg>
+                                <p class="toki-text-msg">Where are you from?</p>
+                        </div>
+                    </div>
+                    <div class="interactive-container flex-col-center">
+                        <div class="dist-options-grid">
+                            <div class="dist-option">
+                                <span class="dist-label">Dhaka</span>
+
+                                <svg class="dist-opt-checkmark" width="21" height="16" viewBox="0 0 21 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M19.5 1.75L7.125 14.125L1.5 8.5" stroke="#07192D" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <div class="dist-option">
+                                <span class="dist-label">Chittagong</span>
+
+                                <svg class="dist-opt-checkmark" width="21" height="16" viewBox="0 0 21 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M19.5 1.75L7.125 14.125L1.5 8.5" stroke="#07192D" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <div class="dist-option">
+                                <span class="dist-label">Khulna</span>
+
+                                <svg class="dist-opt-checkmark" width="21" height="16" viewBox="0 0 21 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M19.5 1.75L7.125 14.125L1.5 8.5" stroke="#07192D" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <div class="dist-option">
+                                <span class="dist-label">Barishal</span>
+
+                                <svg class="dist-opt-checkmark" width="21" height="16" viewBox="0 0 21 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M19.5 1.75L7.125 14.125L1.5 8.5" stroke="#07192D" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <div class="dist-option">
+                                <span class="dist-label">Rangpur</span>
+
+                                <svg class="dist-opt-checkmark" width="21" height="16" viewBox="0 0 21 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M19.5 1.75L7.125 14.125L1.5 8.5" stroke="#07192D" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <div class="dist-option">
+                                <span class="dist-label">Rajshahi</span>
+
+                                <svg class="dist-opt-checkmark" width="21" height="16" viewBox="0 0 21 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M19.5 1.75L7.125 14.125L1.5 8.5" stroke="#07192D" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <div class="dist-option">
+                                <span class="dist-label">Sylhet</span>
+
+                                <svg class="dist-opt-checkmark" width="21" height="16" viewBox="0 0 21 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M19.5 1.75L7.125 14.125L1.5 8.5" stroke="#07192D" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <div class="dist-option">
+                                <span class="dist-label">Mymensingh</span>
+
+                                <svg class="dist-opt-checkmark" width="21" height="16" viewBox="0 0 21 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M19.5 1.75L7.125 14.125L1.5 8.5" stroke="#07192D" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="move-section-ctrl-container flex-row-center">
+                        <button class="move-section-btn">Continue</button>
+                    </div>
+                    </div>
+                </div>
+
+                <!-- Slide 2 -->
+                <div class="slide" id="slide-2">
+                    <div class="toki-msg-container flex-row-center">
+                        <img class="toki-img" src="\images\onboarding-assets\toki-slide-2.png" alt="Toki msg 2">
+                        <div class="toki-msg">
+                            <svg class="toki-msg__background" width="320" height="50" viewBox="0 0 320 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M16 11C16 5.7533 20.2533 1.5 25.5 1.5H285.5C290.747 1.5 295 5.75329 295 11V39C295 44.2467 290.747 48.5 285.5 48.5H22.6266C18.9668 48.5 16 45.5331 16 41.8733C16 37.4195 13.1743 33.4562 8.9638 32.0043L3.37995 30.0788L10.3503 25.512C13.8759 23.2022 16 19.2711 16 15.0563V11Z" stroke="black" stroke-width="3"/>
+                                </svg>
+                                <p class="toki-text-msg slide-2--toki-text-msg" id="tokiClgQtn"></p>
+                        </div>
+                    </div>
+                    <div class="interactive-container flex-col-center">
+                        <div class="clg-selection-wrapper flex-col-center">
+                            <!-- College options will be added here -->
+                            <div class="clg-selection-grid">
+                            </div>
+                            <div class="clg-selection--other-input-wrapper flex-col-center input-wrapper">
+                                <input 
+                                type="text" 
+                                id="other-college" 
+                                class="floating-input-field"
+                                placeholder=" "
+                                />
+                                <label for="Other-college" class="input-floating-label">Other</label>
+                              </div>
+                        </div>
+                        
+                    <div class="move-section-ctrl-container flex-row-center">
+                        <button class="move-section-btn">Continue</button>
+                    </div>
+                    </div>
+                </div>
+
+                <!-- Slide 3 -->
+                <div class="slide" id="slide-3">
+                    <div class="toki-msg-container flex-row-center">
+                        <img class="toki-img" src="\images\onboarding-assets\toki-slide-3.png" alt="Toki msg 1">
+                        <div class="toki-msg">
+                            <svg class="toki-msg__background" width="297" height="50" viewBox="0 0 297 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M16 11C16 5.7533 20.2533 1.5 25.5 1.5H285.5C290.747 1.5 295 5.75329 295 11V39C295 44.2467 290.747 48.5 285.5 48.5H22.6266C18.9668 48.5 16 45.5331 16 41.8733C16 37.4195 13.1743 33.4562 8.9638 32.0043L3.37995 30.0788L10.3503 25.512C13.8759 23.2022 16 19.2711 16 15.0563V11Z" stroke="black" stroke-width="3"/>
+                                </svg>
+                                <p class="toki-text-msg">Almost there!</p>
+                        </div>
+                    </div>
+                    <div class="interactive-container flex-col-center interactive-container--gap-low">
+                        <div class="prfl-pic-wrapper flex-col-center" id="profile-pic-selector">
+                            <div class="upload-prfl-pic-box flex-col-center">
+                                <i class="fa-regular fa-image"></i>
+                                <p class="upload-prfl-pic-msg">Choose your profile picture</p>
+                                <input type="file" id="profile-picture" name="profile-picture" class="profile-picture-input" accept="image/*" required style="display: none;">
+                            </div>
+
+                            <div class="img-preview-wrapper flex-row-center" id="profile-picture-preview" style="display: none;">
+                                <img alt="Your Image" class="uploaded-img-preview" id="selected-profile-pic">
+                                <button class="choose-another-pic-btn">Choose Another</button>
+                            </div>
+                        </div>
+
+                        <div class="slide-4-input-options-roll-grp flex-row-center">
+                            <label id="img_category_label"class="dropdown-field"for="img_category"data-value="">
+                                <span>Which group you're in?</span>
+                                <div id="img_category"class="psuedo_select"name="img_category">
+                                    <span class="selected"></span>
+                                    <ul id="img_category_options"class="dropdown-options">
+                                        <li class="dropdown-option"data-value="science">Science🔬</li>
+                                        <li class="dropdown-option"data-value="commerce">Commerce💰</li>
+                                        <li class="dropdown-option"data-value="arts">Arts🎨</li>
+                                    </ul>
+                                </div>
+                            </label>
+                            <label id="img_category_label"class="dropdown-field"for="img_category"data-value="">
+                                <span>Which year are you in?</span>
+                                <div id="img_category"class="psuedo_select"name="img_category">
+                                    <span class="selected"></span>
+                                    <ul id="img_category_options"class="dropdown-options">
+                                        <li class="dropdown-option"data-value="First Year">First Year👶</li>
+                                        <li class="dropdown-option"data-value="Second Year">Second Year😎</li>
+                                    </ul>
+                                </div>
+                            </label>
+                        </div>
+
+                        <div class="user-clg-roll--input-wrapper flex-col-center input-wrapper">
+                            <input 
+                            type="number" 
+                            id="college-roll" 
+                            class="floating-input-field"
+                            placeholder=" "
+                            />
+                            <label for="college-roll" class="input-floating-label">What's your roll number? (Max 3 Digit)</label>
+                          </div>
+
+                    </div>
+
+
+                        <div class="move-section-ctrl-container flex-row-center">
+                        <button class="move-section-btn">Continue</button>
+                    </div>
+                </div>
+
+                <!-- Slide 4 -->
+                <div class="slide" id="slide-4">
+                    <div class="toki-msg-container flex-row-center">
+                        <img class="toki-img" src="\images\onboarding-assets\toki-slide-3.png" alt="Toki msg 4">
+                        <div class="toki-msg">
+                            <svg class="toki-msg__background" width="614" height="50" viewBox="0 0 614 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M24.2919 11C24.2919 5.75329 28.5452 1.5 33.7919 1.5H603C608.247 1.5 612.5 5.75328 612.5 11V39C612.5 44.2467 608.247 48.5 603 48.5H30.1721C26.9246 48.5 24.2919 45.8673 24.2919 42.6197C24.2919 37.7929 20.7144 33.7136 15.9288 33.0837L5.01904 31.6477L17.4228 25.3892C21.6352 23.2638 24.2919 18.9475 24.2919 14.2293V11Z" stroke="black" stroke-width="3"/>
+                            </svg>
+                                    
+                                <p class="toki-text-msg">What's your fav (and not-so-fav) subject?😁</p>
+                        </div>
+                    </div>
+                    <div class="interactive-container flex-col-center">
+                        <div class="bio-fav-nonfav-wrapper flex-col-center">
+                            <div class="user-bio-container">
+                                <textarea
+                                  class="user-bio-textarea"
+                                  placeholder="Tell us about yourself slightly"
+                                  name="userBio"
+                                  id="userBio"
+                                  maxlength="200"
+                                  oninput="adjustHeight(this); updateCharCount(this);"
+                                ></textarea>
+                                <div class="char-count-user-bio" id="charCount">200/200</div>
+                              </div>
+                              <div class="subj-selection-wrapper">
+                                <p class="subj-selection-inst-msg">First choose your favorite subject and then your non-favorite</p> 
+                                <div class="subj-selection-grid">
+                                    <div class="subj-selection__card flex-col-center" >
+                                        <img class="subj-selection__card--logo" src="\images\onboarding-assets\subjects\physics.png" alt="Physics">
+                                        <p class="subj-label">Physics</p>
+                                    </div>
+                                </div>
+                            </div>
+                              
+                        </div>
+                        <div class="move-section-ctrl-container flex-row-center">
+                        <button class="move-section-btn req-">Submit</button>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/js/controller.js"></script>
+    <script src="/js/onboarding-data.js"></script>
+    <script src="/js/onboarding.js"></script>
+
+</body>
+</html>

@@ -1,12 +1,10 @@
 import Students from "../schemas/students.js";
 import Notes from "../schemas/notes.js";
 import { Notifs } from "../schemas/notifications.js";
+import {ENotificationType} from "../types/notificationService.type.js";
 
 type rootStudentID = string
-enum ENotificationType {
-    Feedback = 'feedback',
-    Mention = 'mention'
-}
+
 
 export async function getSavedNotes(studentID: rootStudentID) {
     let student = await Students.findOne({ studentID: studentID }, { saved_notes: 1 })
@@ -33,7 +31,21 @@ export async function getNotifications(studentID: rootStudentID) {
                     { path: 'commenterDocID', select: 'displayname studentID username' }
                 ]))
             }
-        } else {
+        } else if (doc['docType'] === ENotificationType.Reply) {
+            if (doc["ownerStudentID"] == studentID) {
+                populatedNotifications.push(doc.populate([
+                    { path: 'noteDocID', select: 'title' },
+                    { path: 'commenterDocID', select: 'displayname studentID username' }
+                ]))
+            }
+        } else if (doc['docType'] === ENotificationType.UpVote) {
+            if (doc["ownerStudentID"] == studentID) {
+                populatedNotifications.push(doc.populate([
+                    { path: 'noteDocID', select: 'title upvoteCount' },
+                ]))
+            }
+        } 
+        else {
             populatedNotifications.push(doc)
         }
     })
