@@ -20,21 +20,21 @@ function handleCredentialResponse(response) {
     })
         .then(response => response.json())
         .then(data => {
-            data.message ? setupErrorPopup(data.message) : data.redirect ? window.location.href = data.redirect : "" 
+            data.message ? setupErrorPopup(data.message) : data.redirect ? window.location.href = data.redirect : ""
         })
         .catch(error => setupErrorPopup(error.message))
-        
+
     document.querySelector('#login-spinner').style.display = "flex";
 }
 
 
 // noteroom-auth handler.
-document.querySelector('.primary-btn').addEventListener('click', function() {
+document.querySelector('.primary-btn').addEventListener('click', function () {
     let loginSpinner = document.querySelector('#login-spinner')
     let displayName = document.querySelector('input[name="displayname"]').value
     let email = document.querySelector('input[name="email"]').value
     let password = document.querySelector('input[name="password"]').value
-    
+
     let formData = new FormData()
     formData.append('displayname', displayName)
     formData.append('email', email)
@@ -44,39 +44,28 @@ document.querySelector('.primary-btn').addEventListener('click', function() {
         method: 'POST',
         body: formData
     })
-    .then(response => { return response.json() })
-    .then(data => { 
-        //FIXME: simplify this and sync with backend error handler
-        if(data.url) {
-            loginSpinner.style.display = 'none'
-            window.location.href = data.url
-        } else if(data.message) {
-            console.log(data)
-            loginSpinner.style.display = 'none'
-            setupErrorPopup(data.message)
-        } else if(data.emptyFields) {
-            let { emptyFields, userDefinedErrors } = data
-            let message
-
-            if(emptyFields.length > 0 && userDefinedErrors.length === 0) {
-                message = `Empty Fields: <b>${emptyFields.join()}</b>`
-            } else if(emptyFields.length > 0 && userDefinedErrors.length > 0) {
-                message = `
-                Empty Fields: <b>${emptyFields.join()}</b><br>
-                <b>${_.capitalize(userDefinedErrors[0].fieldName)}</b>: ${userDefinedErrors[0].errorMessage}
-                `
-            } else if(emptyFields.length === 0 && userDefinedErrors.length > 0) {
-                message = `<b>${_.capitalize(userDefinedErrors[0].fieldName)}</b>: ${userDefinedErrors[0].errorMessage}`
+        .then(response => { return response.json() })
+        .then(data => {
+            if (data.url) {
+                loginSpinner.style.display = 'none'
+                window.location.href = data.url
             }
 
+            else if (!data.ok) {
                 loginSpinner.style.display = 'none'
-                setupErrorPopup(message)
-        }
-    })
-    .catch(error => { 
-        loginSpinner.style.display = 'none'
-        console.error(error) 
-    })
+
+                data.message ? (function() {
+                    setupErrorPopup(data.message)
+                })() : data.error ? (function() {
+                    setupErrorPopup(`On <b>${data.error.fieldName}</b>: ${data.error.errorMessage}`)
+                })() : false
+            }
+        })
+        .catch(error => {
+            loginSpinner.style.display = 'none'
+            setupErrorPopup(error)
+        })
+        
     loginSpinner.style.display = 'flex'
 })
 
@@ -86,9 +75,9 @@ const password = document.querySelector('#password');
 
 togglePassword.addEventListener('click', function () {
     const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
-    
+
     password.setAttribute('type', type);
-    
+
     const icon = this.querySelector('i');
     icon.classList.toggle('fa-eye');
     icon.classList.toggle('fa-eye-slash');

@@ -29,7 +29,6 @@ function signupRouter(io: Server) {
         }
     })
 
-    //CRITICAL: there is no folder created for a student when using google-auth or noteroom-auth. when the onboard will be done, profile picture will be added in firebase in a user-folder
     router.post('/auth/google', async (req, res) => {
         try {
             let { id_token } = req.body
@@ -81,31 +80,17 @@ function signupRouter(io: Server) {
             setSession({recordID: studentDocID, studentID: student['studentID']}, req, res)
             res.json({ url: `/onboarding` })
             
-        //FIXME: try to enhance the error handling and follow some more structured and generalized way
         } catch (error) {
             if (error.code === 11000) {
                 let duplicate_field = Object.keys(error.keyValue)[0] // Sending the first duplicated field name to the client-side to show an error
                 io.emit('duplicate-value', duplicate_field)
             } else if (error.name === 'ValidationError') {
-                let requiredFields = []
-                let userDefineds = []
-
-                for (let field in error.errors) {
-                    if (error.errors[field].kind === 'required') {
-                        requiredFields.push(field)
-                    } else if (error.errors[field].kind === 'user defined') {
-                        userDefineds.push({ fieldName: error.errors[field].path, errorMessage: error.errors[field].properties.message })
-                    }
-                }
-
-                if (requiredFields.length > 0 || userDefineds.length > 0) {
-                    res.send({
-                        emptyFields: requiredFields,
-                        userDefinedErrors: userDefineds
-                    })
+                let field = Object.keys(error.errors)[0] // from multiple errors, selecting the first one
+                if (error.errors[field].kind === 'user defined') /* the error which is got from custom validator */ { 
+                    res.json({ ok: false, error: { fieldName: error.errors[field].path, errorMessage: error.errors[field].properties.message } })
                 }
             } else {
-                res.send({ message: error.message })
+                res.send({ ok: false, message: error.message })
             }
         }
     })
@@ -137,7 +122,7 @@ function signupRouter(io: Server) {
             }) 
 
         } catch (error) {
-            res.json({ message: "Something went wrong!" })
+            res.json({ ok: false, message: "Something went wrong!" })
         }
     })
 

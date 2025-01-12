@@ -7,20 +7,31 @@ const studentsSchema = new Schema({
     },
     displayname: {
         type: String,
-        required: true
+        validate: {
+            validator: (displayname) => displayname != "",
+            message: "Displayname is not provided" 
+        }
     },
     email: {
         type: String,
-        validate: {
-            validator: (email: any) => email.includes("@"),
-            message: (data: any) => `Email doesn't contain @`
-        },
+        validate: [
+            {
+                validator: (email) => email != "",
+                message: "Email is not provided" 
+            },
+            {
+                validator: (email: any) => email.includes("@"),
+                message: `The email addess is not valid`
+            },
+        ],
         unique: true,
-        required: true
     },
     password: {
-        type: String,
-        default: null
+        type: Schema.Types.Mixed,
+        validate: {
+            validator: (password) => password != "",
+            message: "Password is not provided"
+        }
     },
     studentID: {
         type: String,
@@ -29,8 +40,7 @@ const studentsSchema = new Schema({
         unique: true
     },
     rollnumber: {
-        type: String,
-        unique: false
+        type: String
     },
     collegesection: {
         type: String,
