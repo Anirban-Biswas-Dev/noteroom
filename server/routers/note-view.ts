@@ -9,8 +9,9 @@ import {getNotifications, getSavedNotes, profileInfo, unreadNotiCount} from '../
 import {getNote, getOwner} from '../services/noteService.js'
 import {Convert} from '../services/userService.js'
 import {addFeedback, addReply} from '../services/feedbackService.js'
-import addVote from '../services/voteService.js';
+import addVote, { deleteVote } from '../services/voteService.js';
 import { NotificationSender } from '../services/io/ioNotifcationService.js';
+import NoteVotes from '../schemas/votes.js';
 
 const router = Router()
 function noteViewRouter(io: Server) {
@@ -29,13 +30,17 @@ function noteViewRouter(io: Server) {
                     let savedNotes = await getSavedNotes(req.session["stdid"])
                     let notis = await getNotifications(req.session["stdid"])
                     let unReadCount = await unreadNotiCount(req.session["stdid"])
+                    
+                    let studentDocID = await Convert.getDocumentID_studentid(req.session["stdid"])
+                    let upvote_doc = await NoteVotes.findOne({ $and: [ { noteDocID: noteDocID }, { voterStudentDocID: studentDocID } ] })
+                    let isUpvoted = upvote_doc ? true : false
 
                     if (note.ownerDocID == req.cookies['recordID']) {
                         mynote = 1
-                        res.render('note-view/note-view', { note: note, mynote: mynote, owner: owner, feedbacks: feedbacks, root: root, savedNotes: savedNotes, notis: notis, unReadCount: unReadCount }) // Specific notes: visiting my notes
+                        res.render('note-view/note-view', { note: note, mynote: mynote, owner: owner, feedbacks: feedbacks, root: root, savedNotes: savedNotes, notis: notis, unReadCount: unReadCount, isUpvoted }) // Specific notes: visiting my notes
                     } else {
                         mynote = 0
-                        res.render('note-view/note-view', { note: note, mynote: mynote, owner: owner, feedbacks: feedbacks, root: root, savedNotes: savedNotes, notis: notis, unReadCount: unReadCount }) // Specific notes: visiting others notes
+                        res.render('note-view/note-view', { note: note, mynote: mynote, owner: owner, feedbacks: feedbacks, root: root, savedNotes: savedNotes, notis: notis, unReadCount: unReadCount, isUpvoted }) // Specific notes: visiting others notes
                     }
                 }
             } else {
@@ -129,34 +134,46 @@ function noteViewRouter(io: Server) {
         const _noteDocID = req.params.noteID
         const noteOwnerInfo = await getOwner({noteDocID: _noteDocID}) 
         const _ownerStudentID = noteOwnerInfo["ownerDocID"]["studentID"].toString()
+        
+        const action = req.query["action"]
 
+        let voteType = <"upvote" | "downvote">req.query["type"]
+        let noteDocID = req.body["noteDocID"]
+        let _voterStudentID = req.body["voterStudentID"]
+        let voterStudentDocID = (await Convert.getDocumentID_studentid(_voterStudentID)).toString()
+
+        //FIXME: check if a user has voted a note or not. though frontend js ensures that but it can be changed via any proxy by bypassing the frontend logic.
         try {
-            let voteType = <"upvote" | "downvote">req.query["type"]
-            let noteDocID = req.body["noteDocID"]
-            let _voterStudentID = req.body["voterStudentID"]
-            let voterStudentDocID = (await Convert.getDocumentID_studentid(_voterStudentID)).toString()
-            
-            let voteData = await addVote({ voteType, noteDocID, voterStudentDocID })
-            let upvoteCount = voteData["noteDocID"]["upvoteCount"]
+            if (!action) {
+                let voteData = await addVote({ voteType, noteDocID, voterStudentDocID })
+                let upvoteCount = voteData["noteDocID"]["upvoteCount"]
+    
+                io.emit('increment-upvote-dashboard', noteDocID)
+                io.to(noteDocID).emit('increment-upvote')
+                
+                if(_voterStudentID !== _ownerStudentID) {
+                    upvoteCount % 5 === 0 || upvoteCount === 1 ? (async function() {
+                        await NotificationSender(io, {
+                            upvoteCount: upvoteCount,
+                            noteDocID: noteDocID,
+                            ownerStudentID: _ownerStudentID,
+                            voterStudentDocID: voterStudentDocID
+                        }).sendVoteNotification(voteData)
+                    })() : false
+                }
+                            
+                res.json({ok: true})
+                    
+            } else {
+                await deleteVote({ noteDocID, voterStudentDocID, voteType })
+                io.emit('decrement-upvote-dashboard', noteDocID)
+                io.to(noteDocID).emit('decrement-upvote')
 
-            io.emit('increment-upvote-dashboard', noteDocID)
-            io.to(noteDocID).emit('increment-upvote')
-            
-            upvoteCount % 5 === 0 || upvoteCount === 1 ? (async function() {
-                await NotificationSender(io, {
-                    upvoteCount: upvoteCount,
-                    noteDocID: noteDocID,
-                    ownerStudentID: _ownerStudentID,
-                    voterStudentDocID: voterStudentDocID
-                }).sendVoteNotification(voteData)
-            })() : false
-                        
-            res.json({ok: true})
-            
+                res.json({ ok: true })
+            }
         } catch (error) {
             res.json({ ok: false })
         }
-        
     })
 
     router.get('/:noteID/shared', async (req, res, next) => {

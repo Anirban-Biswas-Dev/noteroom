@@ -7,3 +7,8 @@ export default async function addVote({ noteDocID, voterStudentDocID, voteType }
     let voteData = await votesModel.create({noteDocID, voterStudentDocID, voteType})
     return voteData.populate('noteDocID', 'title upvoteCount')
 }
+
+export async function deleteVote({ noteDocID, voterStudentDocID }: IVoteDB) {
+    await votesModel.deleteOne({ $and: [{ noteDocID: noteDocID }, { voterStudentDocID: voterStudentDocID }] })
+    await Notes.updateOne({ _id: noteDocID }, { $inc: { upvoteCount: -1 } })
+}

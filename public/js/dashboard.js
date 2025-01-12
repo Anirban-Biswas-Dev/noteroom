@@ -9,7 +9,13 @@ socket.on('increment-upvote-dashboard', function (noteDocID) {
 		noteCard.querySelector(".uv-count").innerHTML = parseInt(uvCount.innerHTML) + 1
 	})() : false
 })
-  
+socket.on('decrement-upvote-dashboard', function (noteDocID) {
+	let noteCard = document.querySelector(`#note-${noteDocID}`)
+	noteCard !== null ? (function() {
+		let uvCount = noteCard.querySelector(".uv-count")
+		noteCard.querySelector(".uv-count").innerHTML = parseInt(uvCount.innerHTML) - 1
+	})() : false
+})
 
 async function upvote(noteDocID) {
 	console.log(noteDocID)
