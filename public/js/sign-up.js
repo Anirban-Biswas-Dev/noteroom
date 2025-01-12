@@ -28,6 +28,16 @@ function handleCredentialResponse(response) {
 }
 
 
+document.querySelectorAll('.custom__input-field').forEach(inputField => {
+    inputField.addEventListener('input', function (e) {
+        if (!e.target.value || !inputField.value) {
+            document.querySelector('.primary-btn').disabled = true
+        } else {
+            document.querySelector('.primary-btn').disabled = false
+        }
+    })
+})
+
 // noteroom-auth handler.
 document.querySelector('.primary-btn').addEventListener('click', function () {
     let loginSpinner = document.querySelector('#login-spinner')
@@ -54,9 +64,9 @@ document.querySelector('.primary-btn').addEventListener('click', function () {
             else if (!data.ok) {
                 loginSpinner.style.display = 'none'
 
-                data.message ? (function() {
+                data.message ? (function () {
                     setupErrorPopup(data.message)
-                })() : data.error ? (function() {
+                })() : data.error ? (function () {
                     setupErrorPopup(`On <b>${data.error.fieldName}</b>: ${data.error.errorMessage}`)
                 })() : false
             }
@@ -65,7 +75,7 @@ document.querySelector('.primary-btn').addEventListener('click', function () {
             loginSpinner.style.display = 'none'
             setupErrorPopup(error)
         })
-        
+
     loginSpinner.style.display = 'flex'
 })
 
