@@ -9,9 +9,8 @@ import {getNotifications, getSavedNotes, profileInfo, unreadNotiCount} from '../
 import {getNote, getOwner} from '../services/noteService.js'
 import {Convert} from '../services/userService.js'
 import {addFeedback, addReply} from '../services/feedbackService.js'
-import addVote, { deleteVote } from '../services/voteService.js';
+import addVote, { deleteVote, isUpVoted } from '../services/voteService.js';
 import { NotificationSender } from '../services/io/ioNotifcationService.js';
-import NoteVotes from '../schemas/votes.js';
 
 const router = Router()
 function noteViewRouter(io: Server) {
@@ -31,9 +30,8 @@ function noteViewRouter(io: Server) {
                     let notis = await getNotifications(req.session["stdid"])
                     let unReadCount = await unreadNotiCount(req.session["stdid"])
                     
-                    let studentDocID = await Convert.getDocumentID_studentid(req.session["stdid"])
-                    let upvote_doc = await NoteVotes.findOne({ $and: [ { noteDocID: noteDocID }, { voterStudentDocID: studentDocID } ] })
-                    let isUpvoted = upvote_doc ? true : false
+                    let studentDocID = (await Convert.getDocumentID_studentid(req.session["stdid"])).toString()
+                    let isUpvoted = await isUpVoted({ noteDocID: noteDocID, voterStudentDocID: studentDocID, voteType: 'upvote' })
 
                     if (note.ownerDocID == req.cookies['recordID']) {
                         mynote = 1

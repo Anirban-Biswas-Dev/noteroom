@@ -5,6 +5,7 @@ import { INoteDB } from '../types/database.types.js'
 import { IManageUserNote, INoteDetails } from '../types/noteService.types.js'
 import { Notifs } from '../schemas/notifications.js'
 import { deleteNoteImages } from './firebaseService.js'
+import { isUpVoted } from './voteService.js'
 
 
 export async function addNote(noteData: INoteDB) {
@@ -76,12 +77,22 @@ export async function getNote({noteDocID}: IManageUserNote) {
     }
 }
 
-export async function getAllNotes() {
+export async function getAllNotes(studentDocID?: string) {
+    let allNotes: any
+
     let notes = await Notes.find({}, { ownerDocID: 1, title: 1, content: 1, feedbackCount: 1, upvoteCount: 1 })
         .sort({ createdAt: -1 })
         .limit(3)
         .populate('ownerDocID', 'profile_pic displayname studentID username')
-    return notes
+    
+    !studentDocID ? allNotes = notes : allNotes = await Promise.all(
+        notes.map(async note => {
+            let isupvoted = await isUpVoted({ noteDocID: note._id.toString(), voterStudentDocID: studentDocID, voteType: 'upvote' })
+            return { ...note.toObject(), isUpvoted: isupvoted }
+        })
+    )
+
+    return allNotes
 }
 
 export async function getOwner({noteDocID}: IManageUserNote) {

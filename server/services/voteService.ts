@@ -12,3 +12,9 @@ export async function deleteVote({ noteDocID, voterStudentDocID }: IVoteDB) {
     await votesModel.deleteOne({ $and: [{ noteDocID: noteDocID }, { voterStudentDocID: voterStudentDocID }] })
     await Notes.updateOne({ _id: noteDocID }, { $inc: { upvoteCount: -1 } })
 }
+
+
+export async function isUpVoted({ noteDocID, voterStudentDocID }: IVoteDB) {
+    let upvote_doc = await votesModel.findOne({ $and: [ { noteDocID: noteDocID }, { voterStudentDocID: voterStudentDocID } ] })
+    return upvote_doc ? true : false
+}
