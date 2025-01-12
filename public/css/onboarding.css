@@ -285,7 +285,7 @@ body {
 .slide-2--toki-text-msg{
     font-size: .8rem;
 }
-.clg-selection-wrapper {
+.clg-selection-wrapper, .subj-selection-wrapper {
     width: 100%;
     max-width: 700px;
     background-color: white;
@@ -295,7 +295,7 @@ body {
     gap: 30px;
 }
 
-.clg-selection-grid {
+.clg-selection-grid, .subj-selection-grid {
     width: 100%;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
@@ -588,4 +588,121 @@ label.dropdown-field.focused .psuedo_select ul {
     /* padding: 0 15px; */
     padding-right: 25px;
     max-width: 596px;
+}
+
+/* || Slide 4 */
+
+.bio-fav-nonfav-wrapper{
+    width: 100%;
+    max-width: 700px;
+}
+
+.user-bio-container {
+    width: 100%;
+    max-width: 550px;
+    position: relative;
+}
+  
+  .user-bio-textarea {
+    width: 100%;
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 12px;
+    line-height: 1.5;
+    resize: none; 
+    transition: all var(--duration-med) ease;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .user-bio-textarea:focus {
+    outline: none;
+    border: none;
+    box-shadow: #BED4FC 0px 2px 8px 0px;
+    
+}
+  
+  .char-count-user-bio {
+    font-size: 12px;
+    color: #666;
+    padding: 10px;
+    text-align: right;
+  }
+
+.subj-selection-wrapper{
+    padding: 10px 15px;
+    padding-bottom: 15px;
+}
+
+.subj-selection-inst-msg{
+    font-weight: var(--fw-bold);
+    font-size: 1rem;
+    line-height: 22px;
+    text-align: center;
+    letter-spacing: -0.06em;
+    color: rgba(0, 0, 0, 0.8);
+    padding: 10px 5px;
+}
+  
+/* This already has grid layout of the clg selection */
+
+.subj-selection__card{
+    justify-content: flex-start; 
+    background-color: white;
+    padding: 10px 5px;
+    height: 130px;
+    border: 1px solid #BED4FC;
+    border-radius: 8px;
+    transition: box-shadow var(--duration-med) ease;
+    gap: 5px;
+    transition: background-color var(--duration-fast) ease;
+}
+
+.subj-selection__card:hover {
+    box-shadow: #c2d6fc 0px 2px 4px 0px;
+    cursor: pointer;
+}
+
+.subj-selection__card--logo{
+    width: 55px;
+    height: 55px; 
+    object-fit: contain; 
+    margin-top: auto; 
+}
+.subj-label{
+    font-size: 0.8rem;
+    text-align: center;
+    letter-spacing: -0.03em;
+    color: rgba(0, 0, 0, 0.85);
+    line-height: 1.2; 
+    padding: 12px 5px;
+}
+
+/* These two classes visually distinguish fav and non fav subj for users */
+
+.selected-fav-subj{
+    background: linear-gradient(0deg, rgba(68, 255, 0, 0.2), rgba(68, 255, 0, 0.2)), #FFFFFF;
+    border: solid 1px #1D8102;
+    transition: background-color var(--duration-fast) ease;
+}
+.selected-non-fav-subj{
+    background: linear-gradient(0deg, rgba(255, 0, 0, 0.2), rgba(255, 0, 0, 0.2)), #FFFFFF;
+    border: 1px solid #D55F5F;
+    transition: background-color var(--duration-fast) ease;
+}
+
+
+@media (max-width: 768px) {
+    .subj-selection-grid {
+        grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+    }
+    .subj-selection__card {
+        height: 100px; 
+    }
+    .subj-selection__card--logo {
+        width: 30px; 
+    }
+    .subj-label {
+        font-size: 0.8rem; 
+    }
 }

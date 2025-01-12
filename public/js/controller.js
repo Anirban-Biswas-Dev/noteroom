@@ -1,5 +1,5 @@
 const conHost = window.location.origin
-const conSock = io(conHost, { query: { studentID: Cookies.get("studentID") } })
+const conSock = io(conHost)
 
 //* Badge images: user-profile + search-profile
 let baseURL = 'https://storage.googleapis.com/noteroom-fb1a7.appspot.com/badges/'
@@ -779,77 +779,77 @@ notiLinks.forEach(notiLink => {
 
 //* Event that will trigger when someone gives a feedback to a note: all pages, related to addNoti
 //FIXME: Good but I will optimize these two event handler more
-conSock.on('notification-feedback', (feedbackData, message) => {
-    addNoti(feedbackData, message)
-    manageDb.add('notis', feedbackData)
+// conSock.on('notification-feedback', (feedbackData, message) => {
+//     addNoti(feedbackData, message)
+//     manageDb.add('notis', feedbackData)
 
-    const nftShake = document.querySelector('.mobile-nft-btn')
-    nftShake.classList.add('shake') // 4
-    setTimeout(() => {
-        nftShake.classList.remove('shake');
-    }, 300)
+//     const nftShake = document.querySelector('.mobile-nft-btn')
+//     nftShake.classList.add('shake') // 4
+//     setTimeout(() => {
+//         nftShake.classList.remove('shake');
+//     }, 300)
 
-    try {
-        const audio = document.getElementById('notificationAudio');
-        audio.play();
-    } catch (error) {
-        console.error(error)
-    }
-})
+//     try {
+//         const audio = document.getElementById('notificationAudio');
+//         audio.play();
+//     } catch (error) {
+//         console.error(error)
+//     }
+// })
 
-conSock.on("notification-mention", (mentionData, message) => {
-    addNoti(mentionData, message)
-    manageDb.add('notis', mentionData)
+// conSock.on("notification-mention", (mentionData, message) => {
+//     addNoti(mentionData, message)
+//     manageDb.add('notis', mentionData)
 
-    const nftShake = document.querySelector('.mobile-nft-btn')
-    nftShake.classList.add('shake') // 4
-    setTimeout(() => {
-        nftShake.classList.remove('shake');
-    }, 300)
+//     const nftShake = document.querySelector('.mobile-nft-btn')
+//     nftShake.classList.add('shake') // 4
+//     setTimeout(() => {
+//         nftShake.classList.remove('shake');
+//     }, 300)
 
-    try {
-        const audio = document.getElementById('notificationAudio');
-        audio.play();
-    } catch (error) {
-        console.error(error)
-    }
-})
+//     try {
+//         const audio = document.getElementById('notificationAudio');
+//         audio.play();
+//     } catch (error) {
+//         console.error(error)
+//     }
+// })
 
-conSock.on("notification-reply", (replyData, message) => {
-    addNoti(replyData, message)
-    manageDb.add('notis', replyData)
+// conSock.on("notification-reply", (replyData, message) => {
+//     addNoti(replyData, message)
+//     manageDb.add('notis', replyData)
 
-    const nftShake = document.querySelector('.mobile-nft-btn')
-    nftShake.classList.add('shake') // 4
-    setTimeout(() => {
-        nftShake.classList.remove('shake');
-    }, 300)
+//     const nftShake = document.querySelector('.mobile-nft-btn')
+//     nftShake.classList.add('shake') // 4
+//     setTimeout(() => {
+//         nftShake.classList.remove('shake');
+//     }, 300)
 
-    try {
-        const audio = document.getElementById('notificationAudio');
-        audio.play();
-    } catch (error) {
-        console.error(error)
-    }
-})
+//     try {
+//         const audio = document.getElementById('notificationAudio');
+//         audio.play();
+//     } catch (error) {
+//         console.error(error)
+//     }
+// })
 
-conSock.on("notification-upvote", (replyData, message) => {
-    addNoti(replyData, message)
-    manageDb.add('notis', replyData)
+// conSock.on("notification-upvote", (replyData, message) => {
+//     addNoti(replyData, message)
+//     manageDb.add('notis', replyData)
 
-    const nftShake = document.querySelector('.mobile-nft-btn')
-    nftShake.classList.add('shake') // 4
-    setTimeout(() => {
-        nftShake.classList.remove('shake');
-    }, 300)
+//     const nftShake = document.querySelector('.mobile-nft-btn')
+//     nftShake.classList.add('shake') // 4
+//     setTimeout(() => {
+//         nftShake.classList.remove('shake');
+//     }, 300)
 
-    try {
-        const audio = document.getElementById('notificationAudio');
-        audio.play();
-    } catch (error) {
-        console.error(error)
-    }
-})
+//     try {
+//         const audio = document.getElementById('notificationAudio');
+//         audio.play();
+//     } catch (error) {
+//         console.error(error)
+//     }
+// })
 
 try {
     //* Mobile notification panel
