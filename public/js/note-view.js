@@ -1,5 +1,5 @@
 const host = window.location.origin;
-const socket = io(host, { query: { studentID: Cookies.get("studentID") } });
+const socket = io(host);
 
 /*
 # Event Sequence:
@@ -24,6 +24,53 @@ socket.on('add-feedback', (feedbackData) => {
 socket.on('add-reply', (replyData) => {
   manageNotes.addReply(document.querySelector(`#thread-${replyData.parentFeedbackDocID._id}`), replyData)
 })
+
+socket.on('increment-upvote', function () {
+  let uvCount = document.querySelector('.uv-count')
+  document.querySelector('.uv-count').innerHTML = parseInt(uvCount.innerHTML) + 1
+})
+socket.on('decrement-upvote', function () {
+  let uvCount = document.querySelector('.uv-count')
+  document.querySelector('.uv-count').innerHTML = parseInt(uvCount.innerHTML) - 1
+})
+
+
+async function upvote(voteContainer) {
+  const voterStudentID = Cookies.get("studentID")
+  const noteDocID = voteContainer.getAttribute('data-noteid')
+  const isUpvoted = voteContainer.getAttribute('data-isupvoted') === "true" ? true : false
+
+  let voteData = new FormData()
+  voteData.append('noteDocID', noteDocID)
+  voteData.append('voterStudentID', voterStudentID)
+
+  function replaceUpvoteArrow(svg, action) {
+    document.querySelector('#upvote-container .uv-icon').innerHTML = svg
+    action === "delete" ? voteContainer.setAttribute('data-isupvoted', 'false') : voteContainer.setAttribute('data-isupvoted', 'true')
+  }
+
+  if(!isUpvoted) {
+    let response = await fetch(`/view/${noteDocID}/vote?type=upvote`, {
+      body: voteData,
+      method: 'post'
+    })
+    let data = await response.json()
+    data.ok ? replaceUpvoteArrow(`<path
+      d="M20.293 10.2935L19.5859 11.0006L20.293 10.2935ZM10.2929 1.70717L9.58575 1.00008L10.2929 1.70717ZM9.58575 1.00008L0.999862 9.58646L2.41412 11.0006L11 2.41425L9.58575 1.00008ZM2.41412 13.0006H6V11.0006H2.41412V13.0006ZM6 13.0006V19.5H8V13.0006H6ZM9.5 23H12.5V21H9.5V23ZM16 19.5V13.0006H14V19.5H16ZM16 13.0006H19.5859V11.0006H16V13.0006ZM21.0001 9.58646L12.4143 1.00008L11 2.41425L19.5859 11.0006L21.0001 9.58646ZM19.5859 13.0006C21.3677 13.0006 22.26 10.8464 21.0001 9.58646L19.5859 11.0006L19.5859 11.0006V13.0006ZM16 13.0006L16 13.0006V11.0006C14.8954 11.0006 14 11.8961 14 13.0006H16ZM12.5 23C14.433 23 16 21.433 16 19.5H14C14 20.3284 13.3284 21 12.5 21V23ZM6 19.5C6 21.433 7.567 23 9.5 23V21C8.67157 21 8 20.3284 8 19.5H6ZM6 13.0006L6 13.0006H8C8 11.8961 7.10457 11.0006 6 11.0006V13.0006ZM0.999862 9.58646C-0.260013 10.8464 0.632334 13.0006 2.41412 13.0006V11.0006L2.41412 11.0006L0.999862 9.58646ZM11 2.41425L11 2.41425L12.4143 1.00008C11.6332 0.218978 10.3668 0.218978 9.58575 1.00008L11 2.41425ZM11 1L21 11H14V21H8V11H1L11 1Z"
+      fill="#00FF00"
+    />`, "add") : false
+  } else {
+    let response = await fetch(`/view/${noteDocID}/vote?type=upvote&action=delete`, {
+      body: voteData,
+      method: 'post'
+    })
+    let data = await response.json()
+    data.ok ? replaceUpvoteArrow(`<path
+      d="M20.293 10.2935L19.5859 11.0006L20.293 10.2935ZM10.2929 1.70717L9.58575 1.00008L10.2929 1.70717ZM9.58575 1.00008L0.999862 9.58646L2.41412 11.0006L11 2.41425L9.58575 1.00008ZM2.41412 13.0006H6V11.0006H2.41412V13.0006ZM6 13.0006V19.5H8V13.0006H6ZM9.5 23H12.5V21H9.5V23ZM16 19.5V13.0006H14V19.5H16ZM16 13.0006H19.5859V11.0006H16V13.0006ZM21.0001 9.58646L12.4143 1.00008L11 2.41425L19.5859 11.0006L21.0001 9.58646ZM19.5859 13.0006C21.3677 13.0006 22.26 10.8464 21.0001 9.58646L19.5859 11.0006L19.5859 11.0006V13.0006ZM16 13.0006L16 13.0006V11.0006C14.8954 11.0006 14 11.8961 14 13.0006H16ZM12.5 23C14.433 23 16 21.433 16 19.5H14C14 20.3284 13.3284 21 12.5 21V23ZM6 19.5C6 21.433 7.567 23 9.5 23V21C8.67157 21 8 20.3284 8 19.5H6ZM6 13.0006L6 13.0006H8C8 11.8961 7.10457 11.0006 6 11.0006V13.0006ZM0.999862 9.58646C-0.260013 10.8464 0.632334 13.0006 2.41412 13.0006V11.0006L2.41412 11.0006L0.999862 9.58646ZM11 2.41425L11 2.41425L12.4143 1.00008C11.6332 0.218978 10.3668 0.218978 9.58575 1.00008L11 2.41425Z"
+      fill="black"
+    />`, "delete") : false
+  }
+}
 
 function formatDate(date) {
   const formatter = new Intl.DateTimeFormat('en-US', {
@@ -317,7 +364,8 @@ document.addEventListener('DOMContentLoaded', () => {
           threadEditor.innerHTML = `
                   <!--<img class="tec__avatar-preview thread-avatar">-->
                   <div class="thread-editor-wrapper">
-                    <textarea placeholder="Write a comment..." class="thread-editor">@${parentCommenterUsername} </textarea>
+                    <span id='mentioneduser' style="display: inline-block; background-color: #e3f2fd; color: #1e88e5; padding: 5px 10px; border-radius: 12px; font-weight: bold; font-size: 14px; font-family: Arial, sans-serif;">@${parentCommenterUsername}</span>
+                    <textarea placeholder="Write a comment..." class="thread-editor"></textarea>
                     <div class="thread-editor__action-opts">
                       <svg id="threadCmntBtn" class="thread__cmnt-btn" width="18px" height="18px" viewBox="0 0 256 256" id="Flat" xmlns="http://www.w3.org/2000/svg">
                         <path d="M231.626,128a16.015,16.015,0,0,1-8.18262,13.96094L54.53027,236.55273a15.87654,15.87654,0,0,1-18.14648-1.74023,15.87132,15.87132,0,0,1-4.74024-17.60156L60.64746,136H136a8,8,0,0,0,0-16H60.64746L31.64355,38.78906A16.00042,16.00042,0,0,1,54.5293,19.44727l168.915,94.59179A16.01613,16.01613,0,0,1,231.626,128Z"/>
@@ -339,7 +387,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // Handle posting replies
       if (event.target.closest('.thread__cmnt-btn')) {
         const textarea = event.target.closest('.thread-editor-container').querySelector('.thread-editor');
-        const replyContent = textarea.value.trim();
+        const replyContent = document.querySelector('#mentioneduser').innerHTML + " " + textarea.value.trim();
 
         if (!replyContent) return; // Prevents posting empty replies
 

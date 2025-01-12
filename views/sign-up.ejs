@@ -73,7 +73,6 @@
 
                 <button class="primary-btn flex-center-evenly">Sign Up
                     <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="login-spinner" style="display: none"></span> <!--Maybe add the spinner, this is the bootstrap one, I just wanted to see how that works. Make yours like this, it will be easy to handle.-->
-                    <!-- once the js file is available, this leaoder needs to be displayed on submission of details -->
                     <div class="btn-loader"></div>
                 </button>
             </div>
@@ -85,6 +84,8 @@
     <img class="focus-img" src="\images\sign-up-enhancer.png" alt="Two friends talking about NoteRoom">
 
     <%- include('side-panel', { block: 'error-popup' }) %>
+
+	<script src="/js/notificationHandler.js"></script>
     <script src="/js/controller.js"></script>
     <script src="/js/sign-up.js"></script>
     <script src="/js/utils.js"></script>

@@ -1,5 +1,5 @@
 const conHost = window.location.origin
-const conSock = io(conHost, { query: { studentID: Cookies.get("studentID") } })
+const conSock = io(conHost)
 
 //* Badge images: user-profile + search-profile
 let baseURL = 'https://storage.googleapis.com/noteroom-fb1a7.appspot.com/badges/'
@@ -184,9 +184,9 @@ const manageNotes = { // I treat all the cards as notes
                                             <span class="opt-label">Save Note</span>
                                     </div>
                                     <div class="option" onclick="download('${noteData.noteID}', '${noteData.noteTitle}')">
-                                            <svg class="download-icon" width="40" height="40" viewBox="0 0 43 43" fill="none" xmlns="http://www.w3.org/2000/svg" >
-                                      <path d="M37.1541 26.5395V33.6165C37.1541 34.555 36.7813 35.455 36.1177 36.1186C35.4541 36.7822 34.5541 37.155 33.6156 37.155H8.84623C7.90776 37.155 7.00773 36.7822 6.34414 36.1186C5.68054 35.455 5.30774 34.555 5.30774 33.6165V26.5395M12.3847 17.6933L21.2309 26.5395M21.2309 26.5395L30.0771 17.6933M21.2309 26.5395V5.30859" stroke="#1E1E1E" stroke-width="2.29523" stroke-linecap="round" stroke-linejoin="round"/>
-                                  </svg>
+                                        <svg class="download-icon" width="40" height="40" viewBox="0 0 43 43" fill="none" xmlns="http://www.w3.org/2000/svg" >
+                                            <path d="M37.1541 26.5395V33.6165C37.1541 34.555 36.7813 35.455 36.1177 36.1186C35.4541 36.7822 34.5541 37.155 33.6156 37.155H8.84623C7.90776 37.155 7.00773 36.7822 6.34414 36.1186C5.68054 35.455 5.30774 34.555 5.30774 33.6165V26.5395M12.3847 17.6933L21.2309 26.5395M21.2309 26.5395L30.0771 17.6933M21.2309 26.5395V5.30859" stroke="#1E1E1E" stroke-width="2.29523" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
                                         <span class="opt-label">Download</span>
                                     </div>
                                     <div class="option" onclick="setupShareModal('${noteData.noteID}')"
@@ -209,11 +209,14 @@ const manageNotes = { // I treat all the cards as notes
                               </div>
                               <div class="note-engagement">
                             <div class="vote-container">
-                                <div class="uv-container">
+                                <div class="uv-container" id="upvote-container" data-isupvoted='${noteData.isUpvoted}' data-noteid='${noteData.noteID}' onclick="upvote(this)">
                                     <svg class="uv-icon" width="18" height="19" viewBox="0 0 22 23" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M20.293 10.2935L19.5859 11.0006L20.293 10.2935ZM10.2929 1.70717L9.58575 1.00008L10.2929 1.70717ZM9.58575 1.00008L0.999862 9.58646L2.41412 11.0006L11 2.41425L9.58575 1.00008ZM2.41412 13.0006H6V11.0006H2.41412V13.0006ZM6 13.0006V19.5H8V13.0006H6ZM9.5 23H12.5V21H9.5V23ZM16 19.5V13.0006H14V19.5H16ZM16 13.0006H19.5859V11.0006H16V13.0006ZM21.0001 9.58646L12.4143 1.00008L11 2.41425L19.5859 11.0006L21.0001 9.58646ZM19.5859 13.0006C21.3677 13.0006 22.26 10.8464 21.0001 9.58646L19.5859 11.0006L19.5859 11.0006V13.0006ZM16 13.0006L16 13.0006V11.0006C14.8954 11.0006 14 11.8961 14 13.0006H16ZM12.5 23C14.433 23 16 21.433 16 19.5H14C14 20.3284 13.3284 21 12.5 21V23ZM6 19.5C6 21.433 7.567 23 9.5 23V21C8.67157 21 8 20.3284 8 19.5H6ZM6 13.0006L6 13.0006H8C8 11.8961 7.10457 11.0006 6 11.0006V13.0006ZM0.999862 9.58646C-0.260013 10.8464 0.632334 13.0006 2.41412 13.0006V11.0006L2.41412 11.0006L0.999862 9.58646ZM11 2.41425L11 2.41425L12.4143 1.00008C11.6332 0.218978 10.3668 0.218978 9.58575 1.00008L11 2.41425Z" fill="black"/>
-                                        </svg>									
-                                    <span class="uv-count">0</span>
+                                        ${noteData.isUpvoted ?
+                                                `<path d="M20.293 10.2935L19.5859 11.0006L20.293 10.2935ZM10.2929 1.70717L9.58575 1.00008L10.2929 1.70717ZM9.58575 1.00008L0.999862 9.58646L2.41412 11.0006L11 2.41425L9.58575 1.00008ZM2.41412 13.0006H6V11.0006H2.41412V13.0006ZM6 13.0006V19.5H8V13.0006H6ZM9.5 23H12.5V21H9.5V23ZM16 19.5V13.0006H14V19.5H16ZM16 13.0006H19.5859V11.0006H16V13.0006ZM21.0001 9.58646L12.4143 1.00008L11 2.41425L19.5859 11.0006L21.0001 9.58646ZM19.5859 13.0006C21.3677 13.0006 22.26 10.8464 21.0001 9.58646L19.5859 11.0006L19.5859 11.0006V13.0006ZM16 13.0006L16 13.0006V11.0006C14.8954 11.0006 14 11.8961 14 13.0006H16ZM12.5 23C14.433 23 16 21.433 16 19.5H14C14 20.3284 13.3284 21 12.5 21V23ZM6 19.5C6 21.433 7.567 23 9.5 23V21C8.67157 21 8 20.3284 8 19.5H6ZM6 13.0006L6 13.0006H8C8 11.8961 7.10457 11.0006 6 11.0006V13.0006ZM0.999862 9.58646C-0.260013 10.8464 0.632334 13.0006 2.41412 13.0006V11.0006L2.41412 11.0006L0.999862 9.58646ZM11 2.41425L11 2.41425L12.4143 1.00008C11.6332 0.218978 10.3668 0.218978 9.58575 1.00008L11 2.41425ZM11 1L21 11H14V21H8V11H1L11 1Z" fill="#00FF00" />`
+                                                : `<path d="M20.293 10.2935L19.5859 11.0006L20.293 10.2935ZM10.2929 1.70717L9.58575 1.00008L10.2929 1.70717ZM9.58575 1.00008L0.999862 9.58646L2.41412 11.0006L11 2.41425L9.58575 1.00008ZM2.41412 13.0006H6V11.0006H2.41412V13.0006ZM6 13.0006V19.5H8V13.0006H6ZM9.5 23H12.5V21H9.5V23ZM16 19.5V13.0006H14V19.5H16ZM16 13.0006H19.5859V11.0006H16V13.0006ZM21.0001 9.58646L12.4143 1.00008L11 2.41425L19.5859 11.0006L21.0001 9.58646ZM19.5859 13.0006C21.3677 13.0006 22.26 10.8464 21.0001 9.58646L19.5859 11.0006L19.5859 11.0006V13.0006ZM16 13.0006L16 13.0006V11.0006C14.8954 11.0006 14 11.8961 14 13.0006H16ZM12.5 23C14.433 23 16 21.433 16 19.5H14C14 20.3284 13.3284 21 12.5 21V23ZM6 19.5C6 21.433 7.567 23 9.5 23V21C8.67157 21 8 20.3284 8 19.5H6ZM6 13.0006L6 13.0006H8C8 11.8961 7.10457 11.0006 6 11.0006V13.0006ZM0.999862 9.58646C-0.260013 10.8464 0.632334 13.0006 2.41412 13.0006V11.0006L2.41412 11.0006L0.999862 9.58646ZM11 2.41425L11 2.41425L12.4143 1.00008C11.6332 0.218978 10.3668 0.218978 9.58575 1.00008L11 2.41425Z" fill="black" />`
+                                        }
+                                    </svg>									
+                                    <span class="uv-count">${noteData.upvoteCount}</span>
                                 </div>
                                 <div class="divider-uv-dv"></div>
                                 <div class="dv-container">
@@ -292,13 +295,14 @@ const manageNotes = { // I treat all the cards as notes
         let existingNoti = document.querySelector(`#noti-${feedbackData.notiID}`)
 
         if (!existingNoti) {
+            let isVote = feedbackData.vote ? true : false
             let notificationHtml = `
                   <div class="notification secondary-${feedbackData.isread}" id="noti-${feedbackData.notiID}">
-                      <span class='feedback-id' style="display: none;">${feedbackData.feedbackID}</span>
+                      ${!isVote ? `<span class='feedback-id' style='display: none;'>${feedbackData.feedbackID}</span>` : ""} 
                       <div class="first-row">
                       <div class="frnt-wrapper">
                       <span class="isRead ${feedbackData.isread}"></span>
-                        <a href='/view/${feedbackData.noteID}/#${feedbackData.feedbackID}' class="notification-link">
+                        <a href='/view/${feedbackData.noteID}/${!isVote ? `#${feedbackData.feedbackID}` : ''}' class="notification-link">
                           <span class="notification-title">
                           ${truncatedTitle(feedbackData.nfnTitle)}
                           </span>
@@ -307,9 +311,12 @@ const manageNotes = { // I treat all the cards as notes
                         <span class="remove-notification" onclick="deleteNoti('${feedbackData.notiID}')">&times;</span>
                       </div>
                       <div class="notification-msg">
-                        <a href='/user/${feedbackData.commenterUserName}' class="commenter-prfl">
-                        ${feedbackData.commenterDisplayName}
-                        </a><a href='/view/${feedbackData.noteID}/#${feedbackData.feedbackID}' class="notification-link-2"> ${message}</a>
+                        ${!isVote ? `
+                            <a href='/user/${feedbackData.commenterUserName}' class="commenter-prfl">${feedbackData.commenterDisplayName}</a>
+                            <a href='/view/${feedbackData.noteID}/#${feedbackData.feedbackID}' class="notification-link-2"> ${message}</a>
+                        ` : `<a href='/view/${feedbackData.noteID}' class="notification-link-2"> ${message}</a>`
+                } 
+                        
                       </div>
                   </div>`
             notificationContainer.insertAdjacentHTML('afterbegin', notificationHtml);
@@ -363,8 +370,8 @@ const manageNotes = { // I treat all the cards as notes
             <div class="main__cmnts-replies-wrapper">
                 <div class="main__body cmnt-body-3rows">
                     <div class="main__reply-info reply-info">
-                        <span id="parentFeedbackDocID" style="display: none;">${feedbackData._id }</span>
-                        <span id="commenterUsername" style="display: none;">${ feedbackData.commenterDocID.username }</span>
+                        <span id="parentFeedbackDocID" style="display: none;">${feedbackData._id}</span>
+                        <span id="commenterUsername" style="display: none;">${feedbackData.commenterDocID.username}</span>
                         <span class="main__author-name">${feedbackData.commenterDocID.displayname}</span>
                         <span class="reply-date">${formattedDate}</span>
                     </div>
@@ -397,11 +404,11 @@ const manageNotes = { // I treat all the cards as notes
             </div>
         </div>
       `;
-      document.querySelector(".cmnts-list").insertAdjacentHTML('afterbegin', feedbackCard)
+        document.querySelector(".cmnts-list").insertAdjacentHTML('afterbegin', feedbackCard)
     },
 
 
-    addReply: function(threadSection, replyData) {
+    addReply: function (threadSection, replyData) {
         console.log(threadSection)
         let date = new Date(replyData.createdAt)
         const formatter = new Intl.DateTimeFormat('en-US', {
@@ -419,7 +426,7 @@ const manageNotes = { // I treat all the cards as notes
             <img src="${replyData.commenterDocID.profile_pic}" alt="User Avatar" class="cmnt-author-img thread-avatar">
             <div class="cmnt-body-3rows">
                 <div class="reply-info">
-                    <span id="commenterUsername" style="display: none;">${ replyData.commenterDocID.username }</span>
+                    <span id="commenterUsername" style="display: none;">${replyData.commenterDocID.username}</span>
                     <span class="main__author-name">${replyData.commenterDocID.displayname}</span>
                     <span class="reply-date">${formattedDate}</span>
                 </div>
@@ -451,10 +458,10 @@ const manageNotes = { // I treat all the cards as notes
         `;
         let threadEditor = threadSection.querySelector('.thread-editor-container');
         if (!threadEditor) {
-            
+
             threadEditor = document.createElement('div');
             threadEditor.classList.add('thread-editor-container');
-            
+
             // Add the HTML for the thread editor
             threadEditor.innerHTML = `
             <!--<img class="tec__avatar-preview thread-avatar">-->
@@ -467,7 +474,7 @@ const manageNotes = { // I treat all the cards as notes
                 </div>
             </div>
             `;
-            
+
             threadSection.appendChild(threadEditor);
         }
         threadSection.querySelector('.thread-editor-container').insertAdjacentHTML('beforebegin', replyMessage);
@@ -710,9 +717,9 @@ try {
 
 
 let notificationCount = document.getElementById('notification-count').textContent;
-if(notificationCount <= 0) {
+if (notificationCount <= 0) {
     document.getElementById('notification-count').style.display = 'none'
-} 
+}
 
 //* Delete notifications: all pages
 async function deleteNoti(id) {
@@ -775,60 +782,77 @@ notiLinks.forEach(notiLink => {
 
 //* Event that will trigger when someone gives a feedback to a note: all pages, related to addNoti
 //FIXME: Good but I will optimize these two event handler more
-conSock.on('notification-feedback', (feedbackData, message) => {
-    addNoti(feedbackData, message)
-    manageDb.add('notis', feedbackData)
+// conSock.on('notification-feedback', (feedbackData, message) => {
+//     addNoti(feedbackData, message)
+//     manageDb.add('notis', feedbackData)
 
-    const nftShake = document.querySelector('.mobile-nft-btn')
-    nftShake.classList.add('shake') // 4
-    setTimeout(() => {
-        nftShake.classList.remove('shake');
-    }, 300)
+//     const nftShake = document.querySelector('.mobile-nft-btn')
+//     nftShake.classList.add('shake') // 4
+//     setTimeout(() => {
+//         nftShake.classList.remove('shake');
+//     }, 300)
 
-    try {
-        const audio = document.getElementById('notificationAudio');
-        audio.play();
-    } catch (error) {
-        console.error(error)
-    }
-})
+//     try {
+//         const audio = document.getElementById('notificationAudio');
+//         audio.play();
+//     } catch (error) {
+//         console.error(error)
+//     }
+// })
 
-conSock.on("notification-mention", (mentionData, message) => {
-    addNoti(mentionData, message)
-    manageDb.add('notis', mentionData)
+// conSock.on("notification-mention", (mentionData, message) => {
+//     addNoti(mentionData, message)
+//     manageDb.add('notis', mentionData)
 
-    const nftShake = document.querySelector('.mobile-nft-btn')
-    nftShake.classList.add('shake') // 4
-    setTimeout(() => {
-        nftShake.classList.remove('shake');
-    }, 300)
+//     const nftShake = document.querySelector('.mobile-nft-btn')
+//     nftShake.classList.add('shake') // 4
+//     setTimeout(() => {
+//         nftShake.classList.remove('shake');
+//     }, 300)
 
-    try {
-        const audio = document.getElementById('notificationAudio');
-        audio.play();
-    } catch (error) {
-        console.error(error)
-    }
-})
+//     try {
+//         const audio = document.getElementById('notificationAudio');
+//         audio.play();
+//     } catch (error) {
+//         console.error(error)
+//     }
+// })
 
-conSock.on("notification-reply", (replyData, message) => {
-    addNoti(replyData, message)
-    manageDb.add('notis', replyData)
+// conSock.on("notification-reply", (replyData, message) => {
+//     addNoti(replyData, message)
+//     manageDb.add('notis', replyData)
 
-    const nftShake = document.querySelector('.mobile-nft-btn')
-    nftShake.classList.add('shake') // 4
-    setTimeout(() => {
-        nftShake.classList.remove('shake');
-    }, 300)
+//     const nftShake = document.querySelector('.mobile-nft-btn')
+//     nftShake.classList.add('shake') // 4
+//     setTimeout(() => {
+//         nftShake.classList.remove('shake');
+//     }, 300)
 
-    try {
-        const audio = document.getElementById('notificationAudio');
-        audio.play();
-    } catch (error) {
-        console.error(error)
-    }
-})
+//     try {
+//         const audio = document.getElementById('notificationAudio');
+//         audio.play();
+//     } catch (error) {
+//         console.error(error)
+//     }
+// })
 
+// conSock.on("notification-upvote", (replyData, message) => {
+//     addNoti(replyData, message)
+//     manageDb.add('notis', replyData)
+
+//     const nftShake = document.querySelector('.mobile-nft-btn')
+//     nftShake.classList.add('shake') // 4
+//     setTimeout(() => {
+//         nftShake.classList.remove('shake');
+//     }, 300)
+
+//     try {
+//         const audio = document.getElementById('notificationAudio');
+//         audio.play();
+//     } catch (error) {
+//         console.error(error)
+//     }
+// })
 
 try {
     //* Mobile notification panel

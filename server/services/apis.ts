@@ -7,10 +7,13 @@ import archiver from "archiver";
 import { getNotifications } from "../helpers/rootInfo.js";
 import { deleteNote } from "./noteService.js";
 import { Convert } from "./userService.js";
+import { isUpVoted } from "./voteService.js";
 
 const router = Router()
 
 export default function apiRouter(io: Server) {
+    //CRITICAL: only sessioned user can call apis, enhance error-handling otherwise
+
     router.post("/download", async (req, res) => {
         let noteID = req.body.noteID
         let noteTitle = req.body.noteTitle
@@ -104,9 +107,24 @@ export default function apiRouter(io: Server) {
             let page = req.query.page as unknown as number
             let count = req.query.count as unknown as number
             let skip: number = (page - 1) * count
-            let notes = await Notes.find({}).sort({ createdAt: -1 }).skip(skip).limit(count).populate('ownerDocID', 'profile_pic displayname studentID')
+            let studentDocID = (await Convert.getDocumentID_studentid(req.session["stdid"])).toString()
+
+            let notes = await Notes
+                .find({})
+                .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(count)
+                .populate('ownerDocID', 'profile_pic displayname studentID')
+
+            //FIXME: repition of process in noteService
+            let processedNotes = await Promise.all(
+                notes.map(async note => {
+                    let isupvoted = await isUpVoted({ noteDocID: note._id.toString(), voterStudentDocID: studentDocID, voteType: 'upvote' })
+                    return { ...note.toObject(), isUpvoted: isupvoted }
+                })
+            )
             if (notes.length != 0) {
-                res.json(notes)
+                res.json(processedNotes)
             } else {
                 res.json([])
             }
