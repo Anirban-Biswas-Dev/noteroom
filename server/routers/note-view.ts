@@ -6,7 +6,7 @@ import Students from '../schemas/students.js'
 import {Server} from 'socket.io'
 import {checkMentions, replaceMentions} from '../helpers/utils.js'
 import {getNotifications, getSavedNotes, profileInfo, unreadNotiCount} from '../helpers/rootInfo.js'
-import {getNote, getOwner} from '../services/noteService.js'
+import {getNote, getOwner, isSaved} from '../services/noteService.js'
 import {Convert} from '../services/userService.js'
 import {addFeedback, addReply} from '../services/feedbackService.js'
 import addVote, { deleteVote, isUpVoted } from '../services/voteService.js';
@@ -32,13 +32,14 @@ function noteViewRouter(io: Server) {
                     
                     let studentDocID = (await Convert.getDocumentID_studentid(req.session["stdid"])).toString()
                     let isUpvoted = await isUpVoted({ noteDocID: noteDocID, voterStudentDocID: studentDocID, voteType: 'upvote' })
+                    let issaved = await isSaved({ noteDocID, studentDocID })
 
                     if (note.ownerDocID == req.cookies['recordID']) {
                         mynote = 1
-                        res.render('note-view/note-view', { note: note, mynote: mynote, owner: owner, feedbacks: feedbacks, root: root, savedNotes: savedNotes, notis: notis, unReadCount: unReadCount, isUpvoted }) // Specific notes: visiting my notes
+                        res.render('note-view/note-view', { isSaved: issaved, note: note, mynote: mynote, owner: owner, feedbacks: feedbacks, root: root, savedNotes: savedNotes, notis: notis, unReadCount: unReadCount, isUpvoted }) // Specific notes: visiting my notes
                     } else {
                         mynote = 0
-                        res.render('note-view/note-view', { note: note, mynote: mynote, owner: owner, feedbacks: feedbacks, root: root, savedNotes: savedNotes, notis: notis, unReadCount: unReadCount, isUpvoted }) // Specific notes: visiting others notes
+                        res.render('note-view/note-view', { isSaved: issaved, note: note, mynote: mynote, owner: owner, feedbacks: feedbacks, root: root, savedNotes: savedNotes, notis: notis, unReadCount: unReadCount, isUpvoted }) // Specific notes: visiting others notes
                     }
                 }
             } else {

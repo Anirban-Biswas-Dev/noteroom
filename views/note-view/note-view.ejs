@@ -69,13 +69,15 @@
         </div>
         <span style="display: none;" class="subject">Subject: <%= note.subject %> </span>
 
-        <div class="fb__col-2">
-          <!-- TODO: Add the same save note logic as dashboard one -->
-          <button class="save-note-btn">
-            <i class="fa-regular fa-bookmark"></i>
-            <i class="fa-solid fa-bookmark saved"></i>
-          </button>
-        </div>
+        <% if (mynote !== 3) { %>
+          <div class="fb__col-2">
+            <button class="<%= isSaved ? "save-note-btn saved" : "save-note-btn" %>" onclick="saveNote('<%= note._id %>', '<%= note.title %>')"
+                id="save-note-btn" data-issaved="<%= isSaved %>">
+                  <i class="fa-regular fa-bookmark"></i>
+                  <i class="fa-solid fa-bookmark saved"></i>
+            </button>
+          </div>
+        <% } %>
       </div>
 
       <!-- COMPONENT: note image carousel -->
@@ -156,6 +158,7 @@
 
     <%- include('../side-panel', { block: 'share-note' }) %>
     <%- include('../side-panel', { block: 'downloading-loader' }) %>
+    <%- include('../side-panel', { block: 'error-popup' }) %>
     
 	  <script src="/js/notificationHandler.js"></script>
     <script src="/js/controller.js"></script>
