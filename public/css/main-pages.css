@@ -307,7 +307,6 @@
   align-items: center;
   justify-content: flex-start;
   overflow-y: auto;
-  overflow-x: hidden;
   z-index: 999;
   background-color: white;
 }
