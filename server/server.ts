@@ -31,6 +31,7 @@ import Alerts from './schemas/alerts.js'
 import noteIOHandler from './services/io/ioNoteService.js';
 import notificationIOHandler from './services/io/ioNotifcationService.js';
 import checkOnboarded from './middlewares/onBoardingChecker.js';
+import resetPasswordRouter from './routers/reset-password.js';
 
 
 
@@ -81,6 +82,7 @@ app.use('/upload', await checkOnboarded(false), uploadRouter(io))
 app.use('/view', await checkOnboarded(false), noteViewRouter(io))
 app.use('/dashboard',await checkOnboarded(false), dashboardRouter(io))
 app.use('/search-profile', await checkOnboarded(false), serachProfileRouter(io))
+app.use('/auth', resetPasswordRouter())
 app.use('/settings', settingsRouter(io))
 app.use('/api', apiRouter(io))
 app.use(errorHandler) // Middleware for handling errors
