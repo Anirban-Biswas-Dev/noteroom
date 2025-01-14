@@ -79,3 +79,19 @@ export async function getProfile(studentID: string) {
         }
     })
 }
+
+
+export async function changePassword(email: string, password: string): Promise<boolean | null> {
+    try {
+        let doc = await Students.updateOne({ 
+            $and: [
+                { email: email },
+                { password: { $ne: null } }
+            ]
+        }, { $set: { password: password } })
+
+        return doc.modifiedCount === 1 ? true : null
+    } catch (error) {
+        return false
+    }
+}
