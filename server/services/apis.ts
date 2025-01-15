@@ -128,7 +128,7 @@ export default function apiRouter(io: Server) {
                 .sort({ createdAt: -1 })
                 .skip(skip)
                 .limit(count)
-                .populate('ownerDocID', 'profile_pic displayname studentID')
+                .populate('ownerDocID', 'profile_pic displayname studentID username')
 
             //FIXME: repition of process in noteService
             let processedNotes = await Promise.all(
