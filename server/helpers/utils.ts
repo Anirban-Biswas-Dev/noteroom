@@ -2,6 +2,14 @@ import fileUpload from "express-fileupload"
 import slug from "slug"
 import sharp from "sharp"
 import { v4 as uuidv4 } from "uuid"
+import crypto from 'crypto'
+
+
+export function getHash(input: string, salt = `${Math.random()}`) {
+    const hash = crypto.createHash('sha256');
+    hash.update(input + salt);
+    return hash.digest('hex');
+}
 
 export function checkMentions(feedbackText: string) {
     let mentions = /@[a-z0-9-]+-[a-z0-9]{8}/g

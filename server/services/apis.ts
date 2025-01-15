@@ -5,7 +5,7 @@ import Notes from "../schemas/notes.js";
 import Students from "../schemas/students.js";
 import archiver from "archiver";
 import { getNotifications } from "../helpers/rootInfo.js";
-import { deleteNote } from "./noteService.js";
+import { addSaveNote, deleteNote, deleteSavedNote } from "./noteService.js";
 import { Convert } from "./userService.js";
 import { isUpVoted } from "./voteService.js";
 
@@ -57,6 +57,20 @@ export default function apiRouter(io: Server) {
         let deleted = await deleteNote({ studentDocID, noteDocID })
         
         res.send({ deleted: deleted })
+    })
+
+    router.post("/note/save", async (req, res) => {
+        let action = req.query["action"]
+        let noteDocID = req.body["noteDocID"]
+        let studentDocID = (await Convert.getDocumentID_studentid(req.session["stdid"])).toString()
+
+        if (!action) {
+            let saved = await addSaveNote({ studentDocID, noteDocID })
+            res.json({ saved: saved })
+        } else {
+            let unsaved = await deleteSavedNote({ studentDocID, noteDocID })
+            res.json({ unsaved: unsaved })
+        }
     })
 
 

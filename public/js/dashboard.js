@@ -273,7 +273,7 @@ async function checkNoSavedMessage() {
 	let _savedNotes = await manageDb.get('savedNotes')
 	let noSavedNoteMessage = document.querySelector('.no-saved-notes-message')
 
-	if (_savedNotes.length == 0) {
+	if (_savedNotes.length === 0) {
 		if (noSavedNoteMessage) {
 			noSavedNoteMessage.style.display = 'inline'
 		}
@@ -300,6 +300,7 @@ async function saveNote(noteDocID, noteTitle) {
 		let savedNoteObject = { noteID: noteDocID, noteTitle: noteTitle }
 		manageNotes.addSaveNote(savedNoteObject)
 		manageDb.add('savedNotes', savedNoteObject)
+		document.querySelector('.no-saved-notes-message')?.remove()
 	}
 }
 
