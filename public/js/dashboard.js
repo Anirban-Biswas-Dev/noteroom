@@ -86,7 +86,8 @@ async function add_note(count) {
 					noteTitle: note.title,
 					ownerID: note.ownerDocID.studentID,
 					ownerDisplayName: note.ownerDocID.displayname,
-					upvoteCount: note.upvoteCount
+					upvoteCount: note.upvoteCount,
+					ownerUserName: note.ownerDocID.username
 				};
 				notesList.push(noteData); // 3
 			});
