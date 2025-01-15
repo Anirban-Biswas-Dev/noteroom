@@ -16,6 +16,16 @@ export const Convert = {
     async getUserName_studentid(studentID: string) {
         let username = (await Students.findOne({ studentID: studentID }, { username: 1 }))["username"]
         return username
+    },
+
+    async getStudentID_email(email: string) {
+        let studentID = (await Students.findOne({ email: email }, { studentID: 1 }))["studentID"]
+        return studentID
+    },
+
+    async getDisplayName_email(email: string) {
+        let displayname = (await Students.findOne({ email: email }, { displayname: 1 }))["displayname"]
+        return displayname
     }
 }
 
@@ -90,7 +100,7 @@ export async function changePassword(email: string, password: string): Promise<b
             ]
         }, { $set: { password: password } })
 
-        return doc.modifiedCount === 1 ? true : null
+        return true
     } catch (error) {
         return false
     }

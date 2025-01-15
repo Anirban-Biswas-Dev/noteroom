@@ -91,6 +91,7 @@ app.get('/logout', (req, res) => {
     req.session.destroy(error => {
         res.clearCookie('studentID')
         res.clearCookie('recordID')
+        res.clearCookie('connect.sid')
         if(!error) {
             res.redirect('/login')
         } else {
