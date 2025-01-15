@@ -44,18 +44,29 @@ export async function deleteNote({studentDocID, noteDocID}: IManageUserNote) {
 }
 
 export async function addSaveNote({ studentDocID, noteDocID }: IManageUserNote) {
-    await Students.updateOne(
-        { _id: studentDocID },
-        { $addToSet: { saved_notes: noteDocID } },
-        { new: true }
-    )
+    try {
+        await Students.updateOne(
+            { _id: studentDocID },
+            { $addToSet: { saved_notes: noteDocID } },
+            { new: true }
+        )
+    
+        return true
+    } catch (error) {
+        return false
+    }
 }
 
 export async function deleteSavedNote({ studentDocID, noteDocID }: IManageUserNote) {
-    await Students.updateOne(
-        { _id: studentDocID },
-        { $pull: { saved_notes: noteDocID } }
-    )
+    try {
+        await Students.updateOne(
+            { _id: studentDocID },
+            { $pull: { saved_notes: noteDocID } }
+        )
+        return true
+    } catch (error) {
+        return false 
+    }
 }
 
 export async function getNote({noteDocID}: IManageUserNote) {
@@ -88,7 +99,8 @@ export async function getAllNotes(studentDocID?: string) {
     !studentDocID ? allNotes = notes : allNotes = await Promise.all(
         notes.map(async note => {
             let isupvoted = await isUpVoted({ noteDocID: note._id.toString(), voterStudentDocID: studentDocID, voteType: 'upvote' })
-            return { ...note.toObject(), isUpvoted: isupvoted }
+            let issaved = await isSaved({ noteDocID: note._id.toString(), studentDocID: studentDocID }) 
+            return { ...note.toObject(), isUpvoted: isupvoted, isSaved: issaved }
         })
     )
 
@@ -98,4 +110,14 @@ export async function getAllNotes(studentDocID?: string) {
 export async function getOwner({noteDocID}: IManageUserNote) {
     let ownerInfo = await Notes.findById(noteDocID, { ownerDocID: 1 }).populate('ownerDocID')
     return ownerInfo
+}
+
+export async function isSaved({ studentDocID, noteDocID }: IManageUserNote) {
+    let document = await Students.find({ $and: 
+        [ 
+            { _id: studentDocID }, 
+            { saved_notes: { $in: [noteDocID] } } 
+        ]
+    })
+    return document.length !== 0 ? true : false
 }
