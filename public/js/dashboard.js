@@ -87,7 +87,8 @@ async function add_note(count) {
 					ownerID: note.ownerDocID.studentID,
 					ownerDisplayName: note.ownerDocID.displayname,
 					upvoteCount: note.upvoteCount,
-					ownerUserName: note.ownerDocID.username
+					ownerUserName: note.ownerDocID.username,
+					isSaved: note.isSaved
 				};
 				notesList.push(noteData); // 3
 			});
@@ -157,9 +158,7 @@ const observers = {
 							let savedNotes = savedNotesObj.map(obj => obj.noteID)
 
 							if (savedNotes.includes(note.noteID)) {
-								document.querySelector(`#save-btn-${note.noteID}`).classList.add('saved') // 3
-								document.querySelector(`#save-btn-${note.noteID} .save-note-btn .fa-solid`).style.display = 'inline'
-								document.querySelector(`#save-btn-${note.noteID} .save-note-btn .fa-regular`).style.display = 'none'
+								document.querySelector(`#note-${note.noteID} #save-note-btn`).classList.add('saved')
 							}
 						}
 					})
@@ -188,11 +187,9 @@ let back_forward_note_add = {
 			document.querySelector('.no-saved-notes-message').style.display = 'none'
 			savedNotes.forEach(note => {
 				manageNotes.addSaveNote(note)
-				let _note = document.querySelector(`#save-btn-${note.noteID}`)
+				let _note = document.querySelector(`#note-${note.noteID} #save-note-btn`)
 				if (_note) {
 					_note.classList.add("saved")
-					document.querySelector(`#save-btn-${note.noteID} .save-note-btn .fa-solid`).style.display = 'inline'
-					document.querySelector(`#save-btn-${note.noteID} .save-note-btn .fa-regular`).style.display = 'none'
 				}
 			})
 		}
@@ -281,30 +278,6 @@ async function checkNoSavedMessage() {
 	}
 }
 
-//* save/delete a note
-async function saveNote(noteDocID, noteTitle) {
-	let recordID = Cookies.get('recordID').split(':')[1].replaceAll('"', '');
-	let saveBtnDiv = document.querySelector(`#save-btn-${noteDocID}`)
-
-	if (saveBtnDiv.classList.contains("saved")) {
-		//* Delete note: from db, removing note-card, from `savedNotes` store
-		socket.emit('delete-saved-note', recordID, noteDocID);
-
-		document.querySelector(`#saved-note-${noteDocID}`).remove()
-		await manageDb.delete('savedNotes', noteDocID)
-		await checkNoSavedMessage()
-	} else {
-		//* Save note: into db, removing no-saved-notes message, into frontend, into `savedNotes` store
-		socket.emit('save-note', recordID, noteDocID);
-		document.querySelector('.no-saved-notes-message').style.display = 'none'
-
-		let savedNoteObject = { noteID: noteDocID, noteTitle: noteTitle }
-		manageNotes.addSaveNote(savedNoteObject)
-		manageDb.add('savedNotes', savedNoteObject)
-		document.querySelector('.no-saved-notes-message')?.remove()
-	}
-}
-
 
 //* Triggering all the observers
 try {
@@ -329,55 +302,55 @@ socket.on('note-upload', (noteData) => {
 
 
 
-function initializeSaveButtons() {
-	const buttons = document.querySelectorAll('.svn-btn-parent:not([data-initialized])');
+// function initializeSaveButtons() {
+// 	const buttons = document.querySelectorAll('.svn-btn-parent:not([data-initialized])');
 
-	buttons.forEach((button) => {
-		const isSaved = button.classList.contains('saved');
-		const iconRegular = button.querySelector('.fa-regular');
-		const iconSolid = button.querySelector('.fa-solid');
+// 	buttons.forEach((button) => {
+// 		const isSaved = button.classList.contains('saved');
+// 		const iconRegular = button.querySelector('.fa-regular');
+// 		const iconSolid = button.querySelector('.fa-solid');
 
-		// Set initial state
-		iconRegular.style.display = isSaved ? 'none' : 'inline';
-		iconSolid.style.display = isSaved ? 'inline' : 'none';
+// 		// Set initial state
+// 		iconRegular.style.display = isSaved ? 'none' : 'inline';
+// 		iconSolid.style.display = isSaved ? 'inline' : 'none';
 
-		// Add click event listener
-		button.addEventListener('click', () => {
-			if (iconRegular.style.display === 'none') {
-				iconRegular.style.display = 'inline';
-				iconSolid.style.display = 'none';
-				button.classList.remove('saved');
-			} else {
-				iconRegular.style.display = 'none';
-				iconSolid.style.display = 'inline';
-				button.classList.add('saved');
+// 		// Add click event listener
+// 		button.addEventListener('click', () => {
+// 			if (iconRegular.style.display === 'none') {
+// 				iconRegular.style.display = 'inline';
+// 				iconSolid.style.display = 'none';
+// 				button.classList.remove('saved');
+// 			} else {
+// 				iconRegular.style.display = 'none';
+// 				iconSolid.style.display = 'inline';
+// 				button.classList.add('saved');
 
-				// Add animation effect
-				button.classList.add('active');
-				setTimeout(() => button.classList.remove('active'), 600);
-			}
-		});
+// 				// Add animation effect
+// 				button.classList.add('active');
+// 				setTimeout(() => button.classList.remove('active'), 600);
+// 			}
+// 		});
 
-		// Mark button as initialized
-		button.setAttribute('data-initialized', 'true');
-	});
-}
+// 		// Mark button as initialized
+// 		button.setAttribute('data-initialized', 'true');
+// 	});
+// }
 
-// Initialize Save Buttons on DOMContentLoaded
-document.addEventListener('DOMContentLoaded', () => {
-	initializeSaveButtons();
-});
+// // Initialize Save Buttons on DOMContentLoaded
+// document.addEventListener('DOMContentLoaded', () => {
+// 	initializeSaveButtons();
+// });
 
-// Re-initialize Save Buttons when new content is lazy-loaded
-const saveButtonObserver = new MutationObserver(() => {
-	initializeSaveButtons();
-});
+// // Re-initialize Save Buttons when new content is lazy-loaded
+// const saveButtonObserver = new MutationObserver(() => {
+// 	initializeSaveButtons();
+// });
 
-// Observe the parent container of lazy-loaded cards
-const saveButtonContainer = document.querySelector('.feed-container'); // Replace with the appropriate selector
-if (saveButtonContainer) {
-	saveButtonObserver.observe(saveButtonContainer, { childList: true, subtree: true });
-}
+// // Observe the parent container of lazy-loaded cards
+// const saveButtonContainer = document.querySelector('.feed-container'); // Replace with the appropriate selector
+// if (saveButtonContainer) {
+// 	saveButtonObserver.observe(saveButtonContainer, { childList: true, subtree: true });
+// }
 
 // function createConfetti(button) {
 //   const confettiContainer = document.createElement('div');

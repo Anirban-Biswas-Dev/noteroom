@@ -65,11 +65,6 @@
 
 		
 		<% if(notes.length != 0) { %> 
-			<% let savedNotesIDs = []
-			savedNotes.forEach(note => { 
-				savedNotesIDs.push(note._id.toString()) 
-			})
-			%> 
 			<% notes.forEach(note => { %>
 				<div class="feed-note-card" id="note-<%= note._id %>">
 					<div class="thumbnail-container">
@@ -84,7 +79,7 @@
 						<img class="thumbnail" data-src="<%= note.content[0] %>" onclick="window.location.href='/view/<%= note._id %>'"/>
 
 						<!-- COMPONENT: note-engagements -->
-						<%- include('components/note-menu.ejs', { note: note, savedNotesIDs: savedNotesIDs }) %>
+						<%- include('components/note-menu.ejs', { note: note }) %>
 						
 					</div>
 

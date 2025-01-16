@@ -2,44 +2,32 @@
     <button class="note-menu-btn">
         <i class="fas fa-ellipsis-v"></i>
     </button>
-    <div class="menu-options">
-
-
-        <% if(savedNotesIDs.includes(note._id.toString())) { %>
-            <div class="option svn-btn-parent saved" id="save-btn-<%= note._id %>" onclick="saveNote('<%= note._id %>', '<%= note.title %>')">
-                <button class="save-note-btn">
-                    <i class="fa-regular fa-bookmark"></i>
-                    <i class="fa-solid fa-bookmark saved"></i>
-                </button>
-                <span class="opt-label">Save Note</span>
-            </div>
-        <% } else { %>
-            <div class="option svn-btn-parent" id="save-btn-<%= note._id %>" onclick="saveNote('<%= note._id %>', '<%= note.title %>')">
-                <button class="save-note-btn">
-                    <i class="fa-regular fa-bookmark"></i>
-                    <i class="fa-solid fa-bookmark saved"></i>
-                </button>
-                <span class="opt-label">Save Note</span>
-            </div>
-        <% } %>
+    <div class="menu-options">    
+        <div class="option svn-btn-parent" id="save-btn-<%= note._id %>" onclick="saveNote('<%= note._id %>', '<%= note.title %>', this)">
+            <button class="<%= note.isSaved ? "save-note-btn saved" : "save-note-btn" %>" id="save-note-btn" data-issaved="<%= note.isSaved %>">
+                <i class="fa-regular fa-bookmark"></i>
+                <i class="fa-solid fa-bookmark saved"></i>
+            </button>
+            <span class="opt-label">Save Note</span>
+        </div>
 
 
         <div class="option" onclick="download('<%= note._id %>', '<%= note.title %>')">
                 <svg
-            class="download-icon"
-            width="40"
-            height="40"
-            viewBox="0 0 43 43"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-        >
-    <path
-        d="M37.1541 26.5395V33.6165C37.1541 34.555 36.7813 35.455 36.1177 36.1186C35.4541 36.7822 34.5541 37.155 33.6156 37.155H8.84623C7.90776 37.155 7.00773 36.7822 6.34414 36.1186C5.68054 35.455 5.30774 34.555 5.30774 33.6165V26.5395M12.3847 17.6933L21.2309 26.5395M21.2309 26.5395L30.0771 17.6933M21.2309 26.5395V5.30859"
-        stroke="#1E1E1E"
-        stroke-width="2.29523"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-    />
+                    class="download-icon"
+                    width="40"
+                    height="40"
+                    viewBox="0 0 43 43"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                >
+                <path
+                    d="M37.1541 26.5395V33.6165C37.1541 34.555 36.7813 35.455 36.1177 36.1186C35.4541 36.7822 34.5541 37.155 33.6156 37.155H8.84623C7.90776 37.155 7.00773 36.7822 6.34414 36.1186C5.68054 35.455 5.30774 34.555 5.30774 33.6165V26.5395M12.3847 17.6933L21.2309 26.5395M21.2309 26.5395L30.0771 17.6933M21.2309 26.5395V5.30859"
+                    stroke="#1E1E1E"
+                    stroke-width="2.29523"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                />
             </svg>
             <span class="opt-label">Download</span>
         </div>

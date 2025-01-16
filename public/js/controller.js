@@ -174,15 +174,14 @@ const manageNotes = { // I treat all the cards as notes
                                     <i class="fas fa-ellipsis-v"></i>
                                 </button>
                                 <div class="menu-options">
-                                    <div class="option svn-btn-parent" id="save-btn-${noteData.noteID}" onclick="saveNote('${noteData.noteID}', '${noteData.noteTitle}')">
-                                        
-                                            <button class="save-note-btn" >
-                                                <i class="fa-regular fa-bookmark"></i>
-                                                <i class="fa-solid fa-bookmark saved"></i>
-                                            </button>
-                                        
-                                            <span class="opt-label">Save Note</span>
+                                    <div class="option svn-btn-parent" id='save-btn-${noteData._id}' onclick="saveNote('${noteData.noteID}', '${noteData.noteTitle}', this)">
+                                        <button class='${noteData.isSaved ? "save-note-btn saved" : "save-note-btn" }' id="save-note-btn" data-issaved="${noteData.isSaved}">
+                                            <i class="fa-regular fa-bookmark"></i>
+                                            <i class="fa-solid fa-bookmark saved"></i>
+                                        </button>
+                                        <span class="opt-label">Save Note</span>
                                     </div>
+
                                     <div class="option" onclick="download('${noteData.noteID}', '${noteData.noteTitle}')">
                                         <svg class="download-icon" width="40" height="40" viewBox="0 0 43 43" fill="none" xmlns="http://www.w3.org/2000/svg" >
                                             <path d="M37.1541 26.5395V33.6165C37.1541 34.555 36.7813 35.455 36.1177 36.1186C35.4541 36.7822 34.5541 37.155 33.6156 37.155H8.84623C7.90776 37.155 7.00773 36.7822 6.34414 36.1186C5.68054 35.455 5.30774 34.555 5.30774 33.6165V26.5395M12.3847 17.6933L21.2309 26.5395M21.2309 26.5395L30.0771 17.6933M21.2309 26.5395V5.30859" stroke="#1E1E1E" stroke-width="2.29523" stroke-linecap="round" stroke-linejoin="round"/>
@@ -626,52 +625,66 @@ async function _checkNoSavedMessage() {
 	}
 }
 
-//FIXME: replition in dashboard
-async function saveNote(noteDocID, noteTitle) {
+
+/**
+* @param {undefined} [saveButtonOptionElement=undefined] 
+* @description - for dashboard notes. dashboard will have a lot of notes. this element will be used to take action on the save-button which is clicked
+*/
+async function saveNote(noteDocID, noteTitle, saveButtonOptionElement=undefined) {
     try {
         let noteData = new FormData()
         noteData.append("noteDocID", noteDocID)
 
-        let issaved = document.querySelector('#save-note-btn').getAttribute("data-issaved")
-
-        //FIXME: bind this one for dashboard's save-note
-        //NICE-TO-HAVE: check if this can be optimized
-        async function actionAfter(mode) {
+        async function actionAfter(mode, svButton) {
             if (mode === "save") {
-                document.querySelector('#save-note-btn').classList.add('saved')
+                svButton.classList.add('saved')
+
                 let savedNoteObject = { noteID: noteDocID, noteTitle: noteTitle }
                 manageNotes.addSaveNote(savedNoteObject)
                 manageDb.add('savedNotes', savedNoteObject)
 
-                document.querySelector('#save-note-btn').setAttribute("data-issaved", "true")
+                svButton.setAttribute("data-issaved", "true")
                 document.querySelector('.no-saved-notes-message').style.display = 'none'
             } else {
-                document.querySelector('#save-note-btn').classList.remove('saved')
+                svButton.classList.remove('saved')
                 document.querySelector(`#saved-note-${noteDocID}`).remove()
 
-                document.querySelector('#save-note-btn').setAttribute("data-issaved", "false")
+                svButton.setAttribute("data-issaved", "false")
                 await manageDb.delete('savedNotes', noteDocID)
                 await _checkNoSavedMessage()
             }
         }
 
-        if (issaved === "false") {
-            let response = await fetch(`/api/note/save`, {
-                method: 'post',
-                body: noteData
-            })
-            let data = await response.json()
-            data.saved ? await actionAfter("save") : setupErrorPopup("Please try again a bit later!")
-        } else {
-            let response = await fetch(`/api/note/save?action=unsave`, {
-                method: 'post',
-                body: noteData
-            })
-            let data = await response.json()
-            data.unsaved ? await actionAfter("unsave") : setupErrorPopup("Please try again a bit later!")
+        async function saveUnSaveFetch(svButton) {
+            let issaved = svButton.getAttribute("data-issaved")
+            async function saveApi(action) {
+                let response = await fetch(`/api/note/save?action=${action}`, {
+                    method: 'post',
+                    body: noteData
+                })
+                let data = await response.json()
+                data[action] ? await actionAfter(action, svButton) : setupErrorPopup("Please try again a bit later!")
+            }
+
+            if (issaved === "false") {
+                await saveApi("save")
+            } else {
+                await saveApi("unsave")
+            }
+        }
+
+
+        if (!saveButtonOptionElement) {
+            let svButton = document.querySelector('#save-note-btn')
+            saveUnSaveFetch(svButton)
+        } 
+        
+        else {
+            let svButton = saveButtonOptionElement.querySelector('#save-note-btn')
+            saveUnSaveFetch(svButton)
         }
     } catch (error) {
-        setupErrorPopup("Please try again a bit later!")
+        setupErrorPopup(error)
     }
 }
 

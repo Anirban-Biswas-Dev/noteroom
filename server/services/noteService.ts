@@ -88,15 +88,14 @@ export async function getNote({noteDocID}: IManageUserNote) {
     }
 }
 
-export async function getAllNotes(studentDocID?: string) {
-    let allNotes: any
-
+export async function getAllNotes(studentDocID: string, options = { skip: 0, limit: 3 }) {
     let notes = await Notes.find({}, { ownerDocID: 1, title: 1, content: 1, feedbackCount: 1, upvoteCount: 1 })
         .sort({ createdAt: -1 })
-        .limit(3)
+        .skip(options.skip)
+        .limit(options.limit)
         .populate('ownerDocID', 'profile_pic displayname studentID username')
     
-    !studentDocID ? allNotes = notes : allNotes = await Promise.all(
+    let extentedNotes = await Promise.all(
         notes.map(async note => {
             let isupvoted = await isUpVoted({ noteDocID: note._id.toString(), voterStudentDocID: studentDocID, voteType: 'upvote' })
             let issaved = await isSaved({ noteDocID: note._id.toString(), studentDocID: studentDocID }) 
@@ -104,7 +103,7 @@ export async function getAllNotes(studentDocID?: string) {
         })
     )
 
-    return allNotes
+    return extentedNotes
 }
 
 export async function getOwner({noteDocID}: IManageUserNote) {

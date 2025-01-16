@@ -5,16 +5,17 @@ import Notes from "../schemas/notes.js";
 import Students from "../schemas/students.js";
 import archiver from "archiver";
 import { getNotifications } from "../helpers/rootInfo.js";
-import { addSaveNote, deleteNote, deleteSavedNote } from "./noteService.js";
+import { addSaveNote, deleteNote, deleteSavedNote, getAllNotes } from "./noteService.js";
 import { Convert } from "./userService.js";
 import { isUpVoted } from "./voteService.js";
+import { checkLoggedIn } from "../middlewares/checkLoggedIn.js";
 
 const router = Router()
 
 export default function apiRouter(io: Server) {
-    //CRITICAL: only sessioned user can call apis, enhance error-handling otherwise
+    router.use(checkLoggedIn)
 
-    router.post("/download", async (req, res) => {
+    router.post("/download" ,async (req, res) => {
         let noteID = req.body.noteID
         let noteTitle = req.body.noteTitle
 
@@ -64,12 +65,12 @@ export default function apiRouter(io: Server) {
         let noteDocID = req.body["noteDocID"]
         let studentDocID = (await Convert.getDocumentID_studentid(req.session["stdid"])).toString()
 
-        if (!action) {
+        if (action === 'save') {
             let saved = await addSaveNote({ studentDocID, noteDocID })
-            res.json({ saved: saved })
+            res.json({ save: saved })
         } else {
             let unsaved = await deleteSavedNote({ studentDocID, noteDocID })
-            res.json({ unsaved: unsaved })
+            res.json({ unsave: unsaved })
         }
     })
 
@@ -121,24 +122,12 @@ export default function apiRouter(io: Server) {
             let page = req.query.page as unknown as number
             let count = req.query.count as unknown as number
             let skip: number = (page - 1) * count
+            
             let studentDocID = (await Convert.getDocumentID_studentid(req.session["stdid"])).toString()
+            let notes = await getAllNotes(studentDocID, { skip: skip, limit: 3 })
 
-            let notes = await Notes
-                .find({})
-                .sort({ createdAt: -1 })
-                .skip(skip)
-                .limit(count)
-                .populate('ownerDocID', 'profile_pic displayname studentID username')
-
-            //FIXME: repition of process in noteService
-            let processedNotes = await Promise.all(
-                notes.map(async note => {
-                    let isupvoted = await isUpVoted({ noteDocID: note._id.toString(), voterStudentDocID: studentDocID, voteType: 'upvote' })
-                    return { ...note.toObject(), isUpvoted: isupvoted }
-                })
-            )
             if (notes.length != 0) {
-                res.json(processedNotes)
+                res.json(notes)
             } else {
                 res.json([])
             }
