@@ -55,10 +55,9 @@
         <div class="p-info__first-row">
             <div class="user-clg-wrapper">
                 <span class="input-label">College</span>
-                <div class="user-clg">
-                    <img src="\images\onboarding-assets\College-logos\chittagong-college-logo.png" alt="Chittagong College" class="user-clg--img">
-
-                    <p class="user-info-text">Chittagong College</p>
+                <div class="user-clg" data-collegeid="<%= student.collegeID %>">
+                    <img src="" class="user-clg--img">
+                    <p class="user-info-text" id="college-name"><%= student.collegeID %></p>
                 </div>
             </div> 
         </div>
@@ -189,6 +188,7 @@
     <div class="background-overlay"></div>
 
 	<script src="/js/notificationHandler.js"></script>
+    <script src="/js/onboarding-data.js"></script>
     <script src="/js/controller.js"></script> 
     <script src="/js/user-profile.js"></script> 
 </body>
