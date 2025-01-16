@@ -124,7 +124,7 @@ export default function apiRouter(io: Server) {
             let skip: number = (page - 1) * count
             
             let studentDocID = (await Convert.getDocumentID_studentid(req.session["stdid"])).toString()
-            let notes = await getAllNotes(studentDocID, { skip: skip, limit: 3 })
+            let notes = await getAllNotes(studentDocID, { skip: skip, limit: count })
 
             if (notes.length != 0) {
                 res.json(notes)

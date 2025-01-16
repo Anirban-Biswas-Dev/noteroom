@@ -88,11 +88,13 @@ async function add_note(count) {
 					ownerDisplayName: note.ownerDocID.displayname,
 					upvoteCount: note.upvoteCount,
 					ownerUserName: note.ownerDocID.username,
-					isSaved: note.isSaved
+					isSaved: note.isSaved,
+					isUpvoted: note.isUpvoted
 				};
 				notesList.push(noteData); // 3
 			});
 			page = page + 1; // Increment the page after processing the notes
+			console.log(page)
 		}
 	} catch (error) {
 		console.log(error.message);
