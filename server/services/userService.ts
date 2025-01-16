@@ -23,6 +23,11 @@ export const Convert = {
         return studentID
     },
 
+    async getEmail_studentid(studentID: string) {
+        let email = (await Students.findOne({ studentID: studentID }, { email: 1 }))["email"]
+        return email
+    },
+
     async getDisplayName_email(email: string) {
         let displayname = (await Students.findOne({ email: email }, { displayname: 1 }))["displayname"]
         return displayname
@@ -91,16 +96,26 @@ export async function getProfile(studentID: string) {
 }
 
 
-export async function changePassword(email: string, password: string): Promise<boolean | null> {
+export async function changePassword(email: string, password: string, current_password?: string): Promise<boolean | null> {
     try {
-        let doc = await Students.updateOne({ 
-            $and: [
-                { email: email },
-                { password: { $ne: null } }
-            ]
-        }, { $set: { password: password } })
+        if (!current_password) {
+            await Students.updateOne({ 
+                $and: [
+                    { email: email },
+                    { password: { $ne: null } }
+                ]
+            }, { $set: { password: password } })
+            return true
+        } else {
+            let doc = await Students.updateOne({ 
+                $and: [
+                    { email: email },
+                    { password: { $eq: current_password } }
+                ]
+            }, { $set: { password: password } })
 
-        return true
+            return doc.matchedCount === 1 ? true : null
+        }
     } catch (error) {
         return false
     }
