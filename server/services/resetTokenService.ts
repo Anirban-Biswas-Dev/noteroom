@@ -1,4 +1,5 @@
 import tokensModel from "../schemas/password_reset_tokens.js";
+import studentsModel from "../schemas/students.js";
 
 
 interface ResetToken {
@@ -8,8 +9,12 @@ interface ResetToken {
 
 export async function addToken({ email, reset_token }: ResetToken) {
     try {
-        await tokensModel.create({ email, reset_token })
-        return true
+        let studentDoc = await studentsModel.findOne({ email: email })
+        if (studentDoc) {
+            await tokensModel.create({ email, reset_token })
+            return true
+        }
+        return null
     } catch (error) {
         return false
     }

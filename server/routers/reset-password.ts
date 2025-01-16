@@ -46,16 +46,22 @@ function resetPasswordRouter() {
         try {
             let email = req.body["email"]
             let reset_token = getHash(email)
-            await addToken({ email: email, reset_token: reset_token })
+            let tokenAdded = await addToken({ email: email, reset_token: reset_token })
             
-            let displayname = await Convert.getDisplayName_email(email)
-
-            let response = sendMail(email, { 
-                subject: "Reset Your NoteRoom Password", 
-                message: templates.reset_password({ reset_token: reset_token, displayname: displayname })
-            })
-
-            res.json({ sent: response })
+            if(tokenAdded) {
+                let displayname = await Convert.getDisplayName_email(email)
+                let response = sendMail(email, { 
+                    subject: "Reset Your NoteRoom Password", 
+                    message: templates.reset_password({ reset_token: reset_token, displayname: displayname })
+                })
+    
+                res.json({ sent: response })
+            } else if (tokenAdded === null) {
+                res.json({ sent: true })
+            } else {
+                res.json({ sent: false })
+            }
+            
         } catch (error) {
             res.json({ sent: false })
         }
