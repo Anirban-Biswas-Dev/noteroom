@@ -3,7 +3,7 @@ export const templates = {
         return `Hi ${globals.displayname}<br>
                 We received a request to reset your password for your NoteRoom account. No worries, we've got you covered! <br>
                 Click the button below to reset your password: <br>
-                👉 <a href='http://127.0.0.1:2000/auth/password-reset?token=${globals.reset_token}'>Reset My Password</a> <br><br>
+                👉 <a href='http://noteroom.co/auth/password-reset?token=${globals.reset_token}'>Reset My Password</a> <br><br>
 
 
                 If you didn't request this, you can safely ignore this email—your password will remain unchanged.<br><br>
