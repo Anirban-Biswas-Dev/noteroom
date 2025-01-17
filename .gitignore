@@ -6,6 +6,6 @@ logs.log
 /server/controllers/logger.js
 /server/routers/db/
 /experiment/
-/dist
+/dist/.env
 /.idea
 /views/test.*
