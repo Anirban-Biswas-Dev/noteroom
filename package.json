@@ -4,7 +4,8 @@
   "main": "server.js",
   "type": "commonjs",
   "scripts": {
-    "start": "nodemon dist/server.js"
+    "start": "nodemon dist/server.js",
+    "build": "tsc"
   },
   "keywords": [],
   "author": "",
