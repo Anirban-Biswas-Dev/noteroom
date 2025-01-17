@@ -52,5 +52,12 @@ async function deleteNoteFolder({ studentDocID, noteDocID }: IManageUserNote) {
 }
 
 
+// bucket.getFiles({ prefix: 'Assets/onboarding/college-logos' }).then(([files]) => {
+//     files.map(file => {
+//         file.makePublic()    
+//     })
+// })
+
+
 export const upload = uploadImage;
 export const deleteNoteImages = deleteNoteFolder
