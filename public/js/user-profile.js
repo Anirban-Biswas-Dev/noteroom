@@ -57,7 +57,7 @@ if (!Number.isNaN(parseInt(collegeID))) {
     let collegeObject = districtCollegeData[collegeDistrict].filter(data => data.id == parseInt(collegeID))[0]
 
     collegeName.innerHTML = collegeObject.name
-    collegeLogo.src = `https://storage.googleapis.com/noteroom-fb1a7.appspot.com/Assets/onboarding/college-logos/${collegeObject.logo}`
+    collegeLogo.src = `\\images\\onboarding-assets\\College-logos\\${collegeObject.logo}`
 } else {
     collegeName.innerHTML = collegeID    
 }
