@@ -5,7 +5,7 @@
   "type": "commonjs",
   "scripts": {
     "start": "nodemon dist/server.js",
-    "build": "tsc"
+    "build": "npx tsc"
   },
   "keywords": [],
   "author": "",
