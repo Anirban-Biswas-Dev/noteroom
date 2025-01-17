@@ -5,6 +5,7 @@ import { INoteDB } from '../types/database.types.js'
 import { IManageUserNote, INoteDetails } from '../types/noteService.types.js'
 import { Notifs } from '../schemas/notifications.js'
 import { deleteNoteImages } from './firebaseService.js'
+import { isUpVoted } from './voteService.js'
 
 
 export async function addNote(noteData: INoteDB) {
@@ -43,18 +44,29 @@ export async function deleteNote({studentDocID, noteDocID}: IManageUserNote) {
 }
 
 export async function addSaveNote({ studentDocID, noteDocID }: IManageUserNote) {
-    await Students.updateOne(
-        { _id: studentDocID },
-        { $addToSet: { saved_notes: noteDocID } },
-        { new: true }
-    )
+    try {
+        await Students.updateOne(
+            { _id: studentDocID },
+            { $addToSet: { saved_notes: noteDocID } },
+            { new: true }
+        )
+    
+        return true
+    } catch (error) {
+        return false
+    }
 }
 
 export async function deleteSavedNote({ studentDocID, noteDocID }: IManageUserNote) {
-    await Students.updateOne(
-        { _id: studentDocID },
-        { $pull: { saved_notes: noteDocID } }
-    )
+    try {
+        await Students.updateOne(
+            { _id: studentDocID },
+            { $pull: { saved_notes: noteDocID } }
+        )
+        return true
+    } catch (error) {
+        return false 
+    }
 }
 
 export async function getNote({noteDocID}: IManageUserNote) {
@@ -76,15 +88,35 @@ export async function getNote({noteDocID}: IManageUserNote) {
     }
 }
 
-export async function getAllNotes() {
+export async function getAllNotes(studentDocID: string, options = { skip: 0, limit: 3 }) {
     let notes = await Notes.find({}, { ownerDocID: 1, title: 1, content: 1, feedbackCount: 1, upvoteCount: 1 })
         .sort({ createdAt: -1 })
-        .limit(3)
+        .skip(options.skip)
+        .limit(options.limit)
         .populate('ownerDocID', 'profile_pic displayname studentID username')
-    return notes
+    
+    let extentedNotes = await Promise.all(
+        notes.map(async note => {
+            let isupvoted = await isUpVoted({ noteDocID: note._id.toString(), voterStudentDocID: studentDocID, voteType: 'upvote' })
+            let issaved = await isSaved({ noteDocID: note._id.toString(), studentDocID: studentDocID }) 
+            return { ...note.toObject(), isUpvoted: isupvoted, isSaved: issaved }
+        })
+    )
+
+    return extentedNotes
 }
 
 export async function getOwner({noteDocID}: IManageUserNote) {
     let ownerInfo = await Notes.findById(noteDocID, { ownerDocID: 1 }).populate('ownerDocID')
     return ownerInfo
+}
+
+export async function isSaved({ studentDocID, noteDocID }: IManageUserNote) {
+    let document = await Students.find({ $and: 
+        [ 
+            { _id: studentDocID }, 
+            { saved_notes: { $in: [noteDocID] } } 
+        ]
+    })
+    return document.length !== 0 ? true : false
 }

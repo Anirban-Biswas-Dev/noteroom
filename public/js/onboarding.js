@@ -869,6 +869,7 @@ document.querySelector('#profile-picture').addEventListener('change', function(e
     let selectedProfilePic = document.querySelector('#selected-profile-pic')
     if(profilePic) {
         document.querySelector('#profile-picture-preview').style.display = 'flex'
+        document.querySelector('.upload-prfl-pic-box').style.display = 'none'
         let blobUrl = URL.createObjectURL(profilePic)
         selectedProfilePic.src = blobUrl
         selectedProfilePic.onload = function() {

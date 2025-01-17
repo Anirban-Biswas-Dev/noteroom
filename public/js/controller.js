@@ -174,19 +174,18 @@ const manageNotes = { // I treat all the cards as notes
                                     <i class="fas fa-ellipsis-v"></i>
                                 </button>
                                 <div class="menu-options">
-                                    <div class="option svn-btn-parent" id="save-btn-${noteData.noteID}" onclick="saveNote('${noteData.noteID}', '${noteData.noteTitle}')">
-                                        
-                                            <button class="save-note-btn" >
-                                                <i class="fa-regular fa-bookmark"></i>
-                                                <i class="fa-solid fa-bookmark saved"></i>
-                                            </button>
-                                        
-                                            <span class="opt-label">Save Note</span>
+                                    <div class="option svn-btn-parent" id='save-btn-${noteData._id}' onclick="saveNote('${noteData.noteID}', '${noteData.noteTitle}', this)">
+                                        <button class='${noteData.isSaved ? "save-note-btn saved" : "save-note-btn" }' id="save-note-btn" data-issaved="${noteData.isSaved}">
+                                            <i class="fa-regular fa-bookmark"></i>
+                                            <i class="fa-solid fa-bookmark saved"></i>
+                                        </button>
+                                        <span class="opt-label">Save Note</span>
                                     </div>
+
                                     <div class="option" onclick="download('${noteData.noteID}', '${noteData.noteTitle}')">
-                                            <svg class="download-icon" width="40" height="40" viewBox="0 0 43 43" fill="none" xmlns="http://www.w3.org/2000/svg" >
-                                      <path d="M37.1541 26.5395V33.6165C37.1541 34.555 36.7813 35.455 36.1177 36.1186C35.4541 36.7822 34.5541 37.155 33.6156 37.155H8.84623C7.90776 37.155 7.00773 36.7822 6.34414 36.1186C5.68054 35.455 5.30774 34.555 5.30774 33.6165V26.5395M12.3847 17.6933L21.2309 26.5395M21.2309 26.5395L30.0771 17.6933M21.2309 26.5395V5.30859" stroke="#1E1E1E" stroke-width="2.29523" stroke-linecap="round" stroke-linejoin="round"/>
-                                  </svg>
+                                        <svg class="download-icon" width="40" height="40" viewBox="0 0 43 43" fill="none" xmlns="http://www.w3.org/2000/svg" >
+                                            <path d="M37.1541 26.5395V33.6165C37.1541 34.555 36.7813 35.455 36.1177 36.1186C35.4541 36.7822 34.5541 37.155 33.6156 37.155H8.84623C7.90776 37.155 7.00773 36.7822 6.34414 36.1186C5.68054 35.455 5.30774 34.555 5.30774 33.6165V26.5395M12.3847 17.6933L21.2309 26.5395M21.2309 26.5395L30.0771 17.6933M21.2309 26.5395V5.30859" stroke="#1E1E1E" stroke-width="2.29523" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
                                         <span class="opt-label">Download</span>
                                     </div>
                                     <div class="option" onclick="setupShareModal('${noteData.noteID}')"
@@ -209,10 +208,13 @@ const manageNotes = { // I treat all the cards as notes
                               </div>
                               <div class="note-engagement">
                             <div class="vote-container">
-                                <div class="uv-container" onclick="upvote('${noteData.noteID}')">
+                                <div class="uv-container" id="upvote-container" data-isupvoted='${noteData.isUpvoted}' data-noteid='${noteData.noteID}' onclick="upvote(this)">
                                     <svg class="uv-icon" width="18" height="19" viewBox="0 0 22 23" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M20.293 10.2935L19.5859 11.0006L20.293 10.2935ZM10.2929 1.70717L9.58575 1.00008L10.2929 1.70717ZM9.58575 1.00008L0.999862 9.58646L2.41412 11.0006L11 2.41425L9.58575 1.00008ZM2.41412 13.0006H6V11.0006H2.41412V13.0006ZM6 13.0006V19.5H8V13.0006H6ZM9.5 23H12.5V21H9.5V23ZM16 19.5V13.0006H14V19.5H16ZM16 13.0006H19.5859V11.0006H16V13.0006ZM21.0001 9.58646L12.4143 1.00008L11 2.41425L19.5859 11.0006L21.0001 9.58646ZM19.5859 13.0006C21.3677 13.0006 22.26 10.8464 21.0001 9.58646L19.5859 11.0006L19.5859 11.0006V13.0006ZM16 13.0006L16 13.0006V11.0006C14.8954 11.0006 14 11.8961 14 13.0006H16ZM12.5 23C14.433 23 16 21.433 16 19.5H14C14 20.3284 13.3284 21 12.5 21V23ZM6 19.5C6 21.433 7.567 23 9.5 23V21C8.67157 21 8 20.3284 8 19.5H6ZM6 13.0006L6 13.0006H8C8 11.8961 7.10457 11.0006 6 11.0006V13.0006ZM0.999862 9.58646C-0.260013 10.8464 0.632334 13.0006 2.41412 13.0006V11.0006L2.41412 11.0006L0.999862 9.58646ZM11 2.41425L11 2.41425L12.4143 1.00008C11.6332 0.218978 10.3668 0.218978 9.58575 1.00008L11 2.41425Z" fill="black"/>
-                                        </svg>									
+                                        ${noteData.isUpvoted ?
+                                            `<path d="M20.293 10.2935L19.5859 11.0006L20.293 10.2935ZM10.2929 1.70717L9.58575 1.00008L10.2929 1.70717ZM9.58575 1.00008L0.999862 9.58646L2.41412 11.0006L11 2.41425L9.58575 1.00008ZM2.41412 13.0006H6V11.0006H2.41412V13.0006ZM6 13.0006V19.5H8V13.0006H6ZM9.5 23H12.5V21H9.5V23ZM16 19.5V13.0006H14V19.5H16ZM16 13.0006H19.5859V11.0006H16V13.0006ZM21.0001 9.58646L12.4143 1.00008L11 2.41425L19.5859 11.0006L21.0001 9.58646ZM19.5859 13.0006C21.3677 13.0006 22.26 10.8464 21.0001 9.58646L19.5859 11.0006L19.5859 11.0006V13.0006ZM16 13.0006L16 13.0006V11.0006C14.8954 11.0006 14 11.8961 14 13.0006H16ZM12.5 23C14.433 23 16 21.433 16 19.5H14C14 20.3284 13.3284 21 12.5 21V23ZM6 19.5C6 21.433 7.567 23 9.5 23V21C8.67157 21 8 20.3284 8 19.5H6ZM6 13.0006L6 13.0006H8C8 11.8961 7.10457 11.0006 6 11.0006V13.0006ZM0.999862 9.58646C-0.260013 10.8464 0.632334 13.0006 2.41412 13.0006V11.0006L2.41412 11.0006L0.999862 9.58646ZM11 2.41425L11 2.41425L12.4143 1.00008C11.6332 0.218978 10.3668 0.218978 9.58575 1.00008L11 2.41425ZM11 1L21 11H14V21H8V11H1L11 1Z" fill="#00FF00" />`
+                                            : `<path d="M20.293 10.2935L19.5859 11.0006L20.293 10.2935ZM10.2929 1.70717L9.58575 1.00008L10.2929 1.70717ZM9.58575 1.00008L0.999862 9.58646L2.41412 11.0006L11 2.41425L9.58575 1.00008ZM2.41412 13.0006H6V11.0006H2.41412V13.0006ZM6 13.0006V19.5H8V13.0006H6ZM9.5 23H12.5V21H9.5V23ZM16 19.5V13.0006H14V19.5H16ZM16 13.0006H19.5859V11.0006H16V13.0006ZM21.0001 9.58646L12.4143 1.00008L11 2.41425L19.5859 11.0006L21.0001 9.58646ZM19.5859 13.0006C21.3677 13.0006 22.26 10.8464 21.0001 9.58646L19.5859 11.0006L19.5859 11.0006V13.0006ZM16 13.0006L16 13.0006V11.0006C14.8954 11.0006 14 11.8961 14 13.0006H16ZM12.5 23C14.433 23 16 21.433 16 19.5H14C14 20.3284 13.3284 21 12.5 21V23ZM6 19.5C6 21.433 7.567 23 9.5 23V21C8.67157 21 8 20.3284 8 19.5H6ZM6 13.0006L6 13.0006H8C8 11.8961 7.10457 11.0006 6 11.0006V13.0006ZM0.999862 9.58646C-0.260013 10.8464 0.632334 13.0006 2.41412 13.0006V11.0006L2.41412 11.0006L0.999862 9.58646ZM11 2.41425L11 2.41425L12.4143 1.00008C11.6332 0.218978 10.3668 0.218978 9.58575 1.00008L11 2.41425Z" fill="black" />`
+                                        }
+                                    </svg>									
                                     <span class="uv-count">${noteData.upvoteCount}</span>
                                 </div>
                                 <div class="divider-uv-dv"></div>
@@ -312,7 +314,7 @@ const manageNotes = { // I treat all the cards as notes
                             <a href='/user/${feedbackData.commenterUserName}' class="commenter-prfl">${feedbackData.commenterDisplayName}</a>
                             <a href='/view/${feedbackData.noteID}/#${feedbackData.feedbackID}' class="notification-link-2"> ${message}</a>
                         ` : `<a href='/view/${feedbackData.noteID}' class="notification-link-2"> ${message}</a>`
-                        } 
+                } 
                         
                       </div>
                   </div>`
@@ -614,6 +616,78 @@ function share(platform) {
     }
 }
 
+//FIXME: replition in dashboard
+async function _checkNoSavedMessage() {
+	let _savedNotes = await manageDb.get('savedNotes')
+
+	if (_savedNotes.length === 0) {
+		document.querySelector('.no-saved-notes-message').style.display = 'inline'
+	}
+}
+
+
+/**
+* @param {undefined} [saveButtonOptionElement=undefined] 
+* @description - for dashboard notes. dashboard will have a lot of notes. this element will be used to take action on the save-button which is clicked
+*/
+async function saveNote(noteDocID, noteTitle, saveButtonOptionElement=undefined) {
+    try {
+        let noteData = new FormData()
+        noteData.append("noteDocID", noteDocID)
+
+        async function actionAfter(mode, svButton) {
+            if (mode === "save") {
+                svButton.classList.add('saved')
+
+                let savedNoteObject = { noteID: noteDocID, noteTitle: noteTitle }
+                manageNotes.addSaveNote(savedNoteObject)
+                manageDb.add('savedNotes', savedNoteObject)
+
+                svButton.setAttribute("data-issaved", "true")
+                document.querySelector('.no-saved-notes-message').style.display = 'none'
+            } else {
+                svButton.classList.remove('saved')
+                document.querySelector(`#saved-note-${noteDocID}`).remove()
+
+                svButton.setAttribute("data-issaved", "false")
+                await manageDb.delete('savedNotes', noteDocID)
+                await _checkNoSavedMessage()
+            }
+        }
+
+        async function saveUnSaveFetch(svButton) {
+            let issaved = svButton.getAttribute("data-issaved")
+            async function saveApi(action) {
+                let response = await fetch(`/api/note/save?action=${action}`, {
+                    method: 'post',
+                    body: noteData
+                })
+                let data = await response.json()
+                data[action] ? await actionAfter(action, svButton) : setupErrorPopup("Please try again a bit later!")
+            }
+
+            if (issaved === "false") {
+                await saveApi("save")
+            } else {
+                await saveApi("unsave")
+            }
+        }
+
+
+        if (!saveButtonOptionElement) {
+            let svButton = document.querySelector('#save-note-btn')
+            saveUnSaveFetch(svButton)
+        } 
+        
+        else {
+            let svButton = saveButtonOptionElement.querySelector('#save-note-btn')
+            saveUnSaveFetch(svButton)
+        }
+    } catch (error) {
+        setupErrorPopup(error)
+    }
+}
+
 
 
 //* Search Notes: All Pages
@@ -776,80 +850,6 @@ notiLinks.forEach(notiLink => {
 });
 
 
-
-//* Event that will trigger when someone gives a feedback to a note: all pages, related to addNoti
-//FIXME: Good but I will optimize these two event handler more
-// conSock.on('notification-feedback', (feedbackData, message) => {
-//     addNoti(feedbackData, message)
-//     manageDb.add('notis', feedbackData)
-
-//     const nftShake = document.querySelector('.mobile-nft-btn')
-//     nftShake.classList.add('shake') // 4
-//     setTimeout(() => {
-//         nftShake.classList.remove('shake');
-//     }, 300)
-
-//     try {
-//         const audio = document.getElementById('notificationAudio');
-//         audio.play();
-//     } catch (error) {
-//         console.error(error)
-//     }
-// })
-
-// conSock.on("notification-mention", (mentionData, message) => {
-//     addNoti(mentionData, message)
-//     manageDb.add('notis', mentionData)
-
-//     const nftShake = document.querySelector('.mobile-nft-btn')
-//     nftShake.classList.add('shake') // 4
-//     setTimeout(() => {
-//         nftShake.classList.remove('shake');
-//     }, 300)
-
-//     try {
-//         const audio = document.getElementById('notificationAudio');
-//         audio.play();
-//     } catch (error) {
-//         console.error(error)
-//     }
-// })
-
-// conSock.on("notification-reply", (replyData, message) => {
-//     addNoti(replyData, message)
-//     manageDb.add('notis', replyData)
-
-//     const nftShake = document.querySelector('.mobile-nft-btn')
-//     nftShake.classList.add('shake') // 4
-//     setTimeout(() => {
-//         nftShake.classList.remove('shake');
-//     }, 300)
-
-//     try {
-//         const audio = document.getElementById('notificationAudio');
-//         audio.play();
-//     } catch (error) {
-//         console.error(error)
-//     }
-// })
-
-// conSock.on("notification-upvote", (replyData, message) => {
-//     addNoti(replyData, message)
-//     manageDb.add('notis', replyData)
-
-//     const nftShake = document.querySelector('.mobile-nft-btn')
-//     nftShake.classList.add('shake') // 4
-//     setTimeout(() => {
-//         nftShake.classList.remove('shake');
-//     }, 300)
-
-//     try {
-//         const audio = document.getElementById('notificationAudio');
-//         audio.play();
-//     } catch (error) {
-//         console.error(error)
-//     }
-// })
 
 try {
     //* Mobile notification panel

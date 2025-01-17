@@ -5,13 +5,17 @@ import Notes from "../schemas/notes.js";
 import Students from "../schemas/students.js";
 import archiver from "archiver";
 import { getNotifications } from "../helpers/rootInfo.js";
-import { deleteNote } from "./noteService.js";
+import { addSaveNote, deleteNote, deleteSavedNote, getAllNotes } from "./noteService.js";
 import { Convert } from "./userService.js";
+import { isUpVoted } from "./voteService.js";
+import { checkLoggedIn } from "../middlewares/checkLoggedIn.js";
 
 const router = Router()
 
 export default function apiRouter(io: Server) {
-    router.post("/download", async (req, res) => {
+    router.use(checkLoggedIn)
+
+    router.post("/download" ,async (req, res) => {
         let noteID = req.body.noteID
         let noteTitle = req.body.noteTitle
 
@@ -54,6 +58,20 @@ export default function apiRouter(io: Server) {
         let deleted = await deleteNote({ studentDocID, noteDocID })
         
         res.send({ deleted: deleted })
+    })
+
+    router.post("/note/save", async (req, res) => {
+        let action = req.query["action"]
+        let noteDocID = req.body["noteDocID"]
+        let studentDocID = (await Convert.getDocumentID_studentid(req.session["stdid"])).toString()
+
+        if (action === 'save') {
+            let saved = await addSaveNote({ studentDocID, noteDocID })
+            res.json({ save: saved })
+        } else {
+            let unsaved = await deleteSavedNote({ studentDocID, noteDocID })
+            res.json({ unsave: unsaved })
+        }
     })
 
 
@@ -104,7 +122,10 @@ export default function apiRouter(io: Server) {
             let page = req.query.page as unknown as number
             let count = req.query.count as unknown as number
             let skip: number = (page - 1) * count
-            let notes = await Notes.find({}).sort({ createdAt: -1 }).skip(skip).limit(count).populate('ownerDocID', 'profile_pic displayname studentID')
+            
+            let studentDocID = (await Convert.getDocumentID_studentid(req.session["stdid"])).toString()
+            let notes = await getAllNotes(studentDocID, { skip: skip, limit: count })
+
             if (notes.length != 0) {
                 res.json(notes)
             } else {

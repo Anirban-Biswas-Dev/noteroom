@@ -2,9 +2,10 @@
     font-family: 'Inter', 'Hind Siliguri', sans-serif;
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
 }
 :root {
-    --squid-ink: #06192d;
+    --squid-ink: #07192d;
     --neon-blue: #04dbf6;
     --light-gray: #F8F8F8;
   }  
@@ -47,11 +48,6 @@
 .display-name {
     font-size: 1.2rem;
     font-weight: 600;
-}
-
-.user-clg-id {
-    font-size: .9rem;
-    padding: 1vw 0px;
 }
 
 .user-group {
@@ -116,86 +112,89 @@
     background: none;
 }
 
-/* Second Row */
-.ms-second-row {
-    width: 100%;
-    padding:15px; 
+/* User Personal Info Section */
+
+.ms-personal-info-container{
     display: flex;
-    justify-content: space-evenly;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+
+    width: 100%;
+    max-width: 900px;
+    border: .9px solid rgba(7, 25, 45, 0.2);
+    border-radius: 15px;
+    padding: 20px;
+
+    margin-top: 15px;
+}
+
+.p-info__first-row, 
+.p-info__second-row, 
+.p-info__third-row, 
+.p-info__fourth-row {
+    width: 100%;
+    padding: 5px;
+    display: flex;
     align-items: center;
 }
+
+/* These two rows have 1+ user info */
+.p-info__third-row, 
+.p-info__fourth-row {
+    justify-content: space-between;
+}
+
+
+.user-clg-wrapper,
+.user-bio-wrapper,
+.user-clg-year-wrapper,
+.user-clg-roll-wrapper,
+.user-fav-sub-wrapper,
+.user-non-fav-sub-wrapper
+{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    min-width: 180px;
+}
+
+
+/* Exception: Has clg logo and name both to be shown */
+.user-clg{
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding-top: 10px;
+}
+
+.user-clg--img{
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+}
+
+/* This class is used for p tags for personal info */
+.user-info-text {
+    font-weight: 600;
+    font-size: .95rem;
+    line-height: 18px;
+    letter-spacing: -0.03em;
+    color: var(--squid-ink);
+}
+
 
 /* Input Labels */
 .input-label {
-    font-family: 'Inter';
-    font-style: normal;
     font-weight: 600;
-    font-size: 1.2rem;
+    font-size: .95rem;
     letter-spacing: -0.06em;
-    color: #07192D;
-    padding: 8px 5px;
+    font-weight: 600;
+    padding-bottom: 5px;
+    line-height: 18px;
+    color: rgba(7, 25, 45, 0.5);
 }
-.user-username,
-.user-college-year,
-.user-college-roll,
-.user-college-section,
-.user-fav-sub,
-.user-non-fav-sub{
-    width: 25%;
-    min-width: 150px;
-}
-
-.username-box,
-.display-year-box,
-.bio-box,
-.email-box,
-.college-roll-box,
-.college-section-box,
-.fav-sub-box,
-.non-fav-sub-box {
-    box-sizing: border-box;
-    width: 100%;
-    height: 45px;
-    border: 1px solid #07192D;
-    border-radius: 15px;
-    align-content: center;
-    padding-left: 5px;
-}
-
-
-/* Third Row */
-.ms-third-row {
-    width: 100%;
-    padding-top: 15px;
-    padding-bottom: 15px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-.user-bio,
-.user-email {
-    width: 66%;
-    min-width: 300px;
-}
-.bio-box,
-.email-box {
-    width: 100%;
-    height: fit-content;
-    margin-bottom: 2vh;
-    min-height: fit-content;
-    padding: 10px;
-}
-/* Fourth and Fifth Rows */
-.ms-fourth-row,
-.ms-fifth-row {
-    width: 100%;
-    padding: 15px 0px;
-    display: flex;
-    justify-content: space-evenly;
-    align-items: center;
-}
-
 
 
 /* Uploaded Notes Section */
@@ -392,9 +391,6 @@
     .info-items-1 {
         padding: 1vw 2vw;
     }
-    .user-clg-id{
-        font-size: .7rem;
-    }
     .user-group {
         width: 90%;
         height: 30px;
@@ -416,39 +412,32 @@
     .featured-note {
         font-size: .8rem;
     }
+    .ms-personal-info-container{
+        width: 98%;
+        padding: 5px;
+        gap: 10px;
+    }
+    .user-clg--img{
+        width: 25px;
+        height: 25px;
+    }
+    .user-info-text{
+        font-size: .8rem;
+        letter-spacing: 0rem;
+    }
+
+    .user-clg-wrapper,
+    .user-bio-wrapper,
+    .user-clg-year-wrapper,
+    .user-clg-roll-wrapper,
+    .user-fav-sub-wrapper,
+    .user-non-fav-sub-wrapper
+    {
+        min-width: 135px;
+    }
+
     .input-label{
         font-size: .8rem;
-    }
-    .user-username,
-    .user-college-year,
-    .user-college-roll,
-    .user-college-section,
-    .user-fav-sub,
-    .user-non-fav-sub{
-        width: 45%;
-        min-width: 45%;
-    }
-    .username-box,
-    .display-year-box,
-    .bio-box,
-    .email-box,
-    .college-roll-box,
-    .college-section-box,
-    .fav-sub-box,
-    .non-fav-sub-box {
-        font-size: .9rem;
-        border: 1px solid #07192d75;
-    }
-    .ms-third-row {
-        width: 100%;
-        padding-top: 10px;
-        padding-bottom: 10px;
-    }
-    .user-bio,
-    .user-email {
-        width: 95%;
-        min-width: 95%;
-        height: fit-content;
     }
     .toggle-header-uploaded-notes{
         padding: 2px;
@@ -482,9 +471,6 @@
     .info-items-1 {
         padding: 1.2vw 2.2vw; 
     }
-    .user-clg-id {
-        font-size: .8rem; 
-    }
     .user-group {
         width: 92%; 
         height: 35px; 
@@ -507,39 +493,33 @@
     .featured-note {
         font-size: .9rem; 
     }
+
+    .ms-personal-info-container{
+        width: 98%;
+        padding: 8px;
+        gap: 12px;
+    }
+    .user-clg--img{
+        width: 30px;
+        height: 30px;
+    }
+    .user-info-text{
+        font-size: .9rem;
+        letter-spacing: 0rem;
+    }
+
+    .user-clg-wrapper,
+    .user-bio-wrapper,
+    .user-clg-year-wrapper,
+    .user-clg-roll-wrapper,
+    .user-fav-sub-wrapper,
+    .user-non-fav-sub-wrapper
+    {
+        min-width: 145px;
+    }
+    
     .input-label {
         font-size: .85rem; 
-    }
-    .user-username,
-    .user-college-year,
-    .user-college-roll,
-    .user-college-section,
-    .user-fav-sub,
-    .user-non-fav-sub {
-        width: 48%; 
-        min-width: 48%;
-    }
-    .username-box,
-    .display-year-box,
-    .bio-box,
-    .email-box,
-    .college-roll-box,
-    .college-section-box,
-    .fav-sub-box,
-    .non-fav-sub-box {
-        font-size: 1rem; 
-        border: 1px solid #07192d75;
-    }
-    .ms-third-row {
-        width: 100%;
-        padding-top: 12px;
-        padding-bottom: 12px; 
-    }
-    .user-bio,
-    .user-email {
-        width: 97%; 
-        min-width: 97%;
-        height: fit-content;
     }
     .toggle-header-uploaded-notes{
         padding: 10px;
@@ -570,9 +550,6 @@
     .info-items-1 {
         padding: 1.5vw 2.5vw; /* Adjusted padding */
     }
-    .user-clg-id {
-        font-size: .85rem; /* Increased font size */
-    }
     .user-group {
         width: 95%; /* Increased width */
         height: 40px; /* Taller group elements */
@@ -596,37 +573,6 @@
     }
     .input-label {
         font-size: 1rem; /* Increased input label font */
-    }
-    .user-username,
-    .user-college-year,
-    .user-college-roll,
-    .user-college-section,
-    .user-fav-sub,
-    .user-non-fav-sub {
-        width: 50%; /* Slightly wider */
-        min-width: 50%;
-    }
-    .username-box,
-    .display-year-box,
-    .bio-box,
-    .email-box,
-    .college-roll-box,
-    .college-section-box,
-    .fav-sub-box,
-    .non-fav-sub-box {
-        font-size: 1.1rem; /* Increased font size */
-        border: 1px solid #07192d75;
-    }
-    .ms-third-row {
-        width: 100%;
-        padding-top: 14px;
-        padding-bottom: 14px; /* Increased padding */
-    }
-    .user-bio,
-    .user-email {
-        width: 98%; /* Almost full width */
-        min-width: 98%;
-        height: fit-content;
     }
     .toggle-header-uploaded-notes{
         padding: 15px;

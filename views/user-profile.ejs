@@ -50,76 +50,45 @@
             <% } %>
         </div>
     </div>
+    
+    <div class="ms-personal-info-container">
+        <div class="p-info__first-row">
+            <div class="user-clg-wrapper">
+                <span class="input-label">College</span>
+                <div class="user-clg" data-collegeid="<%= student.collegeID %>">
+                    <img src="" class="user-clg--img">
+                    <p class="user-info-text" id="college-name"><%= student.collegeID %></p>
+                </div>
+            </div> 
+        </div>
+        <div class="p-info__second-row">
+            <div class="user-bio-wrapper">
+                <span class="input-label">Bio</span>
+                <p class="user-info-text" ><%= student.bio %></p>
+            </div>
+        </div>
+        <div class="p-info__third-row">
+            <div class="user-clg-year-wrapper">
+                <span class="input-label">College Year</span>
+                <p class="user-info-text" ><%= student.collegeyear %></p>
+            </div>
 
-    <div class="ms-second-row">
-        <div class="user-username">
-            <span class="input-label">Username</span>
-            <div class="username-box">
-                <p>
-                    <%
-                        let username;
-                        let name = student.username
-                        if(name.length > 15) {
-                            username = name.slice(0, 15) + " ..."
-                        } else {
-                            username = name
-                        }
-                    %>
-                    <%= username %>
-                </p>
+            <div class="user-clg-roll-wrapper">
+                    <span class="input-label">College Roll</span>
+                    <p class="user-info-text" ><%= student.rollnumber %></p>
             </div>
         </div>
-        <div class="user-college-year">
-            <span class="input-label">College Year</span>
-            <div class="display-year-box">
-                <p><%= student.collegeyear %></p>
+        <div class="p-info__fourth-row">
+            <div class="user-fav-sub-wrapper">
+                <span class="input-label">Favourite Subject</span>
+                <p class="user-info-text" ><%= student.favouritesubject %></p>
+            </div>
+            <div class="user-non-fav-sub-wrapper">
+                <span class="input-label">Not So Favourite Subject</span>
+                <p class="user-info-text" ><%= student.notfavsubject %></p>
             </div>
         </div>
-    </div>
 
-    <div class="ms-third-row">
-        <div class="user-bio">
-            <span class="input-label">Bio</span>
-            <div class="bio-box">
-                <p><%= student.bio %></p>
-            </div>
-        </div>
-        <div class="user-email">
-            <span class="input-label">Email Address</span>
-            <div class="email-box">
-                <p><%= student.email %></p>
-            </div>
-        </div>
-    </div>
-
-    <div class="ms-fourth-row">
-        <div class="user-college-roll">
-            <span class="input-label">College Roll</span>
-            <div class="college-roll-box">
-                <p><%= student.rollnumber %></p>
-            </div>
-        </div>
-        <div class="user-college-section">
-            <span class="input-label">College Section</span>
-            <div class="college-section-box">
-                <p><%= student.collegesection %></p>
-            </div>
-        </div>
-    </div>
-
-    <div class="ms-fifth-row">
-        <div class="user-fav-sub">
-            <span class="input-label">Favourite Subject</span>
-            <div class="fav-sub-box">
-                <p><%= student.favouritesubject %></p>
-            </div>
-        </div>
-        <div class="user-non-fav-sub">
-            <span class="input-label">Not So Favourite Subject</span>
-            <div class="non-fav-sub-box">
-                <p><%= student.notfavsubject %></p>
-            </div>
-        </div>
     </div>
 
     <div class="uploaded-notes-section">
@@ -219,6 +188,7 @@
     <div class="background-overlay"></div>
 
 	<script src="/js/notificationHandler.js"></script>
+    <script src="/js/onboarding-data.js"></script>
     <script src="/js/controller.js"></script> 
     <script src="/js/user-profile.js"></script> 
 </body>
