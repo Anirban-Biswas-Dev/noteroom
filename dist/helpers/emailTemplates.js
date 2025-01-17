@@ -1,5 +1,8 @@
-export const templates = {
-    reset_password(globals: any) {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.templates = void 0;
+exports.templates = {
+    reset_password(globals) {
         return `Hi ${globals.displayname}<br>
                 We received a request to reset your password for your NoteRoom account. No worries, we've got you covered! <br>
                 Click the button below to reset your password: <br>
@@ -14,6 +17,6 @@ export const templates = {
 
                 Best regards, <br>
                 The NoteRoom Team
-        `
+        `;
     }
-}
+};
