@@ -1,5 +1,5 @@
 import fileUpload from "express-fileupload"
-import slug from "slug"
+import slugify from "slugify"
 import sharp from "sharp"
 import { v4 as uuidv4 } from "uuid"
 import crypto from 'crypto'
@@ -36,7 +36,10 @@ export function replaceMentions(feedbackText: string, displaynames: string[]) {
 }
 
 export function generateRandomUsername(displayname: string) {
-    let sluggfied = slug(displayname)
+    let sluggfied = slugify(displayname, {
+        lower: true,
+        strict: true
+    })
     let uuid = uuidv4()
     let suffix = uuid.split("-")[0]
     let username = `${sluggfied}-${suffix}`

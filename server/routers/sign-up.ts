@@ -12,8 +12,8 @@ import { config } from 'dotenv'
 
 const router = Router()
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = dirname(__filename);
 
 config({ path: join(__dirname, '../.env') })
 

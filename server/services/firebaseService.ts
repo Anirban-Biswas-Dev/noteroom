@@ -4,8 +4,8 @@ import { fileURLToPath } from 'url';
 import firebaseAdmin from 'firebase-admin'; // Default import for firebase-admin
 import { IManageUserNote } from '../types/noteService.types.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = dirname(__filename);
 
 config({ path: join(__dirname, '../.env') });
 

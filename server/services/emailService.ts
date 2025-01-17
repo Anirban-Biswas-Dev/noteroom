@@ -3,8 +3,8 @@ import { config } from 'dotenv';
 import { dirname, join } from 'path/posix';
 import { fileURLToPath } from 'url';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = dirname(__filename);
 config({ path: join(__dirname, '../.env') });
 
 const appPassword = process.env.NOTEROOM_TEAM_APP_PASSWORD

@@ -2,10 +2,10 @@
   "name": "server",
   "version": "1.0.0",
   "main": "server.js",
+  "type": "commonjs",
   "scripts": {
     "start": "nodemon dist/server.js"
   },
-  "type": "module",
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -35,7 +35,7 @@
     "socket.io": "^4.7.5",
     "socket.io-client": "^4.7.5",
     "tsc": "^2.0.4",
-    "typescript": "^5.7.2",
+    "typescript": "^5.7.3",
     "uuid": "^11.0.3"
   },
   "devDependencies": {

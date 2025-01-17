@@ -35,8 +35,8 @@ import resetPasswordRouter from './routers/reset-password.js';
 
 
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = dirname(__filename);
 config({ path: join(__dirname, '.env') });
 
 const app = express()
@@ -76,12 +76,12 @@ app.use(session({
 app.use(cookieParser()) // Middleware for working with cookies
 app.use(fileUpload()) // Middleware for working with files
 app.use('/login', loginRouter(io))
-app.use('/user', await checkOnboarded(false), userRouter(io))
+app.use('/user', checkOnboarded(false), userRouter(io))
 app.use('/sign-up', signupRouter(io))
-app.use('/upload', await checkOnboarded(false), uploadRouter(io))
-app.use('/view', await checkOnboarded(false), noteViewRouter(io))
-app.use('/dashboard',await checkOnboarded(false), dashboardRouter(io))
-app.use('/search-profile', await checkOnboarded(false), serachProfileRouter(io))
+app.use('/upload', checkOnboarded(false), uploadRouter(io))
+app.use('/view', checkOnboarded(false), noteViewRouter(io))
+app.use('/dashboard',checkOnboarded(false), dashboardRouter(io))
+app.use('/search-profile', checkOnboarded(false), serachProfileRouter(io))
 app.use('/auth', resetPasswordRouter())
 app.use('/settings', settingsRouter(io))
 app.use('/api', apiRouter(io))
@@ -112,7 +112,7 @@ app.get('/about-us', (req, res) => {
 app.get('/privacy-policy', (req, res) => {
     res.render('privacy-policy')
 })
-app.get('/onboarding', await checkOnboarded(true))
+app.get('/onboarding', checkOnboarded(true))
 
 
 export let userSocketMap: Map<string, string> = new Map()
