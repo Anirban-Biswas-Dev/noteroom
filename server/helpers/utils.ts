@@ -27,7 +27,7 @@ export function replaceMentions(feedbackText: string, displaynames: string[]) {
     let i = 0
     mentions.map(mention => {
         feedbackText = feedbackText.replace(mention, `
-            <a href="/user/${mention.replace(`@`, ``)}" style="color: #ffffff; background-color: #007bff; border-radius: 5px; padding: 2px 4px; font-weight: bold;">
+            <a href="/user/${mention.replace(`@`, ``)}" class="thread-mentioned-user">
                 @${displaynames[i]}
             </a>`)
         i += 1

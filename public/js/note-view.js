@@ -364,7 +364,7 @@ document.addEventListener('DOMContentLoaded', () => {
           threadEditor.innerHTML = `
                   <!--<img class="tec__avatar-preview thread-avatar">-->
                   <div class="thread-editor-wrapper">
-                    <span id='mentioneduser' style="display: inline-block; background-color: #e3f2fd; color: #1e88e5; padding: 5px 10px; border-radius: 12px; font-weight: bold; font-size: 14px; font-family: Arial, sans-serif;">@${parentCommenterUsername}</span>
+                    <span id='mentioneduser' class="thread-mentioned-user">@${parentCommenterUsername}</span>
                     <textarea placeholder="Write a comment..." class="thread-editor"></textarea>
                     <div class="thread-editor__action-opts">
                       <svg id="threadCmntBtn" class="thread__cmnt-btn" width="18px" height="18px" viewBox="0 0 256 256" id="Flat" xmlns="http://www.w3.org/2000/svg">
