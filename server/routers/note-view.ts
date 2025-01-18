@@ -8,9 +8,10 @@ import {checkMentions, replaceMentions} from '../helpers/utils.js'
 import {getNotifications, getSavedNotes, profileInfo, unreadNotiCount} from '../helpers/rootInfo.js'
 import {getNote, getOwner, isSaved} from '../services/noteService.js'
 import {Convert} from '../services/userService.js'
-import {addFeedback, addReply} from '../services/feedbackService.js'
+import {addFeedback, addReply, getReply} from '../services/feedbackService.js'
 import addVote, { deleteVote, isUpVoted } from '../services/voteService.js';
 import { NotificationSender } from '../services/io/ioNotifcationService.js';
+import { replyModel } from '../schemas/comments.js';
 
 const router = Router()
 function noteViewRouter(io: Server) {
@@ -54,6 +55,7 @@ function noteViewRouter(io: Server) {
     router.post('/:noteID/postFeedback', async (req, res) => {
 
         const _commenterStudentID = req.body["commenterStudentID"]
+        const _commenterUserName = await Convert.getUserName_studentid(_commenterStudentID)
         const commenterDocID = (await Convert.getDocumentID_studentid(_commenterStudentID)).toString()
 
         const _noteDocID = req.body["noteDocID"]
@@ -62,20 +64,34 @@ function noteViewRouter(io: Server) {
         const _ownerStudentID = noteOwnerInfo["ownerDocID"]["studentID"].toString()
 
         
-        async function replaceFeedbackText(feedbackText: string) {
+        //NICE-TO-HAVE: see if you can refactor the whole mention->displayname more
+        async function replaceFeedbackText(feedbackText: string, removeFirst = false) {
             let mentions = checkMentions(feedbackText)
+            let modifiedFeedbackText = ""
+
+            if (removeFirst) {
+                let first_mention = mentions[0]
+                modifiedFeedbackText = feedbackText.replace(`@${first_mention}`, '').trim()
+            } else {
+                modifiedFeedbackText = feedbackText
+            }
 
             if (mentions.length !== 0) {
-                let displayNames = (await Students.find({ username: { $in: mentions } }, { displayname: 1 })).map(data => data.displayname.toString()).reverse()
-                return replaceMentions(feedbackText, displayNames)
+                let users = await Students.find({ username: { $in: mentions } }, { displayname: 1, username: 1 })
+                let displaynames = mentions.map(username => {
+                    let user = users.find(doc => doc.username === username)
+                    return user.displayname
+                })
+                return replaceMentions(modifiedFeedbackText, displaynames)
             } else {
-                return feedbackText
+                return modifiedFeedbackText
             }
         }
 
         
         if(!req.body["reply"]) {
             let _feedbackContents = req.body["feedbackContents"]
+            
             let feedbackData: IFeedBackDB = {
                 noteDocID: _noteDocID,
                 commenterDocID: commenterDocID,
@@ -101,31 +117,63 @@ function noteViewRouter(io: Server) {
             
         } else {
             let _replyContent = req.body["replyContent"]
+            let mentions_ = checkMentions(_replyContent)
 
+            let modifiedFeedbackText = _replyContent
+            
             let replyData: IReplyDB = {
                 noteDocID: _noteDocID,
                 commenterDocID: commenterDocID,
-                feedbackContents: await replaceFeedbackText(_replyContent),
                 parentFeedbackDocID: req.body["parentFeedbackDocID"],
             } 
-            let reply = await addReply(replyData)
+            let _reply = await addReply(replyData)
+            let parentFeedbackCommenterInfo = _reply["parentFeedbackDocID"]["commenterDocID"]
+
+            
+            /*
+            * Logic analysis
+
+            When mentions[0] === commenter-username, it means when I will mention my self at first in reply/feedback, the first mention will be removed.
+            Cause the first mention will be the user in this case, so it doesn't need to be processed.
+            */
+            if (_commenterUserName === mentions_[0]) {
+                modifiedFeedbackText = await replaceFeedbackText(_replyContent, true)
+            } else {
+                modifiedFeedbackText = await replaceFeedbackText(_replyContent)
+            }
+
+            await replyModel.findByIdAndUpdate(_reply._id, { $set: { feedbackContents: modifiedFeedbackText } })
+            let reply = await getReply(_reply._id)
+
             io.to(replyData.noteDocID).emit('add-reply', reply.toObject())
 
-            if(_commenterStudentID !== reply["parentFeedbackDocID"]["commenterDocID"].studentID) {
+
+            /*
+            * Logic analysis: reply notification
+            
+            When commenter-username !== parent-feedback-username, means when the commenter isn't replying his own feedback. mentions[0] === parent-feedback-username
+            means the person who is being replied is the one who gave the feedback, shortly the user is repling a feedback, not another reply.
+            So, when a user won't give a reply on his own feedback and will give a reply to the parent-feedback, the person who gave the feedback will get a reply-notification. 
+            */
+            if(_commenterUserName !== parentFeedbackCommenterInfo.username && mentions_[0] === parentFeedbackCommenterInfo.username) {
                 await NotificationSender(io, { 
                     noteDocID: _noteDocID, 
                 }).sendReplyNotification(reply)
             }
 
-            let _mentions = checkMentions(_replyContent)
-            let mentions = _mentions[0] === reply["parentFeedbackDocID"]["commenterDocID"].username ? _mentions.slice(1) : _mentions
-            // This means, if you are repling someone's feedback, the feedbacker won't get a redundant mention notification, but they will get a reply notification
+
+            /*
+            * Logic analysis: mention notification
+            
+            This means, if you are replying someone's feedback, the feedbacker won't get a redundant mention notification, but they will get a reply notification
+            */
+            let modifiedMentions = mentions_[0] === parentFeedbackCommenterInfo.username ? mentions_.slice(1) : mentions_
 
             await NotificationSender(io, { 
                 noteDocID: _noteDocID, 
                 commenterDocID: commenterDocID,
                 commenterStudentID: _commenterStudentID
-            }).sendMentionNotification(mentions, reply)
+            }).sendMentionNotification(modifiedMentions, reply)
         }
     })
 
@@ -141,7 +189,6 @@ function noteViewRouter(io: Server) {
         let _voterStudentID = req.body["voterStudentID"]
         let voterStudentDocID = (await Convert.getDocumentID_studentid(_voterStudentID)).toString()
 
-        //FIXME: check if a user has voted a note or not. though frontend js ensures that but it can be changed via any proxy by bypassing the frontend logic.
         try {
             if (!action) {
                 let voteData = await addVote({ voteType, noteDocID, voterStudentDocID })

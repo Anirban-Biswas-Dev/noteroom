@@ -52,7 +52,7 @@ export interface INoteDB {
 */
 interface ICommentDB {
     noteDocID: string,
-    feedbackContents: string
+    feedbackContents?: string
 }
 
 

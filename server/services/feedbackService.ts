@@ -17,13 +17,11 @@ export async function addFeedback(feedbackData: IFeedBackDB) {
             }
         })
 
-    return extendedFeedback
-}
-
-export async function addReply(replyData: IReplyDB) {
-    await Notes.findByIdAndUpdate(replyData.noteDocID, { $inc: { feedbackCount: 1 } })
-    let reply = await Reply.create(replyData)
-    let extentedReply = await Reply.findById(reply._id)
+        return extendedFeedback
+    }
+    
+export async function getReply(replyDocID) {
+    let extentedReply = await Reply.findById(replyDocID)
         .populate('commenterDocID', 'displayname username studentID profile_pic')
         .populate({
             path: 'parentFeedbackDocID',
@@ -36,3 +34,11 @@ export async function addReply(replyData: IReplyDB) {
         .populate('noteDocID', 'title')
     return extentedReply
 }
+
+export async function addReply(replyData: IReplyDB) {
+    await Notes.findByIdAndUpdate(replyData.noteDocID, { $inc: { feedbackCount: 1 } })
+    let reply = await Reply.create(replyData)
+    return getReply(reply._id.toString())
+}
+
+
