@@ -1,3 +1,4 @@
+import { feedbacksModel } from "../schemas/comments.js"
 import Notes from "../schemas/notes.js"
 import votesModel, { CommentVotes } from "../schemas/votes.js"
 import { ICommentVoteDB, IVoteDB } from "../types/database.types.js"
@@ -20,6 +21,7 @@ export async function isUpVoted({ noteDocID, voterStudentDocID }: IVoteDB) {
 }
 
 export async function addCommentVote({ noteDocID, voterStudentDocID, voteType, feedbackDocID }: ICommentVoteDB) {
+    await feedbacksModel.findByIdAndUpdate(feedbackDocID, { $inc: { upvoteCount: 1 } })
     let voteData = await CommentVotes.create({ noteDocID, voterStudentDocID, voteType, feedbackDocID })
     return voteData.populate([
         { path: 'noteDocID', select: 'title' },
@@ -28,6 +30,7 @@ export async function addCommentVote({ noteDocID, voterStudentDocID, voteType, f
 }
 
 export async function deleteCommentVote({ feedbackDocID, voterStudentDocID }: ICommentVoteDB) {
+    await feedbacksModel.findByIdAndUpdate(feedbackDocID, { $inc: { upvoteCount: -1 } })
     await CommentVotes.deleteOne({ $and: [{ feedbackDocID: feedbackDocID }, { voterStudentDocID: voterStudentDocID }] })
 }
 

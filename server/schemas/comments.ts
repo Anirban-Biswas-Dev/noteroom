@@ -29,6 +29,14 @@ const feedbackSchema = new Schema({
         required: true,
         ref: 'students'
     },
+    replyCount: {
+        type: Number,
+        default: 0
+    },
+    upvoteCount: {
+        type: Number,
+        default: 0
+    }
 })
 const feedbacksModel = CommentsModel.discriminator('feedbacks', feedbackSchema)
 
