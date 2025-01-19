@@ -9,7 +9,7 @@ import {getNotifications, getSavedNotes, profileInfo, unreadNotiCount} from '../
 import {getNote, getOwner, isSaved} from '../services/noteService.js'
 import {Convert} from '../services/userService.js'
 import {addFeedback, addReply, getReply} from '../services/feedbackService.js'
-import addVote, { deleteVote, isUpVoted } from '../services/voteService.js';
+import addVote, { addCommentVote, deleteCommentVote, deleteVote, isUpVoted } from '../services/voteService.js';
 import { NotificationSender } from '../services/io/ioNotifcationService.js';
 import { replyModel } from '../schemas/comments.js';
 
@@ -18,20 +18,22 @@ function noteViewRouter(io: Server) {
     router.get('/:noteID?', async (req, res, next) => {
         try {
             let noteDocID = req.params.noteID
-            let noteInformation = await getNote({noteDocID})
-            let root = await profileInfo(req.session["stdid"])
-            let [note, owner, feedbacks] = [noteInformation['note'], noteInformation['owner'], noteInformation['feedbacks']]
             let mynote: number; //* Varifing if a note is mine or not: corrently using for not allowing users to give feedbacks based on some situations (self-notes and viewing notes without being logged in)
 
             
             if (req.session["stdid"]) {
+                let studentDocID = (await Convert.getDocumentID_studentid(req.session["stdid"])).toString()
+
                 if (noteDocID) {
+                    let noteInformation = await getNote({noteDocID, studentDocID})
+                    let [note, owner, feedbacks] = [noteInformation['note'], noteInformation['owner'], noteInformation['feedbacks']]
+
                     //# Root information
+                    let root = await profileInfo(req.session["stdid"]) 
                     let savedNotes = await getSavedNotes(req.session["stdid"])
                     let notis = await getNotifications(req.session["stdid"])
                     let unReadCount = await unreadNotiCount(req.session["stdid"])
                     
-                    let studentDocID = (await Convert.getDocumentID_studentid(req.session["stdid"])).toString()
                     let isUpvoted = await isUpVoted({ noteDocID: noteDocID, voterStudentDocID: studentDocID, voteType: 'upvote' })
                     let issaved = await isSaved({ noteDocID, studentDocID })
 
@@ -45,6 +47,8 @@ function noteViewRouter(io: Server) {
                 }
             } else {
                 mynote = 3 // Non-sessioned users
+                let noteInformation = await getNote({noteDocID})
+                let [note, owner, feedbacks] = [noteInformation['note'], noteInformation['owner'], noteInformation['feedbacks']]
                 res.render('note-view/note-view', { note: note, mynote: mynote, owner: owner, feedbacks: feedbacks, root: owner }) // Specific notes: visiting notes without being logged in
             }
         } catch (error) {
@@ -183,6 +187,7 @@ function noteViewRouter(io: Server) {
         const _ownerStudentID = noteOwnerInfo["ownerDocID"]["studentID"].toString()
         
         const action = req.query["action"]
+        const on = req.query["on"]
 
         let voteType = <"upvote" | "downvote">req.query["type"]
         let noteDocID = req.body["noteDocID"]
@@ -190,32 +195,43 @@ function noteViewRouter(io: Server) {
         let voterStudentDocID = (await Convert.getDocumentID_studentid(_voterStudentID)).toString()
 
         try {
-            if (!action) {
-                let voteData = await addVote({ voteType, noteDocID, voterStudentDocID })
-                let upvoteCount = voteData["noteDocID"]["upvoteCount"]
-    
-                io.emit('increment-upvote-dashboard', noteDocID)
-                io.to(noteDocID).emit('increment-upvote')
-                
-                if(_voterStudentID !== _ownerStudentID) {
-                    upvoteCount % 5 === 0 || upvoteCount === 1 ? (async function() {
-                        await NotificationSender(io, {
-                            upvoteCount: upvoteCount,
-                            noteDocID: noteDocID,
-                            ownerStudentID: _ownerStudentID,
-                            voterStudentDocID: voterStudentDocID
-                        }).sendVoteNotification(voteData)
-                    })() : false
-                }
-                            
-                res.json({ok: true})
+            if (!on) {
+                if (!action) {
+                    let voteData = await addVote({ voteType, noteDocID, voterStudentDocID })
+                    let upvoteCount = voteData["noteDocID"]["upvoteCount"]
+        
+                    io.emit('increment-upvote-dashboard', noteDocID)
+                    io.to(noteDocID).emit('increment-upvote')
                     
+                    if(_voterStudentID !== _ownerStudentID) {
+                        upvoteCount % 5 === 0 || upvoteCount === 1 ? (async function() {
+                            await NotificationSender(io, {
+                                upvoteCount: upvoteCount,
+                                noteDocID: noteDocID,
+                                ownerStudentID: _ownerStudentID,
+                                voterStudentDocID: voterStudentDocID
+                            }).sendVoteNotification(voteData)
+                        })() : false
+                    }
+                                
+                    res.json({ok: true})
+                        
+                } else {
+                    await deleteVote({ noteDocID, voterStudentDocID })
+                    io.emit('decrement-upvote-dashboard', noteDocID)
+                    io.to(noteDocID).emit('decrement-upvote')
+    
+                    res.json({ ok: true })
+                }
             } else {
-                await deleteVote({ noteDocID, voterStudentDocID, voteType })
-                io.emit('decrement-upvote-dashboard', noteDocID)
-                io.to(noteDocID).emit('decrement-upvote')
-
-                res.json({ ok: true })
+                let feedbackDocID = req.body["feedbackDocID"]                
+                if (!action) {
+                    await addCommentVote({ voteType, feedbackDocID, noteDocID, voterStudentDocID })
+                    res.json({ ok: true })
+                } else {
+                    await deleteCommentVote({ feedbackDocID, voterStudentDocID })
+                    res.json({ ok: true })
+                }
             }
         } catch (error) {
             res.json({ ok: false })

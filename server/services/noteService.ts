@@ -5,7 +5,7 @@ import { INoteDB } from '../types/database.types.js'
 import { IManageUserNote, INoteDetails } from '../types/noteService.types.js'
 import { Notifs } from '../schemas/notifications.js'
 import { deleteNoteImages } from './firebaseService.js'
-import { isUpVoted } from './voteService.js'
+import { isCommentUpVoted, isUpVoted } from './voteService.js'
 
 
 export async function addNote(noteData: INoteDB) {
@@ -69,7 +69,7 @@ export async function deleteSavedNote({ studentDocID, noteDocID }: IManageUserNo
     }
 }
 
-export async function getNote({noteDocID}: IManageUserNote) {
+export async function getNote({noteDocID, studentDocID}: IManageUserNote) {
     if (noteDocID) {
         let note = await Notes.findById(noteDocID, { title: 1, subject: 1, description: 1, ownerDocID: 1, content: 1, upvoteCount: 1 })
         let owner = await Students.findById(note.ownerDocID, { displayname: 1, studentID: 1, profile_pic: 1, username: 1 })
@@ -77,9 +77,11 @@ export async function getNote({noteDocID}: IManageUserNote) {
             .populate('commenterDocID', 'displayname username studentID profile_pic').sort({ createdAt: -1 })
 
         let _extentedFeedbacks = feedbacks.map(async feedback => {
+            let isupvoted = await isCommentUpVoted({ feedbackDocID: feedback._id.toString(), voterStudentDocID: studentDocID })
             let reply = await Reply.find({ parentFeedbackDocID: feedback._id })
                 .populate('commenterDocID', 'username displayname profile_pic studentID')
-            return [feedback, reply]
+
+            return [{...feedback.toObject(), isUpVoted: isupvoted}, reply]
         })
         let extendedFeedbacks = await Promise.all(_extentedFeedbacks)
 
