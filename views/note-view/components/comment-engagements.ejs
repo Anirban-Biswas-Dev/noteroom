@@ -1,5 +1,5 @@
 <div class="main__engagement-opts engagement-opts">
-  <div class="like-wrapper" data-noteid="<%= note._id %>" data-feedbackid="<%= feedback[0]._id %>" data-isupvoted="<%= feedback[0].isUpVoted %>" onclick="upvote(this, true)">
+  <div class="like-wrapper" data-noteid="<%= note._id %>" data-feedbackid="<%= feedback[0]._id %>" data-isupvoted="<%= feedback[0].isUpVoted %>" onclick="upvoteComment(this)">
     <svg class="like-icon" data-tippy-content="Like" width="20" height="22" viewBox="0 0 115 117" fill="none" xmlns="http://www.w3.org/2000/svg">
     <!-- <path d="M5 51V112" stroke="#606770" stroke-width="10" stroke-linecap="round"/> -->
      <% if(feedback[0].isUpVoted) { %>
