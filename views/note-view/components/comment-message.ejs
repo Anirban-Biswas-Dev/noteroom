@@ -13,5 +13,5 @@
     <div class="<% isMainComment ? "main__reply-msg" : "" %> reply-msg"><%- comment.feedbackContents %></div>
 
       <!-- COMPONENT: comment engagement -->
-    <%- include('comment-engagements')  %>
+    <%- include('comment-engagements', { note: note, feedback: feedback })  %>
 </div>

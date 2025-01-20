@@ -80,9 +80,13 @@ export interface IReplyDB extends ICommentDB {
 
 
 export interface IVoteDB {
-    noteDocID: string,
+    noteDocID?: string,
     voterStudentDocID: string,
-    voteType: "upvote" | "downvote",
+    voteType?: "upvote" | "downvote",
+}
+
+export interface ICommentVoteDB extends IVoteDB {
+    feedbackDocID: string
 }
 
 

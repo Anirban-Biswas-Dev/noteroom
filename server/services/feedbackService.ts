@@ -1,5 +1,5 @@
 import Notes from "../schemas/notes.js";
-import {feedbacksModel as Feedbacks, replyModel as Reply} from "../schemas/comments.js";
+import {feedbacksModel as Feedbacks, feedbacksModel, replyModel as Reply} from "../schemas/comments.js";
 import { IFeedBackDB, IReplyDB } from "../types/database.types.js";
 
 
@@ -37,6 +37,7 @@ export async function getReply(replyDocID) {
 
 export async function addReply(replyData: IReplyDB) {
     await Notes.findByIdAndUpdate(replyData.noteDocID, { $inc: { feedbackCount: 1 } })
+    await feedbacksModel.findByIdAndUpdate(replyData.parentFeedbackDocID, { $inc: { replyCount: 1 } })
     let reply = await Reply.create(replyData)
     return getReply(reply._id.toString())
 }

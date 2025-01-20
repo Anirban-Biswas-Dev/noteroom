@@ -1,58 +1,19 @@
-import {
-    IFeedBackDB,
-    IReplyDB} from './../types/database.types.js';
-import {Router} from 'express'
-import Students from '../schemas/students.js'
-import {Server} from 'socket.io'
-import {checkMentions, replaceMentions} from '../helpers/utils.js'
-import {getNotifications, getSavedNotes, profileInfo, unreadNotiCount} from '../helpers/rootInfo.js'
-import {getNote, getOwner, isSaved} from '../services/noteService.js'
-import {Convert} from '../services/userService.js'
-import {addFeedback, addReply, getReply} from '../services/feedbackService.js'
-import addVote, { deleteVote, isUpVoted } from '../services/voteService.js';
-import { NotificationSender } from '../services/io/ioNotifcationService.js';
-import { replyModel } from '../schemas/comments.js';
+import { Router } from 'express';
+import { Server } from 'socket.io';
+import { Convert } from '../../services/userService';
+import { getOwner } from '../../services/noteService';
+import { checkMentions, replaceMentions } from '../../helpers/utils';
+import { IFeedBackDB, IReplyDB } from '../../types/database.types';
+import { addFeedback, addReply, getReply } from '../../services/feedbackService';
+import { NotificationSender } from '../../services/io/ioNotifcationService';
+import { replyModel } from '../../schemas/comments';
+import Students from '../../schemas/students';
+
 
 const router = Router()
-function noteViewRouter(io: Server) {
-    router.get('/:noteID?', async (req, res, next) => {
-        try {
-            let noteDocID = req.params.noteID
-            let noteInformation = await getNote({noteDocID})
-            let root = await profileInfo(req.session["stdid"])
-            let [note, owner, feedbacks] = [noteInformation['note'], noteInformation['owner'], noteInformation['feedbacks']]
-            let mynote: number; //* Varifing if a note is mine or not: corrently using for not allowing users to give feedbacks based on some situations (self-notes and viewing notes without being logged in)
 
-            
-            if (req.session["stdid"]) {
-                if (noteDocID) {
-                    //# Root information
-                    let savedNotes = await getSavedNotes(req.session["stdid"])
-                    let notis = await getNotifications(req.session["stdid"])
-                    let unReadCount = await unreadNotiCount(req.session["stdid"])
-                    
-                    let studentDocID = (await Convert.getDocumentID_studentid(req.session["stdid"])).toString()
-                    let isUpvoted = await isUpVoted({ noteDocID: noteDocID, voterStudentDocID: studentDocID, voteType: 'upvote' })
-                    let issaved = await isSaved({ noteDocID, studentDocID })
-
-                    if (note.ownerDocID == req.cookies['recordID']) {
-                        mynote = 1
-                        res.render('note-view/note-view', { isSaved: issaved, note: note, mynote: mynote, owner: owner, feedbacks: feedbacks, root: root, savedNotes: savedNotes, notis: notis, unReadCount: unReadCount, isUpvoted }) // Specific notes: visiting my notes
-                    } else {
-                        mynote = 0
-                        res.render('note-view/note-view', { isSaved: issaved, note: note, mynote: mynote, owner: owner, feedbacks: feedbacks, root: root, savedNotes: savedNotes, notis: notis, unReadCount: unReadCount, isUpvoted }) // Specific notes: visiting others notes
-                    }
-                }
-            } else {
-                mynote = 3 // Non-sessioned users
-                res.render('note-view/note-view', { note: note, mynote: mynote, owner: owner, feedbacks: feedbacks, root: owner }) // Specific notes: visiting notes without being logged in
-            }
-        } catch (error) {
-            next(error)
-        }
-    })
-
-    router.post('/:noteID/postFeedback', async (req, res) => {
+export function postNoteFeedbackRouter(io: Server) {
+    router.post('/postFeedback', async (req, res) => {
 
         const _commenterStudentID = req.body["commenterStudentID"]
         const _commenterUserName = await Convert.getUserName_studentid(_commenterStudentID)
@@ -177,64 +138,5 @@ function noteViewRouter(io: Server) {
         }
     })
 
-    router.post('/:noteID/vote', async (req, res) => {
-        const _noteDocID = req.params.noteID
-        const noteOwnerInfo = await getOwner({noteDocID: _noteDocID}) 
-        const _ownerStudentID = noteOwnerInfo["ownerDocID"]["studentID"].toString()
-        
-        const action = req.query["action"]
-
-        let voteType = <"upvote" | "downvote">req.query["type"]
-        let noteDocID = req.body["noteDocID"]
-        let _voterStudentID = req.body["voterStudentID"]
-        let voterStudentDocID = (await Convert.getDocumentID_studentid(_voterStudentID)).toString()
-
-        try {
-            if (!action) {
-                let voteData = await addVote({ voteType, noteDocID, voterStudentDocID })
-                let upvoteCount = voteData["noteDocID"]["upvoteCount"]
-    
-                io.emit('increment-upvote-dashboard', noteDocID)
-                io.to(noteDocID).emit('increment-upvote')
-                
-                if(_voterStudentID !== _ownerStudentID) {
-                    upvoteCount % 5 === 0 || upvoteCount === 1 ? (async function() {
-                        await NotificationSender(io, {
-                            upvoteCount: upvoteCount,
-                            noteDocID: noteDocID,
-                            ownerStudentID: _ownerStudentID,
-                            voterStudentDocID: voterStudentDocID
-                        }).sendVoteNotification(voteData)
-                    })() : false
-                }
-                            
-                res.json({ok: true})
-                    
-            } else {
-                await deleteVote({ noteDocID, voterStudentDocID, voteType })
-                io.emit('decrement-upvote-dashboard', noteDocID)
-                io.to(noteDocID).emit('decrement-upvote')
-
-                res.json({ ok: true })
-            }
-        } catch (error) {
-            res.json({ ok: false })
-        }
-    })
-
-    router.get('/:noteID/shared', async (req, res, next) => {
-        let headers = req.headers['user-agent']
-        let noteDocID = req.params.noteID
-        let note = (await getNote({noteDocID})).note
-
-        if (headers.includes('facebook')) {
-            res.render('shared', { note: note, req: req })
-        } else {
-            res.redirect(`/view/${noteDocID}`)
-        }
-    })
-
     return router
 }
-
-export default noteViewRouter
