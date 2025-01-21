@@ -97,114 +97,36 @@
   <div class="notifications-container">
     <% if(notis.length != 0) { %>
     <%
-            function formatDate(date) {
-              const formatter = new Intl.DateTimeFormat('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-                timeZone: 'Asia/Dhaka', 
-                hour12: true 
-              });
-            const formattedDate = formatter.format(date);
-            return formattedDate
-            } 
-            %>
+      function formatDate(date) {
+        const formatter = new Intl.DateTimeFormat('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          timeZone: 'Asia/Dhaka', 
+          hour12: true 
+        });
+      const formattedDate = formatter.format(date);
+      return formattedDate
+      } 
+    %>
     <% notis.forEach(noti => { %>
-    <% if(noti.docType == 'note-feedback' ) { %>
-    <div class="notification secondary-<%= noti.isRead %>" id="noti-<%= noti._id %>">
-      <div class="first-row">
-        <div class="frnt-wrapper">
-          <span class="isRead <%= noti.isRead %>"></span>
-          <a href='/view/<%= noti.noteDocID._id %>/#<%= noti.feedbackDocID %>' class="notification-link notiLink">
-            <span class="notification-title">
-              <% let title = noti.noteDocID.title %>
-              <% if(title.length > 30) { %>
-              <%= title.slice(0, 30) %>...
-              <% } else { %>
-              <%= title %>
-              <% } %>
-              <span style="display: none;"><%= formatDate(new Date(noti.createdAt)) %></span>
-            </span>
-          </a>
-        </div>
-        <span class="remove-notification" onclick="deleteNoti('<%= noti._id %>')">&times;</span>
-      </div>
-      <div class="notification-msg">
-          <a href='/view/<%= noti.noteDocID._id %>/#<%= noti.feedbackDocID %>' class="notification-link-2 notiLink"><%= noti.commenterDocID.displayname %> has given feedback on your notes! Check it out.</a>
-      </div>
-    </div>
-    <% } else if (noti.docType == "note-mention") { %>
-      <div class="notification secondary-<%= noti.isRead %>" id="noti-<%= noti._id %>">
-        <div class="first-row">
-          <div class="frnt-wrapper">
-            <span class="isRead <%= noti.isRead %>"></span>
-            <a href='/view/<%= noti.noteDocID._id %>/#<%= noti.feedbackDocID %>' class="notification-link notiLink">
-              <span class="notification-title">
-                <% let title = noti.noteDocID.title %>
-                <% if(title.length > 30) { %>
-                <%= title.slice(0, 30) %>...
-                <% } else { %>
-                <%= title %>
-                <% } %>
-                <span style="display: none;"><%= formatDate(new Date(noti.createdAt)) %></span>
-              </span>
-            </a>
-          </div>
-          <span class="remove-notification" onclick="deleteNoti('<%= noti._id %>')">&times;</span>
-        </div>
-        <div class="notification-msg">
-            <a href='/view/<%= noti.noteDocID._id %>/#<%= noti.feedbackDocID %>' class="notification-link-2 notiLink"><%= noti.commenterDocID.displayname %> has mentioned you.</a>
-        </div>
-      </div>
-    <% } else if(noti.docType == "note-reply") { %>
-      <div class="notification secondary-<%= noti.isRead %>" id="noti-<%= noti._id %>">
-        <div class="first-row">
-          <div class="frnt-wrapper">
-            <span class="isRead <%= noti.isRead %>"></span>
-            <a href='/view/<%= noti.noteDocID._id %>/#<%= noti.feedbackDocID %>' class="notification-link notiLink">
-              <span class="notification-title">
-                <% let title = noti.noteDocID.title %>
-                <% if(title.length > 30) { %>
-                <%= title.slice(0, 30) %>...
-                <% } else { %>
-                <%= title %>
-                <% } %>
-                <span style="display: none;"><%= formatDate(new Date(noti.createdAt)) %></span>
-              </span>
-            </a>
-          </div>
-          <span class="remove-notification" onclick="deleteNoti('<%= noti._id %>')">&times;</span>
-        </div>
-        <div class="notification-msg">
-            <a href='/view/<%= noti.noteDocID._id %>/#<%= noti.feedbackDocID %>' class="notification-link-2 notiLink"><%= noti.commenterDocID.displayname %> has replied to your comment</a>
-        </div>
-      </div>
-    <% } else if (noti.docType === "note-vote") { %>
-      <div class="notification secondary-<%= noti.isRead %>" id="noti-<%= noti._id %>">
-        <div class="first-row">
-          <div class="frnt-wrapper">
-            <span class="isRead <%= noti.isRead %>"></span>
-            <a href='/view/<%= noti.noteDocID._id %>/' class="notification-link notiLink">
-              <span class="notification-title">
-                <% let title = noti.noteDocID.title %>
-                <% if(title.length > 30) { %>
-                <%= title.slice(0, 30) %>...
-                <% } else { %>
-                <%= title %>
-                <% } %>
-                <span style="display: none;"><%= formatDate(new Date(noti.createdAt)) %></span>
-              </span>
-            </a>
-          </div>
-          <span class="remove-notification" onclick="deleteNoti('<%= noti._id %>')">&times;</span>
-        </div>
-        <div class="notification-msg">
-            <a href='/view/<%= noti.noteDocID._id %>/' class="notification-link-2 notiLink">Got upvotes!! Just got an upvote!!</a>
-        </div>
-      </div>
-    <% } %>
+      <% if(noti.docType == 'note-feedback' ) { %>
+        <%- include('partials/notification.ejs', { noti: noti, message: `${noti.commenterDocID.displayname} left a comment on your notes. Check it out!`, formatDate: formatDate }) %>
+
+      <% } else if (noti.docType == "note-mention") { %>
+        <%- include('partials/notification.ejs', { noti: noti, message: `You were mentioned by ${noti.commenterDocID.displayname}. Join the conversation!`, formatDate: formatDate }) %>
+
+      <% } else if(noti.docType == "note-reply") { %>
+        <%- include('partials/notification.ejs', { noti: noti, message: `${noti.commenterDocID.displayname} replied to your comment. See their response!`, formatDate: formatDate }) %>
+        
+      <% } else if (noti.docType === "note-vote") { %>
+        <%- include('partials/notification.ejs', { noti: noti, message: `Your note is making an impact! just got some upvotes.`, formatDate: formatDate }) %>
+        
+      <% } else if (noti.docType === 'note-comment-vote') { %>
+        <%- include('partials/notification.ejs', { noti: noti, message: `Your comment is getting noticed! Someone liked what you said.`, formatDate: formatDate }) %>
+      <% } %>
     <% }) %>
     <% } %>
   </div>

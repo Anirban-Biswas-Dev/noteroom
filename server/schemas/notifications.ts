@@ -103,6 +103,7 @@ const voteSchema = new Schema({
     ownerStudentID: String
 })
 const votesNotifs = NotifsModel.discriminator('note-vote', voteSchema)
+const commentVotesNotifs = NotifsModel.discriminator('note-comment-vote', voteSchema)
 
 
 
@@ -116,3 +117,5 @@ const _replyNotifs = replyNotifs
 export { _replyNotifs as replyNotifs }
 const _votesNotifs = votesNotifs
 export { _votesNotifs as votesNotifs }
+const _commentVotesNotifs = commentVotesNotifs
+export { _commentVotesNotifs as commentVotesNotifs }

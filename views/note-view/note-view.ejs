@@ -71,8 +71,8 @@
 
         <% if (mynote !== 3) { %>
           <div class="fb__col-2">
-            <button class="<%= isSaved ? "save-note-btn saved" : "save-note-btn" %>" onclick="saveNote('<%= note._id %>', '<%= note.title %>')"
-                id="save-note-btn" data-issaved="<%= isSaved %>">
+            <button class="<%= note.isSaved ? "save-note-btn saved" : "save-note-btn" %>" onclick="saveNote('<%= note._id %>', '<%= note.title %>')"
+                id="save-note-btn" data-issaved="<%= note.isSaved %>">
                   <i class="fa-regular fa-bookmark"></i>
                   <i class="fa-solid fa-bookmark saved"></i>
             </button>
@@ -132,7 +132,7 @@
                       <img src="<%= reply.commenterDocID.profile_pic %>" alt="User Avatar" class="cmnt-author-img thread-avatar">
 
                       <!-- COMPONENT: replies text [without profilepic] -->
-                      <%- include('components/comment-message', { commentType: "reply", reply: reply, formatDate: formatDate, note: note }) %>
+                      <%- include('components/comment-message', { commentType: "reply", reply: reply, formatDate: formatDate, note: note, feedback: feedback }) %>
                     </div>
                     <% }) %>
 

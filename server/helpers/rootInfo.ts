@@ -44,7 +44,13 @@ export async function getNotifications(studentID: rootStudentID) {
                     { path: 'noteDocID', select: 'title upvoteCount' },
                 ]))
             }
-        } 
+        } else if (doc["docType"] === "note-comment-vote") {
+            if (doc["ownerStudentID"] == studentID) {
+                populatedNotifications.push(doc.populate([
+                    { path: 'noteDocID', select: 'title' },
+                ]))
+            }
+        }
         else {
             populatedNotifications.push(doc)
         }

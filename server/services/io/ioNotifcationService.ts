@@ -42,7 +42,7 @@ export function NotificationSender(io: Server, globals?: any) {
                 nfnTitle: feedbackDocument["noteDocID"]["title"],
                 isread: "false",
             } 
-            io.to(ownerSocketID).emit('notification-feedback', notification_io, "has given feedback on your notes! Check it out.")
+            io.to(ownerSocketID).emit('notification-feedback', notification_io, `${notification_io.commenterDisplayName} left a comment on your notes. Check it out!`)
         },
         
         async sendReplyNotification(replyDocument: any) {
@@ -64,22 +64,22 @@ export function NotificationSender(io: Server, globals?: any) {
                 nfnTitle: replyDocument["noteDocID"]["title"],
                 commenterDisplayName: replyDocument["commenterDocID"]["displayname"]
             }
-            io.to(userSocketMap.get(notification_db.ownerStudentID)).emit("notification-reply", notification_io, "replied to your comment")
+            io.to(userSocketMap.get(notification_db.ownerStudentID)).emit("notification-reply", notification_io, `${notification_io.commenterDisplayName} replied to your comment. See their response!`)
         },
 
         async sendVoteNotification(voteDocument: any) {
-            let upvoteCount = globals.upvoteCount
             let noteDocID = globals.noteDocID
             let ownerStudentID = globals.ownerStudentID
             let isFeedback = globals.feedback
 
+            let notification_data: IUpVoteNotificationDB = {
+                noteDocID: noteDocID,
+                voteDocID: voteDocument._id.toString(),
+                voterDocID: globals.voterStudentDocID,
+                ownerStudentID: ownerStudentID
+            }
+
             if (!isFeedback) {
-                let notification_data: IUpVoteNotificationDB = {
-                    noteDocID: noteDocID,
-                    voteDocID: voteDocument._id.toString(),
-                    voterDocID: globals.voterStudentDocID,
-                    ownerStudentID: ownerStudentID
-                }
                 let notification_document = await addVoteNoti(notification_data)
                 
                 let notification_io: IUpVoteNotification = {
@@ -90,11 +90,19 @@ export function NotificationSender(io: Server, globals?: any) {
                     vote: true
                 }
     
-                io.to(userSocketMap.get(ownerStudentID)).emit('notification-upvote', notification_io, `${upvoteCount} upvotes!! Just got an upvote!`)
+                io.to(userSocketMap.get(ownerStudentID)).emit('notification-upvote', notification_io, `Your note is making an impact! just got some upvotes.`)
             } else {
-                
-            }
+                let notification_document = await addVoteNoti(notification_data, true)
 
+                let notification_io: IUpVoteNotification = {
+                    isread: "false",
+                    notiID: notification_document._id.toString(),
+                    noteID: noteDocID,
+                    nfnTitle: voteDocument["noteDocID"]["title"],
+                    vote: true
+                }
+                io.to(userSocketMap.get(ownerStudentID)).emit('notification-comment-upvote', notification_io, `Your comment is getting noticed! Someone liked what you said.`)
+            }
         },
         
         /**
@@ -124,7 +132,7 @@ export function NotificationSender(io: Server, globals?: any) {
                             isread: "false",
                             mention: true
                         }
-                        io.to(userSocketMap.get(studentID)).emit("notification-mention", notification_io, "has mentioned you")
+                        io.to(userSocketMap.get(studentID)).emit("notification-mention", notification_io, `You were mentioned by ${notification_io.commenterDisplayName}. Join the conversation!`)
                     }
                 })
             }

@@ -311,11 +311,9 @@ const manageNotes = { // I treat all the cards as notes
                       </div>
                       <div class="notification-msg">
                         ${!isVote ? `
-                            <a href='/user/${feedbackData.commenterUserName}' class="commenter-prfl">${feedbackData.commenterDisplayName}</a>
-                            <a href='/view/${feedbackData.noteID}/#${feedbackData.feedbackID}' class="notification-link-2"> ${message}</a>
-                        ` : `<a href='/view/${feedbackData.noteID}' class="notification-link-2"> ${message}</a>`
-                } 
-                        
+                            <a href='/view/${feedbackData.noteID}/#${feedbackData.feedbackID}' class="notification-link-2">${message}</a>` : 
+                            `<a href='/view/${feedbackData.noteID}' class="notification-link-2">${message}</a>`
+                		} 
                       </div>
                   </div>`
             notificationContainer.insertAdjacentHTML('afterbegin', notificationHtml);
@@ -378,7 +376,7 @@ const manageNotes = { // I treat all the cards as notes
                     </div>
                     <div class="main__reply-msg reply-msg">${feedbackData.feedbackContents}</div>
                     <div class="main__engagement-opts engagement-opts">
-                        <div class="like-wrapper" data-noteid=${feedbackData.noteDocID._id} data-feedbackid=${feedbackData._id} data-isupvoted="false" onclick="upvote(this, true)">   
+                        <div class="like-wrapper" data-noteid=${feedbackData.noteDocID._id} data-feedbackid=${feedbackData._id} data-isupvoted="false" onclick="upvoteComment(this)">   
                             <svg class="like-icon" width="20" height="22" viewBox="0 0 115 117" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M107.498 49.9985C107.998 49.9985 109.994 52.6188 109.494 70.581C108.994 88.5431 93.5 110.998 88.993 110.998C84.4861 110.998 28.4996 112 28.493 110.455C28.4863 108.91 28.4938 47.5373 28.4938 47.5373L49.9956 32.4996C49.9956 32.4996 53.0332 25.5652 57.9956 8.99958C62.958 -7.56607 78.4744 33.916 66 49.9982M107.498 49.9985C106.998 49.9985 66 49.9982 66 49.9982M107.498 49.9985L66 49.9982" stroke="#606770" stroke-width="10" stroke-linecap="round"/>
                             </svg>

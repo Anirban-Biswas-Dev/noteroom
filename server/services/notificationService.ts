@@ -1,4 +1,4 @@
-import { Notifs, feedBackNotifs, mentionNotifs, replyNotifs, votesNotifs } from "../schemas/notifications.js";
+import { Notifs, commentVotesNotifs, feedBackNotifs, mentionNotifs, replyNotifs, votesNotifs } from "../schemas/notifications.js";
 import { IFeedbackNotificationDB, IMentionNotificationDB, IReplyNotificationDB, IUpVoteNotificationDB } from "../types/database.types.js";
 
 
@@ -29,9 +29,14 @@ export async function addReplyNoti(replyData: IReplyNotificationDB) {
     return replynoti
 }
 
-export async function addVoteNoti(voteData: IUpVoteNotificationDB) {
-    let votenoti = await votesNotifs.create(voteData)
-    return votenoti
+export async function addVoteNoti(voteData: IUpVoteNotificationDB, isCommentVote = false) {
+    if (!isCommentVote) {
+        let votenoti = await votesNotifs.create(voteData)
+        return votenoti
+    } else {
+        let votenoti = await commentVotesNotifs.create(voteData)
+        return votenoti
+    }
 }
 
 // naming: add<notification-type>Noti
