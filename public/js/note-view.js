@@ -298,19 +298,10 @@ const tribute = new Tribute({
 })
 tribute.attach(document.querySelector('#editor'))
 
-
-
-toastui.Editor.codeBlockLanguages = [];
-
-const editor = new toastui.Editor({
-  el: document.querySelector("#editor"),
-  initialEditType: "wysiwyg",
-  previewStyle: "none",
-  height: "200px",
-  hideModeSwitch: true,
-  placeholder: "Give a feedback",
-  toolbarItems: [["bold", "italic", "strike"], ["link"], ["image"]],
+const editor = new Quill('#editor', {
+  theme: 'snow'
 });
+document.getElementById('editor').style.height = '120px';
 
 tippy("[data-tippy-content]", {
   placement: "top",
@@ -371,8 +362,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const commenterStudentID = Cookies.get("studentID"); // Commenter's document ID
 
   const postMainComment = async () => {
-    const commentHTML = editor.getHTML(); // feedback text
-    if (!commentHTML.trim()) return; // Preventing any empty comments
+    const commentHTML = editor.root.innerHTML; // feedback text
+    
+    if (editor.root.textContent.trim() === "") return; // Preventing any empty comments
 
     const feedbackData = new FormData()
     feedbackData.append('noteDocID', noteDocID)
@@ -385,7 +377,7 @@ document.addEventListener('DOMContentLoaded', () => {
     })
 
     adjustThreadLineHeights();
-    editor.setHTML(''); // reseting toast ui editor content
+    editor.root.innerHTML = ''; // reseting toast ui editor content
   };
 
   cmntBtn.addEventListener("click", postMainComment);
