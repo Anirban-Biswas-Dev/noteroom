@@ -132,7 +132,7 @@
                       <img src="<%= reply.commenterDocID.profile_pic %>" alt="User Avatar" class="cmnt-author-img thread-avatar">
 
                       <!-- COMPONENT: replies text [without profilepic] -->
-                      <%- include('components/comment-message', { commentType: "reply", reply: reply, formatDate: formatDate, note: note }) %>
+                      <%- include('components/comment-message', { commentType: "reply", reply: reply, formatDate: formatDate, note: note, feedback: feedback }) %>
                     </div>
                     <% }) %>
 

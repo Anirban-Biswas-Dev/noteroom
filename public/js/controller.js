@@ -311,11 +311,9 @@ const manageNotes = { // I treat all the cards as notes
                       </div>
                       <div class="notification-msg">
                         ${!isVote ? `
-                            <a href='/user/${feedbackData.commenterUserName}' class="commenter-prfl">${feedbackData.commenterDisplayName}</a>
-                            <a href='/view/${feedbackData.noteID}/#${feedbackData.feedbackID}' class="notification-link-2"> ${message}</a>
-                        ` : `<a href='/view/${feedbackData.noteID}' class="notification-link-2"> ${message}</a>`
-                } 
-                        
+                            <a href='/view/${feedbackData.noteID}/#${feedbackData.feedbackID}' class="notification-link-2">${message}</a>` : 
+                            `<a href='/view/${feedbackData.noteID}' class="notification-link-2">${message}</a>`
+                		} 
                       </div>
                   </div>`
             notificationContainer.insertAdjacentHTML('afterbegin', notificationHtml);
