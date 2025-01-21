@@ -26,13 +26,20 @@ export async function addCommentVote({ noteDocID, voterStudentDocID, voteType, f
     return voteData.populate([
         { path: 'noteDocID', select: 'title' },
         { path: 'voterStudentDocID', select: 'displayname' },
-        { path: 'feedbackDocID', select: 'upvoteCount' }
+        { 
+            path: 'feedbackDocID', 
+            select: 'upvoteCount commenterDocID',
+            populate: {
+                path: 'commenterDocID',
+                select: 'username studentID'
+            } 
+        }
     ])
 }
 
 export async function deleteCommentVote({ feedbackDocID, voterStudentDocID }: ICommentVoteDB) {
     await feedbacksModel.findByIdAndUpdate(feedbackDocID, { $inc: { upvoteCount: -1 } })
-    await CommentVotes.deleteOne({ $and: [ { docType: { $ne: 'feedback' } }, { feedbackDocID: feedbackDocID }, { voterStudentDocID: voterStudentDocID }] })
+    await CommentVotes.deleteOne({ $and: [ { docType: { $eq: 'feedback' } }, { feedbackDocID: feedbackDocID }, { voterStudentDocID: voterStudentDocID }] })
 }
 
 export async function isCommentUpVoted({ feedbackDocID, voterStudentDocID }) {

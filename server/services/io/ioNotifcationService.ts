@@ -73,13 +73,14 @@ export function NotificationSender(io: Server, globals?: any) {
             let ownerStudentID = globals.ownerStudentID
             let isFeedback = globals.feedback
 
+            let notification_data: IUpVoteNotificationDB = {
+                noteDocID: noteDocID,
+                voteDocID: voteDocument._id.toString(),
+                voterDocID: globals.voterStudentDocID,
+                ownerStudentID: ownerStudentID
+            }
+
             if (!isFeedback) {
-                let notification_data: IUpVoteNotificationDB = {
-                    noteDocID: noteDocID,
-                    voteDocID: voteDocument._id.toString(),
-                    voterDocID: globals.voterStudentDocID,
-                    ownerStudentID: ownerStudentID
-                }
                 let notification_document = await addVoteNoti(notification_data)
                 
                 let notification_io: IUpVoteNotification = {
@@ -92,9 +93,17 @@ export function NotificationSender(io: Server, globals?: any) {
     
                 io.to(userSocketMap.get(ownerStudentID)).emit('notification-upvote', notification_io, `${upvoteCount} upvotes!! Just got an upvote!`)
             } else {
-                
-            }
+                let notification_document = await addVoteNoti(notification_data, true)
 
+                let notification_io: IUpVoteNotification = {
+                    isread: "false",
+                    notiID: notification_document._id.toString(),
+                    noteID: noteDocID,
+                    nfnTitle: voteDocument["noteDocID"]["title"],
+                    vote: true
+                }
+                io.to(userSocketMap.get(ownerStudentID)).emit('notification-comment-upvote', notification_io, `Like!!!`)
+            }
         },
         
         /**

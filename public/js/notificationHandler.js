@@ -56,9 +56,27 @@ ioSocket.on("notification-reply", (replyData, message) => {
     }
 })
 
-ioSocket.on("notification-upvote", (replyData, message) => {
-    addNoti(replyData, message)
-    manageDb.add('notis', replyData)
+ioSocket.on("notification-upvote", (voteData, message) => {
+    addNoti(voteData, message)
+    manageDb.add('notis', voteData)
+
+    const nftShake = document.querySelector('.mobile-nft-btn')
+    nftShake.classList.add('shake') // 4
+    setTimeout(() => {
+        nftShake.classList.remove('shake');
+    }, 300)
+
+    try {
+        const audio = document.getElementById('notificationAudio');
+        audio.play();
+    } catch (error) {
+        console.error(error)
+    }
+})
+
+ioSocket.on('notification-comment-upvote', (voteData, message) => {
+    addNoti(voteData, message)
+    manageDb.add('notis', voteData)
 
     const nftShake = document.querySelector('.mobile-nft-btn')
     nftShake.classList.add('shake') // 4

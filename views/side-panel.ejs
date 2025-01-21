@@ -204,6 +204,29 @@
             <a href='/view/<%= noti.noteDocID._id %>/' class="notification-link-2 notiLink">Got upvotes!! Just got an upvote!!</a>
         </div>
       </div>
+    <% } else if (noti.docType === 'note-comment-vote') { %>
+      <div class="notification secondary-<%= noti.isRead %>" id="noti-<%= noti._id %>">
+        <div class="first-row">
+          <div class="frnt-wrapper">
+            <span class="isRead <%= noti.isRead %>"></span>
+            <a href='/view/<%= noti.noteDocID._id %>/' class="notification-link notiLink">
+              <span class="notification-title">
+                <% let title = noti.noteDocID.title %>
+                <% if(title.length > 30) { %>
+                <%= title.slice(0, 30) %>...
+                <% } else { %>
+                <%= title %>
+                <% } %>
+                <span style="display: none;"><%= formatDate(new Date(noti.createdAt)) %></span>
+              </span>
+            </a>
+          </div>
+          <span class="remove-notification" onclick="deleteNoti('<%= noti._id %>')">&times;</span>
+        </div>
+        <div class="notification-msg">
+            <a href='/view/<%= noti.noteDocID._id %>/' class="notification-link-2 notiLink">liked!!!</a>
+        </div>
+      </div>
     <% } %>
     <% }) %>
     <% } %>

@@ -5,7 +5,7 @@ import { NotificationSender } from "../../services/io/ioNotifcationService";
 import { Convert } from "../../services/userService";
 import addVote, { deleteVote, addCommentVote, deleteCommentVote } from "../../services/voteService";
 
-const router = Router()
+const router = Router({ mergeParams: true})
 
 export function voteRouter(io: Server) {
     router.post('/vote/feedback', async (req, res) => {
@@ -16,8 +16,25 @@ export function voteRouter(io: Server) {
         let _voterStudentID = req.body["voterStudentID"]
         let voterStudentDocID = (await Convert.getDocumentID_studentid(_voterStudentID)).toString()
 
+    
         if (!action) {
             let voteData = await addCommentVote({ voteType, feedbackDocID, noteDocID, voterStudentDocID })
+
+            let feedbackOwner = voteData["feedbackDocID"]["commenterDocID"]
+            let upvoteCount = voteData["feedbackDocID"]["upvoteCount"]
+
+            if (_voterStudentID !== feedbackOwner["studentID"]) {
+                upvoteCount === 1 || upvoteCount % 5 ? (async function() {
+                    await NotificationSender(io, {
+                        upvoteCount: upvoteCount,
+                        noteDocID: noteDocID,
+                        ownerStudentID: feedbackOwner["studentID"],
+                        voterStudentDocID: voterStudentDocID,
+                        feedback: true
+                    }).sendVoteNotification(voteData)
+                })() : false
+            }
+
             res.json({ ok: true })
         } else if (action === "delete") {
             await deleteCommentVote({ feedbackDocID, voterStudentDocID })
