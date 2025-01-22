@@ -73,7 +73,7 @@ export function postNoteFeedbackRouter(io: Server) {
             await NotificationSender(io, { 
                 noteDocID: _noteDocID, 
                 commenterDocID: commenterDocID,
-                commenterStudentID: _commenterStudentID
+                commenterStudentID: _commenterStudentID,
             }).sendMentionNotification(mentions, feedback)
             
         } else {

@@ -31,6 +31,10 @@ export const Convert = {
     async getDisplayName_email(email: string) {
         let displayname = (await Students.findOne({ email: email }, { displayname: 1 }))["displayname"]
         return displayname
+    },
+    async getDisplayName_studentID(studentID: string) {
+        let displayname = (await Students.findOne({ studentID: studentID }, { displayname: 1 }))["displayname"]
+        return displayname
     }
 }
 
