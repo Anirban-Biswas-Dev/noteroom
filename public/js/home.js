@@ -54,3 +54,28 @@ document.addEventListener("DOMContentLoaded", () => {
   // Initialize corner position updates
   updateCornerPositions();
 });
+
+const generateRandomOffset = (maxOffset) => {
+  const offsetX = Math.random() * maxOffset - maxOffset / 2; // Random X offset within range
+  const offsetY = Math.random() * maxOffset - maxOffset / 2; // Random Y offset within range
+  return { offsetX, offsetY };
+};
+
+const updateCursorPositions = () => {
+  // Select all elements with the class 'moving-cursor-icon'
+  const cursorIcons = document.querySelectorAll('.moving-cursor-icon');
+
+  cursorIcons.forEach((icon) => {
+    // Generate random offsets with a subtle range (e.g., ±15px)
+    const { offsetX, offsetY } = generateRandomOffset(15);
+
+    // Apply the random offsets to the element's transform property
+    icon.style.transform = `translate(calc(50% + ${offsetX}px), calc(-10% + ${offsetY}px))`;
+  });
+
+  // Schedule the next update in 1.5 seconds
+  setTimeout(updateCursorPositions, 1000);
+};
+
+// Start updating cursor positions once the DOM content is fully loaded
+document.addEventListener('DOMContentLoaded', updateCursorPositions);
