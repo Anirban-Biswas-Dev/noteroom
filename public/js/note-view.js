@@ -299,7 +299,8 @@ const tribute = new Tribute({
 tribute.attach(document.querySelector('#editor'))
 
 const editor = new Quill('#editor', {
-  theme: 'snow'
+  theme: 'snow',
+  placeholder: 'Give a feeback'
 });
 document.getElementById('editor').style.height = '120px';
 

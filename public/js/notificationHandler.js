@@ -4,8 +4,8 @@ const ioSocket = io(ioServer, { query: { studentID: Cookies.get("studentID") } }
 let notiEvents = ['notification-feedback', 'notification-mention', 'notification-reply', 'notification-upvote', 'notification-comment-upvote']
 function handleNotifications(events) {
     events.forEach(event => {
-        ioSocket.on(event, (data, message) => {
-            addNoti(data, message)
+        ioSocket.on(event, (data) => {
+            addNoti(data)
             manageDb.add('notis', data)
             
             

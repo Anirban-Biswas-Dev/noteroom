@@ -112,21 +112,7 @@
       } 
     %>
     <% notis.forEach(noti => { %>
-      <% if(noti.docType == 'note-feedback' ) { %>
-        <%- include('partials/notification.ejs', { noti: noti, message: `${noti.commenterDocID.displayname} left a comment on your notes. Check it out!`, formatDate: formatDate }) %>
-
-      <% } else if (noti.docType == "note-mention") { %>
-        <%- include('partials/notification.ejs', { noti: noti, message: `You were mentioned by ${noti.commenterDocID.displayname}. Join the conversation!`, formatDate: formatDate }) %>
-
-      <% } else if(noti.docType == "note-reply") { %>
-        <%- include('partials/notification.ejs', { noti: noti, message: `${noti.commenterDocID.displayname} replied to your comment. See their response!`, formatDate: formatDate }) %>
-        
-      <% } else if (noti.docType === "note-vote") { %>
-        <%- include('partials/notification.ejs', { noti: noti, message: `Your note is making an impact! just got some upvotes.`, formatDate: formatDate }) %>
-        
-      <% } else if (noti.docType === 'note-comment-vote') { %>
-        <%- include('partials/notification.ejs', { noti: noti, message: `Your comment is getting noticed! Someone liked what you said.`, formatDate: formatDate }) %>
-      <% } %>
+      <%- include('partials/notification.ejs', { noti: noti, message: noti.content, formatDate: formatDate }) %>
     <% }) %>
     <% } %>
   </div>

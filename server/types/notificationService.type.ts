@@ -33,7 +33,8 @@ export interface ICommentNotification {
     commenterDisplayName: string,
 
     notiID: string,
-    feedbackID: string
+    feedbackID: string,
+    message: string
 }
 
 //FIXME:maybe the ownerStudentID is not needed anymore as the cookie checking for notification is deprecated
@@ -72,5 +73,6 @@ export interface IUpVoteNotification {
     nfnTitle: string,
     isread: string,
     notiID: string,
-    vote: boolean
+    vote: boolean,
+    message: string
 }

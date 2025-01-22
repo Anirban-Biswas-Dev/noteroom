@@ -100,6 +100,7 @@ export interface ICommentVoteDB extends IVoteDB {
 */
 interface INoteNotificationsDB {
     noteDocID: string,
+    content: string
 }
 
 
@@ -147,5 +148,6 @@ export interface IUpVoteNotificationDB {
     noteDocID: string,
     voteDocID: string,
     voterDocID: string,
-    ownerStudentID: string
+    ownerStudentID: string,
+    content: string
 }

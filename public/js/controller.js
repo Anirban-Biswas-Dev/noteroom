@@ -289,7 +289,7 @@ const manageNotes = { // I treat all the cards as notes
      * @param {Object} feedbackData - { notiID, feedbackID, isread, noteID, nfnTitle, commenterUserName, commenterDisplayName }
      * @description - First checks if there is already a noti div with noti-notiID, if not, adds one
     */
-    addNoti: function (feedbackData, message) {
+    addNoti: function (feedbackData) {
         let notificationContainer = document.querySelector('.notifications-container')
         let existingNoti = document.querySelector(`#noti-${feedbackData.notiID}`)
 
@@ -311,8 +311,8 @@ const manageNotes = { // I treat all the cards as notes
                       </div>
                       <div class="notification-msg">
                         ${!isVote ? `
-                            <a href='/view/${feedbackData.noteID}/#${feedbackData.feedbackID}' class="notification-link-2">${message}</a>` : 
-                            `<a href='/view/${feedbackData.noteID}' class="notification-link-2">${message}</a>`
+                            <a href='/view/${feedbackData.noteID}/#${feedbackData.feedbackID}' class="notification-link-2">${feedbackData.message}</a>` : 
+                            `<a href='/view/${feedbackData.noteID}' class="notification-link-2">${feedbackData.message}</a>`
                 		} 
                       </div>
                   </div>`
@@ -799,13 +799,13 @@ async function deleteNoti(id) {
 
 //* Adding notifications: all pages
 
-function addNoti(feedbackData, message) {
+function addNoti(feedbackData) {
     /* 
     # Process: The main function is manageNotes.addNoti. Related to feedback-given WS event
     ~   the noti. data is got via feedback-given WS event. the process handles the main addNoti funnction (1). then the number got increased
     ~   and shown in the noti. badge (2)
     */
-    manageNotes.addNoti(feedbackData, message) // 1
+    manageNotes.addNoti(feedbackData) // 1
     notificationCount++;
     updateNotificationBadge(); // 2
 }
