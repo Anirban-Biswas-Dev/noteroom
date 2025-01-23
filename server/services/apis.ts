@@ -61,16 +61,20 @@ export default function apiRouter(io: Server) {
     })
 
     router.post("/note/save", async (req, res) => {
-        let action = req.query["action"]
-        let noteDocID = req.body["noteDocID"]
-        let studentDocID = (await Convert.getDocumentID_studentid(req.session["stdid"])).toString()
-
-        if (action === 'save') {
-            let saved = await addSaveNote({ studentDocID, noteDocID })
-            res.json({ save: saved })
-        } else {
-            let unsaved = await deleteSavedNote({ studentDocID, noteDocID })
-            res.json({ unsave: unsaved })
+        try {
+            let action = req.query["action"]
+            let noteDocID = req.body["noteDocID"]
+            let studentDocID = (await Convert.getDocumentID_studentid(req.session["stdid"])).toString()
+    
+            if (action === 'save') {
+                let result = await addSaveNote({ studentDocID, noteDocID })
+                res.json({ ok: result.ok, count: result.count })
+            } else {
+                let result = await deleteSavedNote({ studentDocID, noteDocID })
+                res.json({ ok: result.ok, count: result.count })
+            }
+        } catch (error) {
+            res.json({ ok: false, count: undefined })
         }
     })
 

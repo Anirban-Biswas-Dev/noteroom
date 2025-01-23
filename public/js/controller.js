@@ -178,19 +178,7 @@ async function upvote(voteContainer, fromDashboard = false) {
 
 
 //* The main dynamic content loading manager object
-const manageNotes = { // I treat all the cards as notes
-    /* 
-    # Functions:
-        => addNote: adds note in the dashboard
-            # process:
-        ~       notes are added with this function in 2 scenerios. One is after back_forward and another is lazy loading.
-        ~       first the note will be added (1) and then the lazy loading oserver will be triggered for that specific note. (2)
-        => addSaveNote: adds note in the left-panel
-        => addNoti: adds a notification in the right-panel
-        => addProfile: adds profiles when searched in search-profile
-        => addFeedback: adds feedback in notes in note-view
-    */
-
+const manageNotes = {
     addNote: function (noteData) {
         let existingUNote = document.querySelector(`#note-${noteData.noteID}`)
 
@@ -213,8 +201,8 @@ const manageNotes = { // I treat all the cards as notes
                                     <i class="fas fa-ellipsis-v"></i>
                                 </button>
                                 <div class="menu-options">
-                                    <div class="option svn-btn-parent" id='save-btn-${noteData._id}' onclick="saveNote('${noteData.noteID}', '${noteData.noteTitle}', this)">
-                                        <button class='${noteData.isSaved ? "save-note-btn saved" : "save-note-btn"}' id="save-note-btn" data-issaved="${noteData.isSaved}">
+                                    <div class="option svn-btn-parent" id='save-btn-${noteData._id}' onclick="saveNote(this, true)" data-notetitle="${noteData.noteTitle}" data-noteid="${noteData.noteID}" data-issaved="${noteData.isSaved}">
+                                        <button class='${noteData.isSaved ? "saved" : ""} save-note-btn' id="save-note-btn">
                                             <i class="fa-regular fa-bookmark"></i>
                                             <i class="fa-solid fa-bookmark saved"></i>
                                         </button>
@@ -321,6 +309,13 @@ const manageNotes = { // I treat all the cards as notes
                     newNote.classList.add('show-sv-in-LP');
                 }
             }, 50);
+        }
+    },
+
+    removeSaveNote: function(noteData) {
+        let existingNote = document.querySelector(`#saved-note-${noteData.noteID}`)
+        if (existingNote) {
+            existingNote.remove()
         }
     },
 
@@ -509,7 +504,6 @@ const manageNotes = { // I treat all the cards as notes
 }
 
 
-
 //* Download: Dashboard + Note View
 async function download(noteID, noteTitle) {
     /* 
@@ -643,75 +637,42 @@ function share(platform) {
     }
 }
 
-//FIXME: replition in dashboard
-async function _checkNoSavedMessage() {
-    let _savedNotes = await manageDb.get('savedNotes')
 
-    if (_savedNotes.length === 0) {
-        document.querySelector('.no-saved-notes-message').style.display = 'inline'
+
+async function saveNote(svButton, fromDashboard = false) {
+    if (svButton.getAttribute('data-disabled')) return
+
+    svButton.setAttribute('data-disabled', 'true')
+    
+    let noteTitle = svButton.getAttribute('data-notetitle')
+    let noteDocID = svButton.getAttribute('data-noteid')
+    
+    let noteData = new FormData()
+    noteData.append("noteDocID", noteDocID)
+    
+    let isSaved = svButton.getAttribute('data-issaved')
+    let url = `/api/note/save?action=${isSaved === 'true' ? 'delete' : 'save'}`
+    let mainsvButton = fromDashboard ? svButton.querySelector('#save-note-btn') : svButton
+
+    const SAVE_SVG = () => mainsvButton.classList.add('saved')
+    const UNSAVE_SVG = () => mainsvButton.classList.remove('saved')
+    
+    function replaceSaveButton() {
+        isSaved === 'false' ? SAVE_SVG() : UNSAVE_SVG()
+        svButton.setAttribute('data-issaved', isSaved === 'false' ? 'true' : 'false')
     }
-}
 
+    replaceSaveButton()
+    manageNotes[isSaved === "true" ? "removeSaveNote" : "addSaveNote"]({ noteTitle, noteID: noteDocID})
 
-/**
-* @param {undefined} [saveButtonOptionElement=undefined] 
-* @description - for dashboard notes. dashboard will have a lot of notes. this element will be used to take action on the save-button which is clicked
-*/
-async function saveNote(noteDocID, noteTitle, saveButtonOptionElement = undefined) {
-    try {
-        let noteData = new FormData()
-        noteData.append("noteDocID", noteDocID)
-
-        async function actionAfter(mode, svButton) {
-            if (mode === "save") {
-                svButton.classList.add('saved')
-
-                let savedNoteObject = { noteID: noteDocID, noteTitle: noteTitle }
-                manageNotes.addSaveNote(savedNoteObject)
-                manageDb.add('savedNotes', savedNoteObject)
-
-                svButton.setAttribute("data-issaved", "true")
-                document.querySelector('.no-saved-notes-message').style.display = 'none'
-            } else {
-                svButton.classList.remove('saved')
-                document.querySelector(`#saved-note-${noteDocID}`).remove()
-
-                svButton.setAttribute("data-issaved", "false")
-                await manageDb.delete('savedNotes', noteDocID)
-                await _checkNoSavedMessage()
-            }
-        }
-
-        async function saveUnSaveFetch(svButton) {
-            let issaved = svButton.getAttribute("data-issaved")
-            async function saveApi(action) {
-                let response = await fetch(`/api/note/save?action=${action}`, {
-                    method: 'post',
-                    body: noteData
-                })
-                let data = await response.json()
-                data[action] ? await actionAfter(action, svButton) : setupErrorPopup("Please try again a bit later!")
-            }
-
-            if (issaved === "false") {
-                await saveApi("save")
-            } else {
-                await saveApi("unsave")
-            }
-        }
-
-
-        if (!saveButtonOptionElement) {
-            let svButton = document.querySelector('#save-note-btn')
-            saveUnSaveFetch(svButton)
-        }
-
-        else {
-            let svButton = saveButtonOptionElement.querySelector('#save-note-btn')
-            saveUnSaveFetch(svButton)
-        }
-    } catch (error) {
-        setupErrorPopup(error)
+    let response = await fetch(url, {
+        method: 'post',
+        body: noteData
+    })
+    let body = await response.json()
+    if (body.ok) {
+        document.querySelector('.no-saved-notes-message').classList[body.count === 0 ? 'remove' : 'add']('hide')
+        svButton.removeAttribute('data-disabled')
     }
 }
 

@@ -50,10 +50,11 @@ export async function addSaveNote({ studentDocID, noteDocID }: IManageUserNote) 
             { $addToSet: { saved_notes: noteDocID } },
             { new: true }
         )
+        let saved_notes_count = (await Students.findOne({ _id: studentDocID }, { saved_notes: 1 })).saved_notes.length
     
-        return true
+        return { ok: true, count: saved_notes_count }
     } catch (error) {
-        return false
+        return { ok: false }
     }
 }
 
@@ -63,9 +64,11 @@ export async function deleteSavedNote({ studentDocID, noteDocID }: IManageUserNo
             { _id: studentDocID },
             { $pull: { saved_notes: noteDocID } }
         )
-        return true
+        let saved_notes_count = (await Students.findOne({ _id: studentDocID }, { saved_notes: 1 })).saved_notes.length
+
+        return { ok: true, count: saved_notes_count } 
     } catch (error) {
-        return false 
+        return { ok: false }
     }
 }
 
