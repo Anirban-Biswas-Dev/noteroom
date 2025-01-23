@@ -38,4 +38,18 @@ export const founders = [
             linkedin: 'https://www.linkedin.com/in/devajit-mutsuddy-rohit-1bb31730a/'
         }
     }
+    ,
+    {
+        name: 'Fahad Hossain Shovon',
+        imgSrc: '/images/NoteRoom Caricature - Mr. Shovon.png',
+        college: 'Lecturer in the Math Department at HTDC',
+        role: 'Investor and Brand Ambassador',
+        description: "Mr. Fahad is our investor, brand ambassador, and all-around advisor for NoteRoom. He oversees funding, provides crucial feedback on our product, and contributes to shaping strategies for marketing and business growth. As the founder of Mathletes, he knows how to engage and inspire, making him the perfect advocate for our platform. Fahad also plays a key role in building NoteRoom’s image and ensuring we’re always moving in the right direction. And when he’s not guiding us or reviewing ideas, he’s probably planning his next big adventure—his travel stories are almost as legendary as his math lessons.",
+        socialLinks: {
+            facebook: 'https://www.facebook.com/fahad.h.shovon',
+            instagram: 'https://l.facebook.com/l.php?u=https%3A%2F%2Fwww.instagram.com%2Ffahad%2520hossain%2520shovon%3Ffbclid%3DIwZXh0bgNhZW0CMTAAAR2ghwibcFiXBKM6Z_vCfy6d3FrrbuYzlUjCTj4NR_NO-m0HCgPPOw5GCQo_aem_072ETnCGJGMesA7o7nc1-g&h=AT2ZhhkxvxbN5dAsVmUnTtc368iciskJVg9FPDIVnJW6N_D3deh8LAg39c5gLzSEibvueUB0npvKjNg5lVgtdF9QuAN0JvT_69UL_C92-YDRg7HjIQYCbu6viSJYpQGG9CT6',
+            twitter: '',
+            linkedin: ''
+        }
+    }
 ];
