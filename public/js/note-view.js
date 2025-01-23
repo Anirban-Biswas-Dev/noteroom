@@ -25,14 +25,10 @@ socket.on('add-reply', (replyData) => {
   manageNotes.addReply(document.querySelector(`#thread-${replyData.parentFeedbackDocID._id}`), replyData)
 })
 
-// socket.on('increment-upvote', function () {
-//   let uvCount = document.querySelector('.uv-count')
-//   document.querySelector('.uv-count').innerHTML = parseInt(uvCount.innerHTML) + 1
-// })
-// socket.on('decrement-upvote', function () {
-//   let uvCount = document.querySelector('.uv-count')
-//   document.querySelector('.uv-count').innerHTML = parseInt(uvCount.innerHTML) - 1
-// })
+socket.on('update-upvote', function (upvoteCount) {
+  document.querySelector('.uv-count').innerHTML = parseInt(upvoteCount)
+})
+
 
 
 const voterStudentID = Cookies.get("studentID")

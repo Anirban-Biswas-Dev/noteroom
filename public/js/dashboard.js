@@ -1,20 +1,11 @@
 const host = window.location.origin
 const socket = io(host)
 
-
-socket.on('increment-upvote-dashboard', function (noteDocID) {
+socket.on('update-upvote-dashboard', function (noteDocID, upvoteCount) {
 	let noteCard = document.querySelector(`#note-${noteDocID}`)
-	noteCard !== null ? (function () {
-		let uvCount = noteCard.querySelector(".uv-count")
-		noteCard.querySelector(".uv-count").innerHTML = parseInt(uvCount.innerHTML) + 1
-	})() : false
-})
-socket.on('decrement-upvote-dashboard', function (noteDocID) {
-	let noteCard = document.querySelector(`#note-${noteDocID}`)
-	noteCard !== null ? (function () {
-		let uvCount = noteCard.querySelector(".uv-count")
-		noteCard.querySelector(".uv-count").innerHTML = parseInt(uvCount.innerHTML) - 1
-	})() : false
+	if (noteCard) {
+		noteCard.querySelector(".uv-count").innerHTML = parseInt(upvoteCount)
+	}
 })
 
 

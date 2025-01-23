@@ -44,7 +44,6 @@ export function voteRouter(io: Server) {
 
     router.post('/vote', async (req, res) => {
 
-        //CRITICAL: Don't increament-decreament upvotes from the client-side. just send them the new upvote-count to update the clinet-side
         const _noteDocID = req.body["noteDocID"]
         const noteOwnerInfo = await getOwner({noteDocID: _noteDocID}) 
         const _ownerStudentID = noteOwnerInfo["ownerDocID"]["studentID"].toString()
@@ -59,10 +58,12 @@ export function voteRouter(io: Server) {
         try {
             if (!action) {
                 let voteData = await addVote({ voteType, noteDocID, voterStudentDocID })
+                if (voteData["saved"]) return { ok: false }
+                
                 let upvoteCount = voteData["noteDocID"]["upvoteCount"]
     
-                io.emit('increment-upvote-dashboard', noteDocID)
-                io.to(noteDocID).emit('increment-upvote')
+                io.emit('update-upvote-dashboard', noteDocID, upvoteCount)
+                io.to(noteDocID).emit('update-upvote', upvoteCount)
                 
                 if(_voterStudentID !== _ownerStudentID) {
                     upvoteCount % 5 === 0 || upvoteCount === 1 ? (async function() {
@@ -78,9 +79,9 @@ export function voteRouter(io: Server) {
                 res.json({ok: true})
                     
             } else {
-                await deleteVote({ noteDocID, voterStudentDocID })
-                io.emit('decrement-upvote-dashboard', noteDocID)
-                io.to(noteDocID).emit('decrement-upvote')
+                let upvoteCount = await deleteVote({ noteDocID, voterStudentDocID })
+                io.emit('update-upvote-dashboard', noteDocID, upvoteCount)
+                io.to(noteDocID).emit('update-upvote', upvoteCount)
 
                 res.json({ ok: true })
             }

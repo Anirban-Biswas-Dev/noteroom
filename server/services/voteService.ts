@@ -4,14 +4,27 @@ import votesModel, { CommentVotes } from "../schemas/votes.js"
 import { ICommentVoteDB, IVoteDB } from "../types/database.types.js"
 
 export default async function addVote({ noteDocID, voterStudentDocID, voteType }: IVoteDB) {
-    await Notes.findByIdAndUpdate(noteDocID, { $inc: { upvoteCount : 1 } })
-    let voteData = await votesModel.create({noteDocID, voterStudentDocID, voteType})
-    return voteData.populate('noteDocID', 'title upvoteCount')
+    let existingVoteData = await votesModel.findOne({
+        noteDocID: noteDocID,
+        voterStudentDocID: voterStudentDocID,
+        docType: { $ne: 'feedback' }
+    })
+    if (!existingVoteData) {
+        let voteData = await votesModel.create({noteDocID, voterStudentDocID, voteType})
+        await Notes.findByIdAndUpdate(noteDocID, { $inc: { upvoteCount : 1 } })
+        return voteData.populate('noteDocID', 'title upvoteCount')
+    } else {
+        return { saved: false }
+    }
 }
 
 export async function deleteVote({ noteDocID, voterStudentDocID }: IVoteDB) {
-    await votesModel.deleteOne({ $and: [{ noteDocID: noteDocID }, { voterStudentDocID: voterStudentDocID }] })
-    await Notes.updateOne({ _id: noteDocID }, { $inc: { upvoteCount: -1 } })
+    let deleteResult = await votesModel.deleteOne({ $and: [{ noteDocID: noteDocID }, { voterStudentDocID: voterStudentDocID }] })
+    if (deleteResult.deletedCount !== 0) {
+        await Notes.updateOne({ _id: noteDocID }, { $inc: { upvoteCount: -1 } })
+    } 
+    let upvoteCount = (await Notes.findOne({ _id: noteDocID }, { upvoteCount: 1 })).upvoteCount
+    return upvoteCount
 }
 
 
