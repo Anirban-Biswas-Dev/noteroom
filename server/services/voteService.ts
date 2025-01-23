@@ -34,25 +34,39 @@ export async function isUpVoted({ noteDocID, voterStudentDocID }: IVoteDB) {
 }
 
 export async function addCommentVote({ noteDocID, voterStudentDocID, voteType, feedbackDocID }: ICommentVoteDB) {
-    await feedbacksModel.findByIdAndUpdate(feedbackDocID, { $inc: { upvoteCount: 1 } })
-    let voteData = await CommentVotes.create({ noteDocID, voterStudentDocID, voteType, feedbackDocID })
-    return voteData.populate([
-        { path: 'noteDocID', select: 'title' },
-        { path: 'voterStudentDocID', select: 'displayname' },
-        { 
-            path: 'feedbackDocID', 
-            select: 'upvoteCount commenterDocID',
-            populate: {
-                path: 'commenterDocID',
-                select: 'username studentID'
-            } 
-        }
-    ])
+    let existingVoteData = await CommentVotes.findOne({
+        noteDocID: noteDocID,
+        voterStudentDocID: voterStudentDocID,
+        docType: 'feedback'
+    })
+    if (!existingVoteData) {
+        let voteData = await CommentVotes.create({ noteDocID, voterStudentDocID, voteType, feedbackDocID })
+        await feedbacksModel.findByIdAndUpdate(feedbackDocID, { $inc: { upvoteCount: 1 } })
+        return voteData.populate([
+            { path: 'noteDocID', select: 'title' },
+            { path: 'voterStudentDocID', select: 'displayname' },
+            { 
+                path: 'feedbackDocID', 
+                select: 'upvoteCount commenterDocID',
+                populate: {
+                    path: 'commenterDocID',
+                    select: 'username studentID'
+                } 
+            }
+        ])
+    } else {
+        return { saved: false }
+    }
 }
 
 export async function deleteCommentVote({ feedbackDocID, voterStudentDocID }: ICommentVoteDB) {
-    await feedbacksModel.findByIdAndUpdate(feedbackDocID, { $inc: { upvoteCount: -1 } })
-    await CommentVotes.deleteOne({ $and: [ { docType: { $eq: 'feedback' } }, { feedbackDocID: feedbackDocID }, { voterStudentDocID: voterStudentDocID }] })
+    let deleteResult = await CommentVotes.deleteOne({ $and: [ { docType: { $eq: 'feedback' } }, { feedbackDocID: feedbackDocID }, { voterStudentDocID: voterStudentDocID }] })
+    if (deleteResult.deletedCount !== 0) {
+        await feedbacksModel.findByIdAndUpdate(feedbackDocID, { $inc: { upvoteCount: -1 } })
+        return { deleted: true }
+    } else {
+        return { deleted: false }
+    }
 }
 
 export async function isCommentUpVoted({ feedbackDocID, voterStudentDocID }) {

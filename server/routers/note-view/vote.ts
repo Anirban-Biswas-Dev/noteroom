@@ -16,29 +16,33 @@ export function voteRouter(io: Server) {
         let _voterStudentID = req.body["voterStudentID"]
         let voterStudentDocID = (await Convert.getDocumentID_studentid(_voterStudentID)).toString()
 
+        try {
+            if (!action) {
+                let voteData = await addCommentVote({ voteType, feedbackDocID, noteDocID, voterStudentDocID })
+                if (voteData["saved"]) return { ok: false}
     
-        if (!action) {
-            let voteData = await addCommentVote({ voteType, feedbackDocID, noteDocID, voterStudentDocID })
-
-            let feedbackOwner = voteData["feedbackDocID"]["commenterDocID"]
-            let upvoteCount = voteData["feedbackDocID"]["upvoteCount"]
-
-            if (_voterStudentID !== feedbackOwner["studentID"]) {
-                upvoteCount === 1 || upvoteCount % 5 ? (async function() {
-                    await NotificationSender(io, {
-                        upvoteCount: upvoteCount,
-                        noteDocID: noteDocID,
-                        ownerStudentID: feedbackOwner["studentID"],
-                        voterStudentDocID: voterStudentDocID,
-                        feedback: true
-                    }).sendVoteNotification(voteData)
-                })() : false
+                let feedbackOwner = voteData["feedbackDocID"]["commenterDocID"]
+                let upvoteCount = voteData["feedbackDocID"]["upvoteCount"]
+    
+                if (_voterStudentID !== feedbackOwner["studentID"]) {
+                    upvoteCount === 1 || upvoteCount % 5 ? (async function() {
+                        await NotificationSender(io, {
+                            upvoteCount: upvoteCount,
+                            noteDocID: noteDocID,
+                            ownerStudentID: feedbackOwner["studentID"],
+                            voterStudentDocID: voterStudentDocID,
+                            feedback: true
+                        }).sendVoteNotification(voteData)
+                    })() : false
+                }
+    
+                res.json({ ok: true })
+            } else if (action === "delete") {
+                let isDeleted = await deleteCommentVote({ feedbackDocID, voterStudentDocID })
+                res.json({ ok: isDeleted.deleted || false })
             }
-
-            res.json({ ok: true })
-        } else if (action === "delete") {
-            await deleteCommentVote({ feedbackDocID, voterStudentDocID })
-            res.json({ ok: true })
+        } catch (error) {
+            res.json({ ok: false })
         }
     })
 
@@ -59,7 +63,7 @@ export function voteRouter(io: Server) {
             if (!action) {
                 let voteData = await addVote({ voteType, noteDocID, voterStudentDocID })
                 if (voteData["saved"]) return { ok: false }
-                
+
                 let upvoteCount = voteData["noteDocID"]["upvoteCount"]
     
                 io.emit('update-upvote-dashboard', noteDocID, upvoteCount)

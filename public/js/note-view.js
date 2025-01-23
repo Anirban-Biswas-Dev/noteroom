@@ -34,52 +34,39 @@ socket.on('update-upvote', function (upvoteCount) {
 const voterStudentID = Cookies.get("studentID")
 
 async function upvoteComment(voteContainer) {
+  if (voteContainer.getAttribute('data-disabled')) return
+
+  voteContainer.setAttribute('data-disabled', 'true')
+  
   const noteDocID = voteContainer.getAttribute('data-noteid')
   const isUpvoted = voteContainer.getAttribute('data-isupvoted') === "true" ? true : false
   const feedbackDocID = voteContainer.getAttribute('data-feedbackid')
-
-  function replaceLikeSvg(svg, action) {
+  
+  let likeCount = voteContainer.querySelector('.like-count')
+  const LIKE_SVG = `<path class='like-icon-fill' d='M28.4938 47.5373C28.4938 47.5373 28.4863 108.91 28.493 110.455C28.4996 112 84.4861 110.998 88.993 110.998C93.5 110.998 108.994 88.5431 109.494 70.581C109.994 52.6188 107.998 49.9985 107.498 49.9985L66 49.9982C78.4744 33.916 62.958 -7.56607 57.9956 8.99958C53.0332 25.5652 49.9956 32.4996 49.9956 32.4996L28.4938 47.5373Z' fill='black'/>`
+  const DISLIKE_SVG = `<path d="M107.498 49.9985C107.998 49.9985 109.994 52.6188 109.494 70.581C108.994 88.5431 93.5 110.998 88.993 110.998C84.4861 110.998 28.4996 112 28.493 110.455C28.4863 108.91 28.4938 47.5373 28.4938 47.5373L49.9956 32.4996C49.9956 32.4996 53.0332 25.5652 57.9956 8.99958C62.958 -7.56607 78.4744 33.916 66 49.9982M107.498 49.9985C106.998 49.9985 66 49.9982 66 49.9982M107.498 49.9985L66 49.9982" stroke="#606770" stroke-width="10" stroke-linecap="round"/>`
+  
+  function replaceLikeSvg(svg, increment) {
     voteContainer.querySelector('.like-icon').innerHTML = svg
-    let like_count = voteContainer.querySelector('.like-count')
-
-    action === "unlike" ? (function() {
-      voteContainer.setAttribute('data-isupvoted', 'false')
-      voteContainer.querySelector('.like-count').innerHTML = parseInt(like_count.innerHTML) - 1
-    })() : (function() {
-      voteContainer.setAttribute('data-isupvoted', 'true')
-      voteContainer.querySelector('.like-count').innerHTML = parseInt(like_count.innerHTML) + 1
-    })()
+    voteContainer.setAttribute('data-isupvoted', !isUpvoted)
+    voteContainer.querySelector('.like-count').innerHTML = parseInt(likeCount.innerHTML) + (increment ? 1 : -1)
   }
+
+  let url = `/view/${noteDocID}/vote/feedback?type=upvote${isUpvoted ? '&action=delete' : ''}`
+  replaceLikeSvg(isUpvoted ? DISLIKE_SVG : LIKE_SVG, !isUpvoted)
 
   let voteData = new FormData()
   voteData.append('noteDocID', noteDocID)
   voteData.append('voterStudentID', voterStudentID)
   voteData.append('feedbackDocID', feedbackDocID)
 
-  
-  if (!isUpvoted) {
-    let response = await fetch(`/view/${noteDocID}/vote/feedback?type=upvote`, {
-      method: 'post',
-      body: voteData
-    })
-    let data = await response.json()
-    console.log(data)
-    data.ok ? replaceLikeSvg(`<path 
-      class='like-icon-fill' 
-      d="M28.4938 47.5373C28.4938 47.5373 28.4863 108.91 28.493 110.455C28.4996 112 84.4861 110.998 88.993 110.998C93.5 110.998 108.994 88.5431 109.494 70.581C109.994 52.6188 107.998 49.9985 107.498 49.9985L66 49.9982C78.4744 33.916 62.958 -7.56607 57.9956 8.99958C53.0332 25.5652 49.9956 32.4996 49.9956 32.4996L28.4938 47.5373Z" 
-      fill="black"
-    />`, 'add') : false
-  } else {
-    let response = await fetch(`/view/${noteDocID}/vote/feedback?type=upvote&action=delete`, {
-      method: 'post',
-      body: voteData
-    })
-    let data = await response.json()
-    data.ok ? replaceLikeSvg(`<path 
-      d="M107.498 49.9985C107.998 49.9985 109.994 52.6188 109.494 70.581C108.994 88.5431 93.5 110.998 88.993 110.998C84.4861 110.998 28.4996 112 28.493 110.455C28.4863 108.91 28.4938 47.5373 28.4938 47.5373L49.9956 32.4996C49.9956 32.4996 53.0332 25.5652 57.9956 8.99958C62.958 -7.56607 78.4744 33.916 66 49.9982M107.498 49.9985C106.998 49.9985 66 49.9982 66 49.9982M107.498 49.9985L66 49.9982" 
-      stroke="#606770" stroke-width="10" stroke-linecap="round"
-      />
-    `, 'unlike') : false
+  let response = await fetch(url, {
+    method: 'post',
+    body: voteData
+  })
+  let data = await response.json()
+  if (data.ok) {
+    voteContainer.removeAttribute('data-disabled')
   }
 }
 
