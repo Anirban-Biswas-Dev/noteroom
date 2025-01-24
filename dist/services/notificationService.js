@@ -25,7 +25,13 @@ async function addReplyNoti(replyData) {
     let replynoti = await notifications_js_1.replyNotifs.create(replyData);
     return replynoti;
 }
-async function addVoteNoti(voteData) {
-    let votenoti = await notifications_js_1.votesNotifs.create(voteData);
-    return votenoti;
+async function addVoteNoti(voteData, isCommentVote = false) {
+    if (!isCommentVote) {
+        let votenoti = await notifications_js_1.votesNotifs.create(voteData);
+        return votenoti;
+    }
+    else {
+        let votenoti = await notifications_js_1.commentVotesNotifs.create(voteData);
+        return votenoti;
+    }
 }

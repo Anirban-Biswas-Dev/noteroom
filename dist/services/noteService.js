@@ -73,31 +73,37 @@ async function deleteNote({ studentDocID, noteDocID }) {
 async function addSaveNote({ studentDocID, noteDocID }) {
     try {
         await students_js_1.default.updateOne({ _id: studentDocID }, { $addToSet: { saved_notes: noteDocID } }, { new: true });
-        return true;
+        let saved_notes_count = (await students_js_1.default.findOne({ _id: studentDocID }, { saved_notes: 1 })).saved_notes.length;
+        return { ok: true, count: saved_notes_count };
     }
     catch (error) {
-        return false;
+        return { ok: false };
     }
 }
 async function deleteSavedNote({ studentDocID, noteDocID }) {
     try {
         await students_js_1.default.updateOne({ _id: studentDocID }, { $pull: { saved_notes: noteDocID } });
-        return true;
+        let saved_notes_count = (await students_js_1.default.findOne({ _id: studentDocID }, { saved_notes: 1 })).saved_notes.length;
+        return { ok: true, count: saved_notes_count };
     }
     catch (error) {
-        return false;
+        return { ok: false };
     }
 }
-async function getNote({ noteDocID }) {
+async function getNote({ noteDocID, studentDocID }) {
     if (noteDocID) {
-        let note = await notes_js_1.default.findById(noteDocID, { title: 1, subject: 1, description: 1, ownerDocID: 1, content: 1, upvoteCount: 1 });
+        let _note = (await notes_js_1.default.findById(noteDocID, { title: 1, subject: 1, description: 1, ownerDocID: 1, content: 1, upvoteCount: 1 })).toObject();
+        let _isNoteUpvoted = await (0, voteService_js_1.isUpVoted)({ noteDocID, voterStudentDocID: studentDocID });
+        let _isSaved = await isSaved({ studentDocID, noteDocID });
+        let note = { ..._note, isUpvoted: _isNoteUpvoted, isSaved: _isSaved };
         let owner = await students_js_1.default.findById(note.ownerDocID, { displayname: 1, studentID: 1, profile_pic: 1, username: 1 });
         let feedbacks = await comments_js_1.feedbacksModel.find({ noteDocID: note._id })
             .populate('commenterDocID', 'displayname username studentID profile_pic').sort({ createdAt: -1 });
         let _extentedFeedbacks = feedbacks.map(async (feedback) => {
+            let isupvoted = await (0, voteService_js_1.isCommentUpVoted)({ feedbackDocID: feedback._id.toString(), voterStudentDocID: studentDocID });
             let reply = await comments_js_1.replyModel.find({ parentFeedbackDocID: feedback._id })
                 .populate('commenterDocID', 'username displayname profile_pic studentID');
-            return [feedback, reply];
+            return [{ ...feedback.toObject(), isUpVoted: isupvoted }, reply];
         });
         let extendedFeedbacks = await Promise.all(_extentedFeedbacks);
         let returnedNote = { note: note, owner: owner, feedbacks: extendedFeedbacks };

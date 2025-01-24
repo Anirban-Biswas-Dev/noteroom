@@ -32,6 +32,10 @@ exports.Convert = {
     async getDisplayName_email(email) {
         let displayname = (await students_js_1.default.findOne({ email: email }, { displayname: 1 }))["displayname"];
         return displayname;
+    },
+    async getDisplayName_studentID(studentID) {
+        let displayname = (await students_js_1.default.findOne({ studentID: studentID }, { displayname: 1 }))["displayname"];
+        return displayname;
     }
 };
 exports.SearchProfile = {

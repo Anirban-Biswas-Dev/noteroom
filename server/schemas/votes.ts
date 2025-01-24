@@ -29,7 +29,7 @@ const commenteVotesSchema = new Schema({
     feedbackDocID: {
         type: Schema.Types.ObjectId,
         required: true,
-        ref: 'comments-test'
+        ref: 'comments'
     }
 })
 const commentVotesModel = votesModel.discriminator('feedback', commenteVotesSchema)

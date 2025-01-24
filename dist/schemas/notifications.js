@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.votesNotifs = exports.replyNotifs = exports.mentionNotifs = exports.feedBackNotifs = exports.Notifs = void 0;
+exports.commentVotesNotifs = exports.votesNotifs = exports.replyNotifs = exports.mentionNotifs = exports.feedBackNotifs = exports.Notifs = void 0;
 const mongoose_1 = require("mongoose");
 const baseOptions = {
     discriminatorKey: 'docType',
@@ -14,6 +14,10 @@ const NotifsSchema = new mongoose_1.Schema({
     createdAt: {
         type: Date,
         default: Date.now
+    },
+    content: {
+        type: String,
+        default: ''
     }
 }, baseOptions);
 const NotifsModel = (0, mongoose_1.model)('notifs', NotifsSchema);
@@ -94,6 +98,7 @@ const voteSchema = new mongoose_1.Schema({
     ownerStudentID: String
 });
 const votesNotifs = NotifsModel.discriminator('note-vote', voteSchema);
+const commentVotesNotifs = NotifsModel.discriminator('note-comment-vote', voteSchema);
 exports.Notifs = NotifsModel;
 const _feedBackNotifs = feedBackNotifs;
 exports.feedBackNotifs = _feedBackNotifs;
@@ -103,3 +108,5 @@ const _replyNotifs = replyNotifs;
 exports.replyNotifs = _replyNotifs;
 const _votesNotifs = votesNotifs;
 exports.votesNotifs = _votesNotifs;
+const _commentVotesNotifs = commentVotesNotifs;
+exports.commentVotesNotifs = _commentVotesNotifs;

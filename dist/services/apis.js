@@ -52,16 +52,21 @@ function apiRouter(io) {
         res.send({ deleted: deleted });
     });
     router.post("/note/save", async (req, res) => {
-        let action = req.query["action"];
-        let noteDocID = req.body["noteDocID"];
-        let studentDocID = (await userService_js_1.Convert.getDocumentID_studentid(req.session["stdid"])).toString();
-        if (action === 'save') {
-            let saved = await (0, noteService_js_1.addSaveNote)({ studentDocID, noteDocID });
-            res.json({ save: saved });
+        try {
+            let action = req.query["action"];
+            let noteDocID = req.body["noteDocID"];
+            let studentDocID = (await userService_js_1.Convert.getDocumentID_studentid(req.session["stdid"])).toString();
+            if (action === 'save') {
+                let result = await (0, noteService_js_1.addSaveNote)({ studentDocID, noteDocID });
+                res.json({ ok: result.ok, count: result.count });
+            }
+            else {
+                let result = await (0, noteService_js_1.deleteSavedNote)({ studentDocID, noteDocID });
+                res.json({ ok: result.ok, count: result.count });
+            }
         }
-        else {
-            let unsaved = await (0, noteService_js_1.deleteSavedNote)({ studentDocID, noteDocID });
-            res.json({ unsave: unsaved });
+        catch (error) {
+            res.json({ ok: false, count: undefined });
         }
     });
     router.get('/search', async (req, res, next) => {

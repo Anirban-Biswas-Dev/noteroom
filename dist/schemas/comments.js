@@ -14,7 +14,7 @@ const CommentsSchema = new mongoose_1.Schema({
     },
     feedbackContents: {
         type: String,
-        required: true
+        default: ""
     },
     createdAt: {
         type: Date,
@@ -28,6 +28,14 @@ const feedbackSchema = new mongoose_1.Schema({
         required: true,
         ref: 'students'
     },
+    replyCount: {
+        type: Number,
+        default: 0
+    },
+    upvoteCount: {
+        type: Number,
+        default: 0
+    }
 });
 const feedbacksModel = CommentsModel.discriminator('feedbacks', feedbackSchema);
 exports.feedbacksModel = feedbacksModel;

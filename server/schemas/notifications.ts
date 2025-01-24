@@ -2,7 +2,7 @@ import { Schema, model } from 'mongoose'
 
 const baseOptions = {
     discriminatorKey: 'docType',
-    collection: 'notifs-test'
+    collection: 'notifs'
 }
 
 const NotifsSchema = new Schema({
@@ -19,7 +19,7 @@ const NotifsSchema = new Schema({
         default: ''
     }
 }, baseOptions)
-const NotifsModel = model('notifs-test', NotifsSchema)
+const NotifsModel = model('notifs', NotifsSchema)
 
 
 const feedBackSchema = new Schema({
