@@ -8,21 +8,21 @@ const socket = io(host);
 ~   3. add-feedback: from server : add the responsed extented feedback data with commenter's information   
 */
 
-socket.emit(
-  "join-room",
-  window.location.pathname.split(
-    "/"
-  )[2] /* The note-id as the unique room name */
-);
+socket.emit("join-room", window.location.pathname.split("/")[2] /* The note-id as the unique room name */);
+
+try {
+  adjustThreadLineHeights(); // Adjust thread height again
+} catch (error) {}
 
 //* Broadcasted feedback handler. The extented-feedback is broadcasted
 socket.on('add-feedback', (feedbackData) => {
-  document.querySelector('div[data-temporary=true]')?.remove()  
+  document.querySelector('div.main-cmnt-container[data-temporary=true]')?.remove()  
   manageNotes.addFeedback(feedbackData)
 })
 
 
 socket.on('add-reply', (replyData) => {
+  document.querySelector('div.thread-msg[data-temporary=true]')?.remove()
   manageNotes.addReply(document.querySelector(`#thread-${replyData.parentFeedbackDocID._id}`), replyData)
 })
 
@@ -352,10 +352,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if(data.sent) {
       document.querySelector('#editor').removeAttribute('data-disabled') 
       Swal.fire(toastData('success', "Feedback delivered with care!", 2000))
+      editor.root.innerHTML = ''; // reseting toast ui editor content
+      adjustThreadLineHeights();
+    } else {
+      Swal.fire(toastData('error', "Yikes! Try again later.", 3000))
     }
 
-    adjustThreadLineHeights();
-    editor.root.innerHTML = ''; // reseting toast ui editor content
   };
 
   cmntBtn.addEventListener("click", postMainComment);
@@ -409,10 +411,22 @@ document.addEventListener('DOMContentLoaded', () => {
         const textarea = event.target.closest('.thread-editor-container').querySelector('.thread-editor');
         const replyContent = document.querySelector('#mentioneduser').innerHTML + " " + textarea.value.trim();
 
-        if (!replyContent) return; // Prevents posting empty replies
-
+        if (!textarea.value.trim() || textarea.getAttribute('data-disabled')) return; // Prevents posting empty replies
+        
+        textarea.setAttribute('data-disabled', 'true')
         const threadSection = event.target.closest('.thread-section');
 
+        manageNotes.addReply(threadSection, {
+          createdAt: new Date(),
+          feedbackContents: '',
+          commenterDocID: {
+            profile_pic: '__profile_pic__',
+            username: '__username__',
+            displayname: 'User'
+          },
+          temporary: true
+        })
+        
         const parentFeedbackDocID = threadSection.previousElementSibling.querySelector('.reply-info #parentFeedbackDocID').innerHTML
         const replyData = new FormData()
         replyData.append('noteDocID', noteDocID)
@@ -421,13 +435,19 @@ document.addEventListener('DOMContentLoaded', () => {
         replyData.append('parentFeedbackDocID', parentFeedbackDocID)
         replyData.append('reply', true)
 
-        await fetch(`${pathname.endsWith('/') ? pathname : pathname + '/'}postFeedback`, {
+        let response = await fetch(`${pathname.endsWith('/') ? pathname : pathname + '/'}postFeedback`, {
           body: replyData,
           method: 'post'
         })
+        let data = await response.json()
+        if (data.sent) {
+          textarea.removeAttribute('data-disabled')
+          adjustThreadLineHeights(); // Adjust thread height again
+          textarea.value = '';
+        } else {
+          Swal.fire(toastData('error', "Yikes! Try again later.", 3000))    
+        }
 
-        adjustThreadLineHeights(); // Adjust thread height again
-        textarea.value = '';
       }
     });
   };

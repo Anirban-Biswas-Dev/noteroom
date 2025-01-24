@@ -406,7 +406,7 @@ const manageNotes = {
         let isTemporary = feedbackData.temporary
 
         let feedbackCard = `
-        <div class='main-cmnt-container' data-temporary=${feedbackData.temporary}>
+        <div class='main-cmnt-container' data-temporary=${isTemporary}>
             <div class="main__author-threadline-wrapper">
                 ${!isTemporary ? `
                     <img
@@ -456,7 +456,14 @@ const manageNotes = {
 
 
     addReply: function (threadSection, replyData) {
-        console.log(threadSection)
+        /*
+        => createdAt
+        => feedbackContents
+        => commenterDocID 
+            => profile_pic
+            => username
+            => displayname
+        */
         let date = new Date(replyData.createdAt)
         const formatter = new Intl.DateTimeFormat('en-US', {
             year: 'numeric',
@@ -468,31 +475,24 @@ const manageNotes = {
             hour12: true
         });
         const formattedDate = formatter.format(date);
+        let isTemporary = replyData.temporary
+
         replyMessage = `
-        <div class='thread-msg'>
-            <img src="${replyData.commenterDocID.profile_pic}" alt="User Avatar" class="cmnt-author-img thread-avatar">
+        <div class='thread-msg' data-temporary=${isTemporary}>
+            ${!isTemporary ? `<img src="${replyData.commenterDocID.profile_pic}" alt="User Avatar" class="cmnt-author-img thread-avatar">` : '' }
             <div class="cmnt-body-3rows">
                 <div class="reply-info">
                     <span id="commenterUsername" style="display: none;">${replyData.commenterDocID.username}</span>
                     <span class="main__author-name">${replyData.commenterDocID.displayname}</span>
                     <span class="reply-date">${formattedDate}</span>
                 </div>
-                <div class="reply-msg">${replyData.feedbackContents}</div>
+                <div class="reply-msg">${isTemporary ? 'Sending reply...<div class="search-results-loader"></div>' : replyData.feedbackContents}</div>
                 <div class="main__engagement-opts engagement-opts">
-                <!--<div class="like-wrapper">
-                    <svg class="like-icon" data-tippy-content="Like" width="20" height="22" viewBox="0 0 115 117" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M5 51V112" stroke="#606770" stroke-width="10" stroke-linecap="round"/>
-                    <path class='like-icon-fill' d="M28.4938 47.5373C28.4938 47.5373 28.4863 108.91 28.493 110.455C28.4996 112 84.4861 110.998 88.993 110.998C93.5 110.998 108.994 88.5431 109.494 70.581C109.994 52.6188 107.998 49.9985 107.498 49.9985L66 49.9982C78.4744 33.916 62.958 -7.56607 57.9956 8.99958C53.0332 25.5652 49.9956 32.4996 49.9956 32.4996L28.4938 47.5373Z" fill="white"/>
-                    <path d="M107.498 49.9985C107.998 49.9985 109.994 52.6188 109.494 70.581C108.994 88.5431 93.5 110.998 88.993 110.998C84.4861 110.998 28.4996 112 28.493 110.455C28.4863 108.91 28.4938 47.5373 28.4938 47.5373L49.9956 32.4996C49.9956 32.4996 53.0332 25.5652 57.9956 8.99958C62.958 -7.56607 78.4744 33.916 66 49.9982M107.498 49.9985C106.998 49.9985 66 49.9982 66 49.9982M107.498 49.9985L66 49.9982" stroke="#606770" stroke-width="10" stroke-linecap="round"/>
-                    </svg>
-                    <span class="like-count">0</span>
-                </div>-->
-                <svg 
-                class="reply-icon thread-opener"
-                data-tippy-content="Reply"
-                width="25" height="24" viewBox="0 0 22 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M18.7186 12.9452C18.7186 13.401 18.5375 13.8382 18.2152 14.1605C17.8929 14.4829 17.4557 14.6639 16.9999 14.6639H6.68747L3.25 18.1014V4.35155C3.25 3.89571 3.43108 3.45854 3.75341 3.13622C4.07573 2.81389 4.5129 2.63281 4.96873 2.63281H16.9999C17.4557 2.63281 17.8929 2.81389 18.2152 3.13622C18.5375 3.45854 18.7186 3.89571 18.7186 4.35155V12.9452Z" stroke="#1E1E1E" stroke-width="1.14582" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>                    
+                ${!isTemporary ? `
+                    <svg class="reply-icon thread-opener" data-tippy-content="Reply" width="25" height="24" viewBox="0 0 22 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M18.7186 12.9452C18.7186 13.401 18.5375 13.8382 18.2152 14.1605C17.8929 14.4829 17.4557 14.6639 16.9999 14.6639H6.68747L3.25 18.1014V4.35155C3.25 3.89571 3.43108 3.45854 3.75341 3.13622C4.07573 2.81389 4.5129 2.63281 4.96873 2.63281H16.9999C17.4557 2.63281 17.8929 2.81389 18.2152 3.13622C18.5375 3.45854 18.7186 3.89571 18.7186 4.35155V12.9452Z" stroke="#1E1E1E" stroke-width="1.14582" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>` : ''
+                }                    
                 </div>
             </div>
         </div>
