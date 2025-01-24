@@ -33,6 +33,8 @@
 	<link rel="icon" type="image/png" sizes="16x16" href="\assets\favicon-16x16.png">
 	<link rel="icon" type="image/png" href="\assets\android-chrome-192x192.png">
 	<link rel="manifest" href="/site.webmanifest">
+
+	<%- include('../partials/links.ejs') %>
 	<title>Dashboard</title>
 	</head>
 	<body>
@@ -89,12 +91,8 @@
 						<div class="author-title-container">
 						<div class="note-title">
 							<a href="/view/<%= note._id %>">
-								<% let title = note.title %>
-								<% if(title.length > 30) { %>
-									<%= title.slice(0, 30) %>...
-								<% } else { %>
-									<%= title %>
-								<% } %>
+								<% let title = note.title.length > 30 ? `${note.title.slice(0, 30)}...` : note.title  %>
+            					<%= title %>
 							</a>
 						</div>
 						<div class="author">

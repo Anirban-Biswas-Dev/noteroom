@@ -3,6 +3,7 @@ import { config } from 'dotenv';
 import { dirname, join } from 'path/posix';
 import { fileURLToPath } from 'url';
 
+//CRITICAL: mail service doesn't work on noteroom.co
 // const __filename = fileURLToPath(import.meta.url);
 // const __dirname = dirname(__filename);
 config({ path: join(__dirname, '../.env') });

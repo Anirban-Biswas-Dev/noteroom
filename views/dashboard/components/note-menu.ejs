@@ -3,8 +3,8 @@
         <i class="fas fa-ellipsis-v"></i>
     </button>
     <div class="menu-options">    
-        <div class="option svn-btn-parent" id="save-btn-<%= note._id %>" onclick="saveNote('<%= note._id %>', '<%= note.title %>', this)">
-            <button class="<%= note.isSaved ? "save-note-btn saved" : "save-note-btn" %>" id="save-note-btn" data-issaved="<%= note.isSaved %>">
+        <div class="option svn-btn-parent" id="save-btn-<%= note._id %>" onclick="saveNote(this, true)" data-notetitle="<%= note.title %>" data-noteid="<%= note._id %>" data-issaved="<%= note.isSaved %>">
+            <button class="<%= note.isSaved ? "saved" : "" %> save-note-btn" id="save-note-btn">
                 <i class="fa-regular fa-bookmark"></i>
                 <i class="fa-solid fa-bookmark saved"></i>
             </button>

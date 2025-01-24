@@ -2,7 +2,7 @@ import { Schema, model } from 'mongoose'
 
 const baseOptions = {
     discriminatorKey: 'docType',
-    collection: 'comments'
+    collection: 'comments-test'
 }
 
 const CommentsSchema = new Schema({
@@ -13,14 +13,14 @@ const CommentsSchema = new Schema({
     },
     feedbackContents: {
         type: String, 
-        required: true
+        default: ""
     },
     createdAt: {
         type: Date,
         default: Date.now
     }
 }, baseOptions)
-const CommentsModel = model('comments', CommentsSchema)
+const CommentsModel = model('comments-test', CommentsSchema)
 
 
 const feedbackSchema = new Schema({
@@ -29,6 +29,14 @@ const feedbackSchema = new Schema({
         required: true,
         ref: 'students'
     },
+    replyCount: {
+        type: Number,
+        default: 0
+    },
+    upvoteCount: {
+        type: Number,
+        default: 0
+    }
 })
 const feedbacksModel = CommentsModel.discriminator('feedbacks', feedbackSchema)
 
