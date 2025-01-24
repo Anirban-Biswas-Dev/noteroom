@@ -37,11 +37,9 @@ async function add_note(count) {
 					isSaved: note.isSaved,
 					isUpvoted: note.isUpvoted
 				};
-				console.log(noteData)
 				notesList.push(noteData); // 3
 			});
 			page = page + 1; // Increment the page after processing the notes
-			console.log(page)
 		}
 	} catch (error) {
 		console.log(error.message);

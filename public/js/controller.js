@@ -216,7 +216,7 @@ const manageNotes = {
                                 </button>
                                 <div class="menu-options">
                                     <div class="option svn-btn-parent" id='save-btn-${noteData.noteID}' onclick="saveNote(this, true)" data-notetitle="${noteData.noteTitle}" data-noteid="${noteData.noteID}" data-issaved="${noteData.isSaved}">
-                                        <button class=${noteData.isSaved ? 'save-note-btn saved' : 'save-note-btn' } id="save-note-btn">
+                                        <button class='${noteData.isSaved ? 'save-note-btn saved' : 'save-note-btn' }' id="save-note-btn">
                                             <i class="fa-regular fa-bookmark"></i>
                                             <i class="fa-solid fa-bookmark saved"></i>
                                         </button>
