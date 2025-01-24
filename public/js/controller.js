@@ -10,6 +10,18 @@ let imageObject = {
 }
 
 
+let toastData = (type, message, timer=2000) => {
+    return {
+        toast: true,
+        position: "bottom-end",
+        icon: type,
+        title: message,
+        timer: timer,
+        timerProgressBar: true,
+        showConfirmButton: false
+    }
+}
+
 
 //* Description or Bio truncater function
 function truncatedTitle(title) {
@@ -173,6 +185,8 @@ async function upvote(voteContainer, fromDashboard = false) {
     let data = await response.json()
     if (data.ok) {
         voteContainer.removeAttribute('data-disabled')
+    } else {
+        Swal.fire(toastData('error', "Yikes! Try again later.", 3000))
     }
 }
 
@@ -201,8 +215,8 @@ const manageNotes = {
                                     <i class="fas fa-ellipsis-v"></i>
                                 </button>
                                 <div class="menu-options">
-                                    <div class="option svn-btn-parent" id='save-btn-${noteData._id}' onclick="saveNote(this, true)" data-notetitle="${noteData.noteTitle}" data-noteid="${noteData.noteID}" data-issaved="${noteData.isSaved}">
-                                        <button class='${noteData.isSaved ? "saved" : ""} save-note-btn' id="save-note-btn">
+                                    <div class="option svn-btn-parent" id='save-btn-${noteData.noteID}' onclick="saveNote(this, true)" data-notetitle="${noteData.noteTitle}" data-noteid="${noteData.noteID}" data-issaved="${noteData.isSaved}">
+                                        <button class=${noteData.isSaved ? 'save-note-btn saved' : 'save-note-btn' } id="save-note-btn">
                                             <i class="fa-regular fa-bookmark"></i>
                                             <i class="fa-solid fa-bookmark saved"></i>
                                         </button>
@@ -377,8 +391,7 @@ const manageNotes = {
                 ~ displayname
                 
         */
-        //<path d="M107.498 49.9985C107.998 49.9985 109.994 52.6188 109.494 70.581C108.994 88.5431 93.5 110.998 88.993 110.998C84.4861 110.998 28.4996 112 28.493 110.455C28.4863 108.91 28.4938 47.5373 28.4938 47.5373L49.9956 32.4996C49.9956 32.4996 53.0332 25.5652 57.9956 8.99958C62.958 -7.56607 78.4744 33.916 66 49.9982M107.498 49.9985C106.998 49.9985 66 49.9982 66 49.9982M107.498 49.9985L66 49.9982" stroke="#606770" stroke-width="10" stroke-linecap="round"/>
-        //
+        
         let date = new Date(feedbackData.createdAt)
         const formatter = new Intl.DateTimeFormat('en-US', {
             year: 'numeric',
@@ -390,14 +403,18 @@ const manageNotes = {
             hour12: true
         });
         const formattedDate = formatter.format(date);
+        let isTemporary = feedbackData.temporary
+
         let feedbackCard = `
-        <div class='main-cmnt-container'>
+        <div class='main-cmnt-container' data-temporary=${feedbackData.temporary}>
             <div class="main__author-threadline-wrapper">
-                <img
-                    src="${feedbackData.commenterDocID.profile_pic}"
-                    alt="User Avatar"
-                    class="main__cmnt-author-img cmnt-author-img"
-                />
+                ${!isTemporary ? `
+                    <img
+                        src="${feedbackData.commenterDocID.profile_pic}"
+                        alt="User Avatar"
+                        class="main__cmnt-author-img cmnt-author-img"
+                    />
+                ` : ''}
                 <div class="thread-line"></div>
              </div>
             <div class="main__cmnts-replies-wrapper">
@@ -405,26 +422,29 @@ const manageNotes = {
                     <div class="main__reply-info reply-info">
                         <span id="parentFeedbackDocID" style="display: none;">${feedbackData._id}</span>
                         <span id="commenterUsername" style="display: none;">${feedbackData.commenterDocID.username}</span>
+
                         <span class="main__author-name">${feedbackData.commenterDocID.displayname}</span>
                         <span class="reply-date">${formattedDate}</span>
                     </div>
-                    <div class="main__reply-msg reply-msg">${feedbackData.feedbackContents}</div>
-                    <div class="main__engagement-opts engagement-opts">
-                        <div class="like-wrapper" data-noteid=${feedbackData.noteDocID._id} data-feedbackid=${feedbackData._id} data-isupvoted="false" onclick="upvoteComment(this)">   
-                            <svg class="like-icon" width="20" height="22" viewBox="0 0 115 117" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M107.498 49.9985C107.998 49.9985 109.994 52.6188 109.494 70.581C108.994 88.5431 93.5 110.998 88.993 110.998C84.4861 110.998 28.4996 112 28.493 110.455C28.4863 108.91 28.4938 47.5373 28.4938 47.5373L49.9956 32.4996C49.9956 32.4996 53.0332 25.5652 57.9956 8.99958C62.958 -7.56607 78.4744 33.916 66 49.9982M107.498 49.9985C106.998 49.9985 66 49.9982 66 49.9982M107.498 49.9985L66 49.9982" stroke="#606770" stroke-width="10" stroke-linecap="round"/>
-                            </svg>
+                    <div class="main__reply-msg reply-msg">${isTemporary ? 'Sending feedback...<div class="search-results-loader"></div>' : feedbackData.feedbackContents }</div>
+                    ${!isTemporary ? `
+                        <div class="main__engagement-opts engagement-opts">
+                            <div class="like-wrapper" data-noteid=${feedbackData.noteDocID._id} data-feedbackid=${feedbackData._id} data-isupvoted="false" onclick="upvoteComment(this)">   
+                                <svg class="like-icon" width="20" height="22" viewBox="0 0 115 117" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M107.498 49.9985C107.998 49.9985 109.994 52.6188 109.494 70.581C108.994 88.5431 93.5 110.998 88.993 110.998C84.4861 110.998 28.4996 112 28.493 110.455C28.4863 108.91 28.4938 47.5373 28.4938 47.5373L49.9956 32.4996C49.9956 32.4996 53.0332 25.5652 57.9956 8.99958C62.958 -7.56607 78.4744 33.916 66 49.9982M107.498 49.9985C106.998 49.9985 66 49.9982 66 49.9982M107.498 49.9985L66 49.9982" stroke="#606770" stroke-width="10" stroke-linecap="round"/>
+                                </svg>
 
-                            <span class="like-count">${feedbackData.upvoteCount}</span>
+                                <span class="like-count">${feedbackData.upvoteCount}</span>
+                            </div>
+                                
+                            <svg 
+                                class="reply-icon thread-opener"
+                                data-tippy-content="Reply"
+                                width="25" height="24" viewBox="0 0 22 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M18.7186 12.9452C18.7186 13.401 18.5375 13.8382 18.2152 14.1605C17.8929 14.4829 17.4557 14.6639 16.9999 14.6639H6.68747L3.25 18.1014V4.35155C3.25 3.89571 3.43108 3.45854 3.75341 3.13622C4.07573 2.81389 4.5129 2.63281 4.96873 2.63281H16.9999C17.4557 2.63281 17.8929 2.81389 18.2152 3.13622C18.5375 3.45854 18.7186 3.89571 18.7186 4.35155V12.9452Z" stroke="#1E1E1E" stroke-width="1.14582" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>                    
                         </div>
-                            
-                        <svg 
-                            class="reply-icon thread-opener"
-                            data-tippy-content="Reply"
-                            width="25" height="24" viewBox="0 0 22 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M18.7186 12.9452C18.7186 13.401 18.5375 13.8382 18.2152 14.1605C17.8929 14.4829 17.4557 14.6639 16.9999 14.6639H6.68747L3.25 18.1014V4.35155C3.25 3.89571 3.43108 3.45854 3.75341 3.13622C4.07573 2.81389 4.5129 2.63281 4.96873 2.63281H16.9999C17.4557 2.63281 17.8929 2.81389 18.2152 3.13622C18.5375 3.45854 18.7186 3.89571 18.7186 4.35155V12.9452Z" stroke="#1E1E1E" stroke-width="1.14582" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>                    
-                    </div>
+                    ` : ''}
                 </div>
 
                 <div class="thread-section" id="thread-${feedbackData._id}"></div>
@@ -671,8 +691,11 @@ async function saveNote(svButton, fromDashboard = false) {
     })
     let body = await response.json()
     if (body.ok) {
+        isSaved === "false" ? Swal.fire(toastData('success', 'Note saved successfully!')) : false
         document.querySelector('.no-saved-notes-message').classList[body.count === 0 ? 'remove' : 'add']('hide')
         svButton.removeAttribute('data-disabled')
+    } else {
+        Swal.fire(toastData('error', "Yikes! Try again later.", 3000))
     }
 }
 

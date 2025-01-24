@@ -75,6 +75,8 @@ export function postNoteFeedbackRouter(io: Server) {
                 commenterDocID: commenterDocID,
                 commenterStudentID: _commenterStudentID,
             }).sendMentionNotification(mentions, feedback)
+
+            res.json({ sent: true })
             
         } else {
             let _replyContent = req.body["replyContent"]

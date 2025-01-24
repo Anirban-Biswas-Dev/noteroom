@@ -17,6 +17,7 @@ socket.emit(
 
 //* Broadcasted feedback handler. The extented-feedback is broadcasted
 socket.on('add-feedback', (feedbackData) => {
+  document.querySelector('div[data-temporary=true]')?.remove()  
   manageNotes.addFeedback(feedbackData)
 })
 
@@ -67,6 +68,8 @@ async function upvoteComment(voteContainer) {
   let data = await response.json()
   if (data.ok) {
     voteContainer.removeAttribute('data-disabled')
+  } else {
+    Swal.fire(toastData('error', "Yikes! Try again later.", 3000))
   }
 }
 
@@ -310,20 +313,46 @@ document.addEventListener('DOMContentLoaded', () => {
   const noteDocID = window.location.pathname.split("/")[2]; // Note's document ID
   const commenterStudentID = Cookies.get("studentID"); // Commenter's document ID
 
-  const postMainComment = async () => {
+  const postMainComment = async (event) => {
+    event.preventDefault()
+
     const commentHTML = editor.root.innerHTML; // feedback text
     
-    if (editor.root.textContent.trim() === "") return; // Preventing any empty comments
+    if (editor.root.textContent.trim() === "" || document.querySelector('#editor').getAttribute('data-disabled')) return; // Preventing any empty comments
+
+    document.querySelector('#editor').setAttribute('data-disabled', 'true')
+
+    // a temporary feedback placeholder that will be shown until the main feedback is sent successfully
+    manageNotes.addFeedback({
+      _id: '__id__',
+      createdAt: new Date(),
+      feedbackContents: '',
+      commenterDocID: {
+        profile_pic: '__profile_pic__',
+        username: '__username__',
+        displayname: 'User'
+      },
+      noteDocID: {
+        _id: '__id__'
+      },
+      upvoteCount: 0,
+      temporary: true
+    })
 
     const feedbackData = new FormData()
     feedbackData.append('noteDocID', noteDocID)
     feedbackData.append('commenterStudentID', commenterStudentID)
     feedbackData.append('feedbackContents', commentHTML)
 
-    await fetch(`${pathname.endsWith('/') ? pathname : pathname + '/'}postFeedback`, {
+    let response = await fetch(`${pathname.endsWith('/') ? pathname : pathname + '/'}postFeedback`, {
       body: feedbackData,
       method: 'post'
     })
+    let data = await response.json()
+    if(data.sent) {
+      document.querySelector('#editor').removeAttribute('data-disabled') 
+      Swal.fire(toastData('success', "Feedback delivered with care!", 2000))
+    }
 
     adjustThreadLineHeights();
     editor.root.innerHTML = ''; // reseting toast ui editor content
@@ -354,7 +383,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
           // Add the HTML for the thread editor
           threadEditor.innerHTML = `
-                  <!--<img class="tec__avatar-preview thread-avatar">-->
                   <div class="thread-editor-wrapper">
                     <span id='mentioneduser' class="thread-mentioned-user">@${parentCommenterUsername}</span>
                     <textarea placeholder="Write a comment..." class="thread-editor"></textarea>

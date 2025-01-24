@@ -37,6 +37,7 @@ async function add_note(count) {
 					isSaved: note.isSaved,
 					isUpvoted: note.isUpvoted
 				};
+				console.log(noteData)
 				notesList.push(noteData); // 3
 			});
 			page = page + 1; // Increment the page after processing the notes
@@ -101,13 +102,7 @@ const observers = {
 				if (noteList.length != 0) {
 					noteList.forEach(async note => {
 						if (!document.querySelector(`#note-${note.noteID}`)) {
-							manageNotes.addNote(note) // 2
-							let savedNotesObj = await manageDb.get('savedNotes')
-							let savedNotes = savedNotesObj.map(obj => obj.noteID)
-
-							if (savedNotes.includes(note.noteID)) {
-								document.querySelector(`#note-${note.noteID} #save-note-btn`).classList.add('saved')
-							}
+							manageNotes.addNote(note)
 						}
 					})
 					_observer.unobserve(lastNote.target) // 4
