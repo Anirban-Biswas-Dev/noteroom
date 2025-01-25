@@ -521,10 +521,10 @@ const manageNotes = {
         threadSection.querySelector('.thread-editor-container').insertAdjacentHTML('beforebegin', replyMessage);
     },
 
-    addNoteProfile: function (noteData) {
-        let savedNotesContainer = document.querySelector('.sv-notes-container')
+    addNoteProfile: function (noteData, noteType='saved') {
+        let savedNotesContainer = document.querySelector(noteType === 'saved' ? '.sv-notes-container' : '.notes-container')
         let noteCard = `
-            <div class="note-card" id="sv-note-${noteData.noteID}">
+            <div class="note-card" id="${noteType === 'saved' ? "sv-note" : "own-note"}-${noteData.noteID}">
                 <a href="/view/${noteData.noteID}">
                     <h3>
                         ${noteData.noteTitle > 30 ? noteData.noteTitle.slice(0, 30) : noteData.noteTitle }

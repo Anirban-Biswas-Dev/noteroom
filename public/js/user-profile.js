@@ -63,6 +63,23 @@ if (!Number.isNaN(parseInt(collegeID))) {
 }
 
 
+let observer = new IntersectionObserver(entries => {
+    entries.forEach(async entry => {
+        if (entry.isIntersecting) {
+            let response = await fetch('/api/note?noteType=owned')
+            let notes = await response.json()
+            notes.forEach(note => {
+                manageNotes.addNoteProfile({ noteID: note._id, noteTitle: note.title, noteThumbnail: note.thumbnail }, 'owned')
+            })
+            observer.unobserve(entry.target)
+            document.querySelector('.owned-notes-status').remove()
+        }
+    })
+}, {
+    rootMargin: '0px 0px -300px 0px'
+})
+observer.observe(document.querySelector('#ownedNotes'))
+
 //* The delete note eventhandler
 // document.addEventListener('click', function (event) {
 //     if (event.target.classList.contains('delete-note')) {
