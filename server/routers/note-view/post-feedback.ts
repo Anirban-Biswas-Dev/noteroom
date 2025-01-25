@@ -26,16 +26,8 @@ export function postNoteFeedbackRouter(io: Server) {
 
         
         //NICE-TO-HAVE: see if you can refactor the whole mention->displayname more
-        async function replaceFeedbackText(feedbackText: string, removeFirst = false) {
+        async function replaceFeedbackText(feedbackText: string) {
             let mentions = checkMentions(feedbackText)
-            let modifiedFeedbackText = ""
-
-            if (removeFirst) {
-                let first_mention = mentions[0]
-                modifiedFeedbackText = feedbackText.replace(`@${first_mention}`, '').trim()
-            } else {
-                modifiedFeedbackText = feedbackText
-            }
 
             if (mentions.length !== 0) {
                 let users = await Students.find({ username: { $in: mentions } }, { displayname: 1, username: 1 })
@@ -43,9 +35,9 @@ export function postNoteFeedbackRouter(io: Server) {
                     let user = users.find(doc => doc.username === username)
                     return user.displayname
                 })
-                return replaceMentions(modifiedFeedbackText, displaynames)
+                return replaceMentions(feedbackText, displaynames)
             } else {
-                return modifiedFeedbackText
+                return feedbackText
             }
         }
 
@@ -98,17 +90,7 @@ export function postNoteFeedbackRouter(io: Server) {
                 let parentFeedbackCommenterInfo = _reply["parentFeedbackDocID"]["commenterDocID"]
     
                 
-                /*
-                * Logic analysis
-    
-                When mentions[0] === commenter-username, it means when I will mention my self at first in reply/feedback, the first mention will be removed.
-                Cause the first mention will be the user in this case, so it doesn't need to be processed.
-                */
-                if (_commenterUserName === mentions_[0]) {
-                    modifiedFeedbackText = await replaceFeedbackText(_replyContent, true)
-                } else {
-                    modifiedFeedbackText = await replaceFeedbackText(_replyContent)
-                }
+                modifiedFeedbackText = await replaceFeedbackText(_replyContent)
     
                 await replyModel.findByIdAndUpdate(_reply._id, { $set: { feedbackContents: modifiedFeedbackText } })
                 let reply = await getReply(_reply._id)
