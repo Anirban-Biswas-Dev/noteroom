@@ -98,7 +98,11 @@ const toggleSections = (activeBtn, inactiveBtn, showSection, hideSection) => {
 };
 
 try {
-    userSavedNotesBtn.addEventListener('click', () => {
+    userSavedNotesBtn.addEventListener('click', async () => {
+        let savedNotes = await manageDb.get('savedNotes')
+        savedNotes.forEach(note => {
+            manageNotes.addNoteProfile(note)
+        })
         toggleSections(userSavedNotesBtn, userNotesBtn, userSavedNotes, userNotes);
     });
 

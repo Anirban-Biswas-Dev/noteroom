@@ -122,12 +122,6 @@
 									<%= title %>
 								<% } %>
                             </h3>
-                            <!-- <% let description = note.description %>
-                            <% if(description.length > 40) { %>
-                                <p><%= description.slice(0, 40) %>...</p>
-                            <% } else { %>
-                                <p><%= description %></p>
-                            <% } %> -->
                             <img src="<%= note.content[0] %>" alt="No thumbnail?!">
                         </a>
                     </div>
@@ -146,30 +140,8 @@
         </div>
         <% if(!visiting) { %>
             <div class="sv-notes-container not-show">
-              <% if (savedNotes.length != 0) { %>
-                <% for (const note of savedNotes) { %>
-                    <div class="note-card">
-                        <a href="/view/<%= note._id %>">
-                            <h3>
-                                <% let title = note.title %>
-								<% if(title.length > 30) { %>
-									<%= title.slice(0, 30) %>...
-								<% } else { %>
-									<%= title %>
-								<% } %>
-                            </h3>
-                            <!-- <% let description = note.description; %>
-                            <% if (description.length > 40) { %>
-                                <p><%= description.slice(0, 40) %>...</p>
-                            <% } else { %>
-                                <p><%= description %></p>
-                            <% } %> -->
-                            <img src="<%= note.content[0] %>" alt="No thumbnail?!">
-                        </a>
-                    </div>
-                <% } %>
-                <% } else { %>
-                    <div class="no-notes-content">
+                <% if (savedNotes.length === 0) { %>
+                    <div class="no-notes-content" id="saved-notes-profile">
                         <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather feather-frown">
                             <circle cx="12" cy="12" r="10" stroke-width="1"></circle>
                             <path d="M9 9h.01" stroke-width="1"></path>

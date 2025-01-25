@@ -13,7 +13,7 @@ import { checkLoggedIn } from "../middlewares/checkLoggedIn.js";
 const router = Router()
 
 export default function apiRouter(io: Server) {
-    router.use(checkLoggedIn)
+    // router.use(checkLoggedIn)
 
     router.post("/download" ,async (req, res) => {
         let noteID = req.body.noteID
@@ -68,7 +68,7 @@ export default function apiRouter(io: Server) {
     
             if (action === 'save') {
                 let result = await addSaveNote({ studentDocID, noteDocID })
-                res.json({ ok: result.ok, count: result.count })
+                res.json({ ok: result.ok, count: result.count, savedNote: result.savedNote })
             } else {
                 let result = await deleteSavedNote({ studentDocID, noteDocID })
                 res.json({ ok: result.ok, count: result.count })
@@ -115,11 +115,18 @@ export default function apiRouter(io: Server) {
         async function getSavedNotes(studentDocID) {
             let student = await Students.findById(studentDocID, { saved_notes: 1 })
             let saved_notes_ids = student['saved_notes']
-            let notes = await Notes.find({ _id: { $in: saved_notes_ids } }, { title: 1 })
+            let notes = await Notes.aggregate([
+                { $match: { _id: { $in: saved_notes_ids } } },
+                { $project: {
+                    title: 1,
+                    thumbnail: { $first: '$content' }
+                } }
+            ])
             return notes
         }
+
         if (type === 'save') {
-            let studentDocID = req.query.studentDocID
+            let studentDocID = await Convert.getDocumentID_studentid(req.session["stdid"])
             let savedNotes = await getSavedNotes(studentDocID)
             res.json(savedNotes)
         } else if (type === 'seg') {
