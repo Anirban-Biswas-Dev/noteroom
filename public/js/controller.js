@@ -35,8 +35,8 @@ function truncatedTitle(title) {
 
 
 const db = new Dexie("Notes")
-db.version(4).stores({
-    savedNotes: "++id,noteID,noteTitle",
+db.version(6).stores({
+    savedNotes: "++id,noteID,noteTitle,noteThumbnail",
     notis: "++id,notiID,feedbackID,isread,noteID,nfnTitle,commenterUsername,commenterDisplayname",
     notes: "++id,noteID,thumbnail,profile_pic,noteTitle,feedbackCount,ownerDisplayName,ownerID,ownerUserName"
 })
@@ -54,11 +54,12 @@ const manageDb = {
     async add(store, obj) {
         switch (store) {
             case 'savedNotes':
-                let existingNote = await db.savedNotes.where("noteID").equals(obj.noteID).first()
+                let existingNote = await db.savedNotes.where("noteID").equals(obj._id).first()
                 if (!existingNote) {
                     await db.savedNotes.add({
-                        noteID: obj.noteID,
-                        noteTitle: obj.noteTitle
+                        noteID: obj._id,
+                        noteTitle: obj.title,
+                        noteThumbnail: obj.thumbnail
                     })
                 }
                 break
@@ -454,7 +455,6 @@ const manageNotes = {
         document.querySelector(".cmnts-list").insertAdjacentHTML('afterbegin', feedbackCard)
     },
 
-
     addReply: function (threadSection, replyData) {
         /*
         => createdAt
@@ -521,6 +521,19 @@ const manageNotes = {
         threadSection.querySelector('.thread-editor-container').insertAdjacentHTML('beforebegin', replyMessage);
     },
 
+    addNoteProfile: function (noteData) {
+        let savedNotesContainer = document.querySelector('.sv-notes-container')
+        let noteCard = `
+            <div class="note-card" id="sv-note-${noteData.noteID}">
+                <a href="/view/${noteData.noteID}">
+                    <h3>
+                        ${noteData.noteTitle > 30 ? noteData.noteTitle.slice(0, 30) : noteData.noteTitle }
+                    </h3>
+                    <img src='${noteData.noteThumbnail}' alt="No thumbnail?!">
+                </a>
+            </div>`
+        savedNotesContainer.insertAdjacentHTML('afterbegin', noteCard);
+    }
 }
 
 
@@ -691,7 +704,11 @@ async function saveNote(svButton, fromDashboard = false) {
     })
     let body = await response.json()
     if (body.ok) {
-        isSaved === "false" ? Swal.fire(toastData('success', 'Note saved successfully!')) : false
+        isSaved === "false" ? (async function() {
+            Swal.fire(toastData('success', 'Note saved successfully!'))
+            await manageDb.add('savedNotes', body.savedNote[0])
+        })() : manageDb.delete('savedNotes', noteDocID)
+
         document.querySelector('.no-saved-notes-message').classList[body.count === 0 ? 'remove' : 'add']('hide')
         svButton.removeAttribute('data-disabled')
     } else {

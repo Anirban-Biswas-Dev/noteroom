@@ -1,0 +1,23 @@
+<div class="saved-notes-container">
+    <div class="<%= savedNotes.length !== 0 ? 'hide' : '' %> no-saved-notes-message">
+        <p>It looks like you haven't saved any notes yet.</p>
+        <p>Start saving <span class="anim-bg">important notes</span> to easily access them later!</p>
+    </div>
+        
+    <% savedNotes.forEach(note => { %>
+    <div class="saved-note" id="saved-note-<%= note._id %>">
+        <span class="saved-note-doc-id" style="display: none;"><%= note._id %></span>
+        <span class="sv-note-title">
+            
+        <a class="sv-n-link" href='/view/<%= note._id %>'>
+            <% let title = note.title %>
+            <% if(title.length > 30) { %>
+                <%= title.slice(0, 30) %>...
+            <% } else { %>
+                <%= title %>
+            <% } %>
+        </a>
+        </span>
+    </div>
+    <% }) %>
+</div>

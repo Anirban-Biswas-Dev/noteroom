@@ -6,6 +6,7 @@ import { IManageUserNote, INoteDetails } from '../types/noteService.types.js'
 import { Notifs } from '../schemas/notifications.js'
 import { deleteNoteImages } from './firebaseService.js'
 import { isCommentUpVoted, isUpVoted } from './voteService.js'
+import mongoose from 'mongoose'
 
 
 export async function addNote(noteData: INoteDB) {
@@ -51,8 +52,15 @@ export async function addSaveNote({ studentDocID, noteDocID }: IManageUserNote) 
             { new: true }
         )
         let saved_notes_count = (await Students.findOne({ _id: studentDocID }, { saved_notes: 1 })).saved_notes.length
-    
-        return { ok: true, count: saved_notes_count }
+        let savedNote = await Notes.aggregate([
+            { $match: { _id: new mongoose.Types.ObjectId(noteDocID) } },
+            { $project: {
+                title: 1,
+                thumbnail: { $first: '$content' }
+            } }
+        ])
+            
+        return { ok: true, count: saved_notes_count, savedNote: savedNote }
     } catch (error) {
         return { ok: false }
     }
