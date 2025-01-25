@@ -8,17 +8,18 @@ founders.forEach((founder) => {
 
     // Check and add only existing social links
     if (founder.socialLinks.facebook) {
-        socialIconsHtml += `<i onclick="window.location.href='${founder.socialLinks.facebook}'" class="fa-brands fa-facebook"></i>`;
+        socialIconsHtml += `<i onclick="window.open('${founder.socialLinks.facebook}', '_blank')" class="fa-brands fa-facebook"></i>`;
     }
     if (founder.socialLinks.instagram) {
-        socialIconsHtml += `<i onclick="window.location.href='${founder.socialLinks.instagram}'" class="fa-brands fa-square-instagram"></i>`;
+        socialIconsHtml += `<i onclick="window.open('${founder.socialLinks.instagram}', '_blank')" class="fa-brands fa-square-instagram"></i>`;
     }
     if (founder.socialLinks.twitter) {
-        socialIconsHtml += `<i onclick="window.location.href='${founder.socialLinks.twitter}'" class="fa-brands fa-square-x-twitter"></i>`;
+        socialIconsHtml += `<i onclick="window.open('${founder.socialLinks.twitter}', '_blank')" class="fa-brands fa-square-x-twitter"></i>`;
     }
     if (founder.socialLinks.linkedin) {
-        socialIconsHtml += `<i onclick="window.location.href='${founder.socialLinks.linkedin}'" class="fa-brands fa-linkedin"></i>`;
+        socialIconsHtml += `<i onclick="window.open('${founder.socialLinks.linkedin}', '_blank')" class="fa-brands fa-linkedin"></i>`;
     }
+    
 
     // Construct the founder card HTML
     founderCardsHtml += `
