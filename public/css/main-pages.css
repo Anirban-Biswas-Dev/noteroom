@@ -2,6 +2,12 @@
   --notiDotUnread: #0073e6;
   --secondaryUnread:#e7f3ff;
   --secondaryUnreadHover:#dcefff;
+
+  --main-bg: #F2F4F7;
+}
+
+body{
+  background-color: var(--main-bg);
 }
 
 .search-container {
@@ -15,8 +21,7 @@
   z-index: 1000;
 }
 .search-bar-box {
-  background-color: var(--light-gray);
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
+  background-color: var(--main-bg);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -30,42 +35,53 @@
   align-items: center;
   width: fit-content;
   min-width: 120px;
+  background: #F2F2F2;
+  border: 1px solid #EAEAEA;
+  box-shadow: 0px 2px 3.7px -2px rgba(0, 0, 0, 0.25);
+  border-radius: 25px;
+
 }
 .search-bar {
-  max-width: 980px;
-  min-width: 100px;
-  box-sizing: border-box;
-  background: rgba(255, 255, 255, 0.18);
-  border: 2px solid #1e1e1e;
+  background: #F2F2F2;
+  border-bottom-right-radius: 0px;
   border-radius: 25px;
   border-top-right-radius: 0px;
-  border-bottom-right-radius: 0px;
-  width: 768px;
-  height: 57px;
-  padding-left: 10px;
-  font-size: 1.2rem;
+  border: none;
+  box-sizing: border-box;
+  color: rgba(30, 30, 30, 0.35);
+  font-size: 1rem;
+  height: 50px;
+  font-weight: 550;
+  letter-spacing: -0.03em;
+  line-height: 23px;
+  max-width: 980px;
+  min-width: 100px;
+  padding-left: 3vw;
+  width: 650px;
+  
 }
 .search-bar:focus {
   outline: none;
 }
 
 .search-bar-box button {
-  cursor: pointer;
-  font-size: 1.8rem;
-  background: rgba(255, 255, 255, 0.18);
-  border: 2px solid #1e1e1e;
+  align-items: center;
+  background: #F2F2F2;
+  border-bottom-right-radius: 25px;
   border-left: none;
   border-top-right-radius: 25px;
-  border-bottom-right-radius: 25px;
-  height: 57px;
+  border: none;
+  box-sizing: border-box;
+  color: #8C8C8C;
+  cursor: pointer;
   display: flex;
-  align-items: center;
+  font-size: 1.4rem;
+  height: 50px;
   justify-content: center;
-  width: 60px;
   min-width: 30px;
   padding: 0 20px;
-  box-sizing: border-box;
   transition: transform 0.2s ease;
+  width: 60px;
 }
 .fa-magnifying-glass {
   transition: color 0.2s ease;
@@ -89,7 +105,7 @@
 .mobile-nft-btn {
   cursor: pointer;
   min-width: 40px;
-  padding: 0px 10px 0px 10px;
+  width: 50px;
   padding: 0px 2vw;
   transition: transform 0.2s ease, opacity 0.2s ease, background-color 0.2s ease;
 }
@@ -126,13 +142,16 @@
   position: absolute;
   top: 2px;
   right: 10px;
+  top: 5%;
   background-color: rgb(255, 61, 61);
   color: white;
   border-radius: 50%;
   padding: 3px 3px;
   font-size: 10px;
-  width: 12px;
-  height: 12px;
+  width: 18px;
+  height: 18px;
+  align-items: center;
+  justify-content: center;
   font-weight: bold;
   line-height: 1;
   min-width: 12px;
@@ -140,7 +159,7 @@
 }
 .results-container {
   width: 100%;
-  background-color: var(--light-gray);
+  background-color: var(--main-bg);
   box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.25);
   border-radius: 0px 0px 20px 20px;
   display: none;
@@ -308,7 +327,7 @@
   justify-content: flex-start;
   overflow-y: auto;
   z-index: 999;
-  background-color: white;
+  background-color: var(--main-bg);
 }
 
 .middle-section::-webkit-scrollbar {
@@ -321,25 +340,24 @@
   display: none;
 }
 
-.notification-panel {
+.right-panel {
   position: fixed;
   top: 0;
   right: 0;
   width: 22%;
   height: 100vh;
-  background: var(--light-gray);
+  background: var(--main-bg);
   overflow-y: auto;
   overflow-x: hidden;
   padding: 10px;
-  box-sizing: border-box;
-  box-shadow: -1px 4px 4px rgba(0, 0, 0, 0.25);
+  border-left: 1px solid #D9D9D9;
   z-index: 1003;
   display: flex;
   flex-direction: column;
   align-items: center;
   transition: transform 0.3s ease;
 }
-.notification-panel::-webkit-scrollbar {
+.right-panel::-webkit-scrollbar {
   width: 0;
   height: 0;
 }
@@ -356,50 +374,73 @@
   backdrop-filter: blur(2px);
   -webkit-backdrop-filter: blur(2px);
 }
-.notification-panel-header {
+.right-panel-header {
   width: 100%;
-  padding: 5px 10px 5px 10px;
+  max-width: 280px;
+  padding: 5px 10px;
   display: flex;
   align-items: center;
-  justify-content: end;
+  justify-content: space-evenly;
 }
 .search-prfl-pc {
-  min-width: 45px;
+  min-width: 40px;
+  width: 50px;
+  height: 50px;
+  background-color: #E2E5E9;
+  border-radius: 15px;
+  padding: 10px;
   transition: transform 0.2s ease, fill 0.2s ease, color 0.2s ease;
   cursor: pointer;
 }
-
-.search-prfl-pc:hover {
-  transform: scale(1.05);
-}
-.search-prfl-pc:active {
-  transform: scale(0.99);
-}
+/* Hover and click effects with settings */
 
 .profile-pic {
   box-sizing: border-box;
-  width: 55px;
-  height: 55px;
-  border: 2px solid var(--squid-ink);
+  width: 50px;
+  height: 50px;
+  border: none;
   border-radius: 50px;
-  object-fit: contain;
-  margin-left: 45px;
+  overflow: hidden;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  transition: filter 0.3s ease,
+}
+
+.profile-pic:hover {
+    filter: brightness(0.9); 
+}
+.profile-pic:active {
+  filter: brightness(0.8); 
 }
 .btn-hide-nft {
   display: none;
   min-width: 40px;
 }
 .settings-icon {
-  font-size: 3rem;
-  margin-left: 45px;
-  margin-right: 20px;
+  background-color: #E2E5E9;
+  padding: 10px;
+  font-size: 2rem;
+  border-radius: 15px;
   cursor: pointer;
-  transition: transform 0.3s ease, opacity 0.3s ease;
+  transition: background-color 0.2s ease;
+}
+.pc-nft-btn{
+  cursor: pointer;
+  width: 50px;
+  height: auto;
+  padding: 5px;
+  height: auto;
+  display: block;
+  background-color: #E2E5E9;
+  transition: background-color 0.2s ease;
+  border-radius: 15px;
 }
 
-.settings-icon:hover {
-  transform: rotate(-40deg);
-  opacity: 0.8;
+.settings-icon:hover, .search-prfl-pc:hover , .pc-nft-btn:hover {
+  background-color: #D7D8D9;
+}
+.settings-icon:active, .search-prfl-pc:hover , .pc-nft-btn:active {
+  background-color: #C8CACC;
 }
 .sub-header {
   font-weight: 500;
@@ -410,8 +451,6 @@
 .notifications-container {
   width: 100%;
   display: flex;
-  /* this is one way to give the most recent notification:) */
-  /* flex-direction: column-reverse; */
   flex-direction: column;
   align-items: center;
   padding: 15px;
@@ -523,44 +562,47 @@ div.notification-msg > .commenter-prfl:visited {
   align-items: center;
   flex-direction: column;
   padding: 10px;
-  box-sizing: border-box;
   overflow-y: auto;
   overflow-x: hidden;
-  filter: drop-shadow(4.31887px -6.4783px 4.31887px rgba(0, 0, 0, 0.25));
   background: linear-gradient(333.5deg, #07192d 27%, #fefefe 200%);
 }
 
 .left-panel-header {
   display: flex;
   align-items: center;
-  justify-content: space-evenly;
+  justify-content: center;
   width: 100%;
-  padding: 0px 10px 20px 0px;
-  img {
-    width: 70px;
-    height: 70px;
-    object-fit: contain;
-  }
+  padding: 10px 10px 20px 0px;
+  gap: 10px;
 }
+
+.left-panel--nr-logo{
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+  cursor: pointer;
+}
+
 .users-db-msg {
   font-weight: 800;
   font-size: 1.2rem;
   color: var(--light-gray);
+  text-transform: uppercase;
 }
 .btn-home {
   width: 70%;
   height: 45px;
-  display: flex;
+  display: flex;  
   align-items: center;
   justify-content: center;
-  box-sizing: border-box;
+  gap: 5px;
   background: #ffffff;
   border: 1px solid #001832;
   box-shadow: 0px 6px 4px rgba(0, 0, 0, 0.25);
   border-radius: 10px;
   font-weight: 400;
-  color: var(--squid-ink);
-  font-size: 1.06rem;
+  font-size: 1rem;
+  line-height: 0;
   transition: background-color 0.3s ease, transform 0.2s ease,
     box-shadow 0.2s ease;
 }
@@ -580,7 +622,7 @@ div.notification-msg > .commenter-prfl:visited {
   background: var(--neon-blue);
   border-radius: 12px;
   font-weight: 800;
-  color: #ffffff;
+  color: black;
   position: relative;
   overflow: hidden;
   margin-top: 50px;
@@ -591,8 +633,10 @@ div.notification-msg > .commenter-prfl:visited {
   box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
 }
 
-.btn-upload-note svg {
+.btn-upload-note .btn-upload-note-svg {
   padding: 0 10px;
+  min-width: 50px;
+  height: auto;
 }
 
 .btn-upload-note::before,
@@ -656,8 +700,13 @@ div.notification-msg > .commenter-prfl:visited {
   width: 85%;
 }
 .saved-notes-container {
-  width: 85%;
-  height: 33%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  max-width: 360px;
+  height: 40%;
   padding: 15px 10px;
   overflow-y: scroll;
   margin-bottom: 8vh;
@@ -677,33 +726,6 @@ div.notification-msg > .commenter-prfl:visited {
 .no-saved-notes-message.hide {
   display: none;
 }
-.anim-bg {
-  position: relative;
-  overflow: hidden;
-  color: rgb(0, 0, 0);
-  font-weight: 600;
-  padding: 0px;
-}
-
-.anim-bg::before {
-  content: "";
-  position: absolute;
-  width: 0%;
-  height: 100%;
-  background: hsla(0, 0%, 100%, 0.9);
-  z-index: -1;
-  transition: width 1s ease-in-out;
-  animation: expand 2s forwards;
-}
-
-@keyframes expand {
-  0% {
-    width: 0%;
-  }
-  100% {
-    width: 100%;
-  }
-}
 .saved-note {
   display: flex;
   align-items: center;
@@ -711,14 +733,14 @@ div.notification-msg > .commenter-prfl:visited {
   box-sizing: border-box;
   width: 95%;
   height: 40px;
-  background: var(--light-gray);
-  border: 1px solid var(--neon-blue);
+  background: #FFFFFF;
+  border: none;
   font-weight: 500;
   font-size: 0.9rem;
   line-height: 18px;
   color: var(--squid-ink);
-  border-radius: 8px;
-  margin-bottom: 11px;
+  box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 4px;
   transition: opacity 0.4s ease, transform 0.4s ease, box-shadow 0.2s ease,
     border-color 0.2s ease, background-color 0.2s ease;
 }
@@ -736,9 +758,9 @@ div.notification-msg > .commenter-prfl:visited {
   transform: translateY(0);
 }
 .saved-note:hover {
-  box-shadow: 0px 6px 12px rgb(255, 255, 255);
-  border-color: var(--neon-blue);
-  background-color: #ffffff;
+  background-color: #EBEBEB;
+  background: #EBEBEB;
+  box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.25);
   cursor: pointer;
 }
 .sv-n-link {
@@ -753,15 +775,18 @@ div.notification-msg > .commenter-prfl:visited {
 }
 .right-panel-btn {
   box-sizing: border-box;
-  width: 60%;
-  height: 46.43px;
+  width: 100%;
+  max-width: 280px;
+  height: 45px;
   background: #ffffff;
-  border: 1px solid #c0c0c0;
-  border-radius: 10px;
   margin-bottom: 15px;
   padding: 12px;
   font-weight: 400;
-  color: #4f4f4f;
+  border: 0.15px solid #000000;
+  border-radius: 8px;
+  font-size: 12px;
+  line-height: 15px;
+  color: #000000;
   transition: background-color 0.2s ease, border-color 0.2s ease,
     box-shadow 0.2s ease;
 }
@@ -773,7 +798,7 @@ div.notification-msg > .commenter-prfl:visited {
   cursor: pointer;
 }
 
-.button {
+/* .button {
   margin-top: 20px;
   padding: 10px 20px;
   background-color: var(--squid-ink);
@@ -781,7 +806,7 @@ div.notification-msg > .commenter-prfl:visited {
   border-radius: 5px;
   color: var(--neon-blue);
   cursor: pointer;
-}
+} */
 
 canvas {
   position: absolute;
@@ -801,8 +826,11 @@ canvas {
   height: 40px;
   border: 1px solid var(--squid-ink);
   border-radius: 50px;
-  object-fit: contain;
+  object-fit: cover;
   display: none;
+  aspect-ratio: 1 / 1;
+  align-items: center;
+  justify-content: center;
 }
 .mbl-ctrl-panel {
   display: flex;
@@ -940,7 +968,7 @@ canvas {
 
 /* Temporarily Hiding the notification panel */
 @media (max-width: 1530px) {
-  .notification-panel {
+  .right-panel {
     width: 20%;
   }
 }
@@ -989,8 +1017,7 @@ canvas {
     display: inline-block;
   }
   .search-bar-box {
-    padding: 10px;
-    background-color: white;
+    padding: 10px 0;
     justify-content: space-evenly;
   }
   .search-bar {
@@ -1024,7 +1051,7 @@ canvas {
 }
 
 @media (max-width: 480px) {
-  .notification-panel {
+  .right-panel {
     position: fixed;
     overflow-x: hidden;
     top: 0;
@@ -1065,8 +1092,6 @@ canvas {
 }
 @media (max-width: 768px) {
   .settings-icon {
-    margin-left: 20px;
-    margin-right: 10px;
     font-size: 2rem;
   }
 
@@ -1129,7 +1154,7 @@ canvas {
   }
 }
 @media (min-width: 481px) and (max-width: 1025px) {
-  .notification-panel {
+  .right-panel {
     display: none;
   }
 }
@@ -1155,12 +1180,29 @@ canvas {
 }
 @media (min-width: 1026px) and (max-width: 1380px) {
   .profile-pic {
-    margin-left: 20px;
     width: 45px;
     height: 45px;
   }
   .settings-icon {
-    margin-left: 20px;
     font-size: 2.6rem;
   }
+}
+
+
+/* Ensure general styling for smaller screens */
+@media (max-width:560px) {
+  .search-wraper{
+    width: 70%;
+  border: 1px solid #EAEAEA;
+  box-shadow: 0px 5px 2.5px -5px rgba(0, 0, 0, 0.25);
+}
+.search-bar{
+  padding-left: 5vw;
+  width: 90%;
+}
+.search-bar-box button{
+  width: 10%;
+  padding: 0px 10px;
+}
+  
 }
