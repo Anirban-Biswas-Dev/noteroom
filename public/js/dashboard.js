@@ -10,7 +10,7 @@ socket.on('update-upvote-dashboard', function (noteDocID, upvoteCount) {
 
 window.addEventListener('load', () => {
 	async function getSavedNotes() {
-		let response = await fetch('/api/getnote?type=save')
+		let response = await fetch('/api/note?noteType=saved')
 		let savedNotes = await response.json()
 		savedNotes.forEach(note => {
 			manageDb.add('savedNotes', note)

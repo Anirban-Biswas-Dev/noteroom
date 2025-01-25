@@ -5,7 +5,7 @@ import Notes from "../schemas/notes.js";
 import Students from "../schemas/students.js";
 import archiver from "archiver";
 import { getNotifications } from "../helpers/rootInfo.js";
-import { addSaveNote, deleteNote, deleteSavedNote, getAllNotes } from "./noteService.js";
+import { addSaveNote, deleteNote, deleteSavedNote, getAllNotes, manageProfileNotes } from "./noteService.js";
 import { Convert } from "./userService.js";
 import { isUpVoted } from "./voteService.js";
 import { checkLoggedIn } from "../middlewares/checkLoggedIn.js";
@@ -143,6 +143,14 @@ export default function apiRouter(io: Server) {
                 res.json([])
             }
         }
+    })
+
+
+    router.get('/note', async (req, res) => {
+        let studentID = req.session["stdid"]
+        let noteType = <"saved" | "owned">req.query["noteType"]
+        let notes = await manageProfileNotes.getNote(noteType, studentID)
+        res.json(notes)
     })
 
 

@@ -123,6 +123,22 @@ export async function getAllNotes(studentDocID: string, options = { skip: 0, lim
     return extentedNotes
 }
 
+
+export const manageProfileNotes = {
+    async getNote(type: "saved" | "owned", studentID: string) {
+        let student = await Students.findOne({ studentID: studentID }, { saved_notes: 1, owned_notes: 1 })
+        let notes_ids = student[type === "saved" ? "saved_notes" : "owned_notes"]
+        let notes = await Notes.aggregate([
+            { $match: { _id: { $in: notes_ids } } },
+            { $project: {
+                title: 1,
+                thumbnail: { $first: '$content' }
+            } }
+        ])
+        return notes
+    }
+}
+
 export async function getOwner({noteDocID}: IManageUserNote) {
     let ownerInfo = await Notes.findById(noteDocID, { ownerDocID: 1 }).populate('ownerDocID')
     return ownerInfo
