@@ -1,12 +1,12 @@
 :root {
   --notiDotUnread: #0073e6;
-  --secondaryUnread:#e7f3ff;
-  --secondaryUnreadHover:#dcefff;
+  --secondaryUnread: #e7f3ff;
+  --secondaryUnreadHover: #dcefff;
 
-  --main-bg: #F2F4F7;
+  --main-bg: #f2f4f7;
 }
 
-body{
+body {
   background-color: var(--main-bg);
 }
 
@@ -35,14 +35,13 @@ body{
   align-items: center;
   width: fit-content;
   min-width: 120px;
-  background: #F2F2F2;
-  border: 1px solid #EAEAEA;
+  background: #f2f2f2;
+  border: 1px solid #eaeaea;
   box-shadow: 0px 2px 3.7px -2px rgba(0, 0, 0, 0.25);
   border-radius: 25px;
-
 }
 .search-bar {
-  background: #F2F2F2;
+  background: #f2f2f2;
   border-bottom-right-radius: 0px;
   border-radius: 25px;
   border-top-right-radius: 0px;
@@ -58,7 +57,6 @@ body{
   min-width: 100px;
   padding-left: 3vw;
   width: 650px;
-  
 }
 .search-bar:focus {
   outline: none;
@@ -66,13 +64,13 @@ body{
 
 .search-bar-box button {
   align-items: center;
-  background: #F2F2F2;
+  background: #f2f2f2;
   border-bottom-right-radius: 25px;
   border-left: none;
   border-top-right-radius: 25px;
   border: none;
   box-sizing: border-box;
-  color: #8C8C8C;
+  color: #8c8c8c;
   cursor: pointer;
   display: flex;
   font-size: 1.4rem;
@@ -350,7 +348,7 @@ body{
   overflow-y: auto;
   overflow-x: hidden;
   padding: 10px;
-  border-left: 1px solid #D9D9D9;
+  border-left: 1px solid #d9d9d9;
   z-index: 1003;
   display: flex;
   flex-direction: column;
@@ -386,7 +384,7 @@ body{
   min-width: 40px;
   width: 50px;
   height: 50px;
-  background-color: #E2E5E9;
+  background-color: #e2e5e9;
   border-radius: 15px;
   padding: 10px;
   transition: transform 0.2s ease, fill 0.2s ease, color 0.2s ease;
@@ -403,44 +401,48 @@ body{
   overflow: hidden;
   aspect-ratio: 1 / 1;
   object-fit: cover;
-  transition: filter 0.3s ease,
+  transition: filter 0.3s ease;
 }
 
 .profile-pic:hover {
-    filter: brightness(0.9); 
+  filter: brightness(0.9);
 }
 .profile-pic:active {
-  filter: brightness(0.8); 
+  filter: brightness(0.8);
 }
 .btn-hide-nft {
   display: none;
   min-width: 40px;
 }
 .settings-icon {
-  background-color: #E2E5E9;
+  background-color: #e2e5e9;
   padding: 10px;
   font-size: 2rem;
   border-radius: 15px;
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
-.pc-nft-btn{
+.pc-nft-btn {
   cursor: pointer;
   width: 50px;
   height: auto;
   padding: 5px;
   height: auto;
   display: block;
-  background-color: #E2E5E9;
+  background-color: #e2e5e9;
   transition: background-color 0.2s ease;
   border-radius: 15px;
 }
 
-.settings-icon:hover, .search-prfl-pc:hover , .pc-nft-btn:hover {
-  background-color: #D7D8D9;
+.settings-icon:hover,
+.search-prfl-pc:hover,
+.pc-nft-btn:hover {
+  background-color: #d7d8d9;
 }
-.settings-icon:active, .search-prfl-pc:hover , .pc-nft-btn:active {
-  background-color: #C8CACC;
+.settings-icon:active,
+.search-prfl-pc:hover,
+.pc-nft-btn:active {
+  background-color: #c8cacc;
 }
 .sub-header {
   font-weight: 500;
@@ -576,7 +578,7 @@ div.notification-msg > .commenter-prfl:visited {
   gap: 10px;
 }
 
-.left-panel--nr-logo{
+.left-panel--nr-logo {
   width: 50px;
   height: 50px;
   object-fit: contain;
@@ -592,7 +594,7 @@ div.notification-msg > .commenter-prfl:visited {
 .btn-home {
   width: 70%;
   height: 45px;
-  display: flex;  
+  display: flex;
   align-items: center;
   justify-content: center;
   gap: 5px;
@@ -733,7 +735,7 @@ div.notification-msg > .commenter-prfl:visited {
   box-sizing: border-box;
   width: 95%;
   height: 40px;
-  background: #FFFFFF;
+  background: #ffffff;
   border: none;
   font-weight: 500;
   font-size: 0.9rem;
@@ -758,8 +760,8 @@ div.notification-msg > .commenter-prfl:visited {
   transform: translateY(0);
 }
 .saved-note:hover {
-  background-color: #EBEBEB;
-  background: #EBEBEB;
+  background-color: #ebebeb;
+  background: #ebebeb;
   box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.25);
   cursor: pointer;
 }
@@ -1188,21 +1190,19 @@ canvas {
   }
 }
 
-
 /* Ensure general styling for smaller screens */
-@media (max-width:560px) {
-  .search-wraper{
+@media (max-width: 560px) {
+  .search-wraper {
     width: 70%;
-  border: 1px solid #EAEAEA;
-  box-shadow: 0px 5px 2.5px -5px rgba(0, 0, 0, 0.25);
-}
-.search-bar{
-  padding-left: 5vw;
-  width: 90%;
-}
-.search-bar-box button{
-  width: 10%;
-  padding: 0px 10px;
-}
-  
+    border: 1px solid #eaeaea;
+    box-shadow: 0px 5px 2.5px -5px rgba(0, 0, 0, 0.25);
+  }
+  .search-bar {
+    padding-left: 5vw;
+    width: 90%;
+  }
+  .search-bar-box button {
+    width: 10%;
+    padding: 0px 10px;
+  }
 }
