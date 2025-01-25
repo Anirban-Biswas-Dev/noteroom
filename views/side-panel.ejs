@@ -34,16 +34,11 @@
   <span class="sv-header">Saved Notes</span>
   <!-- dynamic content loading here -->
   <div class="saved-notes-container">
-    <% if (savedNotes && savedNotes.length === 0) { %>
-    <div class="no-saved-notes-message">
+    <div class="<%= savedNotes.length !== 0 ? 'hide' : '' %> no-saved-notes-message">
       <p>It looks like you haven't saved any notes yet.</p>
       <p>Start saving <span class="anim-bg">important notes</span> to easily access them later!</p>
     </div>
-    <% } else { %>
-    <div class="no-saved-notes-message" style="display: none;">
-      <p>It looks like you haven't saved any notes yet.</p>
-      <p>Start saving <span class="anim-bg">important notes</span> to easily access them later!</p>
-    </div>
+      
     <% savedNotes.forEach(note => { %>
     <div class="saved-note" id="saved-note-<%= note._id %>">
       <span class="saved-note-doc-id" style="display: none;"><%= note._id %></span>
@@ -59,7 +54,6 @@
       </span>
     </div>
     <% }) %>
-    <% } %>
   </div>
   <button class="right-panel-btn" onclick="location.href='/support'">Help & Support</button>
   <button class="right-panel-btn" onclick="window.open('https://app.hubspot.com/guide-creator/g/YPlbIIXPTt?uuid=f456224c-8bcd-4673-8a7d-573176e779bb', '_blank'); return false">User Guide</button>
@@ -112,21 +106,7 @@
       } 
     %>
     <% notis.forEach(noti => { %>
-      <% if(noti.docType == 'note-feedback' ) { %>
-        <%- include('partials/notification.ejs', { noti: noti, message: `${noti.commenterDocID.displayname} left a comment on your notes. Check it out!`, formatDate: formatDate }) %>
-
-      <% } else if (noti.docType == "note-mention") { %>
-        <%- include('partials/notification.ejs', { noti: noti, message: `You were mentioned by ${noti.commenterDocID.displayname}. Join the conversation!`, formatDate: formatDate }) %>
-
-      <% } else if(noti.docType == "note-reply") { %>
-        <%- include('partials/notification.ejs', { noti: noti, message: `${noti.commenterDocID.displayname} replied to your comment. See their response!`, formatDate: formatDate }) %>
-        
-      <% } else if (noti.docType === "note-vote") { %>
-        <%- include('partials/notification.ejs', { noti: noti, message: `Your note is making an impact! just got some upvotes.`, formatDate: formatDate }) %>
-        
-      <% } else if (noti.docType === 'note-comment-vote') { %>
-        <%- include('partials/notification.ejs', { noti: noti, message: `Your comment is getting noticed! Someone liked what you said.`, formatDate: formatDate }) %>
-      <% } %>
+      <%- include('partials/notification.ejs', { noti: noti, message: noti.content, formatDate: formatDate }) %>
     <% }) %>
     <% } %>
   </div>

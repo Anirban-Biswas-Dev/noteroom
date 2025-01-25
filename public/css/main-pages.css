@@ -674,6 +674,9 @@ div.notification-msg > .commenter-prfl:visited {
     padding: 5px 0px;
   }
 }
+.no-saved-notes-message.hide {
+  display: none;
+}
 .anim-bg {
   position: relative;
   overflow: hidden;

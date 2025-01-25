@@ -8,120 +8,71 @@ const socket = io(host);
 ~   3. add-feedback: from server : add the responsed extented feedback data with commenter's information   
 */
 
-socket.emit(
-  "join-room",
-  window.location.pathname.split(
-    "/"
-  )[2] /* The note-id as the unique room name */
-);
+socket.emit("join-room", window.location.pathname.split("/")[2] /* The note-id as the unique room name */);
+
+try {
+  adjustThreadLineHeights(); // Adjust thread height again
+} catch (error) {}
 
 //* Broadcasted feedback handler. The extented-feedback is broadcasted
 socket.on('add-feedback', (feedbackData) => {
+  document.querySelector('div.main-cmnt-container[data-temporary=true]')?.remove()  
   manageNotes.addFeedback(feedbackData)
 })
 
 
 socket.on('add-reply', (replyData) => {
+  document.querySelector('div.thread-msg[data-temporary=true]')?.remove()
   manageNotes.addReply(document.querySelector(`#thread-${replyData.parentFeedbackDocID._id}`), replyData)
 })
 
-socket.on('increment-upvote', function () {
-  let uvCount = document.querySelector('.uv-count')
-  document.querySelector('.uv-count').innerHTML = parseInt(uvCount.innerHTML) + 1
+socket.on('update-upvote', function (upvoteCount) {
+  document.querySelector('.uv-count').innerHTML = parseInt(upvoteCount)
 })
-socket.on('decrement-upvote', function () {
-  let uvCount = document.querySelector('.uv-count')
-  document.querySelector('.uv-count').innerHTML = parseInt(uvCount.innerHTML) - 1
-})
+
 
 
 const voterStudentID = Cookies.get("studentID")
 
 async function upvoteComment(voteContainer) {
+  if (voteContainer.getAttribute('data-disabled')) return
+
+  voteContainer.setAttribute('data-disabled', 'true')
+  
   const noteDocID = voteContainer.getAttribute('data-noteid')
   const isUpvoted = voteContainer.getAttribute('data-isupvoted') === "true" ? true : false
   const feedbackDocID = voteContainer.getAttribute('data-feedbackid')
-
-  function replaceLikeSvg(svg, action) {
+  
+  let likeCount = voteContainer.querySelector('.like-count')
+  const LIKE_SVG = `<path class='like-icon-fill' d='M28.4938 47.5373C28.4938 47.5373 28.4863 108.91 28.493 110.455C28.4996 112 84.4861 110.998 88.993 110.998C93.5 110.998 108.994 88.5431 109.494 70.581C109.994 52.6188 107.998 49.9985 107.498 49.9985L66 49.9982C78.4744 33.916 62.958 -7.56607 57.9956 8.99958C53.0332 25.5652 49.9956 32.4996 49.9956 32.4996L28.4938 47.5373Z' fill='black'/>`
+  const DISLIKE_SVG = `<path d="M107.498 49.9985C107.998 49.9985 109.994 52.6188 109.494 70.581C108.994 88.5431 93.5 110.998 88.993 110.998C84.4861 110.998 28.4996 112 28.493 110.455C28.4863 108.91 28.4938 47.5373 28.4938 47.5373L49.9956 32.4996C49.9956 32.4996 53.0332 25.5652 57.9956 8.99958C62.958 -7.56607 78.4744 33.916 66 49.9982M107.498 49.9985C106.998 49.9985 66 49.9982 66 49.9982M107.498 49.9985L66 49.9982" stroke="#606770" stroke-width="10" stroke-linecap="round"/>`
+  
+  function replaceLikeSvg(svg, increment) {
     voteContainer.querySelector('.like-icon').innerHTML = svg
-    let like_count = voteContainer.querySelector('.like-count')
-
-    action === "unlike" ? (function() {
-      voteContainer.setAttribute('data-isupvoted', 'false')
-      voteContainer.querySelector('.like-count').innerHTML = parseInt(like_count.innerHTML) - 1
-    })() : (function() {
-      voteContainer.setAttribute('data-isupvoted', 'true')
-      voteContainer.querySelector('.like-count').innerHTML = parseInt(like_count.innerHTML) + 1
-    })()
+    voteContainer.setAttribute('data-isupvoted', !isUpvoted)
+    voteContainer.querySelector('.like-count').innerHTML = parseInt(likeCount.innerHTML) + (increment ? 1 : -1)
   }
+
+  let url = `/view/${noteDocID}/vote/feedback?type=upvote${isUpvoted ? '&action=delete' : ''}`
+  replaceLikeSvg(isUpvoted ? DISLIKE_SVG : LIKE_SVG, !isUpvoted)
 
   let voteData = new FormData()
   voteData.append('noteDocID', noteDocID)
   voteData.append('voterStudentID', voterStudentID)
   voteData.append('feedbackDocID', feedbackDocID)
 
-  
-  if (!isUpvoted) {
-    let response = await fetch(`/view/${noteDocID}/vote/feedback?type=upvote`, {
-      method: 'post',
-      body: voteData
-    })
-    let data = await response.json()
-    console.log(data)
-    data.ok ? replaceLikeSvg(`<path 
-      class='like-icon-fill' 
-      d="M28.4938 47.5373C28.4938 47.5373 28.4863 108.91 28.493 110.455C28.4996 112 84.4861 110.998 88.993 110.998C93.5 110.998 108.994 88.5431 109.494 70.581C109.994 52.6188 107.998 49.9985 107.498 49.9985L66 49.9982C78.4744 33.916 62.958 -7.56607 57.9956 8.99958C53.0332 25.5652 49.9956 32.4996 49.9956 32.4996L28.4938 47.5373Z" 
-      fill="black"
-    />`, 'add') : false
+  let response = await fetch(url, {
+    method: 'post',
+    body: voteData
+  })
+  let data = await response.json()
+  if (data.ok) {
+    voteContainer.removeAttribute('data-disabled')
   } else {
-    let response = await fetch(`/view/${noteDocID}/vote/feedback?type=upvote&action=delete`, {
-      method: 'post',
-      body: voteData
-    })
-    let data = await response.json()
-    data.ok ? replaceLikeSvg(`<path 
-      d="M107.498 49.9985C107.998 49.9985 109.994 52.6188 109.494 70.581C108.994 88.5431 93.5 110.998 88.993 110.998C84.4861 110.998 28.4996 112 28.493 110.455C28.4863 108.91 28.4938 47.5373 28.4938 47.5373L49.9956 32.4996C49.9956 32.4996 53.0332 25.5652 57.9956 8.99958C62.958 -7.56607 78.4744 33.916 66 49.9982M107.498 49.9985C106.998 49.9985 66 49.9982 66 49.9982M107.498 49.9985L66 49.9982" 
-      stroke="#606770" stroke-width="10" stroke-linecap="round"
-      />
-    `, 'unlike') : false
+    Swal.fire(toastData('error', "Yikes! Try again later.", 3000))
   }
 }
 
-async function upvote(voteContainer) {
-  const noteDocID = voteContainer.getAttribute('data-noteid')
-  const isUpvoted = voteContainer.getAttribute('data-isupvoted') === "true" ? true : false
-
-  let voteData = new FormData()
-  voteData.append('noteDocID', noteDocID)
-  voteData.append('voterStudentID', voterStudentID)
-
-  function replaceUpvoteArrow(svg, action) {
-    document.querySelector('#upvote-container .uv-icon').innerHTML = svg
-    action === "delete" ? voteContainer.setAttribute('data-isupvoted', 'false') : voteContainer.setAttribute('data-isupvoted', 'true')
-  }
-
-  if(!isUpvoted) {
-    let response = await fetch(`/view/${noteDocID}/vote?type=upvote`, {
-      body: voteData,
-      method: 'post'
-    })
-    let data = await response.json()
-    data.ok ? replaceUpvoteArrow(`<path
-      d="M20.293 10.2935L19.5859 11.0006L20.293 10.2935ZM10.2929 1.70717L9.58575 1.00008L10.2929 1.70717ZM9.58575 1.00008L0.999862 9.58646L2.41412 11.0006L11 2.41425L9.58575 1.00008ZM2.41412 13.0006H6V11.0006H2.41412V13.0006ZM6 13.0006V19.5H8V13.0006H6ZM9.5 23H12.5V21H9.5V23ZM16 19.5V13.0006H14V19.5H16ZM16 13.0006H19.5859V11.0006H16V13.0006ZM21.0001 9.58646L12.4143 1.00008L11 2.41425L19.5859 11.0006L21.0001 9.58646ZM19.5859 13.0006C21.3677 13.0006 22.26 10.8464 21.0001 9.58646L19.5859 11.0006L19.5859 11.0006V13.0006ZM16 13.0006L16 13.0006V11.0006C14.8954 11.0006 14 11.8961 14 13.0006H16ZM12.5 23C14.433 23 16 21.433 16 19.5H14C14 20.3284 13.3284 21 12.5 21V23ZM6 19.5C6 21.433 7.567 23 9.5 23V21C8.67157 21 8 20.3284 8 19.5H6ZM6 13.0006L6 13.0006H8C8 11.8961 7.10457 11.0006 6 11.0006V13.0006ZM0.999862 9.58646C-0.260013 10.8464 0.632334 13.0006 2.41412 13.0006V11.0006L2.41412 11.0006L0.999862 9.58646ZM11 2.41425L11 2.41425L12.4143 1.00008C11.6332 0.218978 10.3668 0.218978 9.58575 1.00008L11 2.41425ZM11 1L21 11H14V21H8V11H1L11 1Z"
-      fill="#00FF00"
-    />`, "add") : false
-  } else {
-    let response = await fetch(`/view/${noteDocID}/vote?type=upvote&action=delete`, {
-      body: voteData,
-      method: 'post'
-    })
-    let data = await response.json()
-    data.ok ? replaceUpvoteArrow(`<path
-      d="M20.293 10.2935L19.5859 11.0006L20.293 10.2935ZM10.2929 1.70717L9.58575 1.00008L10.2929 1.70717ZM9.58575 1.00008L0.999862 9.58646L2.41412 11.0006L11 2.41425L9.58575 1.00008ZM2.41412 13.0006H6V11.0006H2.41412V13.0006ZM6 13.0006V19.5H8V13.0006H6ZM9.5 23H12.5V21H9.5V23ZM16 19.5V13.0006H14V19.5H16ZM16 13.0006H19.5859V11.0006H16V13.0006ZM21.0001 9.58646L12.4143 1.00008L11 2.41425L19.5859 11.0006L21.0001 9.58646ZM19.5859 13.0006C21.3677 13.0006 22.26 10.8464 21.0001 9.58646L19.5859 11.0006L19.5859 11.0006V13.0006ZM16 13.0006L16 13.0006V11.0006C14.8954 11.0006 14 11.8961 14 13.0006H16ZM12.5 23C14.433 23 16 21.433 16 19.5H14C14 20.3284 13.3284 21 12.5 21V23ZM6 19.5C6 21.433 7.567 23 9.5 23V21C8.67157 21 8 20.3284 8 19.5H6ZM6 13.0006L6 13.0006H8C8 11.8961 7.10457 11.0006 6 11.0006V13.0006ZM0.999862 9.58646C-0.260013 10.8464 0.632334 13.0006 2.41412 13.0006V11.0006L2.41412 11.0006L0.999862 9.58646ZM11 2.41425L11 2.41425L12.4143 1.00008C11.6332 0.218978 10.3668 0.218978 9.58575 1.00008L11 2.41425Z"
-      fill="black"
-    />`, "delete") : false
-  }
-}
 
 function formatDate(date) {
   const formatter = new Intl.DateTimeFormat('en-US', {
@@ -299,7 +250,8 @@ const tribute = new Tribute({
 tribute.attach(document.querySelector('#editor'))
 
 const editor = new Quill('#editor', {
-  theme: 'snow'
+  theme: 'snow',
+  placeholder: 'Give a feeback'
 });
 document.getElementById('editor').style.height = '120px';
 
@@ -361,23 +313,51 @@ document.addEventListener('DOMContentLoaded', () => {
   const noteDocID = window.location.pathname.split("/")[2]; // Note's document ID
   const commenterStudentID = Cookies.get("studentID"); // Commenter's document ID
 
-  const postMainComment = async () => {
+  const postMainComment = async (event) => {
+    event.preventDefault()
+
     const commentHTML = editor.root.innerHTML; // feedback text
     
-    if (editor.root.textContent.trim() === "") return; // Preventing any empty comments
+    if (editor.root.textContent.trim() === "" || document.querySelector('#editor').getAttribute('data-disabled')) return; // Preventing any empty comments
+
+    document.querySelector('#editor').setAttribute('data-disabled', 'true')
+
+    // a temporary feedback placeholder that will be shown until the main feedback is sent successfully
+    manageNotes.addFeedback({
+      _id: '__id__',
+      createdAt: new Date(),
+      feedbackContents: '',
+      commenterDocID: {
+        profile_pic: '__profile_pic__',
+        username: '__username__',
+        displayname: 'User'
+      },
+      noteDocID: {
+        _id: '__id__'
+      },
+      upvoteCount: 0,
+      temporary: true
+    })
 
     const feedbackData = new FormData()
     feedbackData.append('noteDocID', noteDocID)
     feedbackData.append('commenterStudentID', commenterStudentID)
     feedbackData.append('feedbackContents', commentHTML)
 
-    await fetch(`${pathname.endsWith('/') ? pathname : pathname + '/'}postFeedback`, {
+    let response = await fetch(`${pathname.endsWith('/') ? pathname : pathname + '/'}postFeedback`, {
       body: feedbackData,
       method: 'post'
     })
+    let data = await response.json()
+    if(data.sent) {
+      document.querySelector('#editor').removeAttribute('data-disabled') 
+      Swal.fire(toastData('success', "Feedback delivered with care!", 2000))
+      editor.root.innerHTML = ''; // reseting toast ui editor content
+      adjustThreadLineHeights();
+    } else {
+      Swal.fire(toastData('error', "Yikes! Try again later.", 3000))
+    }
 
-    adjustThreadLineHeights();
-    editor.root.innerHTML = ''; // reseting toast ui editor content
   };
 
   cmntBtn.addEventListener("click", postMainComment);
@@ -405,7 +385,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
           // Add the HTML for the thread editor
           threadEditor.innerHTML = `
-                  <!--<img class="tec__avatar-preview thread-avatar">-->
                   <div class="thread-editor-wrapper">
                     <span id='mentioneduser' class="thread-mentioned-user">@${parentCommenterUsername}</span>
                     <textarea placeholder="Write a comment..." class="thread-editor"></textarea>
@@ -432,10 +411,22 @@ document.addEventListener('DOMContentLoaded', () => {
         const textarea = event.target.closest('.thread-editor-container').querySelector('.thread-editor');
         const replyContent = document.querySelector('#mentioneduser').innerHTML + " " + textarea.value.trim();
 
-        if (!replyContent) return; // Prevents posting empty replies
-
+        if (!textarea.value.trim() || textarea.getAttribute('data-disabled')) return; // Prevents posting empty replies
+        
+        textarea.setAttribute('data-disabled', 'true')
         const threadSection = event.target.closest('.thread-section');
 
+        manageNotes.addReply(threadSection, {
+          createdAt: new Date(),
+          feedbackContents: '',
+          commenterDocID: {
+            profile_pic: '__profile_pic__',
+            username: '__username__',
+            displayname: 'User'
+          },
+          temporary: true
+        })
+        
         const parentFeedbackDocID = threadSection.previousElementSibling.querySelector('.reply-info #parentFeedbackDocID').innerHTML
         const replyData = new FormData()
         replyData.append('noteDocID', noteDocID)
@@ -444,13 +435,19 @@ document.addEventListener('DOMContentLoaded', () => {
         replyData.append('parentFeedbackDocID', parentFeedbackDocID)
         replyData.append('reply', true)
 
-        await fetch(`${pathname.endsWith('/') ? pathname : pathname + '/'}postFeedback`, {
+        let response = await fetch(`${pathname.endsWith('/') ? pathname : pathname + '/'}postFeedback`, {
           body: replyData,
           method: 'post'
         })
+        let data = await response.json()
+        if (data.sent) {
+          textarea.removeAttribute('data-disabled')
+          adjustThreadLineHeights(); // Adjust thread height again
+          textarea.value = '';
+        } else {
+          Swal.fire(toastData('error', "Yikes! Try again later.", 3000))    
+        }
 
-        adjustThreadLineHeights(); // Adjust thread height again
-        textarea.value = '';
       }
     });
   };
