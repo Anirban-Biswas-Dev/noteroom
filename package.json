@@ -24,6 +24,7 @@
     "express-session": "^1.18.0",
     "firebase-admin": "^12.7.0",
     "google-auth-library": "^9.15.0",
+    "jsdom": "^26.0.0",
     "mongoose": "^8.5.1",
     "node-fetch": "^3.3.2",
     "nodemailer": "^6.9.16",

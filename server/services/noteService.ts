@@ -7,6 +7,7 @@ import { Notifs } from '../schemas/notifications.js'
 import { deleteNoteImages } from './firebaseService.js'
 import { isCommentUpVoted, isUpVoted } from './voteService.js'
 import mongoose from 'mongoose'
+import { JSDOM }  from 'jsdom'
 
 
 export async function addNote(noteData: INoteDB) {
@@ -102,7 +103,25 @@ export async function getNote({noteDocID, studentDocID}: IManageUserNote) {
 
         let returnedNote: INoteDetails = { note: note, owner: owner, feedbacks: extendedFeedbacks }
         return returnedNote
+    } else {
+        
     }
+}
+
+export async function getNoteForShare({noteDocID, studentDocID}: IManageUserNote) {
+    let _note = await Notes.aggregate([
+        { $match: { _id: new mongoose.Types.ObjectId(noteDocID) } },
+        { $project: {
+            title: 1,
+            description: 1,
+            thumbnail: { $first: "$content" }
+        } }
+    ])
+    let note = _note[0]
+    let parser = new JSDOM(note["description"])
+    let description = parser.window.document.querySelector('body').textContent
+    
+    return { ...note, description: description }
 }
 
 export async function getAllNotes(studentDocID: string, options = { skip: 0, limit: 3 }) {
