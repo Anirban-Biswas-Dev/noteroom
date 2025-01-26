@@ -6,11 +6,14 @@ import {Convert} from '../../services/userService.js'
 import { postNoteFeedbackRouter } from './post-feedback.js';
 import { voteRouter } from './vote.js';
 import { INoteDetails } from '../../types/noteService.types.js'
+import apisRouter from './apis.js'
 
+//TODO: fetch the comments dynamically
 const router = Router()
 function noteViewRouter(io: Server) {
     router.use('/:noteID', postNoteFeedbackRouter(io))
     router.use('/:noteID', voteRouter(io))
+    router.use('/:noteID', apisRouter(io))
 
     router.get('/:noteID?', async (req, res, next) => {
         try {

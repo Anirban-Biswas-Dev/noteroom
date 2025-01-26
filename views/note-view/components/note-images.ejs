@@ -1,13 +1,6 @@
-<div class="carousel-container">
+<div class="carousel-container" id="note-image-container">
+  <div class="search-results-loader" id="note-image-loader"></div>
   <div class="carousel-wrapper">
-    <span class="note-thumbnail" style="display: none">
-      <%= note.content[0] %>
-    </span>
-    <% note.content.forEach(note => { %>
-    <div class="carousel-slide">
-      <img src="<%= note %>" class="image-links" />
-    </div>
-    <% }) %>
   </div>
   <button class="carousel-control prev">
     <i class="fa-solid fa-arrow-left"></i>

@@ -81,9 +81,9 @@ export async function deleteSavedNote({ studentDocID, noteDocID }: IManageUserNo
     }
 }
 
-export async function getNote({noteDocID, studentDocID}: IManageUserNote) {
-    if (noteDocID) {
-        let _note = (await Notes.findById(noteDocID, { title: 1, subject: 1, description: 1, ownerDocID: 1, content: 1, upvoteCount: 1 })).toObject()
+export async function getNote({noteDocID, studentDocID}: IManageUserNote, images: boolean = false) {
+    if(!images) {
+        let _note = (await Notes.findById(noteDocID, { title: 1, subject: 1, description: 1, ownerDocID: 1, upvoteCount: 1 })).toObject()
         let _isNoteUpvoted = await isUpVoted({ noteDocID, voterStudentDocID: studentDocID })
         let _isSaved = await isSaved({ studentDocID, noteDocID })
         let note = { ..._note, isUpvoted: _isNoteUpvoted, isSaved: _isSaved }
@@ -104,7 +104,8 @@ export async function getNote({noteDocID, studentDocID}: IManageUserNote) {
         let returnedNote: INoteDetails = { note: note, owner: owner, feedbacks: extendedFeedbacks }
         return returnedNote
     } else {
-        
+        let images = (await Notes.findById(noteDocID, { content: 1 })).content
+        return images
     }
 }
 
@@ -120,7 +121,7 @@ export async function getNoteForShare({noteDocID, studentDocID}: IManageUserNote
     let note = _note[0]
     let parser = new JSDOM(note["description"])
     let description = parser.window.document.querySelector('body').textContent
-    
+
     return { ...note, description: description }
 }
 
