@@ -136,6 +136,12 @@ export const manageProfileNotes = {
             } }
         ])
         return notes
+    },
+
+    async getNoteCount(type: "saved" | "owned", studentID: string) {
+        let student = await Students.findOne({ studentID: studentID }, { saved_notes: 1, owned_notes: 1 })
+        let notes_ids = student[type === "saved" ? "saved_notes" : "owned_notes"]
+        return notes_ids.length
     }
 }
 

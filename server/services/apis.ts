@@ -147,10 +147,21 @@ export default function apiRouter(io: Server) {
 
 
     router.get('/note', async (req, res) => {
-        let studentID = req.session["stdid"]
-        let noteType = <"saved" | "owned">req.query["noteType"]
-        let notes = await manageProfileNotes.getNote(noteType, studentID)
-        res.json(notes)
+        try {
+            let username = <string>req.query["username"]
+            let studentID = await Convert.getStudentID_username(username)
+            let noteType = <"saved" | "owned">req.query["noteType"]
+            let isCount = req.query["count"] ? true : false
+            if (!isCount) {
+                let notes = await manageProfileNotes.getNote(noteType, studentID)
+                res.json(notes)
+            } else {
+                let noteCount = await manageProfileNotes.getNoteCount(noteType, studentID)
+                res.json({ noteType, count: noteCount })
+            }
+        } catch (error) {
+            
+        }
     })
 
 

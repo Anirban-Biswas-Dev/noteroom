@@ -521,18 +521,23 @@ const manageNotes = {
         threadSection.querySelector('.thread-editor-container').insertAdjacentHTML('beforebegin', replyMessage);
     },
 
-    addNoteProfile: function (noteData, noteType='saved') {
-        let savedNotesContainer = document.querySelector(noteType === 'saved' ? '.sv-notes-container' : '.notes-container')
-        let noteCard = `
-            <div class="note-card" id="${noteType === 'saved' ? "sv-note" : "own-note"}-${noteData.noteID}">
-                <a href="/view/${noteData.noteID}">
-                    <h3>
-                        ${noteData.noteTitle > 30 ? noteData.noteTitle.slice(0, 30) : noteData.noteTitle }
-                    </h3>
-                    <img src='${noteData.noteThumbnail}' alt="No thumbnail?!">
-                </a>
-            </div>`
-        savedNotesContainer.insertAdjacentHTML('afterbegin', noteCard);
+    addNoteProfile: function (noteData, noteType) {
+        let notesContainer = document.querySelector(noteType === 'saved' ? '.sv-notes-container' : '.notes-container')
+        let noteElementID = `${noteType === 'saved' ? "sv-note" : "own-note"}-${noteData.noteID}`
+        let existingNote = notesContainer.querySelector(`#${noteElementID}`)
+
+        if (!existingNote) {
+            let noteCard = `
+                <div class="note-card" id="${noteElementID}">
+                    <a href="/view/${noteData.noteID}">
+                        <h3>
+                            ${noteData.noteTitle > 30 ? noteData.noteTitle.slice(0, 30) : noteData.noteTitle }
+                        </h3>
+                        <img src='${noteData.noteThumbnail}' alt="No thumbnail?!">
+                    </a>
+                </div>`
+            notesContainer.insertAdjacentHTML('afterbegin', noteCard);
+        }
     }
 }
 

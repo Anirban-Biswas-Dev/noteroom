@@ -8,6 +8,12 @@ socket.on('update-upvote-dashboard', function (noteDocID, upvoteCount) {
 	}
 })
 
+/*
+FIXME: The "Saved Notes" are fetched and stored in IndexedDB when the user visits the `/dashboard` page.
+!  However, if a user is redirected directly to the `/user-profile` page without first visiting `/dashboard`,
+!  the notes in IndexedDB may be outdated or unavailable. This results in the user seeing stale data
+!  in the "Saved Notes" tab.
+*/
 window.addEventListener('load', () => {
 	async function getSavedNotes() {
 		let response = await fetch('/api/note?noteType=saved')
@@ -17,7 +23,6 @@ window.addEventListener('load', () => {
 		})
 	}
 	
-
 	getSavedNotes()
 })
 
