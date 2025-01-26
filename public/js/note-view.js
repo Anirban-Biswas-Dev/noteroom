@@ -1,12 +1,50 @@
 const host = window.location.origin;
 const socket = io(host);
 
-/*
-# Event Sequence:
-~   1. join-room: to server : request server to join the room of that note
-~   2. feedback: to server : give the feedback and other assoc. data to add the feedbacks to db
-~   3. add-feedback: from server : add the responsed extented feedback data with commenter's information   
-*/
+window.addEventListener('load', async () => {
+  console.log(`page loaded`)
+  let imageContainer = document.querySelector('#note-image-container').querySelector('.carousel-wrapper')
+  let imageSliderElement = (source) => {
+    let template = `<img src="${source}" class="image-links" />`
+    let slideDiv = document.createElement('div')
+    slideDiv.classList.add('carousel-slide')
+    slideDiv.innerHTML = template.trim()
+    return slideDiv
+  }
+
+  let response = await fetch(`${window.location.pathname}/images`)
+  let images = await response.json()
+  if (images.length !== 0) {
+    document.querySelector('#note-image-loader').remove()
+    images.forEach(source => {
+      imageContainer.appendChild(imageSliderElement(source))
+    })
+    console.log(`image loaded`)
+  }
+ 
+  const slides = document.querySelectorAll(".carousel-slide");
+  const nextButton = document.querySelector(".next");
+  const prevButton = document.querySelector(".prev");
+  let currentIndex = 0;
+
+  function showSlide(index) {
+    const offset = -index * 100;
+    document.querySelector(".carousel-wrapper").style.transform = `translateX(${offset}%)`;
+  }
+
+  nextButton.addEventListener("click", () => {
+    currentIndex = (currentIndex + 1) % slides.length;
+    showSlide(currentIndex);
+  });
+
+  prevButton.addEventListener("click", () => {
+    currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+    showSlide(currentIndex);
+  });
+
+  // Initially show the first slide
+  showSlide(currentIndex);
+})
 
 socket.emit("join-room", window.location.pathname.split("/")[2] /* The note-id as the unique room name */);
 
@@ -87,31 +125,6 @@ function formatDate(date) {
   const formattedDate = formatter.format(date);
   return formattedDate
 }
-
-const slides = document.querySelectorAll(".carousel-slide");
-const nextButton = document.querySelector(".next");
-const prevButton = document.querySelector(".prev");
-let currentIndex = 0;
-
-function showSlide(index) {
-  const offset = -index * 100;
-  document.querySelector(
-    ".carousel-wrapper"
-  ).style.transform = `translateX(${offset}%)`;
-}
-
-nextButton.addEventListener("click", () => {
-  currentIndex = (currentIndex + 1) % slides.length;
-  showSlide(currentIndex);
-});
-
-prevButton.addEventListener("click", () => {
-  currentIndex = (currentIndex - 1 + slides.length) % slides.length;
-  showSlide(currentIndex);
-});
-
-// Initially show the first slide
-showSlide(currentIndex);
 
 let kickUser = document.querySelector('.kick')
 if (kickUser) {

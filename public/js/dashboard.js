@@ -8,6 +8,24 @@ socket.on('update-upvote-dashboard', function (noteDocID, upvoteCount) {
 	}
 })
 
+/*
+FIXME: The "Saved Notes" are fetched and stored in IndexedDB when the user visits the `/dashboard` page.
+!  However, if a user is redirected directly to the `/user-profile` page without first visiting `/dashboard`,
+!  the notes in IndexedDB may be outdated or unavailable. This results in the user seeing stale data
+!  in the "Saved Notes" tab.
+*/
+window.addEventListener('load', () => {
+	async function getSavedNotes() {
+		let response = await fetch('/api/note?noteType=saved')
+		let savedNotes = await response.json()
+		savedNotes.forEach(note => {
+			manageDb.add('savedNotes', note)
+		})
+	}
+	
+	getSavedNotes()
+})
+
 
 //* Function to get paginated notes
 let page = 2
@@ -117,97 +135,99 @@ const observers = {
 	}
 }
 
-/**
- * @description When back_forward is captured, these functions will add cards if there are any in IndexedBD 
-*/
-let back_forward_note_add = {
-	async addSavedNotes() {
-		let savedNotes = await manageDb.get('savedNotes');
+// /**
+//  * @description When back_forward is captured, these functions will add cards if there are any in IndexedBD 
+// */
+// let back_forward_note_add = {
+// 	async addSavedNotes() {
+// 		let savedNotes = await manageDb.get('savedNotes');
 
-		if (savedNotes.length != 0) {
-			document.querySelector('.no-saved-notes-message').style.display = 'none'
-			savedNotes.forEach(note => {
-				manageNotes.addSaveNote(note)
-				let _note = document.querySelector(`#note-${note.noteID} #save-note-btn`)
-				if (_note) {
-					_note.classList.add("saved")
-				}
-			})
-		}
-	},
+// 		if (savedNotes.length != 0) {
+// 			document.querySelector('.no-saved-notes-message').style.display = 'none'
+// 			savedNotes.forEach(note => {
+// 				manageNotes.addSaveNote(note)
+// 				let _note = document.querySelector(`#note-${note.noteID} #save-note-btn`)
+// 				if (_note) {
+// 					_note.classList.add("saved")
+// 				}
+// 			})
+// 		}
+// 	},
 
-	async addNotis() {
-		let notis = await manageDb.get('notis')
+// 	async addNotis() {
+// 		let notis = await manageDb.get('notis')
 
-		if (notis.length != 0) {
-			notis.forEach(noti => {
-				manageNotes.addNoti(noti)
-			})
-		}
-	},
+// 		if (notis.length != 0) {
+// 			notis.forEach(noti => {
+// 				manageNotes.addNoti(noti)
+// 			})
+// 		}
+// 	},
 
-	async addUNotes() {
-		let notes = await manageDb.get('notes')
+// 	async addUNotes() {
+// 		let notes = await manageDb.get('notes')
 
-		if (notes.length != 0) {
-			notes.forEach(note => {
-				manageNotes.addNote(note)
-			})
-		}
-	}
-}
+// 		if (notes.length != 0) {
+// 			notes.forEach(note => {
+// 				manageNotes.addNote(note)
+// 			})
+// 		}
+// 	}
+// }
 
-let [navigate] = performance.getEntriesByType('navigation')
-if ((navigate.type === 'navigate') || (navigate.type == 'reload')) {
+// let [navigate] = performance.getEntriesByType('navigation')
+// if ((navigate.type === 'navigate') || (navigate.type == 'reload')) {
 
-	db.notis.clear()
-	db.notes.clear()
+// 	db.notis.clear()
+// 	db.notes.clear()
 
-	let studentDocID = Cookies.get('recordID').split(':')[1].replaceAll('"', '')
-	let studentID = Cookies.get('studentID')
+// 	let studentDocID = Cookies.get('recordID').split(':')[1].replaceAll('"', '')
+// 	let studentID = Cookies.get('studentID')
 
-	fetch(`/api/getNote?type=save&studentDocID=${studentDocID}`) // 1.1
-		.then(response => response.json())
-		.then(notes => {
-			notes.forEach(note => {
-				let noteData = {
-					noteID: note._id,
-					noteTitle: note.title,
-				}
-				manageDb.add('savedNotes', noteData)
-			})
-		})
-		.catch(error => console.log(error.message))
+// 	fetch(`/api/getNote?type=save&studentDocID=${studentDocID}`) // 1.1
+// 		.then(response => response.json())
+// 		.then(notes => {
+// 			notes.forEach(note => {
+// 				let noteData = {
+// 					noteID: note._id,
+// 					noteTitle: note.title,
+// 				}
+// 				manageDb.add('savedNotes', noteData)
+// 			})
+// 		})
+// 		.catch(error => console.log(error.message))
 
-	fetch(`/api/getNotifs?studentID=${studentID}`)
-		.then(response => response.json())
-		.then(notifs => {
-			notifs.forEach(noti => {
-				let isVote = noti.docType === "note-vote" ? true : false
-				let _notiData = {
-					notiID: noti._id,
-					isread: noti.isRead,
-					noteID: noti.noteDocID._id,
-					nfnTitle: noti.noteDocID.title
-				}
-				let notiData = !isVote ? {
-					..._notiData,
-					feedbackID: noti.feedbackDocID,
-					commenterUserName: noti.commenterDocID.username,
-					commenterDisplayName: noti.commenterDocID.displayname
-				} : _notiData
-				manageDb.add('notis', notiData)
-			})
-		})
+// 	fetch(`/api/getNotifs?studentID=${studentID}`)
+// 		.then(response => response.json())
+// 		.then(notifs => {
+// 			notifs.forEach(noti => {
+// 				let isVote = noti.docType === "note-vote" ? true : false
+// 				let _notiData = {
+// 					notiID: noti._id,
+// 					isread: noti.isRead,
+// 					noteID: noti.noteDocID._id,
+// 					nfnTitle: noti.noteDocID.title
+// 				}
+// 				let notiData = !isVote ? {
+// 					..._notiData,
+// 					feedbackID: noti.feedbackDocID,
+// 					commenterUserName: noti.commenterDocID.username,
+// 					commenterDisplayName: noti.commenterDocID.displayname
+// 				} : _notiData
+// 				manageDb.add('notis', notiData)
+// 			})
+// 		})
 
-} else if (navigate.type === 'back_forward') {
-	back_forward_note_add.addSavedNotes()
-	back_forward_note_add.addNotis()
-	back_forward_note_add.addUNotes()
-}
+// } else if (navigate.type === 'back_forward') {
+// 	back_forward_note_add.addSavedNotes()
+// 	back_forward_note_add.addNotis()
+// 	back_forward_note_add.addUNotes()
+// }
 
 
 // A checker if there are any saved notes in `savedNotes` store, if not, shows the no-saved-notes message
+
+
 async function checkNoSavedMessage() {
 	let _savedNotes = await manageDb.get('savedNotes')
 	let noSavedNoteMessage = document.querySelector('.no-saved-notes-message')

@@ -11,7 +11,12 @@ function checkOnboarded(isOnBoardingFile: boolean) {
                 next()
             }
         } else {
-            res.redirect("/login")
+            let headers = req.headers['user-agent']
+            if (headers.includes('facebook')) {
+                next()
+            } else {
+                res.redirect("/login")
+            }
         }
     }
 

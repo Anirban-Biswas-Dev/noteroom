@@ -1,25 +1,25 @@
 <% if (block === 'left-panel') { %>
 <div class="left-panel">
   <div class="left-panel-header">
-    <img src="https://storage.googleapis.com/noteroom-fb1a7.appspot.com/badges/draft-logo-of-noteroom.png" alt="NoteRoom Logo" />
+    <img class="left-panel--nr-logo" onclick="window.open('/')" src="\assets\android-chrome-192x192.png" alt="NoteRoom Logo" />
     <span class="users-db-msg">
-      Welcome to NoteRoom</span>
+      NoteRoom</span>
   </div>
   <button class="btn-home" onclick="window.location.href = '/dashboard'">
     <svg width="28" height="28" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-      <rect width="24.4687" height="24.4687" fill="url(#pattern0_1185_1183)" />
+      <rect width="24.4687" height="24.4687" fill="url(#pattern0_3781_4874)"/>
       <defs>
-        <pattern id="pattern0_1185_1183" patternContentUnits="objectBoundingBox" width="1" height="1">
-          <use xlink:href="#image0_1185_1183" transform="scale(0.01)" />
-        </pattern>
-        <image id="image0_1185_1183" width="100" height="100" xlink:href="data:image/png;base64,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" />
+      <pattern id="pattern0_3781_4874" patternContentUnits="objectBoundingBox" width="1" height="1">
+      <use xlink:href="#image0_3781_4874" transform="scale(0.01)"/>
+      </pattern>
+      <image id="image0_3781_4874" width="100" height="100" xlink:href="data:image/png;base64,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"/>
       </defs>
-    </svg>
-
+      </svg>
+      
     Home
   </button>
   <button class="btn-upload-note" onclick="window.location.href = '/upload'">
-    <svg width="35" height="35" viewBox="0 0 36 35" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg class="btn-upload-note-svg" width="35" height="35" viewBox="0 0 36 35" fill="none" xmlns="http://www.w3.org/2000/svg">
       <g clip-path="url(#clip0_1010_510)">
         <path d="M23.6606 22.7891L17.9636 17.0921M17.9636 17.0921L12.2666 22.7891M17.9636 17.0921V29.9104M29.9131 26.1931C31.3022 25.4358 32.3996 24.2374 33.032 22.7871C33.6644 21.3369 33.7959 19.7173 33.4056 18.1841C33.0154 16.6508 32.1256 15.2912 30.8768 14.3197C29.628 13.3483 28.0913 12.8204 26.5091 12.8193H24.7146C24.2835 11.1519 23.48 9.60387 22.3645 8.29165C21.249 6.97942 19.8505 5.93716 18.2742 5.2432C16.6979 4.54924 14.9849 4.22166 13.2637 4.28507C11.5426 4.34848 9.85828 4.80124 8.33734 5.60931C6.8164 6.41739 5.49843 7.55974 4.48253 8.95049C3.46662 10.3412 2.77922 11.9442 2.47199 13.6389C2.16477 15.3335 2.24572 17.0758 2.70875 18.7346C3.17179 20.3935 4.00486 21.9258 5.14534 23.2164" stroke="#1E1E1E" stroke-width="2.8485" stroke-linecap="round" stroke-linejoin="round" />
       </g>
@@ -35,12 +35,12 @@
   <!-- dynamic content loading here -->
   <div class="saved-notes-container">
     <div class="<%= savedNotes.length !== 0 ? 'hide' : '' %> no-saved-notes-message">
-      <p>It looks like you haven't saved any notes yet.</p>
-      <p>Start saving <span class="anim-bg">important notes</span> to easily access them later!</p>
+      <p>It looks like you haven't saved any notes yet. Start saving them to read later</p>
+      
     </div>
       
     <% savedNotes.forEach(note => { %>
-    <div class="saved-note" id="saved-note-<%= note._id %>">
+    <div class="saved-note" id="saved-note-<%= note._id %>" onclick="location.href='/view/<%= note._id %>'">
       <span class="saved-note-doc-id" style="display: none;"><%= note._id %></span>
       <span class="sv-note-title">
         <a class="sv-n-link" href='/view/<%= note._id %>'>
@@ -57,11 +57,10 @@
   </div>
   <button class="right-panel-btn" onclick="location.href='/support'">Help & Support</button>
   <button class="right-panel-btn" onclick="window.open('https://app.hubspot.com/guide-creator/g/YPlbIIXPTt?uuid=f456224c-8bcd-4673-8a7d-573176e779bb', '_blank'); return false">User Guide</button>
-  <button class="right-panel-btn" onclick="location.href='/about-us'">About</button>
 </div>
 <% } else if (block === 'right-panel') { %>
-<div class="notification-panel">
-  <div class="notification-panel-header">
+<div class="right-panel">
+  <div class="right-panel-header">
     <!-- This is button only visible on mobile -->
     <svg class="btn-hide-nft" width="40" height="40" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
       <rect width="30" height="30" fill="url(#pattern0_1223_1186)" />
@@ -79,15 +78,19 @@
       <path d="M49.4475 39.4709C49.4475 45.2615 44.7747 49.9417 39.0279 49.9417C33.2811 49.9417 28.6083 45.2615 28.6083 39.4709C28.6083 33.6802 33.2811 29 39.0279 29C44.7747 29 49.4475 33.6802 49.4475 39.4709Z" stroke="#07192D" stroke-width="4" />
       <path d="M3.32248 34.8098C9.00331 27.6792 21.1727 27.069 23.5029 28.6011C25.833 30.1332 25.833 30.9126 23.5029 37.9542C21.1727 44.9958 28.1617 47.278 23.5029 47.3074C18.844 47.3367 0.216087 47.3074 0.216087 47.3074C0.216087 47.3074 -1.22218 40.5142 3.32248 34.8098Z" fill="#07192D" />
     </svg>
-    <a href='/user/<%= root.username %>'><img src="<%= root.profile_pic %>" class="profile-pic" id="root-profile-pic"/></a>
     <i class="fa-solid fa-gear settings-icon" onclick="window.location.href = '/settings'"></i>
+    <svg class="pc-nft-btn" width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+      <rect width="40" height="40" fill="url(#pattern0_3781_4906)"/>
+      <defs>
+      <pattern id="pattern0_3781_4906" patternContentUnits="objectBoundingBox" width="1" height="1">
+      <use xlink:href="#image0_3781_4906" transform="scale(0.01)"/>
+      </pattern>
+      <image id="image0_3781_4906" width="100" height="100" xlink:href="data:image/png;base64,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"/>
+      </defs>
+      </svg>
+      
+    <a href='/user/<%= root.username %>'><img src="<%= root.profile_pic %>" class="profile-pic" id="root-profile-pic"/></a>
   </div>
-  <p class="sub-header">
-    Notifications
-    <svg width="9" height="9" viewBox="0 0 9 9" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect width="9" height="9" fill="#07192D" />
-    </svg>
-  </p>
   <div class="notifications-container">
     <% if(notis.length != 0) { %>
     <%

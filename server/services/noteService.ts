@@ -6,6 +6,8 @@ import { IManageUserNote, INoteDetails } from '../types/noteService.types.js'
 import { Notifs } from '../schemas/notifications.js'
 import { deleteNoteImages } from './firebaseService.js'
 import { isCommentUpVoted, isUpVoted } from './voteService.js'
+import mongoose from 'mongoose'
+import { JSDOM }  from 'jsdom'
 
 
 export async function addNote(noteData: INoteDB) {
@@ -51,8 +53,15 @@ export async function addSaveNote({ studentDocID, noteDocID }: IManageUserNote) 
             { new: true }
         )
         let saved_notes_count = (await Students.findOne({ _id: studentDocID }, { saved_notes: 1 })).saved_notes.length
-    
-        return { ok: true, count: saved_notes_count }
+        let savedNote = await Notes.aggregate([
+            { $match: { _id: new mongoose.Types.ObjectId(noteDocID) } },
+            { $project: {
+                title: 1,
+                thumbnail: { $first: '$content' }
+            } }
+        ])
+            
+        return { ok: true, count: saved_notes_count, savedNote: savedNote }
     } catch (error) {
         return { ok: false }
     }
@@ -72,9 +81,9 @@ export async function deleteSavedNote({ studentDocID, noteDocID }: IManageUserNo
     }
 }
 
-export async function getNote({noteDocID, studentDocID}: IManageUserNote) {
-    if (noteDocID) {
-        let _note = (await Notes.findById(noteDocID, { title: 1, subject: 1, description: 1, ownerDocID: 1, content: 1, upvoteCount: 1 })).toObject()
+export async function getNote({noteDocID, studentDocID}: IManageUserNote, images: boolean = false) {
+    if(!images) {
+        let _note = (await Notes.findById(noteDocID, { title: 1, subject: 1, description: 1, ownerDocID: 1, upvoteCount: 1 })).toObject()
         let _isNoteUpvoted = await isUpVoted({ noteDocID, voterStudentDocID: studentDocID })
         let _isSaved = await isSaved({ studentDocID, noteDocID })
         let note = { ..._note, isUpvoted: _isNoteUpvoted, isSaved: _isSaved }
@@ -94,7 +103,26 @@ export async function getNote({noteDocID, studentDocID}: IManageUserNote) {
 
         let returnedNote: INoteDetails = { note: note, owner: owner, feedbacks: extendedFeedbacks }
         return returnedNote
+    } else {
+        let images = (await Notes.findById(noteDocID, { content: 1 })).content
+        return images
     }
+}
+
+export async function getNoteForShare({noteDocID, studentDocID}: IManageUserNote) {
+    let _note = await Notes.aggregate([
+        { $match: { _id: new mongoose.Types.ObjectId(noteDocID) } },
+        { $project: {
+            title: 1,
+            description: 1,
+            thumbnail: { $first: "$content" }
+        } }
+    ])
+    let note = _note[0]
+    let parser = new JSDOM(note["description"])
+    let description = parser.window.document.querySelector('body').textContent
+
+    return { ...note, description: description }
 }
 
 export async function getAllNotes(studentDocID: string, options = { skip: 0, limit: 3 }) {
@@ -113,6 +141,28 @@ export async function getAllNotes(studentDocID: string, options = { skip: 0, lim
     )
 
     return extentedNotes
+}
+
+
+export const manageProfileNotes = {
+    async getNote(type: "saved" | "owned", studentID: string) {
+        let student = await Students.findOne({ studentID: studentID }, { saved_notes: 1, owned_notes: 1 })
+        let notes_ids = student[type === "saved" ? "saved_notes" : "owned_notes"]
+        let notes = await Notes.aggregate([
+            { $match: { _id: { $in: notes_ids } } },
+            { $project: {
+                title: 1,
+                thumbnail: { $first: '$content' }
+            } }
+        ])
+        return notes
+    },
+
+    async getNoteCount(type: "saved" | "owned", studentID: string) {
+        let student = await Students.findOne({ studentID: studentID }, { saved_notes: 1, owned_notes: 1 })
+        let notes_ids = student[type === "saved" ? "saved_notes" : "owned_notes"]
+        return notes_ids.length
+    }
 }
 
 export async function getOwner({noteDocID}: IManageUserNote) {

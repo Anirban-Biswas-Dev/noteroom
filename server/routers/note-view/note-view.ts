@@ -1,15 +1,19 @@
 import {Router} from 'express'
 import {Server} from 'socket.io'
 import {getNotifications, getSavedNotes, profileInfo, unreadNotiCount} from '../../helpers/rootInfo.js'
-import {getNote} from '../../services/noteService.js'
+import {getNote, getNoteForShare} from '../../services/noteService.js'
 import {Convert} from '../../services/userService.js'
 import { postNoteFeedbackRouter } from './post-feedback.js';
 import { voteRouter } from './vote.js';
+import { INoteDetails } from '../../types/noteService.types.js'
+import apisRouter from './apis.js'
 
+//TODO: fetch the comments dynamically
 const router = Router()
 function noteViewRouter(io: Server) {
     router.use('/:noteID', postNoteFeedbackRouter(io))
     router.use('/:noteID', voteRouter(io))
+    router.use('/:noteID', apisRouter(io))
 
     router.get('/:noteID?', async (req, res, next) => {
         try {
@@ -53,13 +57,14 @@ function noteViewRouter(io: Server) {
     router.get('/:noteID/shared', async (req, res, next) => {
         let headers = req.headers['user-agent']
         let noteDocID = req.params.noteID
-        let note = (await getNote({noteDocID})).note
 
-        if (headers.includes('facebook')) {
-            res.render('shared', { note: note, req: req })
-        } else {
+        if (!headers.includes('facebook')) {
             res.redirect(`/view/${noteDocID}`)
+        } else {
+            let note = await getNoteForShare({ noteDocID })
+            res.render('shared', { note: note, req: req })
         }
+
     })
 
     return router
