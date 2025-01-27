@@ -8,6 +8,7 @@ import { voteRouter } from './vote.js';
 import { INoteDetails } from '../../types/noteService.types.js'
 import apisRouter from './apis.js'
 
+//TODO: fetch the comments dynamically
 const router = Router()
 function noteViewRouter(io: Server) {
     router.use('/:noteID', postNoteFeedbackRouter(io))
