@@ -8,6 +8,7 @@ import { deleteNoteImages } from './firebaseService.js'
 import { isCommentUpVoted, isUpVoted } from './voteService.js'
 import mongoose from 'mongoose'
 import { JSDOM }  from 'jsdom'
+import { getComments } from './feedbackService.js'
 
 
 export async function addNote(noteData: INoteDB) {
@@ -89,21 +90,11 @@ export async function getNote({noteDocID, studentDocID}: IManageUserNote, images
         let note = { ..._note, isUpvoted: _isNoteUpvoted, isSaved: _isSaved }
 
         let owner = await Students.findById(note.ownerDocID, { displayname: 1, studentID: 1, profile_pic: 1, username: 1 })
-        let feedbacks = await Feedbacks.find({ noteDocID: note._id })
-            .populate('commenterDocID', 'displayname username studentID profile_pic').sort({ createdAt: -1 })
-
-        let _extentedFeedbacks = feedbacks.map(async feedback => {
-            let isupvoted = await isCommentUpVoted({ feedbackDocID: feedback._id.toString(), voterStudentDocID: studentDocID })
-            let reply = await Reply.find({ parentFeedbackDocID: feedback._id })
-                .populate('commenterDocID', 'username displayname profile_pic studentID')
-
-            return [{...feedback.toObject(), isUpVoted: isupvoted}, reply]
-        })
-        let extendedFeedbacks = await Promise.all(_extentedFeedbacks)
-
-        let returnedNote: INoteDetails = { note: note, owner: owner, feedbacks: extendedFeedbacks }
+        
+        let returnedNote: INoteDetails = { note: note, owner: owner }
         return returnedNote
     } else {
+        /* For fethcing the notes seperatly via an api */
         let images = (await Notes.findById(noteDocID, { content: 1 })).content
         return images
     }
