@@ -1,6 +1,23 @@
 import Notes from "../schemas/notes.js";
 import {feedbacksModel as Feedbacks, feedbacksModel, replyModel as Reply} from "../schemas/comments.js";
 import { IFeedBackDB, IReplyDB } from "../types/database.types.js";
+import { IManageUserNote } from "../types/noteService.types.js";
+import { isCommentUpVoted } from "./voteService.js";
+
+
+export async function getComments({ noteDocID, studentDocID }: IManageUserNote) {
+    let feedbacks = await Feedbacks.find({ noteDocID: noteDocID }).populate('commenterDocID', 'displayname username studentID profile_pic').sort({ createdAt: -1 })
+    let _extentedFeedbacks = await Promise.all(
+            feedbacks.map(async feedback => {
+            let isupvoted = await isCommentUpVoted({ feedbackDocID: feedback._id.toString(), voterStudentDocID: studentDocID })
+            let reply = await Reply.find({ parentFeedbackDocID: feedback._id })
+                .populate('commenterDocID', 'username displayname profile_pic studentID')
+
+            return [{...feedback.toObject(), isUpVoted: isupvoted}, reply]
+        })
+    )
+    return _extentedFeedbacks
+}
 
 
 export async function addFeedback(feedbackData: IFeedBackDB) {
@@ -18,7 +35,7 @@ export async function addFeedback(feedbackData: IFeedBackDB) {
         })
 
         return extendedFeedback
-    }
+}
     
 export async function getReply(replyDocID) {
     let extentedReply = await Reply.findById(replyDocID)

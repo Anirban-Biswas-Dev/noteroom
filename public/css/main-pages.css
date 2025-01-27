@@ -402,6 +402,7 @@ body {
   aspect-ratio: 1 / 1;
   object-fit: cover;
   transition: filter 0.3s ease;
+  cursor: pointer;
 }
 
 .profile-pic:hover {
