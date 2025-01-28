@@ -7,7 +7,7 @@
     display: none;
     align-items: center;
     justify-content: center; 
-    z-index: 1020   ;
+    z-index: 1020;
     margin: 0;
     background-color: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(2px);
