@@ -163,14 +163,28 @@ function hideLoader() {
     document.querySelector('.loader-overlay').style.display = 'none';
 }
 
+const editor = new Quill('#editor', {
+    theme: 'snow',
+    placeholder: "Describe your note in detail so others can know it's unique", 
+});
+document.getElementById('editor').style.height = '120px';
+
+
 async function publish() {
+    function toogleBrowse(showBrowse) {
+        document.querySelector('#note-upload-loader').style.display = (showBrowse ? 'none' : 'block')
+        document.querySelector('#fileInputBox').style.display = (showBrowse ? 'flex' : 'none')
+    }
+    
     try {
         if (stackFiles.length != 0) {
             let noteSubject = document.querySelector('.note-subject').value;
-            let noteTitle = document.querySelector('.note-title').value;
-            const noteDescription = editor.getHTML();
+            let noteTitle = document.querySelector('.note-title').value
+            const noteDescription = editor.root.innerHTML;
+            
+            if(noteSubject && noteTitle && editor.root.textContent.trim() !== "") {
+                toogleBrowse(false)
 
-            if(noteSubject && noteTitle && noteDescription !== "<p><br></p>") {
                 let formData = new FormData();
                 stackFiles.forEach((file, index) => {
                     formData.append(`image-${index}`, file);
@@ -179,44 +193,28 @@ async function publish() {
                 formData.append('noteTitle', noteTitle);
                 formData.append('noteDescription', noteDescription);
     
-                fetch('/upload', {
-                        method: 'POST',
-                        body: formData
-                }).then(response => {
-                    return response.json()
-                }).then(data => {
-                    if (data.error) {
-                        hideLoader()
-                    } else if (data.url) {
-                        hideLoader(); // Hide the loader after the process
-                        window.location.href = data.url;
-                    }
+                let response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
                 })
-                
-                showLoader()
+                let data = await response.json()
+                if (data.error) {
+                    setupErrorPopup(data.error)
+                } else if (data.ok) {
+                    toogleBrowse(true)
+                    Swal.fire({
+                        toast: true,
+                        position: "bottom-end",
+                        icon: 'success',
+                        title: Messages.upload_section.onUploadUserConformation,
+                        showConfirmButton: true
+                    })
+                }
             } else {
                 setupErrorPopup('Please fill up all the available fields to upload.')
             }
         }
-    } catch (error) {
-        hideLoader(); // Hide the loader in case of an error
-        alert(error.message);
-    }
+    } catch (error) {}
 }
 
-const editor = new toastui.Editor({
-    el: document.querySelector('#editor'),
-    previewStyle: 'none', // Disable split preview
-    initialEditType: 'wysiwyg', // Lock in WYSIWYG mode
-    height: '300px', // Adjusted height
-    toolbarItems: [
-        ['bold', 'italic', 'strike'],
-        ['hr'], 
-        ['link'], 
-        ['quote', 'ul', 'ol'], 
-    ],
-    placeholder: "Describe your note in detail so others can know it's unique", 
-    useCommandShortcut: true, // Enable shortcuts
-    hideModeSwitch: true, // Hide the "Markdown" tab
-});
-
+  

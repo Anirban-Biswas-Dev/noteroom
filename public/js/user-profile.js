@@ -88,7 +88,9 @@ let observer = new IntersectionObserver(entries => {
 }, {
     rootMargin: '0px 0px -300px 0px'
 })
-observer.observe(document.querySelector('#ownedNotes'))
+window.addEventListener('load', () => {
+    observer.observe(document.querySelector('#ownedNotes'))
+})
 
 //* The delete note eventhandler
 // document.addEventListener('click', function (event) {

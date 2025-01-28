@@ -1,7 +1,7 @@
 import { Server } from "socket.io";
-import { addFeedbackNoti, addMentionNoti, addReplyNoti, addVoteNoti, deleteNoti, readNoti } from "../notificationService.js";
-import { IFeedbackNotificationDB, IMentionNotificationDB, IReplyNotificationDB, IUpVoteNotificationDB } from "../../types/database.types.js";
-import { IFeedBackNotification, IMentionNotification, IReplyNotification, IUpVoteNotification } from "../../types/notificationService.type.js";
+import { addFeedbackNoti, addMentionNoti, addNoteUploadConfirmationNoti, addReplyNoti, addVoteNoti, deleteNoti, readNoti } from "../notificationService.js";
+import { IFeedbackNotificationDB, IMentionNotificationDB, INoteUploadConfirmationNotificationDB, IReplyNotificationDB, IUpVoteNotificationDB } from "../../types/database.types.js";
+import { IFeedBackNotification, IMentionNotification, INoteUploadConfirmationNotification, IReplyNotification, IUpVoteNotification } from "../../types/notificationService.type.js";
 import { userSocketMap } from "../../server.js";
 import Students from "../../schemas/students.js";
 
@@ -152,5 +152,32 @@ export function NotificationSender(io: Server, globals?: any) {
                 })
             }
         },
+
+
+        /**
+        * @param {Object} noteData 
+        * @description - This is the saved note's document object
+        */
+        async sendNoteUploadConfirmationNotification(noteData: any, type: 'success' | 'failure') {
+            let ownerStudentID = globals.ownerStudentID
+            let content = type === 'success' ? 'Your note is successfully uploaded!' : "Your note couldn't be uploaded successfully!"
+
+            //CRITICAL: handle the note upload failure
+            let notification_db: INoteUploadConfirmationNotificationDB = {
+                noteDocID: noteData["_id"].toString(),
+                ownerStudentID: ownerStudentID,
+                content: content
+            }
+            let notification_document = await addNoteUploadConfirmationNoti(notification_db)
+
+            let notification_io: INoteUploadConfirmationNotification = {
+                isread: "false",
+                message: notification_db.content,
+                nfnTitle: noteData["title"],
+                noteID: noteData["_id"].toString(),
+                notiID: notification_document._id.toString() ,
+            }
+            io.to(userSocketMap.get(ownerStudentID)).emit("notification-note-upload-confirmation", notification_io)
+        }
     }
 }

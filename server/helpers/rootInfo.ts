@@ -50,6 +50,12 @@ export async function getNotifications(studentID: rootStudentID) {
                     { path: 'noteDocID', select: 'title' },
                 ]))
             }
+        } else if (doc["docType"] === ENotificationType.NoteUploadConfirmation) {
+            if (doc["ownerStudentID"] == studentID) {
+                populatedNotifications.push(doc.populate([
+                    { path: 'noteDocID', select: 'title' },
+                ]))
+            }
         }
         else {
             populatedNotifications.push(doc)

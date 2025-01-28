@@ -104,6 +104,11 @@ interface INoteNotificationsDB {
 }
 
 
+export interface INoteUploadConfirmationNotificationDB extends INoteNotificationsDB {
+    ownerStudentID: string
+}
+
+
 /**
  * @description - This is the ideal structure for notifications **related to comments** (reply, feedack, mentions) **on notes**
  * @param {string} feedbackDocID - The `documentID` of the comment

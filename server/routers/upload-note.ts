@@ -7,6 +7,8 @@ import { getNotifications, getSavedNotes, profileInfo, unreadNotiCount } from '.
 import { INoteDB } from '../types/database.types.js'
 import { compressImage } from '../helpers/utils.js'
 import fileUpload from 'express-fileupload'
+import { userSocketMap } from '../server.js'
+import { NotificationSender } from '../services/io/ioNotifcationService.js'
 const router = Router()
 
 
@@ -24,15 +26,6 @@ function uploadRouter(io: Server) {
     })
 
     router.post('/', async (req, res, next) => {
-        /* 
-        POST Handler:
-        =============
-            1. First the text data (subject, title and description) and the File Objects will be captured
-            2. Add the text data into the database so that we can get the note's document ID
-            3. Grab the note's document ID and then create a new folder with that within the student's folder (owner's folder)
-            4. Save all the files into the cloud (into the note folder) and fetch their links
-            5. Update the note's record by adding all the image-links into the database
-         */
         try {
             if (!req.files) {
                 res.send({ error: 'No files have been selected to publish' })
@@ -43,6 +36,8 @@ function uploadRouter(io: Server) {
                     title: req.body['noteTitle'],
                     description: req.body['noteDescription']
                 } //* All the data except the notes posted by the client
+
+                res.send({ ok: true })
 
                 let note = await addNote(noteData) //* Adding all the record of a note except the content links in the database
                 let noteDocId = note._id
@@ -59,9 +54,13 @@ function uploadRouter(io: Server) {
                     allFilePaths.push(publicUrl)
                 }
 
-                Notes.findByIdAndUpdate(noteDocId, { $set: { content: allFilePaths } }).then(() => {
-                    res.send({ url: '/dashboard' })
-                }) //* After adding everything into the note-db except content (image links), this will update the content field with the image links
+                await Notes.findByIdAndUpdate(noteDocId, { $set: { content: allFilePaths, completed: true } }) //* After adding everything into the note-db except content (image links), this will update the content field with the image links
+                let completedNoteData = await Notes.findById(noteDocId)
+
+                await NotificationSender(io, {
+                    ownerStudentID: req.session["stdid"],
+                }).sendNoteUploadConfirmationNotification(completedNoteData, 'success')
+
 
                 let owner = await profileInfo(req.session["stdid"]) //* Getting the user information, basically the owner of the note
                 io.emit('note-upload', { //* Handler 1: Dashboard; for adding the note at feed via websockets
@@ -72,7 +71,8 @@ function uploadRouter(io: Server) {
                     feedbackCount: 0, //! maybe this needs to be dynamic
                     ownerDisplayName /* Displayname of the owener of the note*/: owner.displayname,
                     ownerID /* Student ID of the owner of the note */: owner.studentID,
-                    ownerUserName /* Username of the owner of the note */: owner.username
+                    ownerUserName /* Username of the owner of the note */: owner.username,
+                    upvoteCount: 0
                 })
             }
         } catch (error) {
@@ -80,6 +80,7 @@ function uploadRouter(io: Server) {
                 let errorField = error.errors.title['path']
                 io.emit('note-validation', { errorField })
             } else {
+                //CRITICAL: handle the note upload failure
                 res.send({ error: error.message })
                 next(error)
             }
