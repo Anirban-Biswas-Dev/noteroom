@@ -8,6 +8,7 @@
 	<link rel="stylesheet" href="/css/dashboard.css" />
 	<link rel="stylesheet" href="/css/loaders.css" />
 	<link rel="stylesheet" href="/css/share-note.css" />
+	<link rel="stylesheet" href="/css/quick-post.css" />
 	<link rel="stylesheet" href="/css/error-popup.css" />
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -143,12 +144,8 @@
 
 	<%- include('../side-panel', { block: 'right-panel' }) %>
 	<%- include('../side-panel', { block: 'mbl-ctrl-panel' }) %>
+	<%- include('../side-panel', { block: 'quick-post' }) %>
 
-	<div class="quick-post-editor-overlay">
-		<div class="quick-post-editor-container">
-			
-		</div>
-	</div>
 
 	<audio id="notificationAudio" src="/sounds/notification-ping-sound.mp3" preload="auto"></audio>
 	<!-- Mobile Bottom Control Bar -->
