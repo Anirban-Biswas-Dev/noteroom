@@ -27,12 +27,13 @@ export function voteRouter(io: Server) {
                 if (_voterStudentID !== feedbackOwner["studentID"]) {
                     upvoteCount === 1 || upvoteCount % 5 ? (async function() {
                         await NotificationSender(io, {
-                            upvoteCount: upvoteCount,
-                            noteDocID: noteDocID,
                             ownerStudentID: feedbackOwner["studentID"],
-                            voterStudentDocID: voterStudentDocID,
-                            feedback: true
-                        }).sendVoteNotification(voteData)
+                            redirectTo: `/view/${noteDocID}`
+                        }).sendNotification({
+                            content: 'Your comment is getting noticed! Someone liked what you said.',
+                            title: `${voteData["noteDocID"]["title"]}`,
+                            event: 'notification-comment-upvote'
+                        })
                     })() : false
                 }
     
@@ -72,11 +73,13 @@ export function voteRouter(io: Server) {
                 if(_voterStudentID !== _ownerStudentID) {
                     upvoteCount % 5 === 0 || upvoteCount === 1 ? (async function() {
                         await NotificationSender(io, {
-                            upvoteCount: upvoteCount,
-                            noteDocID: noteDocID,
                             ownerStudentID: _ownerStudentID,
-                            voterStudentDocID: voterStudentDocID
-                        }).sendVoteNotification(voteData)
+                            redirectTo: `/view/${noteDocID}`
+                        }).sendNotification({
+                            content: 'Your note is making an impact! just got some upvotes.',
+                            title: `${voteData["noteDocID"]["title"]}`,
+                            event: 'notification-upvote'
+                        })
                     })() : false
                 }
                             
