@@ -40,6 +40,10 @@ const notesSchema = new mongoose_1.Schema({
         type: Date,
         required: true,
         default: Date.now
+    },
+    type_: {
+        type: String,
+        default: 'public'
     }
 });
 const notesModel = (0, mongoose_1.model)('notes', notesSchema);

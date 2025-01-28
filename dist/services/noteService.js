@@ -111,7 +111,7 @@ async function getNote({ noteDocID, studentDocID }) {
     }
 }
 async function getAllNotes(studentDocID, options = { skip: 0, limit: 3 }) {
-    let notes = await notes_js_1.default.find({}, { ownerDocID: 1, title: 1, content: 1, feedbackCount: 1, upvoteCount: 1 })
+    let notes = await notes_js_1.default.find({ type_: { $ne: "private" } }, { ownerDocID: 1, title: 1, content: 1, feedbackCount: 1, upvoteCount: 1 })
         .sort({ createdAt: -1 })
         .skip(options.skip)
         .limit(options.limit)

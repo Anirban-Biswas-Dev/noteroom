@@ -98,7 +98,7 @@ export async function getNote({noteDocID, studentDocID}: IManageUserNote) {
 }
 
 export async function getAllNotes(studentDocID: string, options = { skip: 0, limit: 3 }) {
-    let notes = await Notes.find({}, { ownerDocID: 1, title: 1, content: 1, feedbackCount: 1, upvoteCount: 1 })
+    let notes = await Notes.find({ type_: { $ne: "private" } }, { ownerDocID: 1, title: 1, content: 1, feedbackCount: 1, upvoteCount: 1 })
         .sort({ createdAt: -1 })
         .skip(options.skip)
         .limit(options.limit)
