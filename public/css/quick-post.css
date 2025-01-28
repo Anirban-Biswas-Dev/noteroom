@@ -102,6 +102,7 @@
     background-color: rgba(255, 255, 255, 0.5);
     height: 100%;
     width: 100%;
+    padding: 10px;
     display: none;
     flex-direction: column;
     justify-content: center;
@@ -201,9 +202,11 @@
     gap: 10px;
 }
 
+/* The resused profile pic class might conflict here with displaying it */
 .qpec-user-profile-pic{
     width: 45px;
     height: 45px;
+    display: block;
 }
 
 .qpec-user-name{
@@ -300,4 +303,116 @@
     cursor: not-allowed;
     border: none;
     box-shadow: none;
+}
+
+
+@media (max-width:360px) {
+  .qpec-header{
+    padding: 10px 5px;
+  }
+  .qpec-title{
+    font-size: 14px;
+  }
+  .qpec-close-icon{
+    padding: 5px 8px;
+  }
+  .qpec-body{
+    max-height: 40vh;
+    padding: 5px 10px;
+    gap: 8px;
+  }
+  .qpec-user-profile-pic{
+    width: 40px;
+    height: 40px;
+  }
+  .qpec-user-name{
+    font-size: 14px;
+  }
+  .qpec-textarea{
+    font-size: 14px;
+    padding: 5px;
+  }
+  .qpec-icons-wrapper{
+    padding: 5px 10px;
+  }
+  .qpec-img-preview-wrapper{
+    padding: 2px;
+  }
+  .qpec-show-selected-img-preview{
+    max-width: 45vw;
+  }
+}
+
+@media (min-width: 361px) and (max-width: 480px) {
+  .qpec-header {
+    padding: 12px 8px;
+  }
+  .qpec-title {
+    font-size: 16px;
+  }
+  .qpec-close-icon {
+    padding: 6px 10px;
+  }
+  .qpec-body {
+    max-height: 30vh;
+    padding: 8px 12px;
+    gap: 10px;
+  }
+  .qpec-user-profile-pic {
+    width: 50px;
+    height: 50px;
+  }
+  .qpec-user-name {
+    font-size: 16px;
+  }
+  .qpec-textarea {
+    font-size: 15px;
+    padding: 6px;
+  }
+  .qpec-icons-wrapper {
+    padding: 8px 12px;
+  }
+  .qpec-img-preview-wrapper {
+    padding: 4px;
+  }
+  .qpec-show-selected-img-preview {
+    max-width: 50vw;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  .qpec-header {
+    padding: 15px 10px;
+  }
+  .qpec-title {
+    font-size: 18px;
+  }
+  .qpec-close-icon {
+    padding: 8px 12px;
+  }
+  .qpec-body {
+    max-height: 28vh;
+    padding: 10px 15px;
+    gap: 12px;
+  }
+  .qpec-user-profile-pic {
+    width: 60px;
+    height: 60px;
+  }
+  .qpec-user-name {
+    font-size: 18px;
+  }
+  .qpec-textarea {
+    font-size: 16px;
+    padding: 8px;
+  }
+  .qpec-icons-wrapper {
+    padding: 10px 15px;
+  }
+  .qpec-img-preview-wrapper {
+    padding: 6px;
+  }
+  .qpec-show-selected-img-preview {
+    max-width: 40vw;
+  }
 }
