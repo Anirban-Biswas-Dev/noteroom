@@ -1,22 +1,6 @@
 const host = window.location.origin
 const socket = io(host)
 
-socket.on('note-validation', (message) => {
-    let { errorField } = message
-    setTimeout(() => {
-        switch(errorField) {
-            case 'title':
-                let titleElement = document.querySelector('.note-title')
-                titleElement.style.border = '2px solid red'
-                setupErrorPopup("Title's character must be less than 200.")
-                break
-        }
-
-        hideLoader()
-    }, 1000)
-})
-
-
 document.addEventListener('DOMContentLoaded', () => {
     let thumbnailPopup = document.querySelector('.thumbnail-pop-up');
 
@@ -163,14 +147,39 @@ function hideLoader() {
     document.querySelector('.loader-overlay').style.display = 'none';
 }
 
+const editor = new Quill('#editor', {
+    theme: 'snow',
+    placeholder: "Describe your note in detail so others can know it's unique", 
+});
+document.getElementById('editor').style.height = '120px';
+
+
+const uploadToastData = (message, type) => {
+    return {
+        toast: true,
+        position: "bottom-end",
+        icon: type,
+        title: message,
+        showConfirmButton: true
+    }
+}
+
+
 async function publish() {
+    function toogleBrowse(showBrowse) {
+        document.querySelector('#note-upload-loader').style.display = (showBrowse ? 'none' : 'block')
+        document.querySelector('#fileInputBox').style.display = (showBrowse ? 'flex' : 'none')
+    }
+    
     try {
         if (stackFiles.length != 0) {
             let noteSubject = document.querySelector('.note-subject').value;
-            let noteTitle = document.querySelector('.note-title').value;
-            const noteDescription = editor.getHTML();
+            let noteTitle = document.querySelector('.note-title').value
+            const noteDescription = editor.root.innerHTML;
+            
+            if(noteSubject && noteTitle && editor.root.textContent.trim() !== "") {
+                toogleBrowse(false)
 
-            if(noteSubject && noteTitle && noteDescription !== "<p><br></p>") {
                 let formData = new FormData();
                 stackFiles.forEach((file, index) => {
                     formData.append(`image-${index}`, file);
@@ -179,44 +188,29 @@ async function publish() {
                 formData.append('noteTitle', noteTitle);
                 formData.append('noteDescription', noteDescription);
     
-                fetch('/upload', {
-                        method: 'POST',
-                        body: formData
-                }).then(response => {
-                    return response.json()
-                }).then(data => {
-                    if (data.error) {
-                        hideLoader()
-                    } else if (data.url) {
-                        hideLoader(); // Hide the loader after the process
-                        window.location.href = data.url;
-                    }
+                let response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
                 })
-                
-                showLoader()
+                let data = await response.json()
+                if (data.ok) {
+                    Swal.fire(uploadToastData(Messages.upload_section.onUploadUserConformation, 'success'))
+                } else {
+                    if (data.message) {
+                        setupErrorPopup(data.message)
+                    } else {
+                        Swal.fire(uploadToastData(Messages.upload_section.onErrorConfirmation, 'error'))   
+                    }
+                }
+
+                toogleBrowse(true)
             } else {
                 setupErrorPopup('Please fill up all the available fields to upload.')
             }
         }
     } catch (error) {
-        hideLoader(); // Hide the loader in case of an error
-        alert(error.message);
+        setupErrorPopup(error)
     }
 }
 
-const editor = new toastui.Editor({
-    el: document.querySelector('#editor'),
-    previewStyle: 'none', // Disable split preview
-    initialEditType: 'wysiwyg', // Lock in WYSIWYG mode
-    height: '300px', // Adjusted height
-    toolbarItems: [
-        ['bold', 'italic', 'strike'],
-        ['hr'], 
-        ['link'], 
-        ['quote', 'ul', 'ol'], 
-    ],
-    placeholder: "Describe your note in detail so others can know it's unique", 
-    useCommandShortcut: true, // Enable shortcuts
-    hideModeSwitch: true, // Hide the "Markdown" tab
-});
-
+  

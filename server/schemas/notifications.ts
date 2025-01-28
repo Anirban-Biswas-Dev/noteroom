@@ -2,7 +2,7 @@ import { Schema, model } from 'mongoose'
 
 const baseOptions = {
     discriminatorKey: 'docType',
-    collection: 'notifs-test'
+    collection: 'notification-test-ok'
 }
 
 const NotifsSchema = new Schema({
@@ -17,9 +17,21 @@ const NotifsSchema = new Schema({
     content: {
         type: String,
         default: ''
-    }
+    },
+    title: {
+        type: String,
+        default: ''
+    },
+    notiType: {
+        type: String
+    },
+    redirectTo: {
+        type: String,
+        default: ''
+    },
+    ownerStudentID: String
 }, baseOptions)
-const NotifsModel = model('notifs-test', NotifsSchema)
+const NotifsModel = model('notification-test-ok', NotifsSchema)
 
 
 const feedBackSchema = new Schema({
@@ -110,16 +122,31 @@ const votesNotifs = NotifsModel.discriminator('note-vote', voteSchema)
 const commentVotesNotifs = NotifsModel.discriminator('note-comment-vote', voteSchema)
 
 
+const noteUploadConfirmationSchema = new Schema({
+    noteDocID: {
+        type: Schema.Types.ObjectId,
+        ref: 'notes',
+        required: true
+    },
+    ownerStudentID: String
+})
+const noteUploadConfirmationNotifs = NotifsModel.discriminator('note-upload-confirmation', noteUploadConfirmationSchema)
 
 
-export const Notifs = NotifsModel
-const _feedBackNotifs = feedBackNotifs
-export { _feedBackNotifs as feedBackNotifs }
-const _mentionNotifs = mentionNotifs
-export { _mentionNotifs as mentionNotifs }
-const _replyNotifs = replyNotifs
-export { _replyNotifs as replyNotifs }
-const _votesNotifs = votesNotifs
-export { _votesNotifs as votesNotifs }
-const _commentVotesNotifs = commentVotesNotifs
-export { _commentVotesNotifs as commentVotesNotifs }
+const generalNotifsSchema = new Schema({
+    ownerStudentID: String,
+    title: String
+})
+const generalNotifs = NotifsModel.discriminator('notification-general', generalNotifsSchema)
+
+export { 
+    NotifsModel as Notifs, 
+    feedBackNotifs, 
+    mentionNotifs, 
+    replyNotifs, 
+    votesNotifs, 
+    commentVotesNotifs,
+    noteUploadConfirmationNotifs as ntUploadConfirm,
+    generalNotifs
+}
+  

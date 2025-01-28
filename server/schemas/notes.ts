@@ -8,7 +8,6 @@ const notesSchema = new Schema({
     },
     title: {
         type: String,
-        maxLength: 200,
         required: true,
     },
     content: {
@@ -39,6 +38,14 @@ const notesSchema = new Schema({
         type: Date,
         required: true,
         default: Date.now
+    },
+    type_: {
+        type: String,
+        default: "private"
+    },
+    completed: {
+        type: Boolean,
+        default: false
     }
 })
 

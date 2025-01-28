@@ -1,4 +1,5 @@
-import { Notifs, commentVotesNotifs, feedBackNotifs, mentionNotifs, replyNotifs, votesNotifs } from "../schemas/notifications.js";
+import { IGeneralNotificationDB, INoteUploadConfirmationNotificationDB } from './../types/database.types';
+import { Notifs, commentVotesNotifs, feedBackNotifs, generalNotifs, mentionNotifs, ntUploadConfirm, replyNotifs, votesNotifs } from "../schemas/notifications.js";
 import { IFeedbackNotificationDB, IMentionNotificationDB, IReplyNotificationDB, IUpVoteNotificationDB } from "../types/database.types.js";
 
 
@@ -37,6 +38,22 @@ export async function addVoteNoti(voteData: IUpVoteNotificationDB, isCommentVote
         let votenoti = await commentVotesNotifs.create(voteData)
         return votenoti
     }
+}
+
+export async function addNoteUploadConfirmationNoti(notiData: INoteUploadConfirmationNotificationDB) {
+    let data = await ntUploadConfirm.create(notiData)
+    return data
+}
+
+export async function addGeneralNoti(notiData: IGeneralNotificationDB) {
+    let data = await generalNotifs.create(notiData)
+    return data
+}
+
+
+export async function addNoti(notiData) {
+    let data = await Notifs.create(notiData)
+    return data
 }
 
 // naming: add<notification-type>Noti

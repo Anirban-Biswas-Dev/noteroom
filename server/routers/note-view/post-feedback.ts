@@ -41,6 +41,21 @@ export function postNoteFeedbackRouter(io: Server) {
             }
         }
 
+        async function sendMentionNotification(baseDocument, mentions: string[]) {
+            let mentionedStudentIDs = (await Students.find({ username: { $in: mentions } }, { studentID: 1 })).map(data => data.studentID)
+
+            mentionedStudentIDs.forEach(async ownerStudentID => {
+                await NotificationSender(io, {
+                    ownerStudentID: ownerStudentID,
+                    redirectTo: `/view/${_noteDocID}`
+                }).sendNotification({
+                    content: `You were mentioned by ${baseDocument["commenterDocID"]["displayname"]}. Join the conversation!`,
+                    title: baseDocument["noteDocID"]["title"],
+                    event: 'notification-mention'
+                })
+            })
+        }
+
         
         if(!req.body["reply"]) {
             try {
@@ -57,17 +72,16 @@ export function postNoteFeedbackRouter(io: Server) {
                 if (_ownerStudentID !== _commenterStudentID) {
                     await NotificationSender(io, {
                         ownerStudentID: _ownerStudentID,
-                        noteDocID: _noteDocID,
-                        commenterDocID: commenterDocID
-                    }).sendFeedbackNotification(feedback)
+                        redirectTo: `/view/${_noteDocID}#${feedback["_id"].toString()}`
+                    }).sendNotification({
+                        title: feedback['noteDocID']['title'],
+                        content: `${feedback['commenterDocID']['displayname']} left a comment on your notes. Check it out!`,
+                        event: 'notification-feedback'
+                    })
                 }
         
                 let mentions = checkMentions(_feedbackContents)
-                await NotificationSender(io, { 
-                    noteDocID: _noteDocID, 
-                    commenterDocID: commenterDocID,
-                    commenterStudentID: _commenterStudentID,
-                }).sendMentionNotification(mentions, feedback)
+                await sendMentionNotification(feedback, mentions)
     
                 res.json({ sent: true })
             } catch (error) {
@@ -106,9 +120,14 @@ export function postNoteFeedbackRouter(io: Server) {
                 So, when a user won't give a reply on his own feedback and will give a reply to the parent-feedback, the person who gave the feedback will get a reply-notification. 
                 */
                 if(_commenterUserName !== parentFeedbackCommenterInfo.username && mentions_[0] === parentFeedbackCommenterInfo.username) {
-                    await NotificationSender(io, { 
-                        noteDocID: _noteDocID, 
-                    }).sendReplyNotification(reply)
+                    await NotificationSender(io, {
+                        ownerStudentID: parentFeedbackCommenterInfo["studentID"],
+                        redirectTo: `/view/${_noteDocID}#${reply["_id"].toString()}`
+                    }).sendNotification({
+                        title: reply['noteDocID']['title'],
+                        content: `${reply['commenterDocID']['displayname']} replied to your comment. See their response!`,
+                        event: 'notification-reply'
+                    })
                 }
     
     
@@ -118,13 +137,8 @@ export function postNoteFeedbackRouter(io: Server) {
                 This means, if you are replying someone's feedback, the feedbacker won't get a redundant mention notification, but they will get a reply notification
                 */
                 let modifiedMentions = mentions_[0] === parentFeedbackCommenterInfo.username ? mentions_.slice(1) : mentions_
-    
-                await NotificationSender(io, { 
-                    noteDocID: _noteDocID, 
-                    commenterDocID: commenterDocID,
-                    commenterStudentID: _commenterStudentID
-                }).sendMentionNotification(modifiedMentions, reply)
-    
+                await sendMentionNotification(reply, modifiedMentions)
+
                 res.json({ sent: true })
             } catch (error) {
                 res.json({ sent: false })
