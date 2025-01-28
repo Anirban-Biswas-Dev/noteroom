@@ -316,6 +316,7 @@ body {
 .middle-section {
   position: relative;
   width: 100%;
+  height: 100vh;
   max-width: 980px;
   margin: 0 auto;
   padding-top: 80px;
@@ -323,9 +324,11 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  overflow-y: auto;
+  overflow-y: scroll;
   z-index: 999;
   background-color: var(--main-bg);
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
 }
 
 .middle-section::-webkit-scrollbar {
