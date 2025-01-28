@@ -2,13 +2,14 @@ import { Router } from 'express'
 import Notes from '../schemas/notes.js'
 import { upload } from '../services/firebaseService.js'
 import { Server } from 'socket.io'
-import { addNote } from '../services/noteService.js'
+import { addNote, deleteNote } from '../services/noteService.js'
 import { getNotifications, getSavedNotes, profileInfo, unreadNotiCount } from '../helpers/rootInfo.js'
 import { INoteDB } from '../types/database.types.js'
 import { compressImage } from '../helpers/utils.js'
 import fileUpload from 'express-fileupload'
 import { userSocketMap } from '../server.js'
 import { NotificationSender } from '../services/io/ioNotifcationService.js'
+import { Convert } from '../services/userService.js'
 const router = Router()
 
 
@@ -26,12 +27,18 @@ function uploadRouter(io: Server) {
     })
 
     router.post('/', async (req, res, next) => {
-        try {
-            if (!req.files) {
-                res.send({ error: 'No files have been selected to publish' })
-            } else {
+        let studentID = req.session["stdid"]
+        let studentDocID = (await Convert.getDocumentID_studentid(studentID)).toString()
+
+        if (!req.files) {
+            res.send({ ok: false, message: 'No files have been selected to publish' })
+        } else {
+            let noteDocId: any;
+            let noteTitle = req.body['noteTitle'] || "Note upload failure!"
+
+            try {
                 let noteData: INoteDB = {
-                    ownerDocID: req.cookies['recordID'],
+                    ownerDocID: studentDocID,
                     subject: req.body['noteSubject'],
                     title: req.body['noteTitle'],
                     description: req.body['noteDescription']
@@ -40,7 +47,7 @@ function uploadRouter(io: Server) {
                 res.send({ ok: true })
 
                 let note = await addNote(noteData) //* Adding all the record of a note except the content links in the database
-                let noteDocId = note._id
+                noteDocId = note._id
 
                 let fileObjects = <fileUpload.UploadedFile[]>Object.values(req.files) //* Getting all the file objects from the requests
                 let compressedFileObjects = fileObjects.map(file => compressImage(file))
@@ -50,7 +57,7 @@ function uploadRouter(io: Server) {
                 let allFilePaths = [] //* These are the raw file paths that will be directly used in the note-view
 
                 for (const file of allFiles) {
-                    let publicUrl = (await upload(file, `${req.cookies['recordID']}/${noteDocId.toString()}/${file["name"]}`)).toString()
+                    let publicUrl = (await upload(file, `${studentDocID}/${noteDocId.toString()}/${file["name"]}`)).toString()
                     allFilePaths.push(publicUrl)
                 }
 
@@ -58,7 +65,7 @@ function uploadRouter(io: Server) {
                 let completedNoteData = await Notes.findById(noteDocId)
 
                 await NotificationSender(io, {
-                    ownerStudentID: req.session["stdid"],
+                    ownerStudentID: studentID,
                 }).sendNoteUploadConfirmationNotification(completedNoteData, 'success')
 
 
@@ -68,21 +75,18 @@ function uploadRouter(io: Server) {
                     thumbnail /* The first image of the notes content as a thumbnail */: allFilePaths[0],
                     profile_pic /* Profile pic path of the owner of the note */: owner.profile_pic,
                     noteTitle /* Title of the note */: noteData.title,
-                    feedbackCount: 0, //! maybe this needs to be dynamic
+                    feedbackCount: 0, 
                     ownerDisplayName /* Displayname of the owener of the note*/: owner.displayname,
                     ownerID /* Student ID of the owner of the note */: owner.studentID,
                     ownerUserName /* Username of the owner of the note */: owner.username,
                     upvoteCount: 0
                 })
-            }
-        } catch (error) {
-            if (error.errors && error.errors['title'] && error.errors.title['kind'] === 'maxlength') {
-                let errorField = error.errors.title['path']
-                io.emit('note-validation', { errorField })
-            } else {
-                //CRITICAL: handle the note upload failure
-                res.send({ error: error.message })
-                next(error)
+
+            } catch (error) {
+                await deleteNote({ studentDocID: studentDocID, noteDocID: noteDocId })
+                await NotificationSender(io, {
+                    ownerStudentID: studentID
+                }).sendGeneralNotification({ content: 'Your note cannot be uploaded successfully', title: noteTitle})
             }
         }
     })

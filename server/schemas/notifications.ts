@@ -121,6 +121,12 @@ const noteUploadConfirmationSchema = new Schema({
 const noteUploadConfirmationNotifs = NotifsModel.discriminator('note-upload-confirmation', noteUploadConfirmationSchema)
 
 
+const generalNotifsSchema = new Schema({
+    ownerStudentID: String,
+    title: String
+})
+const generalNotifs = NotifsModel.discriminator('notification-general', generalNotifsSchema)
+
 export { 
     NotifsModel as Notifs, 
     feedBackNotifs, 
@@ -128,6 +134,7 @@ export {
     replyNotifs, 
     votesNotifs, 
     commentVotesNotifs,
-    noteUploadConfirmationNotifs as ntUploadConfirm
+    noteUploadConfirmationNotifs as ntUploadConfirm,
+    generalNotifs
 }
   

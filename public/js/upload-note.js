@@ -1,22 +1,6 @@
 const host = window.location.origin
 const socket = io(host)
 
-socket.on('note-validation', (message) => {
-    let { errorField } = message
-    setTimeout(() => {
-        switch(errorField) {
-            case 'title':
-                let titleElement = document.querySelector('.note-title')
-                titleElement.style.border = '2px solid red'
-                setupErrorPopup("Title's character must be less than 200.")
-                break
-        }
-
-        hideLoader()
-    }, 1000)
-})
-
-
 document.addEventListener('DOMContentLoaded', () => {
     let thumbnailPopup = document.querySelector('.thumbnail-pop-up');
 
@@ -170,6 +154,17 @@ const editor = new Quill('#editor', {
 document.getElementById('editor').style.height = '120px';
 
 
+const uploadToastData = (message, type) => {
+    return {
+        toast: true,
+        position: "bottom-end",
+        icon: type,
+        title: message,
+        showConfirmButton: true
+    }
+}
+
+
 async function publish() {
     function toogleBrowse(showBrowse) {
         document.querySelector('#note-upload-loader').style.display = (showBrowse ? 'none' : 'block')
@@ -198,23 +193,24 @@ async function publish() {
                     body: formData
                 })
                 let data = await response.json()
-                if (data.error) {
-                    setupErrorPopup(data.error)
-                } else if (data.ok) {
-                    toogleBrowse(true)
-                    Swal.fire({
-                        toast: true,
-                        position: "bottom-end",
-                        icon: 'success',
-                        title: Messages.upload_section.onUploadUserConformation,
-                        showConfirmButton: true
-                    })
+                if (data.ok) {
+                    Swal.fire(uploadToastData(Messages.upload_section.onUploadUserConformation, 'success'))
+                } else {
+                    if (data.message) {
+                        setupErrorPopup(data.message)
+                    } else {
+                        Swal.fire(uploadToastData(Messages.upload_section.onErrorConfirmation, 'error'))   
+                    }
                 }
+
+                toogleBrowse(true)
             } else {
                 setupErrorPopup('Please fill up all the available fields to upload.')
             }
         }
-    } catch (error) {}
+    } catch (error) {
+        setupErrorPopup(error)
+    }
 }
 
   

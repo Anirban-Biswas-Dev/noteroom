@@ -1,7 +1,16 @@
 const ioServer = window.location.origin
 const ioSocket = io(ioServer, { query: { studentID: Cookies.get("studentID") } })
 
-let notiEvents = ['notification-feedback', 'notification-mention', 'notification-reply', 'notification-upvote', 'notification-comment-upvote', 'notification-note-upload-confirmation']
+let notiEvents = [
+    'notification-feedback', 
+    'notification-mention', 
+    'notification-reply', 
+    'notification-upvote', 
+    'notification-comment-upvote', 
+    'notification-note-upload-confirmation', 
+    'notification-general'
+]
+
 function handleNotifications(events) {
     events.forEach(event => {
         ioSocket.on(event, (data) => {

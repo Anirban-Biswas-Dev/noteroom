@@ -93,24 +93,24 @@
   </div>
   <div class="notifications-container">
     <% if(notis.length != 0) { %>
-    <%
-      function formatDate(date) {
-        const formatter = new Intl.DateTimeFormat('en-US', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit',
-          timeZone: 'Asia/Dhaka', 
-          hour12: true 
-        });
-      const formattedDate = formatter.format(date);
-      return formattedDate
-      } 
-    %>
-    <% notis.forEach(noti => { %>
-      <%- include('partials/notification.ejs', { noti: noti, message: noti.content, formatDate: formatDate }) %>
-    <% }) %>
+      <%
+        function formatDate(date) {
+          const formatter = new Intl.DateTimeFormat('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            timeZone: 'Asia/Dhaka', 
+            hour12: true 
+          });
+        const formattedDate = formatter.format(date);
+        return formattedDate
+        } 
+      %>
+      <% notis.forEach(noti => { %>
+        <%- include('partials/notification.ejs', { noti: noti, message: noti.content, formatDate: formatDate }) %>
+      <% }) %>
     <% } %>
   </div>
 </div>

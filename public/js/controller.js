@@ -347,37 +347,39 @@ const manageNotes = {
         }
     },
 
-    /**
-     * @param {Object} feedbackData - { notiID, feedbackID, isread, noteID, nfnTitle, commenterUserName, commenterDisplayName }
-     * @description - First checks if there is already a noti div with noti-notiID, if not, adds one
-    */
-    addNoti: function (feedbackData) {
+    addNoti: function (notiData) {
         let notificationContainer = document.querySelector('.notifications-container')
-        let existingNoti = document.querySelector(`#noti-${feedbackData.notiID}`)
+        let existingNoti = document.querySelector(`#noti-${notiData.notiID}`)
 
         if (!existingNoti) {
-            let isVote = feedbackData.vote ? true : false
+            let isVote = notiData.vote ? true : false
+            let isGeneral = notiData.general ? true : false 
+
             let notificationHtml = `
-                  <div class="notification secondary-${feedbackData.isread}" id="noti-${feedbackData.notiID}">
-                      ${!isVote ? `<span class='feedback-id' style='display: none;'>${feedbackData.feedbackID}</span>` : ""} 
-                      <div class="first-row">
-                      <div class="frnt-wrapper">
-                      <span class="isRead ${feedbackData.isread}"></span>
-                        <a href='/view/${feedbackData.noteID}/${!isVote ? `#${feedbackData.feedbackID}` : ''}' class="notification-link">
-                          <span class="notification-title">
-                          ${truncatedTitle(feedbackData.nfnTitle)}
-                          </span>
-                        </a>
+                <div class="notification secondary-${notiData.isread}" id="noti-${notiData.notiID}">
+                    ${!isVote || !isGeneral ? `<span class='feedback-id' style='display: none;'>${notiData.feedbackID}</span>` : ""} 
+                    <div class="first-row">
+                        <div class="frnt-wrapper">
+                            <span class="isRead ${notiData.isread}"></span>
+
+                            <a href=${isGeneral ? '#' : `/view/${notiData.noteID}/${!isVote ? `#${notiData.feedbackID}` : ""}`} class="notification-link">
+                                <span class="notification-title">
+                                    ${truncatedTitle(notiData.nfnTitle)}
+                                </span>
+                            </a>
+
                         </div>   
-                        <span class="remove-notification" onclick="deleteNoti('${feedbackData.notiID}')">&times;</span>
-                      </div>
-                      <div class="notification-msg">
-                        ${!isVote ? `
-                            <a href='/view/${feedbackData.noteID}/#${feedbackData.feedbackID}' class="notification-link-2">${feedbackData.message}</a>` :
-                    `<a href='/view/${feedbackData.noteID}' class="notification-link-2">${feedbackData.message}</a>`
-                } 
-                      </div>
-                  </div>`
+                        <span class="remove-notification" onclick="deleteNoti('${notiData.notiID}')">&times;</span>
+                    </div>
+                    <div class="notification-msg">
+                        ${isGeneral ? `${notiData.message}` : `
+                            ${!isVote ? `
+                                <a href='/view/${notiData.noteID}/#${notiData.feedbackID}' class="notification-link-2">${notiData.message}</a>` :
+                                `<a href='/view/${notiData.noteID}' class="notification-link-2">${notiData.message}</a>`
+                            } 
+                        `}
+                    </div>
+                </div>`
             notificationContainer.insertAdjacentHTML('afterbegin', notificationHtml);
         }
     },

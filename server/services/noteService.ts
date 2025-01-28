@@ -27,19 +27,19 @@ export async function addNote(noteData: INoteDB) {
 */
 export async function deleteNote({studentDocID, noteDocID}: IManageUserNote) {
     try {
-        await Notes.deleteOne({ _id: noteDocID })
-        await Students.updateOne(
-            { _id: studentDocID },
-            { $pull: { owned_notes: noteDocID } }
-        )
-        await Comments.deleteMany({ _id: noteDocID })
-    
-        let noteNotifs = await Notifs.find({ docType: { $in: ["note-feedback", "note-reply", "note-mention"] } })
-        let noteSpecificNotifsDocIDs = noteNotifs.filter(noti => noti["noteDocID"].toString() === noteDocID).map(noti => noti["_id"])
-        await Notifs.deleteMany({ _id: { $in: noteSpecificNotifsDocIDs } })
-    
-        await deleteNoteImages({ studentDocID, noteDocID })
-
+        let deleteResult = await Notes.deleteOne({ _id: noteDocID })
+        console.log(deleteResult)
+        if (deleteResult.deletedCount !== 0) {
+            await Students.updateOne(
+                { _id: studentDocID },
+                { $pull: { owned_notes: noteDocID } }
+            )
+            await Comments.deleteMany({ _id: noteDocID })
+            let noteNotifs = await Notifs.find({ docType: { $in: ["note-feedback", "note-reply", "note-mention"] } })
+            let noteSpecificNotifsDocIDs = noteNotifs.filter(noti => noti["noteDocID"].toString() === noteDocID).map(noti => noti["_id"])
+            await Notifs.deleteMany({ _id: { $in: noteSpecificNotifsDocIDs } })
+            await deleteNoteImages({ studentDocID, noteDocID })
+        }
         return true
     } catch (error) {
         return false

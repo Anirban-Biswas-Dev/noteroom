@@ -156,3 +156,10 @@ export interface IUpVoteNotificationDB {
     ownerStudentID: string,
     content: string
 }
+
+
+export interface IGeneralNotificationDB {
+    ownerStudentID: string,
+    title: string,
+    content: string
+}

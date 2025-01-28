@@ -85,3 +85,12 @@ export interface INoteUploadConfirmationNotification {
     nfnTitle: string,
     isread: string
 }
+
+
+export interface IGeneralNotification {
+    notiID: string,
+    message: string,
+    isread: string,
+    nfnTitle: string,
+    general: boolean
+}

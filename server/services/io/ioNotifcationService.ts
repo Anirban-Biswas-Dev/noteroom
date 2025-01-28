@@ -1,7 +1,7 @@
 import { Server } from "socket.io";
-import { addFeedbackNoti, addMentionNoti, addNoteUploadConfirmationNoti, addReplyNoti, addVoteNoti, deleteNoti, readNoti } from "../notificationService.js";
-import { IFeedbackNotificationDB, IMentionNotificationDB, INoteUploadConfirmationNotificationDB, IReplyNotificationDB, IUpVoteNotificationDB } from "../../types/database.types.js";
-import { IFeedBackNotification, IMentionNotification, INoteUploadConfirmationNotification, IReplyNotification, IUpVoteNotification } from "../../types/notificationService.type.js";
+import { addFeedbackNoti, addGeneralNoti, addMentionNoti, addNoteUploadConfirmationNoti, addReplyNoti, addVoteNoti, deleteNoti, readNoti } from "../notificationService.js";
+import { IFeedbackNotificationDB, IMentionNotificationDB, INoteUploadConfirmationNotificationDB, IReplyNotificationDB, IUpVoteNotificationDB, IGeneralNotificationDB } from "../../types/database.types.js";
+import { IFeedBackNotification, IGeneralNotification, IMentionNotification, INoteUploadConfirmationNotification, IReplyNotification, IUpVoteNotification } from "../../types/notificationService.type.js";
 import { userSocketMap } from "../../server.js";
 import Students from "../../schemas/students.js";
 
@@ -178,6 +178,27 @@ export function NotificationSender(io: Server, globals?: any) {
                 notiID: notification_document._id.toString() ,
             }
             io.to(userSocketMap.get(ownerStudentID)).emit("notification-note-upload-confirmation", notification_io)
+        },
+
+
+        async sendGeneralNotification({ content, title }) {
+            let ownerStudentID = globals.ownerStudentID
+
+            let notification_db: IGeneralNotificationDB = {
+                ownerStudentID: ownerStudentID,
+                content: content,
+                title: title
+            }
+            let notification_document = await addGeneralNoti(notification_db)
+            
+            let notification_io: IGeneralNotification = {
+                general: true,
+                isread: "false",
+                notiID: notification_document["_id"].toString(),
+                message: content,
+                nfnTitle: title
+            }
+            io.to(userSocketMap.get(ownerStudentID)).emit("notification-general", notification_io)
         }
     }
 }
