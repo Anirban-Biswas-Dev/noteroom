@@ -22,43 +22,6 @@ export default function notificationIOHandler(io: Server, socket: any) {
 export function NotificationSender(io: Server, globals?: any) {
     return {
         /**
-        * @param baseDocument - This will be the feedback/reply data on which the mentions will be filtered
-        * @param mentions - A list of usernames
-        */
-        async sendMentionNotification(mentions: string[], baseDocument: any) {
-            if (mentions.length !== 0) {
-                let mentionedStudentIDs = (await Students.find({ username: { $in: mentions } }, { studentID: 1 })).map(data => data.studentID)
-                mentionedStudentIDs.map(async studentID => {
-                    if (globals.commenterStudentID !== studentID) {
-                        let commenterDisplayName = baseDocument["commenterDocID"]["displayname"]
-                        let notification_db: IMentionNotificationDB = {
-                            noteDocID: globals.noteDocID,
-                            commenterDocID: globals.commenterDocID,
-                            feedbackDocID: baseDocument["_id"].toString(),
-                            mentionedStudentID: studentID,
-                            content: `You were mentioned by ${commenterDisplayName}. Join the conversation!`
-                        }
-                        let notification_document = await addMentionNoti(notification_db)
-    
-                        let notification_io: IMentionNotification = {
-                            noteID: globals.noteDocID,
-                            notiID: notification_document["_id"].toString(),
-                            feedbackID: baseDocument["_id"].toString(),
-                            mentionedStudentID: studentID,
-                            commenterDisplayName: commenterDisplayName,
-                            nfnTitle: baseDocument["noteDocID"]["title"],
-                            isread: "false",
-                            mention: true,
-                            message: notification_db.content
-                        }
-                        io.to(userSocketMap.get(studentID)).emit("notification-mention", notification_io)
-                    }
-                })
-            }
-        },
-
-
-        /**
         * @param {Object} noteData 
         * @description - This is the saved note's document object
         */
