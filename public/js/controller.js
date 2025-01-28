@@ -353,15 +353,17 @@ const manageNotes = {
 
         if (!existingNoti) {
             let notificationHtml = `
-                <div class="notification secondary-${notiData.isread}" id="noti-${notiData.notiID}" onclick="window.location.href = '${notiData.redirectTo}'">
+                <div class="notification secondary-${notiData.isread}" id="noti-${notiData.notiID}">
                     <div class="first-row">
                         <div class="frnt-wrapper">
                             <span class="isRead ${notiData.isread}"></span>
-                            <span class="notification-title">${truncatedTitle(notiData.title)}</span>
+                            <span class="notification-title">
+                                <a class="notification-link-2" href='${notiData.redirectTo}'>${truncatedTitle(notiData.title)}</a>
+                            </span>
                         </div>   
                         <span class="remove-notification" onclick="deleteNoti('${notiData.notiID}')">&times;</span>
                     </div>
-                    <div class="notification-msg">${notiData.content}</div>
+                    <a class="notification-link-2" href="${notiData.redirectTo}">${notiData.content}</a>
                 </div>`
             notificationContainer.insertAdjacentHTML('afterbegin', notificationHtml);
         }

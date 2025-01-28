@@ -14,64 +14,11 @@ export default function notificationIOHandler(io: Server, socket: any) {
     })
 }
 
-/**
-* @description - 1. Create a notification document from reply/feedback data, 2. Create a notification object to send via WS, 3. Send the notification with appropiate event name 
-*/
-//NICE-TO-HAVE: clarify each studentID's role
-//NICE-TO-HAVE: clarify globals
 export function NotificationSender(io: Server, globals?: any) {
     return {
-        /**
-        * @param {Object} noteData 
-        * @description - This is the saved note's document object
-        */
-        async sendNoteUploadConfirmationNotification(noteData: any, type: 'success' | 'failure') {
-            let ownerStudentID = globals.ownerStudentID
-            let content = type === 'success' ? 'Your note is successfully uploaded!' : "Your note couldn't be uploaded successfully!"
-
-            //CRITICAL: handle the note upload failure
-            let notification_db: INoteUploadConfirmationNotificationDB = {
-                noteDocID: noteData["_id"].toString(),
-                ownerStudentID: ownerStudentID,
-                content: content
-            }
-            let notification_document = await addNoteUploadConfirmationNoti(notification_db)
-
-            let notification_io: INoteUploadConfirmationNotification = {
-                isread: "false",
-                message: notification_db.content,
-                nfnTitle: noteData["title"],
-                noteID: noteData["_id"].toString(),
-                notiID: notification_document._id.toString() ,
-            }
-            io.to(userSocketMap.get(ownerStudentID)).emit("notification-note-upload-confirmation", notification_io)
-        },
-
-
-        async sendGeneralNotification({ content, title }) {
-            let ownerStudentID = globals.ownerStudentID
-
-            let notification_db: IGeneralNotificationDB = {
-                ownerStudentID: ownerStudentID,
-                content: content,
-                title: title
-            }
-            let notification_document = await addGeneralNoti(notification_db)
-            
-            let notification_io: IGeneralNotification = {
-                general: true,
-                isread: "false",
-                notiID: notification_document["_id"].toString(),
-                message: content,
-                nfnTitle: title
-            }
-            io.to(userSocketMap.get(ownerStudentID)).emit("notification-general", notification_io)
-        },
-
-
         async sendNotification({ content, title, event }) {
             let ownerStudentID = globals.ownerStudentID
-            let redirectTo = globals.redirectTo
+            let redirectTo = globals.redirectTo || ""
 
             let notification_db = {
                 notiType: event,

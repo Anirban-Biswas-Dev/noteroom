@@ -7,8 +7,8 @@ let notiEvents = [
     'notification-reply', 
     'notification-upvote', 
     'notification-comment-upvote', 
-    'notification-note-upload-confirmation', 
-    'notification-general'
+    'notification-note-upload-success', 
+    'notification-note-upload-failure'
 ]
 
 function handleNotifications(events) {

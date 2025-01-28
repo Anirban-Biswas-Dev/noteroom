@@ -1,12 +1,14 @@
-<div class="notification secondary-<%= notiData.isRead %>" id="noti-<%= notiData._id %>" onclick="window.location.href = '<%= notiData.redirectTo %>'">
+<div class="notification secondary-<%= notiData.isRead %>" id="noti-<%= notiData._id %>">
     <div class="first-row">
-        <div class="frnt-wrapper">
-            <span class="isRead <%= notiData.isRead %>"></span>
-            <span class="notification-title"><%= notiData.title %></span>
-        </div>   
+        <a href="<%= notiData.redirectTo %>" class="notification-link-2">
+            <div class="frnt-wrapper">
+                <span class="isRead <%= notiData.isRead %>"></span>
+                <span class="notification-title"><%= notiData.title %></span>
+            </div>   
+        </a>
         <span class="remove-notification" onclick="deleteNoti('<%= notiData._id %>')">&times;</span>
     </div>
     <div class="notification-msg">
-        <a class="notification-link-2"><%= notiData.content %></a>
+        <a class="notification-link-2" href="<%= notiData.redirectTo %>"><%= notiData.content %></a>
     </div>
 </div>

@@ -75,7 +75,7 @@ export function postNoteFeedbackRouter(io: Server) {
                         redirectTo: `/view/${_noteDocID}#${feedback["_id"].toString()}`
                     }).sendNotification({
                         title: feedback['noteDocID']['title'],
-                        content: `${feedback['commenterDocID']['displayname']} left a comment!`,
+                        content: `${feedback['commenterDocID']['displayname']} left a comment on your notes. Check it out!`,
                         event: 'notification-feedback'
                     })
                 }
@@ -125,7 +125,7 @@ export function postNoteFeedbackRouter(io: Server) {
                         redirectTo: `/view/${_noteDocID}#${reply["_id"].toString()}`
                     }).sendNotification({
                         title: reply['noteDocID']['title'],
-                        content: `${reply['commenterDocID']['displayname']} gave reply!`,
+                        content: `${reply['commenterDocID']['displayname']} replied to your comment. See their response!`,
                         event: 'notification-reply'
                     })
                 }

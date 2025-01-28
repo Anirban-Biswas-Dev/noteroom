@@ -66,8 +66,12 @@ function uploadRouter(io: Server) {
 
                 await NotificationSender(io, {
                     ownerStudentID: studentID,
-                }).sendNoteUploadConfirmationNotification(completedNoteData, 'success')
-
+                    redirectTo: `/view/${noteDocId}`
+                }).sendNotification({
+                    content: 'Your note is successfully uploaded!',
+                    title: completedNoteData["title"],
+                    event: 'notification-note-upload-success'
+                })
 
                 let owner = await profileInfo(req.session["stdid"]) //* Getting the user information, basically the owner of the note
                 io.emit('note-upload', { //* Handler 1: Dashboard; for adding the note at feed via websockets
@@ -86,7 +90,11 @@ function uploadRouter(io: Server) {
                 await deleteNote({ studentDocID: studentDocID, noteDocID: noteDocId })
                 await NotificationSender(io, {
                     ownerStudentID: studentID
-                }).sendGeneralNotification({ content: 'Your note cannot be uploaded successfully', title: noteTitle})
+                }).sendNotification({
+                    content: "Your note couldn't be uploaded successfully!",
+                    title: noteTitle,
+                    event: 'notification-note-upload-failure'
+                })
             }
         }
     })
