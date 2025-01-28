@@ -352,33 +352,16 @@ const manageNotes = {
         let existingNoti = document.querySelector(`#noti-${notiData.notiID}`)
 
         if (!existingNoti) {
-            let isVote = notiData.vote ? true : false
-            let isGeneral = notiData.general ? true : false 
-
             let notificationHtml = `
-                <div class="notification secondary-${notiData.isread}" id="noti-${notiData.notiID}">
-                    ${!isVote || !isGeneral ? `<span class='feedback-id' style='display: none;'>${notiData.feedbackID}</span>` : ""} 
+                <div class="notification secondary-${notiData.isread}" id="noti-${notiData.notiID}" onclick="window.location.href = '${notiData.redirectTo}'">
                     <div class="first-row">
                         <div class="frnt-wrapper">
                             <span class="isRead ${notiData.isread}"></span>
-
-                            <a href=${isGeneral ? '#' : `/view/${notiData.noteID}/${!isVote ? `#${notiData.feedbackID}` : ""}`} class="notification-link">
-                                <span class="notification-title">
-                                    ${truncatedTitle(notiData.nfnTitle)}
-                                </span>
-                            </a>
-
+                            <span class="notification-title">${truncatedTitle(notiData.title)}</span>
                         </div>   
                         <span class="remove-notification" onclick="deleteNoti('${notiData.notiID}')">&times;</span>
                     </div>
-                    <div class="notification-msg">
-                        ${isGeneral ? `${notiData.message}` : `
-                            ${!isVote ? `
-                                <a href='/view/${notiData.noteID}/#${notiData.feedbackID}' class="notification-link-2">${notiData.message}</a>` :
-                                `<a href='/view/${notiData.noteID}' class="notification-link-2">${notiData.message}</a>`
-                            } 
-                        `}
-                    </div>
+                    <div class="notification-msg">${notiData.content}</div>
                 </div>`
             notificationContainer.insertAdjacentHTML('afterbegin', notificationHtml);
         }

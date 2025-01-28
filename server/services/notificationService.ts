@@ -50,4 +50,10 @@ export async function addGeneralNoti(notiData: IGeneralNotificationDB) {
     return data
 }
 
+
+export async function addNoti(notiData) {
+    let data = await Notifs.create(notiData)
+    return data
+}
+
 // naming: add<notification-type>Noti

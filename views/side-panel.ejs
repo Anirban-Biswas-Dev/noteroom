@@ -109,7 +109,7 @@
         } 
       %>
       <% notis.forEach(noti => { %>
-        <%- include('partials/notification.ejs', { noti: noti, message: noti.content, formatDate: formatDate }) %>
+        <%- include('partials/notification.ejs', { notiData: noti, message: noti.content, formatDate: formatDate }) %>
       <% }) %>
     <% } %>
   </div>

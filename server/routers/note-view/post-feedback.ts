@@ -57,17 +57,20 @@ export function postNoteFeedbackRouter(io: Server) {
                 if (_ownerStudentID !== _commenterStudentID) {
                     await NotificationSender(io, {
                         ownerStudentID: _ownerStudentID,
-                        noteDocID: _noteDocID,
-                        commenterDocID: commenterDocID
-                    }).sendFeedbackNotification(feedback)
+                        redirectTo: `/view/${_noteDocID}#${feedback["_id"].toString()}`
+                    }).sendNotification({
+                        title: feedback['noteDocID']['title'],
+                        content: `${feedback['commenterDocID']['displayname']} left a comment!`,
+                        event: 'notification-feedback'
+                    })
                 }
         
-                let mentions = checkMentions(_feedbackContents)
-                await NotificationSender(io, { 
-                    noteDocID: _noteDocID, 
-                    commenterDocID: commenterDocID,
-                    commenterStudentID: _commenterStudentID,
-                }).sendMentionNotification(mentions, feedback)
+                // let mentions = checkMentions(_feedbackContents)
+                // await NotificationSender(io, { 
+                //     noteDocID: _noteDocID, 
+                //     commenterDocID: commenterDocID,
+                //     commenterStudentID: _commenterStudentID,
+                // }).sendMentionNotification(mentions, feedback)
     
                 res.json({ sent: true })
             } catch (error) {
@@ -106,9 +109,14 @@ export function postNoteFeedbackRouter(io: Server) {
                 So, when a user won't give a reply on his own feedback and will give a reply to the parent-feedback, the person who gave the feedback will get a reply-notification. 
                 */
                 if(_commenterUserName !== parentFeedbackCommenterInfo.username && mentions_[0] === parentFeedbackCommenterInfo.username) {
-                    await NotificationSender(io, { 
-                        noteDocID: _noteDocID, 
-                    }).sendReplyNotification(reply)
+                    await NotificationSender(io, {
+                        ownerStudentID: parentFeedbackCommenterInfo["studentID"],
+                        redirectTo: `/view/${_noteDocID}#${reply["_id"].toString()}`
+                    }).sendNotification({
+                        title: reply['noteDocID']['title'],
+                        content: `${reply['commenterDocID']['displayname']} gave reply!`,
+                        event: 'notification-reply'
+                    })
                 }
     
     
@@ -119,11 +127,11 @@ export function postNoteFeedbackRouter(io: Server) {
                 */
                 let modifiedMentions = mentions_[0] === parentFeedbackCommenterInfo.username ? mentions_.slice(1) : mentions_
     
-                await NotificationSender(io, { 
-                    noteDocID: _noteDocID, 
-                    commenterDocID: commenterDocID,
-                    commenterStudentID: _commenterStudentID
-                }).sendMentionNotification(modifiedMentions, reply)
+                // await NotificationSender(io, { 
+                //     noteDocID: _noteDocID, 
+                //     commenterDocID: commenterDocID,
+                //     commenterStudentID: _commenterStudentID
+                // }).sendMentionNotification(modifiedMentions, reply)
     
                 res.json({ sent: true })
             } catch (error) {
