@@ -1,5 +1,5 @@
 const conHost = window.location.origin
-const conSock = io(conHost, { query: { studentID: Cookies.get("studentID") } })
+const conSock = io(conHost)
 
 //* Badge images: user-profile + search-profile
 let baseURL = 'https://storage.googleapis.com/noteroom-fb1a7.appspot.com/badges/'
@@ -9,6 +9,18 @@ let imageObject = {
     'English': `${baseURL}english.png`
 }
 
+
+let toastData = (type, message, timer=2000) => {
+    return {
+        toast: true,
+        position: "bottom-end",
+        icon: type,
+        title: message,
+        timer: timer,
+        timerProgressBar: true,
+        showConfirmButton: false
+    }
+}
 
 
 //* Description or Bio truncater function
@@ -23,8 +35,8 @@ function truncatedTitle(title) {
 
 
 const db = new Dexie("Notes")
-db.version(4).stores({
-    savedNotes: "++id,noteID,noteTitle",
+db.version(6).stores({
+    savedNotes: "++id,noteID,noteTitle,noteThumbnail",
     notis: "++id,notiID,feedbackID,isread,noteID,nfnTitle,commenterUsername,commenterDisplayname",
     notes: "++id,noteID,thumbnail,profile_pic,noteTitle,feedbackCount,ownerDisplayName,ownerID,ownerUserName"
 })
@@ -42,11 +54,12 @@ const manageDb = {
     async add(store, obj) {
         switch (store) {
             case 'savedNotes':
-                let existingNote = await db.savedNotes.where("noteID").equals(obj.noteID).first()
+                let existingNote = await db.savedNotes.where("noteID").equals(obj._id).first()
                 if (!existingNote) {
                     await db.savedNotes.add({
-                        noteID: obj.noteID,
-                        noteTitle: obj.noteTitle
+                        noteID: obj._id,
+                        noteTitle: obj.title,
+                        noteThumbnail: obj.thumbnail
                     })
                 }
                 break
@@ -138,20 +151,62 @@ const manageDb = {
 }
 
 
-//* The main dynamic content loading manager object
-const manageNotes = { // I treat all the cards as notes
-    /* 
-    # Functions:
-        => addNote: adds note in the dashboard
-            # process:
-        ~       notes are added with this function in 2 scenerios. One is after back_forward and another is lazy loading.
-        ~       first the note will be added (1) and then the lazy loading oserver will be triggered for that specific note. (2)
-        => addSaveNote: adds note in the left-panel
-        => addNoti: adds a notification in the right-panel
-        => addProfile: adds profiles when searched in search-profile
-        => addFeedback: adds feedback in notes in note-view
-    */
+async function upvote(voteContainer, fromDashboard = false) {
+    if (voteContainer.getAttribute('data-disabled')) return
 
+    voteContainer.setAttribute('data-disabled', 'true')
+
+    const voterStudentID = Cookies.get("studentID")
+    const noteDocID = voteContainer.getAttribute('data-noteid')
+    const isUpvoted = voteContainer.getAttribute('data-isupvoted') === "true" ? true : false
+    const voteCard = fromDashboard ? document.querySelector(`#note-${noteDocID}`) : document
+    
+    let uvCount = voteCard.querySelector('.uv-count')
+    const DOWNVOTE_SVG = '<path d="M20.293 10.2935L19.5859 11.0006L20.293 10.2935ZM10.2929 1.70717L9.58575 1.00008L10.2929 1.70717ZM9.58575 1.00008L0.999862 9.58646L2.41412 11.0006L11 2.41425L9.58575 1.00008ZM2.41412 13.0006H6V11.0006H2.41412V13.0006ZM6 13.0006V19.5H8V13.0006H6ZM9.5 23H12.5V21H9.5V23ZM16 19.5V13.0006H14V19.5H16ZM16 13.0006H19.5859V11.0006H16V13.0006ZM21.0001 9.58646L12.4143 1.00008L11 2.41425L19.5859 11.0006L21.0001 9.58646ZM19.5859 13.0006C21.3677 13.0006 22.26 10.8464 21.0001 9.58646L19.5859 11.0006L19.5859 11.0006V13.0006ZM16 13.0006L16 13.0006V11.0006C14.8954 11.0006 14 11.8961 14 13.0006H16ZM12.5 23C14.433 23 16 21.433 16 19.5H14C14 20.3284 13.3284 21 12.5 21V23ZM6 19.5C6 21.433 7.567 23 9.5 23V21C8.67157 21 8 20.3284 8 19.5H6ZM6 13.0006L6 13.0006H8C8 11.8961 7.10457 11.0006 6 11.0006V13.0006ZM0.999862 9.58646C-0.260013 10.8464 0.632334 13.0006 2.41412 13.0006V11.0006L2.41412 11.0006L0.999862 9.58646ZM11 2.41425L11 2.41425L12.4143 1.00008C11.6332 0.218978 10.3668 0.218978 9.58575 1.00008L11 2.41425Z" fill="black"/>'
+    const UPVOTE_SVG = '<path d="M20.293 10.2935L19.5859 11.0006L20.293 10.2935ZM10.2929 1.70717L9.58575 1.00008L10.2929 1.70717ZM9.58575 1.00008L0.999862 9.58646L2.41412 11.0006L11 2.41425L9.58575 1.00008ZM2.41412 13.0006H6V11.0006H2.41412V13.0006ZM6 13.0006V19.5H8V13.0006H6ZM9.5 23H12.5V21H9.5V23ZM16 19.5V13.0006H14V19.5H16ZM16 13.0006H19.5859V11.0006H16V13.0006ZM21.0001 9.58646L12.4143 1.00008L11 2.41425L19.5859 11.0006L21.0001 9.58646ZM19.5859 13.0006C21.3677 13.0006 22.26 10.8464 21.0001 9.58646L19.5859 11.0006L19.5859 11.0006V13.0006ZM16 13.0006L16 13.0006V11.0006C14.8954 11.0006 14 11.8961 14 13.0006H16ZM12.5 23C14.433 23 16 21.433 16 19.5H14C14 20.3284 13.3284 21 12.5 21V23ZM6 19.5C6 21.433 7.567 23 9.5 23V21C8.67157 21 8 20.3284 8 19.5H6ZM6 13.0006L6 13.0006H8C8 11.8961 7.10457 11.0006 6 11.0006V13.0006ZM0.999862 9.58646C-0.260013 10.8464 0.632334 13.0006 2.41412 13.0006V11.0006L2.41412 11.0006L0.999862 9.58646ZM11 2.41425L11 2.41425L12.4143 1.00008C11.6332 0.218978 10.3668 0.218978 9.58575 1.00008L11 2.41425ZM11 1L21 11H14V21H8V11H1L11 1Z" fill="#00FF00"/>'
+
+    
+    let voteData = new FormData()
+    voteData.append('noteDocID', noteDocID)
+    voteData.append('voterStudentID', voterStudentID)
+    
+    function replaceUpvoteArrow(svg, increment) {
+        voteCard.querySelector('#upvote-container .uv-icon').innerHTML = svg
+        voteCard.querySelector('.uv-count').innerHTML = parseInt(uvCount.innerHTML) + (increment ? 1 : -1)
+        voteContainer.setAttribute('data-isupvoted', !isUpvoted)
+    }
+
+    const url = `/view/${noteDocID}/vote?type=upvote${isUpvoted ? '&action=delete' : ''}`
+    replaceUpvoteArrow(isUpvoted ? DOWNVOTE_SVG : UPVOTE_SVG, !isUpvoted)
+    
+    let response = await fetch(url, {
+        body: voteData,
+        method: 'post'
+    })
+    let data = await response.json()
+    if (data.ok) {
+        voteContainer.removeAttribute('data-disabled')
+    } else {
+        Swal.fire(toastData('error', "Yikes! Try again later.", 3000))
+    }
+}
+
+
+//* The main dynamic content loading manager object
+const manageNotes = {
+    formatDate: function(dateString) {
+        let date = new Date(dateString)
+        const formatter = new Intl.DateTimeFormat('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            timeZone: 'Asia/Dhaka',
+            hour12: true
+        });
+        return formatter.format(date);
+    },
     addNote: function (noteData) {
         let existingUNote = document.querySelector(`#note-${noteData.noteID}`)
 
@@ -174,19 +229,18 @@ const manageNotes = { // I treat all the cards as notes
                                     <i class="fas fa-ellipsis-v"></i>
                                 </button>
                                 <div class="menu-options">
-                                    <div class="option svn-btn-parent" id="save-btn-${noteData.noteID}" onclick="saveNote('${noteData.noteID}', '${noteData.noteTitle}')">
-                                        
-                                            <button class="save-note-btn" >
-                                                <i class="fa-regular fa-bookmark"></i>
-                                                <i class="fa-solid fa-bookmark saved"></i>
-                                            </button>
-                                        
-                                            <span class="opt-label">Save Note</span>
+                                    <div class="option svn-btn-parent" id='save-btn-${noteData.noteID}' onclick="saveNote(this, true)" data-notetitle="${noteData.noteTitle}" data-noteid="${noteData.noteID}" data-issaved="${noteData.isSaved}">
+                                        <button class='${noteData.isSaved ? 'save-note-btn saved' : 'save-note-btn' }' id="save-note-btn">
+                                            <i class="fa-regular fa-bookmark"></i>
+                                            <i class="fa-solid fa-bookmark saved"></i>
+                                        </button>
+                                        <span class="opt-label">Save Note</span>
                                     </div>
+
                                     <div class="option" onclick="download('${noteData.noteID}', '${noteData.noteTitle}')">
-                                            <svg class="download-icon" width="40" height="40" viewBox="0 0 43 43" fill="none" xmlns="http://www.w3.org/2000/svg" >
-                                      <path d="M37.1541 26.5395V33.6165C37.1541 34.555 36.7813 35.455 36.1177 36.1186C35.4541 36.7822 34.5541 37.155 33.6156 37.155H8.84623C7.90776 37.155 7.00773 36.7822 6.34414 36.1186C5.68054 35.455 5.30774 34.555 5.30774 33.6165V26.5395M12.3847 17.6933L21.2309 26.5395M21.2309 26.5395L30.0771 17.6933M21.2309 26.5395V5.30859" stroke="#1E1E1E" stroke-width="2.29523" stroke-linecap="round" stroke-linejoin="round"/>
-                                  </svg>
+                                        <svg class="download-icon" width="40" height="40" viewBox="0 0 43 43" fill="none" xmlns="http://www.w3.org/2000/svg" >
+                                            <path d="M37.1541 26.5395V33.6165C37.1541 34.555 36.7813 35.455 36.1177 36.1186C35.4541 36.7822 34.5541 37.155 33.6156 37.155H8.84623C7.90776 37.155 7.00773 36.7822 6.34414 36.1186C5.68054 35.455 5.30774 34.555 5.30774 33.6165V26.5395M12.3847 17.6933L21.2309 26.5395M21.2309 26.5395L30.0771 17.6933M21.2309 26.5395V5.30859" stroke="#1E1E1E" stroke-width="2.29523" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
                                         <span class="opt-label">Download</span>
                                     </div>
                                     <div class="option" onclick="setupShareModal('${noteData.noteID}')"
@@ -209,11 +263,14 @@ const manageNotes = { // I treat all the cards as notes
                               </div>
                               <div class="note-engagement">
                             <div class="vote-container">
-                                <div class="uv-container">
+                                <div class="uv-container" id="upvote-container" data-isupvoted='${noteData.isUpvoted}' data-noteid='${noteData.noteID}' onclick="upvote(this, true)">
                                     <svg class="uv-icon" width="18" height="19" viewBox="0 0 22 23" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M20.293 10.2935L19.5859 11.0006L20.293 10.2935ZM10.2929 1.70717L9.58575 1.00008L10.2929 1.70717ZM9.58575 1.00008L0.999862 9.58646L2.41412 11.0006L11 2.41425L9.58575 1.00008ZM2.41412 13.0006H6V11.0006H2.41412V13.0006ZM6 13.0006V19.5H8V13.0006H6ZM9.5 23H12.5V21H9.5V23ZM16 19.5V13.0006H14V19.5H16ZM16 13.0006H19.5859V11.0006H16V13.0006ZM21.0001 9.58646L12.4143 1.00008L11 2.41425L19.5859 11.0006L21.0001 9.58646ZM19.5859 13.0006C21.3677 13.0006 22.26 10.8464 21.0001 9.58646L19.5859 11.0006L19.5859 11.0006V13.0006ZM16 13.0006L16 13.0006V11.0006C14.8954 11.0006 14 11.8961 14 13.0006H16ZM12.5 23C14.433 23 16 21.433 16 19.5H14C14 20.3284 13.3284 21 12.5 21V23ZM6 19.5C6 21.433 7.567 23 9.5 23V21C8.67157 21 8 20.3284 8 19.5H6ZM6 13.0006L6 13.0006H8C8 11.8961 7.10457 11.0006 6 11.0006V13.0006ZM0.999862 9.58646C-0.260013 10.8464 0.632334 13.0006 2.41412 13.0006V11.0006L2.41412 11.0006L0.999862 9.58646ZM11 2.41425L11 2.41425L12.4143 1.00008C11.6332 0.218978 10.3668 0.218978 9.58575 1.00008L11 2.41425Z" fill="black"/>
-                                        </svg>									
-                                    <span class="uv-count">0</span>
+                                        ${noteData.isUpvoted ?
+                                            `<path d="M20.293 10.2935L19.5859 11.0006L20.293 10.2935ZM10.2929 1.70717L9.58575 1.00008L10.2929 1.70717ZM9.58575 1.00008L0.999862 9.58646L2.41412 11.0006L11 2.41425L9.58575 1.00008ZM2.41412 13.0006H6V11.0006H2.41412V13.0006ZM6 13.0006V19.5H8V13.0006H6ZM9.5 23H12.5V21H9.5V23ZM16 19.5V13.0006H14V19.5H16ZM16 13.0006H19.5859V11.0006H16V13.0006ZM21.0001 9.58646L12.4143 1.00008L11 2.41425L19.5859 11.0006L21.0001 9.58646ZM19.5859 13.0006C21.3677 13.0006 22.26 10.8464 21.0001 9.58646L19.5859 11.0006L19.5859 11.0006V13.0006ZM16 13.0006L16 13.0006V11.0006C14.8954 11.0006 14 11.8961 14 13.0006H16ZM12.5 23C14.433 23 16 21.433 16 19.5H14C14 20.3284 13.3284 21 12.5 21V23ZM6 19.5C6 21.433 7.567 23 9.5 23V21C8.67157 21 8 20.3284 8 19.5H6ZM6 13.0006L6 13.0006H8C8 11.8961 7.10457 11.0006 6 11.0006V13.0006ZM0.999862 9.58646C-0.260013 10.8464 0.632334 13.0006 2.41412 13.0006V11.0006L2.41412 11.0006L0.999862 9.58646ZM11 2.41425L11 2.41425L12.4143 1.00008C11.6332 0.218978 10.3668 0.218978 9.58575 1.00008L11 2.41425ZM11 1L21 11H14V21H8V11H1L11 1Z" fill="#00FF00" />`
+                                            : `<path d="M20.293 10.2935L19.5859 11.0006L20.293 10.2935ZM10.2929 1.70717L9.58575 1.00008L10.2929 1.70717ZM9.58575 1.00008L0.999862 9.58646L2.41412 11.0006L11 2.41425L9.58575 1.00008ZM2.41412 13.0006H6V11.0006H2.41412V13.0006ZM6 13.0006V19.5H8V13.0006H6ZM9.5 23H12.5V21H9.5V23ZM16 19.5V13.0006H14V19.5H16ZM16 13.0006H19.5859V11.0006H16V13.0006ZM21.0001 9.58646L12.4143 1.00008L11 2.41425L19.5859 11.0006L21.0001 9.58646ZM19.5859 13.0006C21.3677 13.0006 22.26 10.8464 21.0001 9.58646L19.5859 11.0006L19.5859 11.0006V13.0006ZM16 13.0006L16 13.0006V11.0006C14.8954 11.0006 14 11.8961 14 13.0006H16ZM12.5 23C14.433 23 16 21.433 16 19.5H14C14 20.3284 13.3284 21 12.5 21V23ZM6 19.5C6 21.433 7.567 23 9.5 23V21C8.67157 21 8 20.3284 8 19.5H6ZM6 13.0006L6 13.0006H8C8 11.8961 7.10457 11.0006 6 11.0006V13.0006ZM0.999862 9.58646C-0.260013 10.8464 0.632334 13.0006 2.41412 13.0006V11.0006L2.41412 11.0006L0.999862 9.58646ZM11 2.41425L11 2.41425L12.4143 1.00008C11.6332 0.218978 10.3668 0.218978 9.58575 1.00008L11 2.41425Z" fill="black" />`
+                                        }
+                                    </svg>									
+                                    <span class="uv-count">${noteData.upvoteCount}</span>
                                 </div>
                                 <div class="divider-uv-dv"></div>
                                 <div class="dv-container">
@@ -283,22 +340,30 @@ const manageNotes = { // I treat all the cards as notes
         }
     },
 
+    removeSaveNote: function(noteData) {
+        let existingNote = document.querySelector(`#saved-note-${noteData.noteID}`)
+        if (existingNote) {
+            existingNote.remove()
+        }
+    },
+
     /**
      * @param {Object} feedbackData - { notiID, feedbackID, isread, noteID, nfnTitle, commenterUserName, commenterDisplayName }
      * @description - First checks if there is already a noti div with noti-notiID, if not, adds one
     */
-    addNoti: function (feedbackData, message) {
+    addNoti: function (feedbackData) {
         let notificationContainer = document.querySelector('.notifications-container')
         let existingNoti = document.querySelector(`#noti-${feedbackData.notiID}`)
 
         if (!existingNoti) {
+            let isVote = feedbackData.vote ? true : false
             let notificationHtml = `
                   <div class="notification secondary-${feedbackData.isread}" id="noti-${feedbackData.notiID}">
-                      <span class='feedback-id' style="display: none;">${feedbackData.feedbackID}</span>
+                      ${!isVote ? `<span class='feedback-id' style='display: none;'>${feedbackData.feedbackID}</span>` : ""} 
                       <div class="first-row">
                       <div class="frnt-wrapper">
                       <span class="isRead ${feedbackData.isread}"></span>
-                        <a href='/view/${feedbackData.noteID}/#${feedbackData.feedbackID}' class="notification-link">
+                        <a href='/view/${feedbackData.noteID}/${!isVote ? `#${feedbackData.feedbackID}` : ''}' class="notification-link">
                           <span class="notification-title">
                           ${truncatedTitle(feedbackData.nfnTitle)}
                           </span>
@@ -307,9 +372,10 @@ const manageNotes = { // I treat all the cards as notes
                         <span class="remove-notification" onclick="deleteNoti('${feedbackData.notiID}')">&times;</span>
                       </div>
                       <div class="notification-msg">
-                        <a href='/user/${feedbackData.commenterUserName}' class="commenter-prfl">
-                        ${feedbackData.commenterDisplayName}
-                        </a><a href='/view/${feedbackData.noteID}/#${feedbackData.feedbackID}' class="notification-link-2"> ${message}</a>
+                        ${!isVote ? `
+                            <a href='/view/${feedbackData.noteID}/#${feedbackData.feedbackID}' class="notification-link-2">${feedbackData.message}</a>` :
+                    `<a href='/view/${feedbackData.noteID}' class="notification-link-2">${feedbackData.message}</a>`
+                } 
                       </div>
                   </div>`
             notificationContainer.insertAdjacentHTML('afterbegin', notificationHtml);
@@ -339,122 +405,95 @@ const manageNotes = { // I treat all the cards as notes
                 ~ displayname
                 
         */
-        let date = new Date(feedbackData.createdAt)
-        const formatter = new Intl.DateTimeFormat('en-US', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            timeZone: 'Asia/Dhaka',
-            hour12: true
-        });
-        const formattedDate = formatter.format(date);
+        
+        let isTemporary = feedbackData.temporary
+
         let feedbackCard = `
-        <div class='main-cmnt-container'>
+        <div class='main-cmnt-container' data-temporary=${isTemporary}>
             <div class="main__author-threadline-wrapper">
-                <img
-                    src="${feedbackData.commenterDocID.profile_pic}"
-                    alt="User Avatar"
-                    class="main__cmnt-author-img cmnt-author-img"
-                />
+                ${!isTemporary ? `
+                    <img
+                        src="${feedbackData.commenterDocID.profile_pic}"
+                        alt="User Avatar"
+                        class="main__cmnt-author-img cmnt-author-img"
+                    />
+                ` : ''}
                 <div class="thread-line"></div>
              </div>
             <div class="main__cmnts-replies-wrapper">
                 <div class="main__body cmnt-body-3rows">
                     <div class="main__reply-info reply-info">
-                        <span id="parentFeedbackDocID" style="display: none;">${feedbackData._id }</span>
-                        <span id="commenterUsername" style="display: none;">${ feedbackData.commenterDocID.username }</span>
+                        <span id="parentFeedbackDocID" style="display: none;">${feedbackData._id}</span>
+                        <span id="commenterUsername" style="display: none;">${feedbackData.commenterDocID.username}</span>
+
                         <span class="main__author-name">${feedbackData.commenterDocID.displayname}</span>
-                        <span class="reply-date">${formattedDate}</span>
+                        <span class="reply-date">${this.formatDate(feedbackData.createdAt)}</span>
                     </div>
-                    <div class="main__reply-msg reply-msg">${feedbackData.feedbackContents}</div>
-                    <div class="main__engagement-opts engagement-opts">
-                        <div class="vote-container">
-                            <div class="uv-container">
-                                <svg class="uv-icon" width="15" height="16" viewBox="0 0 22 23" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M20.293 10.2935L19.5859 11.0006L20.293 10.2935ZM10.2929 1.70717L9.58575 1.00008L10.2929 1.70717ZM9.58575 1.00008L0.999862 9.58646L2.41412 11.0006L11 2.41425L9.58575 1.00008ZM2.41412 13.0006H6V11.0006H2.41412V13.0006ZM6 13.0006V19.5H8V13.0006H6ZM9.5 23H12.5V21H9.5V23ZM16 19.5V13.0006H14V19.5H16ZM16 13.0006H19.5859V11.0006H16V13.0006ZM21.0001 9.58646L12.4143 1.00008L11 2.41425L19.5859 11.0006L21.0001 9.58646ZM19.5859 13.0006C21.3677 13.0006 22.26 10.8464 21.0001 9.58646L19.5859 11.0006L19.5859 11.0006V13.0006ZM16 13.0006L16 13.0006V11.0006C14.8954 11.0006 14 11.8961 14 13.0006H16ZM12.5 23C14.433 23 16 21.433 16 19.5H14C14 20.3284 13.3284 21 12.5 21V23ZM6 19.5C6 21.433 7.567 23 9.5 23V21C8.67157 21 8 20.3284 8 19.5H6ZM6 13.0006L6 13.0006H8C8 11.8961 7.10457 11.0006 6 11.0006V13.0006ZM0.999862 9.58646C-0.260013 10.8464 0.632334 13.0006 2.41412 13.0006V11.0006L2.41412 11.0006L0.999862 9.58646ZM11 2.41425L11 2.41425L12.4143 1.00008C11.6332 0.218978 10.3668 0.218978 9.58575 1.00008L11 2.41425Z" fill="black"/>
-                                    </svg>									
-                                <span class="uv-count">0</span>
-                            </div>
-                            <div class="divider-uv-dv"></div>
-                            <div class="dv-container">
-                                <svg class="dv-icon" width="15" height="16" viewBox="0 0 22 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M1.72696 13.8523L2.42297 13.1343L1.72696 13.8523ZM11.8598 22.2816L12.5779 22.9776L11.8598 22.2816ZM12.5779 22.9776L21.0288 14.2583L19.5926 12.8664L11.1418 21.5856L12.5779 22.9776ZM19.5614 10.8666L15.976 10.9226L16.0072 12.9223L19.5926 12.8664L19.5614 10.8666ZM15.976 10.9226L15.8746 4.42398L13.8748 4.45518L13.9762 10.9538L15.976 10.9226ZM12.3204 0.979002L9.3208 1.0258L9.352 3.02556L12.3516 2.97876L12.3204 0.979002ZM5.87582 4.57998L5.97721 11.0786L7.97697 11.0474L7.87558 4.54878L5.87582 4.57998ZM5.97721 11.0786L2.39177 11.1345L2.42297 13.1343L6.00841 13.0783L5.97721 11.0786ZM1.03095 14.5703L9.74973 23.0217L11.1418 21.5856L2.42297 13.1343L1.03095 14.5703ZM2.39177 11.1345C0.6102 11.1623 -0.24843 13.3302 1.03095 14.5703L2.42297 13.1343L2.42297 13.1343L2.39177 11.1345ZM5.97721 11.0786L5.97721 11.0786L6.00841 13.0783C7.11285 13.0611 7.9942 12.1518 7.97697 11.0474L5.97721 11.0786ZM9.3208 1.0258C7.38804 1.05596 5.84567 2.64721 5.87582 4.57998L7.87558 4.54878C7.86266 3.72045 8.52367 3.03848 9.352 3.02556L9.3208 1.0258ZM15.8746 4.42398C15.8445 2.49122 14.2532 0.948848 12.3204 0.979002L12.3516 2.97876C13.18 2.96584 13.8619 3.62685 13.8748 4.45518L15.8746 4.42398ZM15.976 10.9226L15.976 10.9226L13.9762 10.9538C13.9935 12.0582 14.9028 12.9395 16.0072 12.9223L15.976 10.9226ZM21.0288 14.2583C22.2689 12.9789 21.343 10.8388 19.5614 10.8666L19.5926 12.8664L19.5926 12.8664L21.0288 14.2583ZM11.1418 21.5856L11.1418 21.5856L9.74973 23.0217C10.5429 23.7905 11.8091 23.7708 12.5779 22.9776L11.1418 21.5856Z" fill="black"/>
+                    <div class="main__reply-msg reply-msg">${isTemporary ? 'Sending feedback...<div class="search-results-loader"></div>' : feedbackData.feedbackContents }</div>
+                    ${!isTemporary ? `
+                        <div class="main__engagement-opts engagement-opts">
+                            <div class="like-wrapper" data-noteid=${feedbackData.noteDocID._id} data-feedbackid=${feedbackData._id} data-isupvoted="false" onclick="upvoteComment(this)">   
+                                <svg class="like-icon" width="20" height="22" viewBox="0 0 115 117" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M107.498 49.9985C107.998 49.9985 109.994 52.6188 109.494 70.581C108.994 88.5431 93.5 110.998 88.993 110.998C84.4861 110.998 28.4996 112 28.493 110.455C28.4863 108.91 28.4938 47.5373 28.4938 47.5373L49.9956 32.4996C49.9956 32.4996 53.0332 25.5652 57.9956 8.99958C62.958 -7.56607 78.4744 33.916 66 49.9982M107.498 49.9985C106.998 49.9985 66 49.9982 66 49.9982M107.498 49.9985L66 49.9982" stroke="#606770" stroke-width="10" stroke-linecap="round"/>
                                 </svg>
+
+                                <span class="like-count">${feedbackData.upvoteCount}</span>
                             </div>
+                                
+                            <svg 
+                                class="reply-icon thread-opener"
+                                data-tippy-content="Reply"
+                                width="25" height="24" viewBox="0 0 22 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M18.7186 12.9452C18.7186 13.401 18.5375 13.8382 18.2152 14.1605C17.8929 14.4829 17.4557 14.6639 16.9999 14.6639H6.68747L3.25 18.1014V4.35155C3.25 3.89571 3.43108 3.45854 3.75341 3.13622C4.07573 2.81389 4.5129 2.63281 4.96873 2.63281H16.9999C17.4557 2.63281 17.8929 2.81389 18.2152 3.13622C18.5375 3.45854 18.7186 3.89571 18.7186 4.35155V12.9452Z" stroke="#1E1E1E" stroke-width="1.14582" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>                    
                         </div>
-                        <svg 
-                            class="reply-icon thread-opener"
-                            data-tippy-content="Reply"
-                            width="25" height="24" viewBox="0 0 22 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M18.7186 12.9452C18.7186 13.401 18.5375 13.8382 18.2152 14.1605C17.8929 14.4829 17.4557 14.6639 16.9999 14.6639H6.68747L3.25 18.1014V4.35155C3.25 3.89571 3.43108 3.45854 3.75341 3.13622C4.07573 2.81389 4.5129 2.63281 4.96873 2.63281H16.9999C17.4557 2.63281 17.8929 2.81389 18.2152 3.13622C18.5375 3.45854 18.7186 3.89571 18.7186 4.35155V12.9452Z" stroke="#1E1E1E" stroke-width="1.14582" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>                    
-                    </div>
+                    ` : ''}
                 </div>
 
                 <div class="thread-section" id="thread-${feedbackData._id}"></div>
             </div>
         </div>
       `;
-      document.querySelector(".cmnts-list").insertAdjacentHTML('afterbegin', feedbackCard)
+        document.querySelector(".cmnts-list").insertAdjacentHTML('afterbegin', feedbackCard)
     },
 
+    addReply: function (threadSection, replyData) {
+        /*
+        => createdAt
+        => feedbackContents
+        => commenterDocID 
+            => profile_pic
+            => username
+            => displayname
+        */
+        let isTemporary = replyData.temporary
 
-    addReply: function(threadSection, replyData) {
-        console.log(threadSection)
-        let date = new Date(replyData.createdAt)
-        const formatter = new Intl.DateTimeFormat('en-US', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            timeZone: 'Asia/Dhaka',
-            hour12: true
-        });
-        const formattedDate = formatter.format(date);
         replyMessage = `
-        <div class='thread-msg'>
-            <img src="${replyData.commenterDocID.profile_pic}" alt="User Avatar" class="cmnt-author-img thread-avatar">
+        <div class='thread-msg' data-temporary=${isTemporary}>
+            ${!isTemporary ? `<img src="${replyData.commenterDocID.profile_pic}" alt="User Avatar" class="cmnt-author-img thread-avatar">` : '' }
             <div class="cmnt-body-3rows">
                 <div class="reply-info">
-                    <span id="commenterUsername" style="display: none;">${ replyData.commenterDocID.username }</span>
+                    <span id="commenterUsername" style="display: none;">${replyData.commenterDocID.username}</span>
                     <span class="main__author-name">${replyData.commenterDocID.displayname}</span>
-                    <span class="reply-date">${formattedDate}</span>
+                    <span class="reply-date">${this.formatDate(replyData.createdAt)}</span>
                 </div>
-                <div class="reply-msg">${replyData.feedbackContents}</div>
+                <div class="reply-msg">${isTemporary ? 'Sending reply...<div class="search-results-loader"></div>' : replyData.feedbackContents}</div>
                 <div class="main__engagement-opts engagement-opts">
-                <div class="vote-container">
-                    <div class="uv-container">
-                        <svg class="uv-icon" width="15" height="16" viewBox="0 0 22 23" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M20.293 10.2935L19.5859 11.0006L20.293 10.2935ZM10.2929 1.70717L9.58575 1.00008L10.2929 1.70717ZM9.58575 1.00008L0.999862 9.58646L2.41412 11.0006L11 2.41425L9.58575 1.00008ZM2.41412 13.0006H6V11.0006H2.41412V13.0006ZM6 13.0006V19.5H8V13.0006H6ZM9.5 23H12.5V21H9.5V23ZM16 19.5V13.0006H14V19.5H16ZM16 13.0006H19.5859V11.0006H16V13.0006ZM21.0001 9.58646L12.4143 1.00008L11 2.41425L19.5859 11.0006L21.0001 9.58646ZM19.5859 13.0006C21.3677 13.0006 22.26 10.8464 21.0001 9.58646L19.5859 11.0006L19.5859 11.0006V13.0006ZM16 13.0006L16 13.0006V11.0006C14.8954 11.0006 14 11.8961 14 13.0006H16ZM12.5 23C14.433 23 16 21.433 16 19.5H14C14 20.3284 13.3284 21 12.5 21V23ZM6 19.5C6 21.433 7.567 23 9.5 23V21C8.67157 21 8 20.3284 8 19.5H6ZM6 13.0006L6 13.0006H8C8 11.8961 7.10457 11.0006 6 11.0006V13.0006ZM0.999862 9.58646C-0.260013 10.8464 0.632334 13.0006 2.41412 13.0006V11.0006L2.41412 11.0006L0.999862 9.58646ZM11 2.41425L11 2.41425L12.4143 1.00008C11.6332 0.218978 10.3668 0.218978 9.58575 1.00008L11 2.41425Z" fill="black"/>
-                            </svg>									
-                        <span class="uv-count">0</span>
-                    </div>
-                    <div class="divider-uv-dv"></div>
-                    <div class="dv-container">
-                        <svg class="dv-icon" width="15" height="16" viewBox="0 0 22 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M1.72696 13.8523L2.42297 13.1343L1.72696 13.8523ZM11.8598 22.2816L12.5779 22.9776L11.8598 22.2816ZM12.5779 22.9776L21.0288 14.2583L19.5926 12.8664L11.1418 21.5856L12.5779 22.9776ZM19.5614 10.8666L15.976 10.9226L16.0072 12.9223L19.5926 12.8664L19.5614 10.8666ZM15.976 10.9226L15.8746 4.42398L13.8748 4.45518L13.9762 10.9538L15.976 10.9226ZM12.3204 0.979002L9.3208 1.0258L9.352 3.02556L12.3516 2.97876L12.3204 0.979002ZM5.87582 4.57998L5.97721 11.0786L7.97697 11.0474L7.87558 4.54878L5.87582 4.57998ZM5.97721 11.0786L2.39177 11.1345L2.42297 13.1343L6.00841 13.0783L5.97721 11.0786ZM1.03095 14.5703L9.74973 23.0217L11.1418 21.5856L2.42297 13.1343L1.03095 14.5703ZM2.39177 11.1345C0.6102 11.1623 -0.24843 13.3302 1.03095 14.5703L2.42297 13.1343L2.42297 13.1343L2.39177 11.1345ZM5.97721 11.0786L5.97721 11.0786L6.00841 13.0783C7.11285 13.0611 7.9942 12.1518 7.97697 11.0474L5.97721 11.0786ZM9.3208 1.0258C7.38804 1.05596 5.84567 2.64721 5.87582 4.57998L7.87558 4.54878C7.86266 3.72045 8.52367 3.03848 9.352 3.02556L9.3208 1.0258ZM15.8746 4.42398C15.8445 2.49122 14.2532 0.948848 12.3204 0.979002L12.3516 2.97876C13.18 2.96584 13.8619 3.62685 13.8748 4.45518L15.8746 4.42398ZM15.976 10.9226L15.976 10.9226L13.9762 10.9538C13.9935 12.0582 14.9028 12.9395 16.0072 12.9223L15.976 10.9226ZM21.0288 14.2583C22.2689 12.9789 21.343 10.8388 19.5614 10.8666L19.5926 12.8664L19.5926 12.8664L21.0288 14.2583ZM11.1418 21.5856L11.1418 21.5856L9.74973 23.0217C10.5429 23.7905 11.8091 23.7708 12.5779 22.9776L11.1418 21.5856Z" fill="black"/>
-                        </svg>
-                    </div>
-                </div>
-                <svg 
-                class="reply-icon thread-opener"
-                data-tippy-content="Reply"
-                width="25" height="24" viewBox="0 0 22 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M18.7186 12.9452C18.7186 13.401 18.5375 13.8382 18.2152 14.1605C17.8929 14.4829 17.4557 14.6639 16.9999 14.6639H6.68747L3.25 18.1014V4.35155C3.25 3.89571 3.43108 3.45854 3.75341 3.13622C4.07573 2.81389 4.5129 2.63281 4.96873 2.63281H16.9999C17.4557 2.63281 17.8929 2.81389 18.2152 3.13622C18.5375 3.45854 18.7186 3.89571 18.7186 4.35155V12.9452Z" stroke="#1E1E1E" stroke-width="1.14582" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>                    
+                ${!isTemporary ? `
+                    <svg class="reply-icon thread-opener" data-tippy-content="Reply" width="25" height="24" viewBox="0 0 22 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M18.7186 12.9452C18.7186 13.401 18.5375 13.8382 18.2152 14.1605C17.8929 14.4829 17.4557 14.6639 16.9999 14.6639H6.68747L3.25 18.1014V4.35155C3.25 3.89571 3.43108 3.45854 3.75341 3.13622C4.07573 2.81389 4.5129 2.63281 4.96873 2.63281H16.9999C17.4557 2.63281 17.8929 2.81389 18.2152 3.13622C18.5375 3.45854 18.7186 3.89571 18.7186 4.35155V12.9452Z" stroke="#1E1E1E" stroke-width="1.14582" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>` : ''
+                }                    
                 </div>
             </div>
         </div>
         `;
         let threadEditor = threadSection.querySelector('.thread-editor-container');
         if (!threadEditor) {
-            
+
             threadEditor = document.createElement('div');
             threadEditor.classList.add('thread-editor-container');
-            
+
             // Add the HTML for the thread editor
             threadEditor.innerHTML = `
             <!--<img class="tec__avatar-preview thread-avatar">-->
@@ -467,14 +506,98 @@ const manageNotes = { // I treat all the cards as notes
                 </div>
             </div>
             `;
-            
+
             threadSection.appendChild(threadEditor);
         }
         threadSection.querySelector('.thread-editor-container').insertAdjacentHTML('beforebegin', replyMessage);
     },
 
-}
+    addNoteProfile: function (noteData, noteType) {
+        let notesContainer = document.querySelector(noteType === 'saved' ? '.sv-notes-container' : '.notes-container')
+        let noteElementID = `${noteType === 'saved' ? "sv-note" : "own-note"}-${noteData.noteID}`
+        let existingNote = notesContainer.querySelector(`#${noteElementID}`)
 
+        if (!existingNote) {
+            let noteCard = `
+                <div class="note-card" id="${noteElementID}">
+                    <a href="/view/${noteData.noteID}">
+                        <h3>
+                            ${noteData.noteTitle > 30 ? noteData.noteTitle.slice(0, 30) : noteData.noteTitle }
+                        </h3>
+                        <img src='${noteData.noteThumbnail}' alt="No thumbnail?!">
+                    </a>
+                </div>`
+            notesContainer.insertAdjacentHTML('afterbegin', noteCard);
+        }
+    },
+
+    addAllFeedback: function(feedback) {
+	    let commentsContainer = document.querySelector('.cmnts-list')
+
+        let template = `
+			<div class="main__author-threadline-wrapper">
+				<img src="${feedback[0].commenterDocID.profile_pic}" alt="User Avatar" class="main__cmnt-author-img cmnt-author-img" />
+				<div class="thread-line"></div>
+			</div>
+
+			<div class='main__cmnts-replies-wrapper'>
+				<div class="main__body cmnt-body-3rows">
+					<div class="main__reply-info reply-info"> 
+            			<span id="parentFeedbackDocID" style="display: none;">${feedback[0]._id}</span>
+        				<span id="commenterUsername" style="display: none;">${feedback[0].commenterDocID.username}</span> 
+						<span class="main__author-name">${feedback[0].commenterDocID.displayname}</span>
+						<span class="reply-date">${this.formatDate(feedback[0].createdAt)}</span>
+					</div>
+					<div class='reply-msg'>${feedback[0].feedbackContents}</div>
+					<div class="main__engagement-opts engagement-opts">
+						<div class="like-wrapper" data-noteid='${feedback[0].noteDocID}' data-feedbackid="${feedback[0]._id}" data-isupvoted="${feedback[0].isUpVoted}" onclick="upvoteComment(this)">
+							<svg class="like-icon" data-tippy-content="Like" width="20" height="22" viewBox="0 0 115 117" fill="none" xmlns="http://www.w3.org/2000/svg">
+								${
+									feedback[0].isUpVoted ? 
+        								`<path class='like-icon-fill' d="M28.4938 47.5373C28.4938 47.5373 28.4863 108.91 28.493 110.455C28.4996 112 84.4861 110.998 88.993 110.998C93.5 110.998 108.994 88.5431 109.494 70.581C109.994 52.6188 107.998 49.9985 107.498 49.9985L66 49.9982C78.4744 33.916 62.958 -7.56607 57.9956 8.99958C53.0332 25.5652 49.9956 32.4996 49.9956 32.4996L28.4938 47.5373Z" fill="black"/>`:
+										`<path d="M107.498 49.9985C107.998 49.9985 109.994 52.6188 109.494 70.581C108.994 88.5431 93.5 110.998 88.993 110.998C84.4861 110.998 28.4996 112 28.493 110.455C28.4863 108.91 28.4938 47.5373 28.4938 47.5373L49.9956 32.4996C49.9956 32.4996 53.0332 25.5652 57.9956 8.99958C62.958 -7.56607 78.4744 33.916 66 49.9982M107.498 49.9985C106.998 49.9985 66 49.9982 66 49.9982M107.498 49.9985L66 49.9982" stroke="#606770" stroke-width="10" stroke-linecap="round"/>`
+								}
+							</svg>
+							<span class="like-count">${feedback[0].upvoteCount}</span>
+						</div>
+						<svg class="reply-icon thread-opener" data-tippy-content="Reply" width="25" height="24" viewBox="0 0 22 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<path d="M18.7186 12.9452C18.7186 13.401 18.5375 13.8382 18.2152 14.1605C17.8929 14.4829 17.4557 14.6639 16.9999 14.6639H6.68747L3.25 18.1014V4.35155C3.25 3.89571 3.43108 3.45854 3.75341 3.13622C4.07573 2.81389 4.5129 2.63281 4.96873 2.63281H16.9999C17.4557 2.63281 17.8929 2.81389 18.2152 3.13622C18.5375 3.45854 18.7186 3.89571 18.7186 4.35155V12.9452Z" stroke="#1E1E1E" stroke-width="1.14582" stroke-linecap="round" stroke-linejoin="round" />
+						</svg>
+					</div>
+				</div>
+
+				<div class='thread-section' id='thread-${feedback[0]._id}'>
+					${feedback[1].map(reply => {
+						return `
+						<div class='thread-msg'>
+							<img src="${reply.commenterDocID.profile_pic}" alt="User Avatar" class="cmnt-author-img thread-avatar">
+							<div class="cmnt-body-3rows">
+								<div class="reply-info">
+        							<span id="commenterUsername" style="display: none;">${reply.commenterDocID.username}</span> 
+									<span class="main__author-name">${reply.commenterDocID.displayname}</span>
+									<span class="reply-date">${this.formatDate(reply.createdAt)}</span>
+								</div>
+								<div class="reply-msg">${reply.feedbackContents}</div>
+
+								<div class="main__engagement-opts engagement-opts">
+									<svg class="reply-icon thread-opener" data-tippy-content="Reply" width="25" height="24" viewBox="0 0 22 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+										<path d="M18.7186 12.9452C18.7186 13.401 18.5375 13.8382 18.2152 14.1605C17.8929 14.4829 17.4557 14.6639 16.9999 14.6639H6.68747L3.25 18.1014V4.35155C3.25 3.89571 3.43108 3.45854 3.75341 3.13622C4.07573 2.81389 4.5129 2.63281 4.96873 2.63281H16.9999C17.4557 2.63281 17.8929 2.81389 18.2152 3.13622C18.5375 3.45854 18.7186 3.89571 18.7186 4.35155V12.9452Z" stroke="#1E1E1E" stroke-width="1.14582" stroke-linecap="round" stroke-linejoin="round" />
+									</svg>
+								</div>
+							</div>
+						</div>
+						`
+					})}
+				</div>
+			</div>
+		`
+
+        let mainCommentContainer = document.createElement('div')
+		mainCommentContainer.classList.add('main-cmnt-container')
+		mainCommentContainer.innerHTML = template
+        commentsContainer.appendChild(mainCommentContainer)
+    }
+}
 
 
 //* Download: Dashboard + Note View
@@ -612,6 +735,52 @@ function share(platform) {
 
 
 
+async function saveNote(svButton, fromDashboard = false) {
+    if (svButton.getAttribute('data-disabled')) return
+
+    svButton.setAttribute('data-disabled', 'true')
+    
+    let noteTitle = svButton.getAttribute('data-notetitle')
+    let noteDocID = svButton.getAttribute('data-noteid')
+    
+    let noteData = new FormData()
+    noteData.append("noteDocID", noteDocID)
+    
+    let isSaved = svButton.getAttribute('data-issaved')
+    let url = `/api/note/save?action=${isSaved === 'true' ? 'delete' : 'save'}`
+    let mainsvButton = fromDashboard ? svButton.querySelector('#save-note-btn') : svButton
+
+    const SAVE_SVG = () => mainsvButton.classList.add('saved')
+    const UNSAVE_SVG = () => mainsvButton.classList.remove('saved')
+    
+    function replaceSaveButton() {
+        isSaved === 'false' ? SAVE_SVG() : UNSAVE_SVG()
+        svButton.setAttribute('data-issaved', isSaved === 'false' ? 'true' : 'false')
+    }
+
+    replaceSaveButton()
+    manageNotes[isSaved === "true" ? "removeSaveNote" : "addSaveNote"]({ noteTitle, noteID: noteDocID})
+
+    let response = await fetch(url, {
+        method: 'post',
+        body: noteData
+    })
+    let body = await response.json()
+    if (body.ok) {
+        isSaved === "false" ? (async function() {
+            Swal.fire(toastData('success', 'Note saved successfully!'))
+            await manageDb.add('savedNotes', body.savedNote[0])
+        })() : manageDb.delete('savedNotes', noteDocID)
+
+        document.querySelector('.no-saved-notes-message').classList[body.count === 0 ? 'remove' : 'add']('hide')
+        svButton.removeAttribute('data-disabled')
+    } else {
+        Swal.fire(toastData('error', "Yikes! Try again later.", 3000))
+    }
+}
+
+
+
 //* Search Notes: All Pages
 async function searchNotes() {
     /* 
@@ -710,9 +879,9 @@ try {
 
 
 let notificationCount = document.getElementById('notification-count').textContent;
-if(notificationCount <= 0) {
+if (notificationCount <= 0) {
     document.getElementById('notification-count').style.display = 'none'
-} 
+}
 
 //* Delete notifications: all pages
 async function deleteNoti(id) {
@@ -733,13 +902,13 @@ async function deleteNoti(id) {
 
 //* Adding notifications: all pages
 
-function addNoti(feedbackData, message) {
+function addNoti(feedbackData) {
     /* 
     # Process: The main function is manageNotes.addNoti. Related to feedback-given WS event
     ~   the noti. data is got via feedback-given WS event. the process handles the main addNoti funnction (1). then the number got increased
     ~   and shown in the noti. badge (2)
     */
-    manageNotes.addNoti(feedbackData, message) // 1
+    manageNotes.addNoti(feedbackData) // 1
     notificationCount++;
     updateNotificationBadge(); // 2
 }
@@ -771,63 +940,6 @@ notiLinks.forEach(notiLink => {
     });
 });
 
-
-
-//* Event that will trigger when someone gives a feedback to a note: all pages, related to addNoti
-//FIXME: Good but I will optimize these two event handler more
-conSock.on('notification-feedback', (feedbackData, message) => {
-    addNoti(feedbackData, message)
-    manageDb.add('notis', feedbackData)
-
-    const nftShake = document.querySelector('.mobile-nft-btn')
-    nftShake.classList.add('shake') // 4
-    setTimeout(() => {
-        nftShake.classList.remove('shake');
-    }, 300)
-
-    try {
-        const audio = document.getElementById('notificationAudio');
-        audio.play();
-    } catch (error) {
-        console.error(error)
-    }
-})
-
-conSock.on("notification-mention", (mentionData, message) => {
-    addNoti(mentionData, message)
-    manageDb.add('notis', mentionData)
-
-    const nftShake = document.querySelector('.mobile-nft-btn')
-    nftShake.classList.add('shake') // 4
-    setTimeout(() => {
-        nftShake.classList.remove('shake');
-    }, 300)
-
-    try {
-        const audio = document.getElementById('notificationAudio');
-        audio.play();
-    } catch (error) {
-        console.error(error)
-    }
-})
-
-conSock.on("notification-reply", (replyData, message) => {
-    addNoti(replyData, message)
-    manageDb.add('notis', replyData)
-
-    const nftShake = document.querySelector('.mobile-nft-btn')
-    nftShake.classList.add('shake') // 4
-    setTimeout(() => {
-        nftShake.classList.remove('shake');
-    }, 300)
-
-    try {
-        const audio = document.getElementById('notificationAudio');
-        audio.play();
-    } catch (error) {
-        console.error(error)
-    }
-})
 
 
 try {

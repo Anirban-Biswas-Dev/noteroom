@@ -24,6 +24,8 @@
 	<script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/animations/scale.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
+
+    <%- include('/partials/links.ejs') %>
 </head>
 <body class="flex-center-evenly flex-inverse gradient-2">
     <div class="main-container flex-column-center">
@@ -34,10 +36,6 @@
             <p class="txt-gray-light-bold">Welcome back! Pick up where left off</p>
         </div>
         <div class="acquisition-container flex-column-center">
-            <!-- Google Sign up options -->
-<!--            <button type="button" class="google-btn" >-->
-<!--                Login with Google-->
-<!--            </button>-->
             <div id="g_id_onload"
                  data-client_id="325870811550-0c3n1c09gb0mncb0h4s5ocvuacdd935k.apps.googleusercontent.com"
                  data-callback="handleCredentialResponse"
@@ -68,10 +66,10 @@
                         <i class="fa-solid fa-eye" id="show-pass"></i>
                     </button>
                 </div>
+                <p class="redirecting-msg"><a href="/support" class="redirect-link">Forgot Password?</a></p>
 
                 <button class="primary-btn flex-center-evenly">Login
-                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="login-spinner" style="display: none"></span> <!--Maybe add the spinner, this is the bootstrap one, I just wanted to see how that works. Make yours like this, it will be easy to handle.-->
-                    <!-- once the js file is available, this loader needs to be displayed on submission of details -->
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="login-spinner" style="display: none"></span>
                     <div class="btn-loader"></div>
                 </button>
             </div>
@@ -85,6 +83,7 @@
     <%- include('side-panel', { block: 'error-popup' }) %>
 
 
+	<script src="/js/notificationHandler.js"></script>
     <script src="/js/controller.js"></script>
     <script src="/js/login.js"></script>
     <script src="/js/utils.js"></script>

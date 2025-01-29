@@ -52,7 +52,7 @@ export interface INoteDB {
 */
 interface ICommentDB {
     noteDocID: string,
-    feedbackContents: string
+    feedbackContents?: string
 }
 
 
@@ -79,6 +79,18 @@ export interface IReplyDB extends ICommentDB {
 
 
 
+export interface IVoteDB {
+    noteDocID?: string,
+    voterStudentDocID: string,
+    voteType?: "upvote" | "downvote",
+}
+
+export interface ICommentVoteDB extends IVoteDB {
+    feedbackDocID: string
+}
+
+
+
 
 /* ------------------- Notifications Section ------------------- */
 
@@ -88,6 +100,7 @@ export interface IReplyDB extends ICommentDB {
 */
 interface INoteNotificationsDB {
     noteDocID: string,
+    content: string
 }
 
 
@@ -128,4 +141,13 @@ export interface IMentionNotificationDB extends ICommentNotificationDB {
 export interface IReplyNotificationDB extends ICommentNotificationDB {
     ownerStudentID: string,
     parentFeedbackDocID: string,
+}
+
+
+export interface IUpVoteNotificationDB {
+    noteDocID: string,
+    voteDocID: string,
+    voterDocID: string,
+    ownerStudentID: string,
+    content: string
 }

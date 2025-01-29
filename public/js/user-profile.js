@@ -45,9 +45,50 @@ function badgeStyling() {
             break
     }
 }
-
 badgeStyling();
 
+
+let collegeID = document.querySelector('.user-clg').getAttribute('data-collegeid')
+let collegeName = document.querySelector('#college-name')
+let collegeLogo = document.querySelector('.user-clg--img')
+
+try {
+    if (!Number.isNaN(parseInt(collegeID))) {
+        let collegeDistrict = Object.keys(districtCollegeData)[parseInt(collegeID / 100) - 1]
+        let collegeObject = districtCollegeData[collegeDistrict].filter(data => data.id == parseInt(collegeID))[0]
+    
+        collegeName.innerHTML = collegeObject.name
+        collegeLogo.src = `\\images\\onboarding-assets\\College-logos\\${collegeObject.logo}`
+    } else {
+        collegeName.innerHTML = collegeID    
+    }
+} catch (error) {
+    
+}
+
+
+let observer = new IntersectionObserver(entries => {
+    entries.forEach(async entry => {
+        if (entry.isIntersecting) {
+            let username = document.querySelector('#ownedNotes').getAttribute('data-username')
+            console.log(username)
+            let response = await fetch(`/api/note?noteType=owned&username=${username}`)
+            let notes = await response.json()
+            if (notes.length !== 0) {
+                notes.forEach(note => {
+                    manageNotes.addNoteProfile({ noteID: note._id, noteTitle: note.title, noteThumbnail: note.thumbnail }, 'owned')
+                })
+            } else {
+                document.querySelector('#no-notes-owned').style.display = 'flex'
+            }
+            observer.unobserve(entry.target)
+            document.querySelector('.owned-notes-status').remove()
+        }
+    })
+}, {
+    rootMargin: '0px 0px -300px 0px'
+})
+observer.observe(document.querySelector('#ownedNotes'))
 
 //* The delete note eventhandler
 // document.addEventListener('click', function (event) {
@@ -84,7 +125,15 @@ const toggleSections = (activeBtn, inactiveBtn, showSection, hideSection) => {
 };
 
 try {
-    userSavedNotesBtn.addEventListener('click', () => {
+    userSavedNotesBtn.addEventListener('click', async () => {
+        let savedNotes = await manageDb.get('savedNotes')
+        if (savedNotes.length !== 0) {
+            savedNotes.forEach(note => {
+                manageNotes.addNoteProfile(note, 'saved')
+            })
+        } else {
+            document.querySelector('#no-notes-saved').style.display = 'flex'
+        }
         toggleSections(userSavedNotesBtn, userNotesBtn, userSavedNotes, userNotes);
     });
 
@@ -92,6 +141,5 @@ try {
         toggleSections(userNotesBtn, userSavedNotesBtn, userNotes, userSavedNotes);
     });
 } catch (error) {
-    console.error(error)
 }
 

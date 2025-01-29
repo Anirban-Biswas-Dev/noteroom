@@ -24,6 +24,8 @@
 	<script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dexie@latest/dist/dexie.min.js"></script>
     <title>Find Other People in NoteRoom</title>
+
+    <%- include('/partials/links.ejs') %>
 </head>
 <body>
     <%- include('side-panel', { block: 'left-panel' }) %> 
@@ -74,6 +76,7 @@
 	<div id="overlay" class="overlay"></div>
 	<audio id="notificationAudio" src="/sounds/notification-ping-sound.mp3" preload="auto"></audio>
 
+	<script src="/js/notificationHandler.js"></script>
 	<script src="/js/controller.js"></script>
     <script src="/js/search-profile.js"></script>
 </body>

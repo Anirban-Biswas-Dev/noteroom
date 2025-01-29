@@ -20,7 +20,7 @@ import userRouter from './routers/user.js'
 import signupRouter from './routers/sign-up.js'
 import errorHandler from './middlewares/errors.js'
 import uploadRouter from './routers/upload-note.js'
-import noteViewRouter from './routers/note-view.js'
+import noteViewRouter from './routers/note-view/note-view.js'
 import dashboardRouter from './routers/dashboard.js'
 import serachProfileRouter from './routers/search-profile.js'
 import settingsRouter from './routers/settings.js'
@@ -30,11 +30,13 @@ import Alerts from './schemas/alerts.js'
 
 import noteIOHandler from './services/io/ioNoteService.js';
 import notificationIOHandler from './services/io/ioNotifcationService.js';
+import checkOnboarded from './middlewares/onBoardingChecker.js';
+import resetPasswordRouter from './routers/reset-password.js';
 
 
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = dirname(__filename);
 config({ path: join(__dirname, '.env') });
 
 const app = express()
@@ -74,12 +76,13 @@ app.use(session({
 app.use(cookieParser()) // Middleware for working with cookies
 app.use(fileUpload()) // Middleware for working with files
 app.use('/login', loginRouter(io))
-app.use('/user', userRouter(io))
+app.use('/user', checkOnboarded(false), userRouter(io))
 app.use('/sign-up', signupRouter(io))
-app.use('/upload', uploadRouter(io))
-app.use('/view', noteViewRouter(io))
-app.use('/dashboard', dashboardRouter(io))
-app.use('/search-profile', serachProfileRouter(io))
+app.use('/upload', checkOnboarded(false), uploadRouter(io))
+app.use('/view', checkOnboarded(false), noteViewRouter(io))
+app.use('/dashboard',checkOnboarded(false), dashboardRouter(io))
+app.use('/search-profile', checkOnboarded(false), serachProfileRouter(io))
+app.use('/auth', resetPasswordRouter())
 app.use('/settings', settingsRouter(io))
 app.use('/api', apiRouter(io))
 app.use(errorHandler) // Middleware for handling errors
@@ -88,6 +91,7 @@ app.get('/logout', (req, res) => {
     req.session.destroy(error => {
         res.clearCookie('studentID')
         res.clearCookie('recordID')
+        res.clearCookie('connect.sid')
         if(!error) {
             res.redirect('/login')
         } else {
@@ -108,9 +112,7 @@ app.get('/about-us', (req, res) => {
 app.get('/privacy-policy', (req, res) => {
     res.render('privacy-policy')
 })
-app.get('/onboarding', (req, res) => {
-    res.render('onboarding')
-})
+app.get('/onboarding', checkOnboarded(true))
 
 
 export let userSocketMap: Map<string, string> = new Map()
@@ -121,7 +123,7 @@ io.on('connection', (socket) => {
     }
 
     socket.on('disconnect', () => {
-        userSocketMap.forEach((studentID, sockID) => {
+        userSocketMap.forEach((sockID, studentID) => {
             if (sockID === socket.id) {
                 userSocketMap.delete(studentID)
             }

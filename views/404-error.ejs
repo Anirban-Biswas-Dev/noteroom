@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>404 Error</title>
     <link rel="stylesheet" href="/css/404-error.css">
+
+    <%- include('/partials/links.ejs') %>
 </head>
 <body>
     <header class="top-header"></header>
@@ -26,7 +28,7 @@
                 <p class="message__text"><%= message %></p>
             </div>
             <div class="error__nav e-nav">
-                <a href="https://ctgcollege.gov.bd/" class="e-nav__link">Go Home</a>
+                <a href="/dashboard" class="e-nav__link">Go Home</a>
             </div>
         </div>
         <!-- END Content -->

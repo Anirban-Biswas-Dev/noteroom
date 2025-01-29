@@ -1,0 +1,18 @@
+<div class="notification secondary-<%= noti.isRead %>" id="noti-<%= noti._id %>">
+    <div class="first-row">
+        <div class="frnt-wrapper">
+        <span class="isRead <%= noti.isRead %>"></span>
+        <a href='/view/<%= noti.noteDocID._id %>/' class="notification-link notiLink">
+            <span class="notification-title">
+            <% let title = noti.noteDocID.title.length > 30 ? `${noti.noteDocID.title.slice(0, 30)}...` : noti.noteDocID.title  %>
+            <%= title %>
+            <span style="display: none;"><%= formatDate(new Date(noti.createdAt)) %></span>
+            </span>
+        </a>
+        </div>
+        <span class="remove-notification" onclick="deleteNoti('<%= noti._id %>')">&times;</span>
+    </div>
+    <div class="notification-msg">
+        <a href='/view/<%= noti.noteDocID._id %>/' class="notification-link-2 notiLink"><%= message %></a>
+    </div>
+</div>

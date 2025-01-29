@@ -1,29 +1,163 @@
 const host = window.location.origin;
-const socket = io(host, { query: { studentID: Cookies.get("studentID") } });
+const socket = io(host);
 
-/*
-# Event Sequence:
-~   1. join-room: to server : request server to join the room of that note
-~   2. feedback: to server : give the feedback and other assoc. data to add the feedbacks to db
-~   3. add-feedback: from server : add the responsed extented feedback data with commenter's information   
-*/
+let feedbackAddedObserver = new MutationObserver(entries => {
+  document.querySelector('.no-comments-container').style.display = 'none'
+})
+feedbackAddedObserver.observe(document.querySelector('.cmnts-list'), { childList: true })
 
-socket.emit(
-  "join-room",
-  window.location.pathname.split(
-    "/"
-  )[2] /* The note-id as the unique room name */
-);
+
+window.addEventListener('load', async () => {
+  try {
+    document.querySelector('#editor').setAttribute('data-disabled', 'true') // No feedbacks can be given until the comments are fetched
+    
+    async function getNoteImages() {
+      let imageContainer = document.querySelector('#note-image-container').querySelector('.carousel-wrapper')
+      let imageSliderElement = (source) => {
+        let template = `<img src="${source}" class="image-links"/>`
+        let slideDiv = document.createElement('div')
+        slideDiv.classList.add('carousel-slide')
+        slideDiv.innerHTML = template.trim()
+        return slideDiv
+      }
+  
+      let response = await fetch(`${window.location.pathname}/images`)
+      let images = await response.json()
+      if (images.length !== 0) {
+        document.querySelector('#note-image-loader').remove()
+        images.forEach(source => {
+          imageContainer.appendChild(imageSliderElement(source))
+        })
+      }
+    }
+  
+    async function getNoteComments() {
+      let response = await fetch(`${window.location.pathname}/comments`)
+      let comments = await response.json()
+  
+      document.querySelector('.comments-loader').remove()
+  
+      if (comments.length !== 0) {
+        comments.forEach(feedback => {
+          manageNotes.addAllFeedback(feedback)
+        })
+      } else {
+        document.querySelector('.no-comments-container').style.display = 'flex'
+      }
+      document.querySelector('#editor').removeAttribute('data-disabled')
+    }
+    
+    
+    await getNoteImages()
+    
+    let commentFetchObserver = new IntersectionObserver(entries => {
+      entries.forEach(async entry => {
+        if (entry.isIntersecting) {
+          await getNoteComments()
+          adjustThreadLineHeights(); // Adjust thread height again
+          commentFetchObserver.unobserve(document.querySelector('.cmnts-list'))
+        }
+      })
+    }, {
+      rootMargin: '100px'
+    })
+    commentFetchObserver.observe(document.querySelector('.cmnts-list'))
+  
+  
+    const slides = document.querySelectorAll(".carousel-slide");
+    const nextButton = document.querySelector(".next");
+    const prevButton = document.querySelector(".prev");
+    let currentIndex = 0;
+  
+    function showSlide(index) {
+      const offset = -index * 100;
+      document.querySelector(".carousel-wrapper").style.transform = `translateX(${offset}%)`;
+    }
+  
+    nextButton.addEventListener("click", () => {
+      currentIndex = (currentIndex + 1) % slides.length;
+      showSlide(currentIndex);
+    });
+  
+    prevButton.addEventListener("click", () => {
+      currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+      showSlide(currentIndex);
+    });
+  
+    // Initially show the first slide
+    showSlide(currentIndex);
+  } catch (error) {}
+})
+
+
+socket.emit("join-room", window.location.pathname.split("/")[2] /* The note-id as the unique room name */);
+
+try {
+} catch (error) {}
 
 //* Broadcasted feedback handler. The extented-feedback is broadcasted
 socket.on('add-feedback', (feedbackData) => {
-  manageNotes.addFeedback(feedbackData)
+	try {
+		document.querySelector('div.main-cmnt-container[data-temporary=true]')?.remove()  
+		manageNotes.addFeedback(feedbackData)
+	} catch (error) {}
 })
 
 
 socket.on('add-reply', (replyData) => {
-  manageNotes.addReply(document.querySelector(`#thread-${replyData.parentFeedbackDocID._id}`), replyData)
+	try {
+		document.querySelector('div.thread-msg[data-temporary=true]')?.remove()
+		manageNotes.addReply(document.querySelector(`#thread-${replyData.parentFeedbackDocID._id}`), replyData)
+	} catch (error) {}
 })
+
+socket.on('update-upvote', function (upvoteCount) {
+	document.querySelector('.uv-count').innerHTML = parseInt(upvoteCount)
+})
+
+
+
+const voterStudentID = Cookies.get("studentID")
+
+async function upvoteComment(voteContainer) {
+	if (voteContainer.getAttribute('data-disabled')) return
+
+	voteContainer.setAttribute('data-disabled', 'true')
+
+	const noteDocID = voteContainer.getAttribute('data-noteid')
+	const isUpvoted = voteContainer.getAttribute('data-isupvoted') === "true" ? true : false
+	const feedbackDocID = voteContainer.getAttribute('data-feedbackid')
+
+	let likeCount = voteContainer.querySelector('.like-count')
+	const LIKE_SVG = `<path class='like-icon-fill' d='M28.4938 47.5373C28.4938 47.5373 28.4863 108.91 28.493 110.455C28.4996 112 84.4861 110.998 88.993 110.998C93.5 110.998 108.994 88.5431 109.494 70.581C109.994 52.6188 107.998 49.9985 107.498 49.9985L66 49.9982C78.4744 33.916 62.958 -7.56607 57.9956 8.99958C53.0332 25.5652 49.9956 32.4996 49.9956 32.4996L28.4938 47.5373Z' fill='black'/>`
+	const DISLIKE_SVG = `<path d="M107.498 49.9985C107.998 49.9985 109.994 52.6188 109.494 70.581C108.994 88.5431 93.5 110.998 88.993 110.998C84.4861 110.998 28.4996 112 28.493 110.455C28.4863 108.91 28.4938 47.5373 28.4938 47.5373L49.9956 32.4996C49.9956 32.4996 53.0332 25.5652 57.9956 8.99958C62.958 -7.56607 78.4744 33.916 66 49.9982M107.498 49.9985C106.998 49.9985 66 49.9982 66 49.9982M107.498 49.9985L66 49.9982" stroke="#606770" stroke-width="10" stroke-linecap="round"/>`
+
+	function replaceLikeSvg(svg, increment) {
+		voteContainer.querySelector('.like-icon').innerHTML = svg
+		voteContainer.setAttribute('data-isupvoted', !isUpvoted)
+		voteContainer.querySelector('.like-count').innerHTML = parseInt(likeCount.innerHTML) + (increment ? 1 : -1)
+	}
+
+	let url = `/view/${noteDocID}/vote/feedback?type=upvote${isUpvoted ? '&action=delete' : ''}`
+	replaceLikeSvg(isUpvoted ? DISLIKE_SVG : LIKE_SVG, !isUpvoted)
+
+	let voteData = new FormData()
+	voteData.append('noteDocID', noteDocID)
+	voteData.append('voterStudentID', voterStudentID)
+	voteData.append('feedbackDocID', feedbackDocID)
+
+	let response = await fetch(url, {
+		method: 'post',
+		body: voteData
+	})
+	let data = await response.json()
+	if (!data.ok) {
+		Swal.fire(toastData('error', "Yikes! Try again later.", 3000))
+	} else {
+		voteContainer.removeAttribute('data-disabled')
+	}
+}
+
 
 function formatDate(date) {
   const formatter = new Intl.DateTimeFormat('en-US', {
@@ -38,31 +172,6 @@ function formatDate(date) {
   const formattedDate = formatter.format(date);
   return formattedDate
 }
-
-const slides = document.querySelectorAll(".carousel-slide");
-const nextButton = document.querySelector(".next");
-const prevButton = document.querySelector(".prev");
-let currentIndex = 0;
-
-function showSlide(index) {
-  const offset = -index * 100;
-  document.querySelector(
-    ".carousel-wrapper"
-  ).style.transform = `translateX(${offset}%)`;
-}
-
-nextButton.addEventListener("click", () => {
-  currentIndex = (currentIndex + 1) % slides.length;
-  showSlide(currentIndex);
-});
-
-prevButton.addEventListener("click", () => {
-  currentIndex = (currentIndex - 1 + slides.length) % slides.length;
-  showSlide(currentIndex);
-});
-
-// Initially show the first slide
-showSlide(currentIndex);
 
 let kickUser = document.querySelector('.kick')
 if (kickUser) {
@@ -200,19 +309,11 @@ const tribute = new Tribute({
 })
 tribute.attach(document.querySelector('#editor'))
 
-
-
-toastui.Editor.codeBlockLanguages = [];
-
-const editor = new toastui.Editor({
-  el: document.querySelector("#editor"),
-  initialEditType: "wysiwyg",
-  previewStyle: "none",
-  height: "200px",
-  hideModeSwitch: true,
-  placeholder: "Give a feedback",
-  toolbarItems: [["bold", "italic", "strike"], ["link"], ["image"]],
+const editor = new Quill('#editor', {
+  theme: 'snow',
+  placeholder: 'Give a feeback'
 });
+document.getElementById('editor').style.height = '120px';
 
 tippy("[data-tippy-content]", {
   placement: "top",
@@ -272,22 +373,51 @@ document.addEventListener('DOMContentLoaded', () => {
   const noteDocID = window.location.pathname.split("/")[2]; // Note's document ID
   const commenterStudentID = Cookies.get("studentID"); // Commenter's document ID
 
-  const postMainComment = async () => {
-    const commentHTML = editor.getHTML(); // feedback text
-    if (!commentHTML.trim()) return; // Preventing any empty comments
+  const postMainComment = async (event) => {
+    event.preventDefault()
+
+    const commentHTML = editor.root.innerHTML; // feedback text
+    
+    if (editor.root.textContent.trim() === "" || document.querySelector('#editor').getAttribute('data-disabled')) return; // Preventing any empty comments
+
+    document.querySelector('#editor').setAttribute('data-disabled', 'true')
+
+    // a temporary feedback placeholder that will be shown until the main feedback is sent successfully
+    manageNotes.addFeedback({
+      _id: '__id__',
+      createdAt: new Date(),
+      feedbackContents: '',
+      commenterDocID: {
+        profile_pic: '__profile_pic__',
+        username: '__username__',
+        displayname: 'User'
+      },
+      noteDocID: {
+        _id: '__id__'
+      },
+      upvoteCount: 0,
+      temporary: true
+    })
 
     const feedbackData = new FormData()
     feedbackData.append('noteDocID', noteDocID)
     feedbackData.append('commenterStudentID', commenterStudentID)
     feedbackData.append('feedbackContents', commentHTML)
 
-    await fetch(`${pathname.endsWith('/') ? pathname : pathname + '/'}postFeedback`, {
+    let response = await fetch(`${pathname.endsWith('/') ? pathname : pathname + '/'}postFeedback`, {
       body: feedbackData,
       method: 'post'
     })
+    let data = await response.json()
+    if(data.sent) {
+      document.querySelector('#editor').removeAttribute('data-disabled') 
+      Swal.fire(toastData('success', "Feedback delivered with care!", 2000))
+      editor.root.innerHTML = ''; // reseting toast ui editor content
+      adjustThreadLineHeights();
+    } else {
+      Swal.fire(toastData('error', "Yikes! Try again later.", 3000))
+    }
 
-    adjustThreadLineHeights();
-    editor.setHTML(''); // reseting toast ui editor content
   };
 
   cmntBtn.addEventListener("click", postMainComment);
@@ -315,9 +445,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
           // Add the HTML for the thread editor
           threadEditor.innerHTML = `
-                  <!--<img class="tec__avatar-preview thread-avatar">-->
                   <div class="thread-editor-wrapper">
-                    <textarea placeholder="Write a comment..." class="thread-editor">@${parentCommenterUsername} </textarea>
+                    <span id='mentioneduser' class="thread-mentioned-user">@${parentCommenterUsername}</span>
+                    <textarea placeholder="Write a comment..." class="thread-editor"></textarea>
                     <div class="thread-editor__action-opts">
                       <svg id="threadCmntBtn" class="thread__cmnt-btn" width="18px" height="18px" viewBox="0 0 256 256" id="Flat" xmlns="http://www.w3.org/2000/svg">
                         <path d="M231.626,128a16.015,16.015,0,0,1-8.18262,13.96094L54.53027,236.55273a15.87654,15.87654,0,0,1-18.14648-1.74023,15.87132,15.87132,0,0,1-4.74024-17.60156L60.64746,136H136a8,8,0,0,0,0-16H60.64746L31.64355,38.78906A16.00042,16.00042,0,0,1,54.5293,19.44727l168.915,94.59179A16.01613,16.01613,0,0,1,231.626,128Z"/>
@@ -339,12 +469,24 @@ document.addEventListener('DOMContentLoaded', () => {
       // Handle posting replies
       if (event.target.closest('.thread__cmnt-btn')) {
         const textarea = event.target.closest('.thread-editor-container').querySelector('.thread-editor');
-        const replyContent = textarea.value.trim();
+        const replyContent = document.querySelector('#mentioneduser').innerHTML + " " + textarea.value.trim();
 
-        if (!replyContent) return; // Prevents posting empty replies
-
+        if (!textarea.value.trim() || textarea.getAttribute('data-disabled')) return; // Prevents posting empty replies
+        
+        textarea.setAttribute('data-disabled', 'true')
         const threadSection = event.target.closest('.thread-section');
 
+        manageNotes.addReply(threadSection, {
+          createdAt: new Date(),
+          feedbackContents: '',
+          commenterDocID: {
+            profile_pic: '__profile_pic__',
+            username: '__username__',
+            displayname: 'User'
+          },
+          temporary: true
+        })
+        
         const parentFeedbackDocID = threadSection.previousElementSibling.querySelector('.reply-info #parentFeedbackDocID').innerHTML
         const replyData = new FormData()
         replyData.append('noteDocID', noteDocID)
@@ -353,13 +495,19 @@ document.addEventListener('DOMContentLoaded', () => {
         replyData.append('parentFeedbackDocID', parentFeedbackDocID)
         replyData.append('reply', true)
 
-        await fetch(`${pathname.endsWith('/') ? pathname : pathname + '/'}postFeedback`, {
+        let response = await fetch(`${pathname.endsWith('/') ? pathname : pathname + '/'}postFeedback`, {
           body: replyData,
           method: 'post'
         })
+        let data = await response.json()
+        if (data.sent) {
+          textarea.removeAttribute('data-disabled')
+          adjustThreadLineHeights(); // Adjust thread height again
+          textarea.value = '';
+        } else {
+          Swal.fire(toastData('error', "Yikes! Try again later.", 3000))    
+        }
 
-        adjustThreadLineHeights(); // Adjust thread height again
-        textarea.value = '';
       }
     });
   };

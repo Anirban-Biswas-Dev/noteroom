@@ -2,6 +2,7 @@ import { Router } from 'express'
 import { Convert, getProfile } from '../services/userService.js'
 import { getNotifications, getSavedNotes, unreadNotiCount } from '../helpers/rootInfo.js'
 import { Server } from 'socket.io'
+import { manageProfileNotes } from '../services/noteService.js'
 
 const router = Router()
 
@@ -12,13 +13,17 @@ function userRouter(io: Server) {
                 let username = await Convert.getUserName_studentid(req.session["stdid"])
                 let notis = await getNotifications(req.session["stdid"]) // Notifications of the root-user
                 let unReadCount = await unreadNotiCount(req.session["stdid"])
+                let noteCounts = [
+                    await manageProfileNotes.getNoteCount('owned', req.session["stdid"]),
+                    await manageProfileNotes.getNoteCount('saved', req.session["stdid"])
+                ]
 
                 if (username == req.params.username) {
                     try {
                         let data = await getProfile(req.session["stdid"])
                         let [student, notes] = [data['student'], data['notes']]
                         let savedNotes = await getSavedNotes(req.session["stdid"])
-                        res.render('user-profile', { student: student, notes: notes, savedNotes: savedNotes, visiting: false, notis: notis, root: student, unReadCount: unReadCount })
+                        res.render('user-profile', { noteCounts: noteCounts, student: student, notes: notes, savedNotes: savedNotes, visiting: false, notis: notis, root: student, unReadCount: unReadCount })
                     } catch (error) {
                         next(error)
                     }

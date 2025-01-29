@@ -5,13 +5,17 @@ import Notes from "../schemas/notes.js";
 import Students from "../schemas/students.js";
 import archiver from "archiver";
 import { getNotifications } from "../helpers/rootInfo.js";
-import { deleteNote } from "./noteService.js";
+import { addSaveNote, deleteNote, deleteSavedNote, getAllNotes, manageProfileNotes } from "./noteService.js";
 import { Convert } from "./userService.js";
+import { isUpVoted } from "./voteService.js";
+import { checkLoggedIn } from "../middlewares/checkLoggedIn.js";
 
 const router = Router()
 
 export default function apiRouter(io: Server) {
-    router.post("/download", async (req, res) => {
+    // router.use(checkLoggedIn)
+
+    router.post("/download" ,async (req, res) => {
         let noteID = req.body.noteID
         let noteTitle = req.body.noteTitle
 
@@ -56,6 +60,24 @@ export default function apiRouter(io: Server) {
         res.send({ deleted: deleted })
     })
 
+    router.post("/note/save", async (req, res) => {
+        try {
+            let action = req.query["action"]
+            let noteDocID = req.body["noteDocID"]
+            let studentDocID = (await Convert.getDocumentID_studentid(req.session["stdid"])).toString()
+    
+            if (action === 'save') {
+                let result = await addSaveNote({ studentDocID, noteDocID })
+                res.json({ ok: result.ok, count: result.count, savedNote: result.savedNote })
+            } else {
+                let result = await deleteSavedNote({ studentDocID, noteDocID })
+                res.json({ ok: result.ok, count: result.count })
+            }
+        } catch (error) {
+            res.json({ ok: false, count: undefined })
+        }
+    })
+
 
     router.get('/search', async (req, res, next) => {
         let searchTerm = req.query.q as string
@@ -93,23 +115,52 @@ export default function apiRouter(io: Server) {
         async function getSavedNotes(studentDocID) {
             let student = await Students.findById(studentDocID, { saved_notes: 1 })
             let saved_notes_ids = student['saved_notes']
-            let notes = await Notes.find({ _id: { $in: saved_notes_ids } }, { title: 1 })
+            let notes = await Notes.aggregate([
+                { $match: { _id: { $in: saved_notes_ids } } },
+                { $project: {
+                    title: 1,
+                    thumbnail: { $first: '$content' }
+                } }
+            ])
             return notes
         }
+
         if (type === 'save') {
-            let studentDocID = req.query.studentDocID
+            let studentDocID = await Convert.getDocumentID_studentid(req.session["stdid"])
             let savedNotes = await getSavedNotes(studentDocID)
             res.json(savedNotes)
         } else if (type === 'seg') {
             let page = req.query.page as unknown as number
             let count = req.query.count as unknown as number
             let skip: number = (page - 1) * count
-            let notes = await Notes.find({}).sort({ createdAt: -1 }).skip(skip).limit(count).populate('ownerDocID', 'profile_pic displayname studentID')
+            
+            let studentDocID = (await Convert.getDocumentID_studentid(req.session["stdid"])).toString()
+            let notes = await getAllNotes(studentDocID, { skip: skip, limit: count })
+
             if (notes.length != 0) {
                 res.json(notes)
             } else {
                 res.json([])
             }
+        }
+    })
+
+
+    router.get('/note', async (req, res) => {
+        try {
+            let username = <string>req.query["username"]
+            let studentID = await Convert.getStudentID_username(username)
+            let noteType = <"saved" | "owned">req.query["noteType"]
+            let isCount = req.query["count"] ? true : false
+            if (!isCount) {
+                let notes = await manageProfileNotes.getNote(noteType, studentID)
+                res.json(notes)
+            } else {
+                let noteCount = await manageProfileNotes.getNoteCount(noteType, studentID)
+                res.json({ noteType, count: noteCount })
+            }
+        } catch (error) {
+            
         }
     })
 

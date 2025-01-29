@@ -1,7 +1,15 @@
 import fileUpload from "express-fileupload"
-import slug from "slug"
+import slugify from "slugify"
 import sharp from "sharp"
 import { v4 as uuidv4 } from "uuid"
+import crypto from 'crypto'
+
+
+export function getHash(input: string, salt = `${Math.random()}`) {
+    const hash = crypto.createHash('sha256');
+    hash.update(input + salt);
+    return hash.digest('hex');
+}
 
 export function checkMentions(feedbackText: string) {
     let mentions = /@[a-z0-9-]+-[a-z0-9]{8}/g
@@ -19,7 +27,7 @@ export function replaceMentions(feedbackText: string, displaynames: string[]) {
     let i = 0
     mentions.map(mention => {
         feedbackText = feedbackText.replace(mention, `
-            <a href="/user/${mention.replace(`@`, ``)}" style="color: #ffffff; background-color: #007bff; border-radius: 5px; padding: 2px 4px; font-weight: bold;">
+            <a href="/user/${mention.replace(`@`, ``)}" class="thread-mentioned-user">
                 @${displaynames[i]}
             </a>`)
         i += 1
@@ -28,7 +36,10 @@ export function replaceMentions(feedbackText: string, displaynames: string[]) {
 }
 
 export function generateRandomUsername(displayname: string) {
-    let sluggfied = slug(displayname)
+    let sluggfied = slugify(displayname, {
+        lower: true,
+        strict: true
+    })
     let uuid = uuidv4()
     let suffix = uuid.split("-")[0]
     let username = `${sluggfied}-${suffix}`

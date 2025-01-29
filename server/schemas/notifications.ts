@@ -2,7 +2,7 @@ import { Schema, model } from 'mongoose'
 
 const baseOptions = {
     discriminatorKey: 'docType',
-    collection: 'notifs'
+    collection: 'notifs-test'
 }
 
 const NotifsSchema = new Schema({
@@ -13,9 +13,13 @@ const NotifsSchema = new Schema({
     createdAt: {
         type: Date,
         default: Date.now
+    },
+    content: {
+        type: String,
+        default: ''
     }
 }, baseOptions)
-const NotifsModel = model('notifs', NotifsSchema)
+const NotifsModel = model('notifs-test', NotifsSchema)
 
 
 const feedBackSchema = new Schema({
@@ -84,6 +88,30 @@ const replyNotifs = NotifsModel.discriminator('note-reply', replySchema)
 
 
 
+const voteSchema = new Schema({
+    noteDocID: {
+        type: Schema.Types.ObjectId,
+        ref: 'notes',
+        required: true
+    },
+    voteDocID: {
+        type: Schema.Types.ObjectId,
+        ref: 'votes',
+        required: true
+    },
+    voterDocID: {
+        type: Schema.Types.ObjectId,
+        ref: 'students',
+        required: true
+    },
+    ownerStudentID: String
+})
+const votesNotifs = NotifsModel.discriminator('note-vote', voteSchema)
+const commentVotesNotifs = NotifsModel.discriminator('note-comment-vote', voteSchema)
+
+
+
+
 export const Notifs = NotifsModel
 const _feedBackNotifs = feedBackNotifs
 export { _feedBackNotifs as feedBackNotifs }
@@ -91,3 +119,7 @@ const _mentionNotifs = mentionNotifs
 export { _mentionNotifs as mentionNotifs }
 const _replyNotifs = replyNotifs
 export { _replyNotifs as replyNotifs }
+const _votesNotifs = votesNotifs
+export { _votesNotifs as votesNotifs }
+const _commentVotesNotifs = commentVotesNotifs
+export { _commentVotesNotifs as commentVotesNotifs }

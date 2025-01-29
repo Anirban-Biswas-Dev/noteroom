@@ -27,5 +27,5 @@ export interface IManageUserNote {
 export interface INoteDetails {
     note: any,
     owner: any,
-    feedbacks: any
+    feedbacks?: any
 }

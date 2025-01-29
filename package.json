@@ -2,10 +2,11 @@
   "name": "server",
   "version": "1.0.0",
   "main": "server.js",
+  "type": "commonjs",
   "scripts": {
-    "start": "nodemon dist/server.js"
+    "start": "nodemon dist/server.js",
+    "build": "npx tsc"
   },
-  "type": "module",
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -23,8 +24,10 @@
     "express-session": "^1.18.0",
     "firebase-admin": "^12.7.0",
     "google-auth-library": "^9.15.0",
+    "jsdom": "^26.0.0",
     "mongoose": "^8.5.1",
     "node-fetch": "^3.3.2",
+    "nodemailer": "^6.9.16",
     "passport": "^0.7.0",
     "passport-google-oauth2": "^0.2.0",
     "redis": "^4.7.0",
@@ -34,7 +37,7 @@
     "socket.io": "^4.7.5",
     "socket.io-client": "^4.7.5",
     "tsc": "^2.0.4",
-    "typescript": "^5.7.2",
+    "typescript": "^5.7.3",
     "uuid": "^11.0.3"
   },
   "devDependencies": {

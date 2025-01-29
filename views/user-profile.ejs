@@ -18,10 +18,15 @@
     <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dexie@latest/dist/dexie.min.js"></script>
 
+    <%- include('/partials/links.ejs') %>
+
 </head>
 <body>
-    <%- include('side-panel', { block: 'left-panel' }) %>
     <%- include('side-panel', { block: 'search-bar' }) %>
+
+    <!-- COMPONENT: Left panel -->
+	<%- include('side-panel', { block: 'left-panel' }) %> 
+
     
     <div class="middle-section">
     <div class="ms-first-row">
@@ -50,163 +55,82 @@
             <% } %>
         </div>
     </div>
+    
+    <div class="ms-personal-info-container">
+        <div class="p-info__first-row">
+            <div class="user-clg-wrapper">
+                <span class="input-label">College</span>
+                <div class="user-clg" data-collegeid="<%= student.collegeID %>">
+                    <img src="" class="user-clg--img">
+                    <p class="user-info-text" id="college-name"><%= student.collegeID %></p>
+                </div>
+            </div> 
+        </div>
+        <div class="p-info__second-row">
+            <div class="user-bio-wrapper">
+                <span class="input-label">Bio</span>
+                <p class="user-info-text" ><%= student.bio %></p>
+            </div>
+        </div>
+        <div class="p-info__third-row">
+            <div class="user-clg-year-wrapper">
+                <span class="input-label">College Year</span>
+                <p class="user-info-text" ><%= student.collegeyear %></p>
+            </div>
 
-    <div class="ms-second-row">
-        <div class="user-username">
-            <span class="input-label">Username</span>
-            <div class="username-box">
-                <p>
-                    <%
-                        let username;
-                        let name = student.username
-                        if(name.length > 15) {
-                            username = name.slice(0, 15) + " ..."
-                        } else {
-                            username = name
-                        }
-                    %>
-                    <%= username %>
-                </p>
+            <div class="user-clg-roll-wrapper">
+                    <span class="input-label">College Roll</span>
+                    <p class="user-info-text" ><%= student.rollnumber %></p>
             </div>
         </div>
-        <div class="user-college-year">
-            <span class="input-label">College Year</span>
-            <div class="display-year-box">
-                <p><%= student.collegeyear %></p>
+        <div class="p-info__fourth-row">
+            <div class="user-fav-sub-wrapper">
+                <span class="input-label">Favourite Subject</span>
+                <p class="user-info-text" ><%= student.favouritesubject %></p>
+            </div>
+            <div class="user-non-fav-sub-wrapper">
+                <span class="input-label">Not So Favourite Subject</span>
+                <p class="user-info-text" ><%= student.notfavsubject %></p>
             </div>
         </div>
-    </div>
 
-    <div class="ms-third-row">
-        <div class="user-bio">
-            <span class="input-label">Bio</span>
-            <div class="bio-box">
-                <p><%= student.bio %></p>
-            </div>
-        </div>
-        <div class="user-email">
-            <span class="input-label">Email Address</span>
-            <div class="email-box">
-                <p><%= student.email %></p>
-            </div>
-        </div>
-    </div>
-
-    <div class="ms-fourth-row">
-        <div class="user-college-roll">
-            <span class="input-label">College Roll</span>
-            <div class="college-roll-box">
-                <p><%= student.rollnumber %></p>
-            </div>
-        </div>
-        <div class="user-college-section">
-            <span class="input-label">College Section</span>
-            <div class="college-section-box">
-                <p><%= student.collegesection %></p>
-            </div>
-        </div>
-    </div>
-
-    <div class="ms-fifth-row">
-        <div class="user-fav-sub">
-            <span class="input-label">Favourite Subject</span>
-            <div class="fav-sub-box">
-                <p><%= student.favouritesubject %></p>
-            </div>
-        </div>
-        <div class="user-non-fav-sub">
-            <span class="input-label">Not So Favourite Subject</span>
-            <div class="non-fav-sub-box">
-                <p><%= student.notfavsubject %></p>
-            </div>
-        </div>
     </div>
 
     <div class="uploaded-notes-section">
       <div class="toggle-header-uploaded-notes">
         <% if (visiting) { %>
-            <h2 class="user-notes active-section">
-                <% 
-                    let name = student.displayname 
-                    let displayname = name.match(/^\S+/i)
-                %>
-                <%= displayname %>'s Notes
+            <h2 class="user-notes active-section" id="ownedNotes" data-username="<%= student.username %>">
+                <%= student.displayname.match(/^\S+/i) %>'s Notes
             </h2>
         <% } else { %>
-            <h2 class="user-notes active-section" >My Notes</h2>
-            <h2 class="student-saved-notes" id="savedNotes" >Saved Notes</h2>
+            <h2 class="user-notes active-section" id="ownedNotes" data-username="<%= student.username %>">My Notes</h2>
+            <h2 class="student-saved-notes" id="savedNotes">Saved Notes</h2>
         <% } %>
       </div>
+      <% function noNotesContent(message, for_) {
+        return `
+            <div class="no-notes-content" style='display: none;' id='no-notes-${for_}'>
+                <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather feather-frown">
+                    <circle cx="12" cy="12" r="10" stroke-width="1"></circle>
+                    <path d="M9 9h.01" stroke-width="1"></path>
+                    <path d="M15 9h.01" stroke-width="1"></path>
+                    <path d="M9 15a4 4 0 0 1 6 0" stroke-width="1"></path>
+                </svg>
+                <p class="notes-unavailable">${message}</p>
+            </div>`
+      } %>
         <div class="notes-container visible-container">
-            <% if(notes != 0) { %>
-                <% for (const note of notes) { %>
-                    <div class="note-card" id="owned-note-<%= note._id %>">
-                        <a href="/view/<%= note._id %>">
-                            <h3>
-                                <% let title = note.title %>
-								<% if(title.length > 30) { %>
-									<%= title.slice(0, 30) %>...
-								<% } else { %>
-									<%= title %>
-								<% } %>
-                            </h3>
-                            <!-- <% let description = note.description %>
-                            <% if(description.length > 40) { %>
-                                <p><%= description.slice(0, 40) %>...</p>
-                            <% } else { %>
-                                <p><%= description %></p>
-                            <% } %> -->
-                            <img src="<%= note.content[0] %>" alt="No thumbnail?!">
-                        </a>
-                    </div>
-                <% } %>
-            <% } else { %>
-                <div class="no-notes-content">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather feather-frown">
-                        <circle cx="12" cy="12" r="10" stroke-width="1"></circle>
-                        <path d="M9 9h.01" stroke-width="1"></path>
-                        <path d="M15 9h.01" stroke-width="1"></path>
-                        <path d="M9 15a4 4 0 0 1 6 0" stroke-width="1"></path>
-                    </svg>
-                    <p class="notes-unavailable">No Notes to Show</p>
-                </div>
-            <% } %>
+            <div class="no-notes-content owned-notes-status">
+                <p>Getting your notes...</p>
+                <div class="search-results-loader"></div>
+            </div>
+
+            <%- noNotesContent('No Notes to Show', 'owned') %>
         </div>
+
         <% if(!visiting) { %>
             <div class="sv-notes-container not-show">
-              <% if (savedNotes.length != 0) { %>
-                <% for (const note of savedNotes) { %>
-                    <div class="note-card">
-                        <a href="/view/<%= note._id %>">
-                            <h3>
-                                <% let title = note.title %>
-								<% if(title.length > 30) { %>
-									<%= title.slice(0, 30) %>...
-								<% } else { %>
-									<%= title %>
-								<% } %>
-                            </h3>
-                            <!-- <% let description = note.description; %>
-                            <% if (description.length > 40) { %>
-                                <p><%= description.slice(0, 40) %>...</p>
-                            <% } else { %>
-                                <p><%= description %></p>
-                            <% } %> -->
-                            <img src="<%= note.content[0] %>" alt="No thumbnail?!">
-                        </a>
-                    </div>
-                <% } %>
-                <% } else { %>
-                    <div class="no-notes-content">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather feather-frown">
-                            <circle cx="12" cy="12" r="10" stroke-width="1"></circle>
-                            <path d="M9 9h.01" stroke-width="1"></path>
-                            <path d="M15 9h.01" stroke-width="1"></path>
-                            <path d="M9 15a4 4 0 0 1 6 0" stroke-width="1"></path>
-                        </svg>
-                        <p class="notes-unavailable">No Saved Notes to Show</p>
-                    </div>
-                <% } %>
+                <%- noNotesContent('No Saved Notes to Show', 'saved') %>
             </div>
         <% } %>
     </div>
@@ -218,6 +142,8 @@
 	<audio id="notificationAudio" src="/sounds/notification-ping-sound.mp3" preload="auto"></audio>
     <div class="background-overlay"></div>
 
+	<script src="/js/notificationHandler.js"></script>
+    <script src="/js/onboarding-data.js"></script>
     <script src="/js/controller.js"></script> 
     <script src="/js/user-profile.js"></script> 
 </body>

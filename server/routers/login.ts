@@ -8,8 +8,8 @@ import {dirname, join} from 'path';
 import {fileURLToPath} from "url";
 import * as process from "node:process";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = dirname(__filename);
 
 config({ path: join(__dirname, '../.env') })
 
@@ -45,25 +45,28 @@ function loginRouter(io: Server) {
         }
     })
 
-    router.post('/', async (req, res, next) => {
+    router.post('/', async (req, res) => {
         try {
             let email = req.body.email
             let password = req.body.password
 
-            let student = await LogIn.getProfile(email)
-            if(student["authProvider"] === null) {
-                if (password === student['studentPass']) {
-                    setSession({recordID: student['recordID'], studentID: student["studentID"]}, req, res)
-                    res.json({ url: '/dashboard' })
+            if (!(email && password)) {
+                res.json({ ok: false, field: email === "" ? "email" : "password" })
+            } else {
+                let student = await LogIn.getProfile(email)
+                if(student["authProvider"] === null) {
+                    if (password === student['studentPass']) {
+                        setSession({recordID: student['recordID'], studentID: student["studentID"]}, req, res)
+                        res.json({ ok: true, url: '/dashboard' })
+                    } else {
+                        io.emit('wrong-cred')
+                    }
                 } else {
-                    res.json({ message: 'wrong-cred' })
                     io.emit('wrong-cred')
                 }
-            } else {
-                io.emit('wrong-cred')
             }
+
         } catch (error) {
-            res.json({ message: 'no-email' })
             io.emit('no-email')
         }
     })

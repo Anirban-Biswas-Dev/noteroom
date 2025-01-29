@@ -3,6 +3,7 @@ import Alerts from '../schemas/alerts.js'
 import { Server } from 'socket.io'
 import { getAllNotes } from '../services/noteService.js'
 import { getNotifications, getSavedNotes, profileInfo, unreadNotiCount } from '../helpers/rootInfo.js'
+import { Convert } from '../services/userService.js'
 const router = Router()
 
 function dashboardRouter(io: Server) {
@@ -20,11 +21,12 @@ function dashboardRouter(io: Server) {
             let root = await profileInfo(req.session["stdid"])
             let notis = await getNotifications(req.session["stdid"])
             let unReadCount = await unreadNotiCount(req.session["stdid"])
+            let rootDocID = (await Convert.getDocumentID_studentid(req.session["stdid"])).toString()
 
-            let allNotes = await getAllNotes()
+            let allNotes = await getAllNotes(rootDocID)
             let savedNotes = await getSavedNotes(req.session["stdid"])
 
-            res.render('dashboard', { root: root, notis: notis, notes: allNotes, savedNotes: savedNotes, alert: alert, unReadCount: unReadCount })
+            res.render('dashboard/dashboard', { root: root, notis: notis, notes: allNotes, savedNotes: savedNotes, alert: alert, unReadCount: unReadCount })
         } else {
             res.redirect('login')
         }
