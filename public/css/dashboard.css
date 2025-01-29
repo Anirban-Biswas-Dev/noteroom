@@ -14,6 +14,7 @@ body {
   display: flex;
   justify-content: center;
   flex-direction: column;
+  background-color: var(--main-bg);
 }
 
 /* Temporary alert message */
@@ -65,19 +66,46 @@ body {
 /* || Middle Section */
 
 .feed-container {
-  width: 90%;
+  width: 100%;
+  background-color: var(--main-bg);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
+  gap: 50px;
 }
 .feed-note-card {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 75px;
-  min-width: 90%;
+  width: 100%;
+  max-width: 725px;
+  background: #FFFFFF;
+  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.25);
+  border-radius: 10px;  
+  padding: 10px 0;
 }
+
+.fnc__fr-author-img{
+  box-sizing: border-box;
+  width: 60px;
+  height: 60px;
+  border: none;
+  border-radius: 50px;
+  overflow: hidden;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  transition: filter 0.3s ease;
+  cursor: pointer;
+}
+
+.fnc__fr-author-img:hover {
+  filter: brightness(0.9);
+}
+.fnc__fr-author-img:active {
+  filter: brightness(0.8);
+}
+
 .thumbnail-container {
   position: relative;
   width: 90%;

@@ -8,6 +8,7 @@
 
 body {
   background-color: var(--main-bg);
+  width: 100vw;
 }
 
 .search-container {
