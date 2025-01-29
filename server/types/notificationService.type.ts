@@ -10,7 +10,8 @@ export enum ENotificationType {
     Feedback = 'note-feedback',
     Mention = 'note-mention',
     Reply = 'note-reply',
-    UpVote = 'note-vote'
+    UpVote = 'note-vote',
+    NoteUploadConfirmation = 'note-upload-confirmation'
 }
 
 
@@ -75,4 +76,21 @@ export interface IUpVoteNotification {
     notiID: string,
     vote: boolean,
     message: string
+}
+
+export interface INoteUploadConfirmationNotification {
+    notiID: string,
+    noteID: string,
+    message: string,
+    nfnTitle: string,
+    isread: string
+}
+
+
+export interface IGeneralNotification {
+    notiID: string,
+    message: string,
+    isread: string,
+    nfnTitle: string,
+    general: boolean
 }

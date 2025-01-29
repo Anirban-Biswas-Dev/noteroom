@@ -270,7 +270,7 @@ const manageNotes = {
                                             : `<path d="M20.293 10.2935L19.5859 11.0006L20.293 10.2935ZM10.2929 1.70717L9.58575 1.00008L10.2929 1.70717ZM9.58575 1.00008L0.999862 9.58646L2.41412 11.0006L11 2.41425L9.58575 1.00008ZM2.41412 13.0006H6V11.0006H2.41412V13.0006ZM6 13.0006V19.5H8V13.0006H6ZM9.5 23H12.5V21H9.5V23ZM16 19.5V13.0006H14V19.5H16ZM16 13.0006H19.5859V11.0006H16V13.0006ZM21.0001 9.58646L12.4143 1.00008L11 2.41425L19.5859 11.0006L21.0001 9.58646ZM19.5859 13.0006C21.3677 13.0006 22.26 10.8464 21.0001 9.58646L19.5859 11.0006L19.5859 11.0006V13.0006ZM16 13.0006L16 13.0006V11.0006C14.8954 11.0006 14 11.8961 14 13.0006H16ZM12.5 23C14.433 23 16 21.433 16 19.5H14C14 20.3284 13.3284 21 12.5 21V23ZM6 19.5C6 21.433 7.567 23 9.5 23V21C8.67157 21 8 20.3284 8 19.5H6ZM6 13.0006L6 13.0006H8C8 11.8961 7.10457 11.0006 6 11.0006V13.0006ZM0.999862 9.58646C-0.260013 10.8464 0.632334 13.0006 2.41412 13.0006V11.0006L2.41412 11.0006L0.999862 9.58646ZM11 2.41425L11 2.41425L12.4143 1.00008C11.6332 0.218978 10.3668 0.218978 9.58575 1.00008L11 2.41425Z" fill="black" />`
                                         }
                                     </svg>									
-                                    <span class="uv-count">${noteData.upvoteCount}</span>
+                                    <span class="uv-count">${noteData.upvoteCount || 0}</span>
                                 </div>
                                 <div class="divider-uv-dv"></div>
                                 <div class="dv-container">
@@ -347,37 +347,24 @@ const manageNotes = {
         }
     },
 
-    /**
-     * @param {Object} feedbackData - { notiID, feedbackID, isread, noteID, nfnTitle, commenterUserName, commenterDisplayName }
-     * @description - First checks if there is already a noti div with noti-notiID, if not, adds one
-    */
-    addNoti: function (feedbackData) {
+    addNoti: function (notiData) {
         let notificationContainer = document.querySelector('.notifications-container')
-        let existingNoti = document.querySelector(`#noti-${feedbackData.notiID}`)
+        let existingNoti = document.querySelector(`#noti-${notiData.notiID}`)
 
         if (!existingNoti) {
-            let isVote = feedbackData.vote ? true : false
             let notificationHtml = `
-                  <div class="notification secondary-${feedbackData.isread}" id="noti-${feedbackData.notiID}">
-                      ${!isVote ? `<span class='feedback-id' style='display: none;'>${feedbackData.feedbackID}</span>` : ""} 
-                      <div class="first-row">
-                      <div class="frnt-wrapper">
-                      <span class="isRead ${feedbackData.isread}"></span>
-                        <a href='/view/${feedbackData.noteID}/${!isVote ? `#${feedbackData.feedbackID}` : ''}' class="notification-link">
-                          <span class="notification-title">
-                          ${truncatedTitle(feedbackData.nfnTitle)}
-                          </span>
-                        </a>
+                <div class="notification secondary-${notiData.isread}" id="noti-${notiData.notiID}">
+                    <div class="first-row">
+                        <div class="frnt-wrapper">
+                            <span class="isRead ${notiData.isread}"></span>
+                            <span class="notification-title">
+                                <a class="notification-link-2" href='${notiData.redirectTo}'>${truncatedTitle(notiData.title)}</a>
+                            </span>
                         </div>   
-                        <span class="remove-notification" onclick="deleteNoti('${feedbackData.notiID}')">&times;</span>
-                      </div>
-                      <div class="notification-msg">
-                        ${!isVote ? `
-                            <a href='/view/${feedbackData.noteID}/#${feedbackData.feedbackID}' class="notification-link-2">${feedbackData.message}</a>` :
-                    `<a href='/view/${feedbackData.noteID}' class="notification-link-2">${feedbackData.message}</a>`
-                } 
-                      </div>
-                  </div>`
+                        <span class="remove-notification" onclick="deleteNoti('${notiData.notiID}')">&times;</span>
+                    </div>
+                    <a class="notification-link-2" href="${notiData.redirectTo}">${notiData.content}</a>
+                </div>`
             notificationContainer.insertAdjacentHTML('afterbegin', notificationHtml);
         }
     },

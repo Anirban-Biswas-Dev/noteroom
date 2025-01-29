@@ -49,7 +49,7 @@ function userRouter(io: Server) {
         } else {
             if (req.session["stdid"]) {
                 let username = await Convert.getUserName_studentid(req.session["stdid"])
-                res.redirect(`user/${username}`)
+                res.redirect(`/user/${username}`)
             } else {
                 res.redirect('/login')
             }

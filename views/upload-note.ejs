@@ -14,14 +14,14 @@
       href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" 
       rel="stylesheet"
     >
-    <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.css">
-    <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.js"></script>
-    <script src="https://kit.fontawesome.com/be4b1d4185.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.socket.io/socket.io-3.0.1.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/dexie@latest/dist/dexie.min.js"></script>
+    <script src="https://cdn.quilljs.com/1.3.7/quill.min.js" defer></script>
+    <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
 
-    <%- include('/partials/links.ejs') %>
+    <script src="https://kit.fontawesome.com/be4b1d4185.js" crossorigin="anonymous" defer></script>
+    <script src="https://cdn.socket.io/socket.io-3.0.1.min.js" defer></script>
+	<script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/dexie@latest/dist/dexie.min.js" defer></script>
+	<%- include('partials/links.ejs') %>
 </head>
 <body>
     
@@ -41,19 +41,18 @@
                 </clipPath>
                 </defs>
                 </svg>
-            <!-- <p class="upload-msg">Drag & drop files</p> -->
             <p class="suggested-formats-msg">Suggested Formats : PNG, JPG</p>
-            <!-- <span class="device-upload-sep">Or</span>   -->
-                <p class="upload-msg">Upload pictures from your         
-                    device
-                </p>
+            <p class="upload-msg">Upload pictures from your device</p>
+            
             <div class="browse-file-container"> 
+                <div class="search-results-loader" style="display: none;" id="note-upload-loader"></div>
                 <input type="file" id="fileInput" class="file-input" name="images" multiple/>
-                <label for="fileInput" class="browse-files-btn">
+                <label for="fileInput" class="browse-files-btn" id="fileInputBox">
                     <pre><i class="fa-regular fa-file"></i> Browse</pre>
                 </label>
             </div>
         </div>
+
         <div class="stack-status">
             <div class="stack-number-container">
                 <div class="snc-info-wrapper">
@@ -82,7 +81,7 @@
         </div>
         <div class="text-form">
             <select name="noteSubject" class="note-subject" required>
-                <option value="No Subject" disabled selected >Choose Subject</option>
+                <option value="" disabled selected >Choose Subject</option>
                 <option value="Bangla">Bangla</option>
                 <option value="English">English</option>
                 <option value="ICT">ICT</option>
@@ -148,8 +147,8 @@
         <span class="loader"></span>
     </div>
        
-	<script src="/js/notificationHandler.js"></script>
-    <script src="/js/controller.js"></script>
-    <script src="/js/upload-note.js"></script>
+	<script src="/js/notificationHandler.js" defer></script>
+    <script src="/js/controller.js" defer></script>
+    <script src="/js/upload-note.js" defer></script>
 </body>
 </html>

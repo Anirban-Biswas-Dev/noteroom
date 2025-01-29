@@ -2,7 +2,7 @@ import { Schema, model } from 'mongoose'
 
 const baseOptions = {
     discriminatorKey: 'docType',
-    collection: 'votes'
+    collection: 'votes-test'
 }
 
 const votesSchema = new Schema({
@@ -22,7 +22,7 @@ const votesSchema = new Schema({
         default: "upvote"
     }
 }, baseOptions)
-const votesModel = model('votes', votesSchema)
+const votesModel = model('votes-test', votesSchema)
 
 
 const commenteVotesSchema = new Schema({

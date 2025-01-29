@@ -52,19 +52,18 @@ let collegeID = document.querySelector('.user-clg').getAttribute('data-collegeid
 let collegeName = document.querySelector('#college-name')
 let collegeLogo = document.querySelector('.user-clg--img')
 
-try {
-    if (!Number.isNaN(parseInt(collegeID))) {
-        let collegeDistrict = Object.keys(districtCollegeData)[parseInt(collegeID / 100) - 1]
-        let collegeObject = districtCollegeData[collegeDistrict].filter(data => data.id == parseInt(collegeID))[0]
+if (!Number.isNaN(parseInt(collegeID))) {
+    let collegeDistrict = Object.keys(districtCollegeData)[parseInt(collegeID / 100) - 1]
+    let collegeObject = districtCollegeData[collegeDistrict].filter(data => data.id == parseInt(collegeID))[0]
     
-        collegeName.innerHTML = collegeObject.name
-        collegeLogo.src = `\\images\\onboarding-assets\\College-logos\\${collegeObject.logo}`
-    } else {
-        collegeName.innerHTML = collegeID    
-    }
-} catch (error) {
-    
+    collegeName.innerHTML = collegeObject.name
+    collegeLogo.src = `\\images\\onboarding-assets\\College-logos\\${collegeObject.logo}`
+
+} else {
+    collegeName.innerHTML = collegeID    
+    collegeLogo.src = `\\images\\onboarding-assets\\College-logos\\college-placeholder.png`
 }
+
 
 
 let observer = new IntersectionObserver(entries => {
@@ -88,7 +87,9 @@ let observer = new IntersectionObserver(entries => {
 }, {
     rootMargin: '0px 0px -300px 0px'
 })
-observer.observe(document.querySelector('#ownedNotes'))
+window.addEventListener('load', () => {
+    observer.observe(document.querySelector('#ownedNotes'))
+})
 
 //* The delete note eventhandler
 // document.addEventListener('click', function (event) {
