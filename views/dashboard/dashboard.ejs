@@ -106,10 +106,25 @@
 						</div>
 						<div class="fnc__fr-note-info-wrapper">
 							<div class="note-info-wrapper--first-row">
-								<div class="niw--fr-first-col"></div>
-								<div class="niw--fr-second-col"></div>
+								<div class="niw--fr-first-col">
+									<div class="niw--fr-first-col-fr">
+										<a class="author-prfl-link" href="/user/<%= note.ownerDocID.username %>"><%= note.ownerDocID.displayname %></a>
+
+										<span class="niw--fr-first-col-fr-seperator"></span>
+
+										<a href="" class="db-note-card-request-option">Request</a>
+									</div>
+									<span class="niw--fr-first-col-note-pub-date">Yesterday at 11:02 PM</span>
+								</div>
+								<div class="niw--fr-second-col">
+									<!-- COMPONENT: note-engagements -->
+									<%- include('components/note-menu.ejs', { note: note }) %>
+								</div>
 							</div>
-							<div class="note-info-wrapper--second-row"></div>
+							<div class="note-info-wrapper--second-row">
+								<!-- Char Limit has to be set at 100 along with concating with the 3 dots -->
+								<p class="fnc--note-desc"> Detailed notes on algae and fungi, covering all the essentials. Feel free to reach out if you have a...<span class="note-desc-see-more-btn">Read More</span></p>
+							</div>
 						</div>
 					</div>
 
@@ -124,8 +139,6 @@
 						</div> 
 						<img class="thumbnail" data-src="<%= note.content[0] %>" onclick="window.location.href='/view/<%= note._id %>'"/>
 
-						<!-- COMPONENT: note-engagements -->
-						<%- include('components/note-menu.ejs', { note: note }) %>
 						
 					</div>
 
