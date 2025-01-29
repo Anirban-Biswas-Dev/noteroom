@@ -9,17 +9,32 @@ import { upload } from "../../services/firebaseService";
 import notesModel from "../../schemas/notes";
 import { userSocketMap } from "../../server";
 import { NotificationSender } from "../../services/io/ioNotifcationService";
+import { profileInfo, getSavedNotes, getNotifications, unreadNotiCount } from "../../helpers/rootInfo";
 
 const router = Router()
 
 export function quickPostRouter(io: Server) {
-    router.get('/:postID', async (req, res) => {
-        let ownerDocID = (await Convert.getDocumentID_studentid(req.session["stdid"])).toString()
-        let postID = req.params.postID
-        let postData = await getNote({ noteDocID: postID, studentDocID: ownerDocID })
-        let [post, owner] = [postData["note"], postData["owner"]]
+    router.get('/:postID', async (req, res, next) => {
+        try {
+            let postID = req.params.postID
+            let ownerDocID = (await Convert.getDocumentID_studentid(req.session["stdid"])).toString()
+            let postData = await getNote({ noteDocID: postID, studentDocID: ownerDocID })
 
-        // res.render('note-view', { postType: 'quick-post' })
+            if (postData["error"] || postData["note"]["postType"] === 'note') {
+                next(new Error('Post not found!'))
+            } else {
+                let [post, owner] = [postData["note"], postData["owner"]]
+    
+                let root = await profileInfo(req.session["stdid"]) 
+                let savedNotes = await getSavedNotes(req.session["stdid"])
+                let notis = await getNotifications(req.session["stdid"])
+                let unReadCount = await unreadNotiCount(req.session["stdid"])
+            
+                res.render('note-view/note-view', { postType: 'quick-post', note: post, owner: owner, root: root, savedNotes: savedNotes, notis: notis, unReadCount: unReadCount })
+            }
+        } catch (error) {
+            next(error)
+        }
     })
 
     router.post('/', async (req, res) => {

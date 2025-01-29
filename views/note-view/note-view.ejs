@@ -46,32 +46,25 @@
     <title><%= note.title %></title>
   </head>
   <body>
-    <% if(mynote == 3) { %>
-      <a href="/login" style="display: none;" class="kick"></a>
-    <% } %>
-    <% if(mynote != 3) { %>
-      <%- include('../side-panel', { block: 'left-panel' }) %>
-      <%- include('../side-panel', { block: 'search-bar' }) %>
-    <% } %>
 
-    <span class="note-id" style="display: none"><%= note._id %></span>
+    <%- include('../side-panel', { block: 'left-panel' }) %>
+    <%- include('../side-panel', { block: 'search-bar' }) %>
+
+    <span data-posttype="<%= postType %>" style="display: none;" id="postType"></span>
+
     <div class="middle-section">
       <div class="first-box">
         <div class="fb__col-1">
           <img class="note-author-img" src="<%= owner.profile_pic %>" alt="Author Picture" onclick="location.href='/user/<%= owner.username %>'" />
           <div class="fb__col-1-wrapper-1">
-            <span class="author-name">
-              <a href="/user/<%= owner.username %>">
-                <%= owner.displayname %>
-              </a>
-              <span class="studentusername" style="display: none"><%= owner.username %></span>
-            </span>
-            <h1 class="section-title"><%= note.title %></h1>
+            <span class="author-name">Posted by <a href="/user/<%= owner.username %>"><%= owner.displayname %></a></span>
+            <% if (postType !== "quick-post") { %>
+              <h1 class="section-title"><%= note.title %></h1>
+            <% } %>
           </div>
         </div>
-        <span style="display: none;" class="subject">Subject: <%= note.subject %> </span>
 
-        <% if (mynote !== 3) { %>
+        <% if (postType !== "quick-post") { %>
           <div class="fb__col-2">
             <button class="<%= note.isSaved ? "save-note-btn saved" : "save-note-btn" %>" onclick="saveNote(this)"
                 id="save-note-btn" data-issaved="<%= note.isSaved %>" data-notetitle='<%= note.title %>' data-noteid='<%= note._id %>'>
@@ -80,40 +73,47 @@
             </button>
           </div>
         <% } %>
+
       </div>
 
       <!-- COMPONENT: note image carousel -->
       <%- include('components/note-images', { note: note }) %>
 
-      <div class="third-box">
-        <div class="third-box__row-1">
-          <h3 class="desc-label">Description</h3>
-          
-          <!-- COMPONENT: note engagements -->
-          <%- include('components/note-engagements', { note: note }) %>
+      <% if (postType !== "quick-post") { %>
+        <div class="third-box">
+          <div class="third-box__row-1">
+            <h3 class="desc-label">Description</h3>
+            
+            <!-- COMPONENT: note engagements -->
+            <%- include('components/note-engagements', { note: note, postType }) %>
+          </div>
+          <div class="desc-content" ><%- note.description %></div>
         </div>
-        <div class="desc-content" ><%- note.description %></div>
-      </div>
+
+      <% } else { %>
+        <div class="third-box">
+          <div class="desc-content" ><%- note.description %></div>
+          <div class="third-box__row-1">
+            <h3 class="desc-label"></h3>
+            <%- include('components/note-engagements', { note: note, postType }) %>
+          </div>  
+        </div>
+      <% }%>
 
       <div class="cmnts-section">
         <!-- COMPONENT: main comment box -->
         <%- include('components/comment-box', { type: 'main'}) %>
         
-        <div class="no-comments-container" style="display: none; justify-content: center; align-items: center;">
-          Be the first to share your feedback!
-        </div>
-        <div class="comments-loader" style="display: flex; justify-content: center; align-items: center;">
-          Getting conversations...<div class="search-results-loader" style="display: block;"></div>
-        </div>
+        <div class="no-comments-container" style="display: none; justify-content: center; align-items: center;">Be the first to share your feedback!</div>
+        <div class="comments-loader" style="display: flex; justify-content: center; align-items: center;">Getting conversations...<div class="search-results-loader" style="display: block;"></div></div>
         
         <div class="cmnts-list"></div>
     
       </div>
     </div>
-    <% if(mynote != 3) { %>
-      <%- include('../side-panel', { block: 'right-panel' }) %>
-    <% } %>
+
     <%- include('../side-panel', { block: 'mbl-ctrl-panel' }) %>
+    <%- include('../side-panel', { block: 'right-panel' }) %>
 
 	  <audio id="notificationAudio" src="/sounds/notification-ping-sound.mp3" preload="auto"></audio>
     <div class="background-overlay"></div>
@@ -124,8 +124,5 @@
 	  <script src="/js/notificationHandler.js" defer></script>
     <script src="/js/controller.js" defer></script>
     <script src="/js/note-view.js" defer></script>
-    <script>
- 
-    </script>
   </body>
 </html>

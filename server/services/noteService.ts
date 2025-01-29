@@ -95,20 +95,24 @@ export async function deleteSavedNote({ studentDocID, noteDocID }: IManageUserNo
 }
 
 export async function getNote({noteDocID, studentDocID}: IManageUserNote, images: boolean = false) {
-    if(!images) {
-        let _note = (await Notes.findById(noteDocID, { title: 1, subject: 1, description: 1, ownerDocID: 1, upvoteCount: 1 })).toObject()
-        let _isNoteUpvoted = await isUpVoted({ noteDocID, voterStudentDocID: studentDocID })
-        let _isSaved = await isSaved({ studentDocID, noteDocID })
-        let note = { ..._note, isUpvoted: _isNoteUpvoted, isSaved: _isSaved }
-
-        let owner = await Students.findById(note.ownerDocID, { displayname: 1, studentID: 1, profile_pic: 1, username: 1 })
-        
-        let returnedNote: INoteDetails = { note: note, owner: owner }
-        return returnedNote
-    } else {
-        /* For fethcing the notes seperatly via an api */
-        let images = (await Notes.findById(noteDocID, { content: 1 })).content
-        return images
+    try {
+        if(!images) {
+            let _note = (await Notes.findById(noteDocID, { title: 1, subject: 1, description: 1, ownerDocID: 1, upvoteCount: 1, postType: 1 })).toObject()
+            let _isNoteUpvoted = await isUpVoted({ noteDocID, voterStudentDocID: studentDocID })
+            let _isSaved = await isSaved({ studentDocID, noteDocID })
+            let note = { ..._note, isUpvoted: _isNoteUpvoted, isSaved: _isSaved }
+    
+            let owner = await Students.findById(note.ownerDocID, { displayname: 1, studentID: 1, profile_pic: 1, username: 1 })
+            
+            let returnedNote: INoteDetails = { note: note, owner: owner }
+            return returnedNote
+        } else {
+            /* For fethcing the notes seperatly via an api */
+            let images = (await Notes.findById(noteDocID, { content: 1 })).content
+            return images
+        }
+    } catch (error) {
+        return { error: true }
     }
 }
 
