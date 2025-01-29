@@ -43,8 +43,8 @@ async function uploadImage(fileObject: any, fileName: any) {
     });
 }
 
-async function deleteNoteFolder({ studentDocID, noteDocID }: IManageUserNote) {
-    let noteFolder = `${studentDocID}/${noteDocID}`
+async function deleteNoteFolder({ studentDocID, noteDocID }: IManageUserNote, post: boolean = false) {
+    let noteFolder = post ? `${studentDocID}/quick-posts/${noteDocID}` : `${studentDocID}/${noteDocID}`
     let [files] = await bucket.getFiles({ prefix: noteFolder })
     if (files.length !== 0) {
         await Promise.all(files.map(file => file.delete()))

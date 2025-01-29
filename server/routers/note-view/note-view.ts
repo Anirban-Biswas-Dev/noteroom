@@ -7,10 +7,11 @@ import { postNoteFeedbackRouter } from './post-feedback.js';
 import { voteRouter } from './vote.js';
 import { INoteDetails } from '../../types/noteService.types.js'
 import apisRouter from './apis.js'
+import { quickPostRouter } from './quick-post.js'
 
-//TODO: fetch the comments dynamically
 const router = Router()
 function noteViewRouter(io: Server) {
+    router.use('/quick-post', quickPostRouter(io))
     router.use('/:noteID', postNoteFeedbackRouter(io))
     router.use('/:noteID', voteRouter(io))
     router.use('/:noteID', apisRouter(io))
@@ -20,7 +21,6 @@ function noteViewRouter(io: Server) {
             let noteDocID = req.params.noteID
             let mynote: number; //* Varifing if a note is mine or not: corrently using for not allowing users to give feedbacks based on some situations (self-notes and viewing notes without being logged in)
 
-            
             if (req.session["stdid"]) {
                 let studentDocID = (await Convert.getDocumentID_studentid(req.session["stdid"])).toString()
 
