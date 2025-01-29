@@ -100,6 +100,19 @@
 		<% if(notes.length != 0) { %> 
 			<% notes.forEach(note => { %>
 				<div class="feed-note-card" id="note-<%= note._id %>">
+					<div class="fnc__first-row">
+						<div class="fnc__fr-author-img-wrapper">
+							<img src="<%= note.ownerDocID.profile_pic %>" class="fnc__fr-author-img" onclick="window.location.href='/view/<%= note._id %>'" />
+						</div>
+						<div class="fnc__fr-note-info-wrapper">
+							<div class="note-info-wrapper--first-row">
+								<div class="niw--fr-first-col"></div>
+								<div class="niw--fr-second-col"></div>
+							</div>
+							<div class="note-info-wrapper--second-row"></div>
+						</div>
+					</div>
+
 					<div class="thumbnail-container">
 						<div class="thumbnail-loading">
 							<svg className="w-10 h-10" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 18">
@@ -138,7 +151,7 @@
 		<% }) %> 
 		<% } %>
 		</div>
-		<p class="fetch-loading" style="display: none;">Fetching...</p>
+		<span class="fetch-loading" style="display: none;"></span>
 		<p class="finish" style="display: none;">You covered all of that? You're a talent🫡!!!</p>
 	</div>
 
