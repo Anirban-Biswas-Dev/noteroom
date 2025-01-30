@@ -217,6 +217,7 @@ const manageNotes = {
     },
     addNote: function (noteData) {
         let existingUNote = document.querySelector(`#note-${noteData.noteID}`)
+        let feedContainer = document.querySelector('.feed-container')
 
         if (!existingUNote) {
             let noteCardsHtml = `
@@ -251,7 +252,7 @@ const manageNotes = {
                                         </svg>
                                         <span class="opt-label">Download</span>
                                     </div>
-                                    <div class="option" onclick="setupShareModal('${noteData.noteID}')"
+                                    <div class="option" onclick="setupShareModal('${window.location.pathname}')"
                                         >
                                         <svg class="share-icon" width="40" height="40" viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg" >
                                       <path d="M30.6079 32.5223L27.8819 29.8441L36.6816 21.0444L27.8819 12.2446L30.6079 9.56641L42.0858 21.0444L30.6079 32.5223ZM3.82599 36.3483V28.6963C3.82599 26.05 4.7506 23.8023 6.59983 21.953C8.48094 20.0719 10.7446 19.1314 13.391 19.1314H25.2037L18.3169 12.2446L21.0429 9.56641L32.5209 21.0444L21.0429 32.5223L18.3169 29.8441L25.2037 22.9574H13.391C11.7968 22.9574 10.4418 23.5153 9.32584 24.6312C8.20993 25.7471 7.65197 27.1022 7.65197 28.6963V36.3483H3.82599Z" fill="#1D1B20"/>
@@ -321,11 +322,10 @@ const manageNotes = {
                           </div>
                       </div> `;
 
-            document.querySelector('.feed-container').insertAdjacentHTML('beforeend', noteCardsHtml); // 1
+            feedContainer.insertAdjacentHTML('beforeend', noteCardsHtml);
 
-            let newNoteCard = document.querySelector('.feed-note-card:last-child')
-            observers.observer().observe(newNoteCard) // 2
-            document.querySelector('.fetch-loading').style.display = 'flex'
+            let newNoteCard = document.querySelector(`#note-${noteData.noteID}`)
+            observers.observer().observe(newNoteCard)
         }
     },
 
@@ -662,7 +662,7 @@ function finish() {
     ~       the platform a share link is created and a new window is opened to share the link. (2)
 */
 const linkElement = document.querySelector('._link_');
-function setupShareModal(noteID) {
+function setupShareModal(location) {
     const shareNoteModal = document.querySelector('.share-note-overlay');
     const closeNoteModalBtn = document.querySelector('.close-share-note-modal');
 
@@ -673,7 +673,7 @@ function setupShareModal(noteID) {
 
     // Open the modal and populate the link (immediate execution)
     shareNoteModal.style.display = 'flex';
-    linkElement.innerHTML = `${window.location.origin}/view/${noteID}`;
+    linkElement.innerHTML = `${window.location.origin}${location}`;
     requestAnimationFrame(() => {
         shareNoteModal.classList.add('visible');
     });

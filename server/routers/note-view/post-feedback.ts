@@ -74,7 +74,7 @@ export function postNoteFeedbackRouter(io: Server) {
                         ownerStudentID: _ownerStudentID,
                         redirectTo: `/view/${_noteDocID}#${feedback["_id"].toString()}`
                     }).sendNotification({
-                        title: feedback['noteDocID']['title'],
+                        title: feedback['noteDocID']['title'] || feedback['noteDocID']['description'].slice(0, 20) + '...',
                         content: `${feedback['commenterDocID']['displayname']} left a comment on your notes. Check it out!`,
                         event: 'notification-feedback'
                     })
@@ -124,7 +124,7 @@ export function postNoteFeedbackRouter(io: Server) {
                         ownerStudentID: parentFeedbackCommenterInfo["studentID"],
                         redirectTo: `/view/${_noteDocID}#${reply["_id"].toString()}`
                     }).sendNotification({
-                        title: reply['noteDocID']['title'],
+                        title: reply['noteDocID']['title'] || reply['noteDocID']['description'].slice(0, 20) + '...',
                         content: `${reply['commenterDocID']['displayname']} replied to your comment. See their response!`,
                         event: 'notification-reply'
                     })
