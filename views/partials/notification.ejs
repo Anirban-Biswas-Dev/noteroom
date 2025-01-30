@@ -1,4 +1,4 @@
-<div class="notification secondary-<%= notiData.isRead %>" id="noti-<%= notiData._id %>">
+<!-- <div class="notification secondary-<%= notiData.isRead %>" id="noti-<%= notiData._id %>">
     <div class="first-row">
         <a href="<%= notiData.redirectTo %>" class="notification-link-2">
             <div class="frnt-wrapper">
@@ -10,5 +10,25 @@
     </div>
     <div class="notification-msg">
         <a class="notification-link-2" href="<%= notiData.redirectTo %>"><%= notiData.content %></a>
+    </div>
+</div> -->
+
+<!-- New Template to use rafi, noti title now will be used inside the noti content -->
+
+<div class="notification" id="noti-<%= notiData._id %>">
+    <div class="noti__first-col--img-wrapper">
+        <img src="\images\NoteRoom Caricature Cartoonic  - Anirban.jpg.png" alt="notification" class="noti__source-user-img">
+    </div>
+
+    <div class="noti__sec-col--msg-wrapper">
+        <div class="noti__sc--first-row-msg">
+            <p class="noti-msg secondary-<%= notiData.isRead %>">
+                <span class="noti-source-user-name">User</span> loved note-name
+            </p>
+        </div>
+        <div class="noti__sc--second-row-noti-info">
+            <span class="isRead <%= notiData.isRead %>"></span>
+            <span class="noti-time  secondary-<%= notiData.isRead %>">19 Jan 2025</span>
+        </div>
     </div>
 </div>
