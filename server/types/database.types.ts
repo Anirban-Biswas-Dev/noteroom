@@ -39,7 +39,12 @@ export interface INoteDB {
     description: string
 }
 
-
+export interface IQuickPostDB {
+    ownerDocID: string,
+    description: string,
+    content?: any[],
+    postType?: 'quick-post'
+}
 
 
 /* ------------------- Note Engagement Section ------------------- */
