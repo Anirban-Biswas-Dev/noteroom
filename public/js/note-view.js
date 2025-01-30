@@ -98,17 +98,22 @@ window.addEventListener('load', async () => {
 })
 
 
-socket.emit("join-room", window.location.pathname.split("/")[2] /* The note-id as the unique room name */);
+socket.emit("join-room", noteDocID);
 
 try {
 } catch (error) {}
 
 //* Broadcasted feedback handler. The extented-feedback is broadcasted
 socket.on('add-feedback', (feedbackData) => {
+  console.log(`Got that`)
 	try {
+    console.log(feedbackData)
 		document.querySelector('div.main-cmnt-container[data-temporary=true]')?.remove()  
 		manageNotes.addFeedback(feedbackData)
-	} catch (error) {}
+	} catch (error) {
+    console.log(`Error`)
+    console.log(error)
+  }
 })
 
 

@@ -122,7 +122,8 @@
 						<div class="author-title-container">
 						<div class="note-title">
 							<a href="/view/<%= note._id %>">
-								<% let title = note.title.length > 30 ? `${note.title.slice(0, 30)}...` : note.title  %>
+								<% let _title = note.title ? note.title : note.description  %>
+								<% let title = _title.length > 30 ? `${_title.slice(0, 20)}...` : _title %>
             					<%= title %>
 							</a>
 						</div>

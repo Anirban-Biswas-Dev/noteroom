@@ -8,7 +8,7 @@ const notesSchema = new Schema({
     },
     title: {
         type: String,
-        default: ''
+        default: null
     },
     postType: {
         type: String,
