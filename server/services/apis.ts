@@ -136,7 +136,7 @@ export default function apiRouter(io: Server) {
             
             let studentDocID = (await Convert.getDocumentID_studentid(req.session["stdid"])).toString()
             let notes = await getAllNotes(studentDocID, { skip: skip, limit: count })
-
+            
             if (notes.length != 0) {
                 res.json(notes)
             } else {

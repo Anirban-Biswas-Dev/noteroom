@@ -1,9 +1,20 @@
+const uploadToastData = (message, type) => {
+  return {
+      toast: true,
+      position: "bottom-end",
+      icon: type,
+      title: message,
+      showConfirmButton: true
+  }
+}
+
 const QuickPostEditor = {
     init() {
       this.cacheDOM();
       this.bindEvents();
       this.textAreaMaxLength = 1500; // Maximum character limit
       this.imageSelected = false;
+      this.fileObject = null
     },
   
     cacheDOM() {
@@ -110,6 +121,7 @@ const QuickPostEditor = {
           this.imageSelected = true;
         };
         reader.readAsDataURL(file);
+        this.fileObject = file
       }
     },
   
@@ -124,12 +136,21 @@ const QuickPostEditor = {
       this.imageSelected = false;
     },
   
-    handlePost() {
-      const postData = {
-        text: this.textArea.value,
-        image: this.imageSelected ? this.imagePreview.src : null,
-      };
-      console.log('Post Data:', postData); // Simulate successful post
+    async handlePost() {
+      let postFormData = new FormData()
+      postFormData.append('text', this.textArea.value)
+      postFormData.append('image', this.fileObject)
+      let response = await fetch('/view/quick-post', {
+        method: 'post',
+        body: postFormData
+      })
+      let data = await response.json()
+      if (data.ok) {
+        Swal.fire(uploadToastData(Messages.upload_section.onUploadUserConformation, 'success'))   
+      } else {
+        Swal.fire(uploadToastData(Messages.upload_section.onErrorConfirmation, 'error'))   
+      }
+
       this.closePopup();
     },
   };

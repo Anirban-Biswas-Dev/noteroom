@@ -8,7 +8,11 @@ const notesSchema = new Schema({
     },
     title: {
         type: String,
-        required: true,
+        default: null
+    },
+    postType: {
+        type: String,
+        default: 'note' // or quick-post
     },
     content: {
         type: [String], // The directory where all the images are placed
@@ -20,7 +24,7 @@ const notesSchema = new Schema({
     },
     subject: {
         type: String,
-        required: true
+        default: ''
     },
     isFeatured: {
         type: Boolean,

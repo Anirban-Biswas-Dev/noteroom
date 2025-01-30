@@ -82,6 +82,11 @@ const studentsSchema = new Schema({
         ref: 'notes',
         default: []
     },
+    owned_posts: {
+        type: [Schema.Types.ObjectId],
+        ref: 'notes',
+        default: []
+    },
     saved_notes: {
         type: [Schema.Types.ObjectId],
         ref: 'notes',

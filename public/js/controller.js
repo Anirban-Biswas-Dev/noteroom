@@ -215,117 +215,238 @@ const manageNotes = {
         });
         return formatter.format(date);
     },
-    addNote: function (noteData) {
-        let existingUNote = document.querySelector(`#note-${noteData.noteID}`)
+    addNote: function (note) {
+        let existingUNote = document.querySelector(`#note-${note.noteID}`)
+        let feedContainer = document.querySelector('.feed-container')
 
         if (!existingUNote) {
-            let noteCardsHtml = `
-                        <div class="feed-note-card" id="note-${noteData.noteID}">
-                              <div class="thumbnail-container">
-                                  <div class="thumbnail-loading">
-                                      <svg className="w-10 h-10" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 18">
-                                          <path 
-                                              d="M18 0H2a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2Zm-5.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm4.376 10.481A1 1 0 0 1 16 15H4a1 1 0 0 1-.895-1.447l3.5-7A1 1 0 0 1 7.468 6a.965.965 0 0 1 .9.5l2.775 4.757 1.546-1.887a1 1 0 0 1 1.618.1l2.541 4a1 1 0 0 1 .028 1.011Z" 
-                                              style="fill: hsl(0, 0%, 80%);" 
-                                          />
-                                      </svg>
-                                  </div>
-                                  <img class="thumbnail" data-src="${noteData.thumbnail}" onclick="window.location.href='/view/${noteData.noteID}'" > 
-    
-                                  <div class="note-menu">
-                                <button class="note-menu-btn">
-                                    <i class="fas fa-ellipsis-v"></i>
-                                </button>
-                                <div class="menu-options">
-                                    <div class="option svn-btn-parent" id='save-btn-${noteData.noteID}' onclick="saveNote(this, true)" data-notetitle="${noteData.noteTitle}" data-noteid="${noteData.noteID}" data-issaved="${noteData.isSaved}">
-                                        <button class='${noteData.isSaved ? 'save-note-btn saved' : 'save-note-btn' }' id="save-note-btn">
-                                            <i class="fa-regular fa-bookmark"></i>
-                                            <i class="fa-solid fa-bookmark saved"></i>
-                                        </button>
-                                        <span class="opt-label">Save Note</span>
-                                    </div>
+            let noteCardHtml = `
+                <div class="feed-note-card" id="note-${note.noteID}">
+                    <div class="fnc__first-row">
+                        <div class="fnc__fr-author-img-wrapper">
+                        <img src="${note.profile_pic}" class="fnc__fr-author-img" onclick="window.location.href='/view/${note.noteID}'"/>
+                        </div>
+                        <div class="fnc__fr-note-info-wrapper">
+                        <div class="note-info-wrapper--first-row">
+                            <div class="niw--fr-first-col">
+                            <div class="niw--fr-first-col-fr">
+                                <a class="author-prfl-link" href="/user/${note.ownerUserName}">${note.ownerDisplayName}</a>
+                                <span class="niw--fr-first-col-fr-seperator"></span>
+                                <a href="" class="db-note-card-request-option">Request</a>
+                            </div>
+                            <span class="niw--fr-first-col-note-pub-date">${(new Date(note.createdAt)).toDateString()}</span>
+                            </div>
 
-                                    <div class="option" onclick="download('${noteData.noteID}', '${noteData.noteTitle}')">
-                                        <svg class="download-icon" width="40" height="40" viewBox="0 0 43 43" fill="none" xmlns="http://www.w3.org/2000/svg" >
-                                            <path d="M37.1541 26.5395V33.6165C37.1541 34.555 36.7813 35.455 36.1177 36.1186C35.4541 36.7822 34.5541 37.155 33.6156 37.155H8.84623C7.90776 37.155 7.00773 36.7822 6.34414 36.1186C5.68054 35.455 5.30774 34.555 5.30774 33.6165V26.5395M12.3847 17.6933L21.2309 26.5395M21.2309 26.5395L30.0771 17.6933M21.2309 26.5395V5.30859" stroke="#1E1E1E" stroke-width="2.29523" stroke-linecap="round" stroke-linejoin="round"/>
-                                        </svg>
-                                        <span class="opt-label">Download</span>
-                                    </div>
-                                    <div class="option" onclick="setupShareModal('${noteData.noteID}')"
+                            <div class="niw--fr-second-col">
+                                <div class="note-menu">
+                                    <button class="note-menu-btn">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                    </button>
+                                    <div class="menu-options">    
+                                        <div class="option svn-btn-parent" id="save-btn-${note.noteID}" onclick="saveNote(this, true)" data-notetitle="${note.noteTitle}" data-noteid="${note.noteID}" data-issaved="${note.isSaved}">
+                                            <button class="${note.isSaved ? "saved" : ""} save-note-btn" id="save-note-btn">
+                                                <i class="fa-regular fa-bookmark"></i>
+                                                <i class="fa-solid fa-bookmark saved"></i>
+                                            </button>
+                                            <span class="opt-label">Save Note</span>
+                                        </div>
+
+
+                                        <div class="option" onclick="download('${note.noteID}', '${note.noteTitle}')">
+                                                <svg
+                                                    class="download-icon"
+                                                    width="40"
+                                                    height="40"
+                                                    viewBox="0 0 43 43"
+                                                    fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                >
+                                                <path
+                                                    d="M37.1541 26.5395V33.6165C37.1541 34.555 36.7813 35.455 36.1177 36.1186C35.4541 36.7822 34.5541 37.155 33.6156 37.155H8.84623C7.90776 37.155 7.00773 36.7822 6.34414 36.1186C5.68054 35.455 5.30774 34.555 5.30774 33.6165V26.5395M12.3847 17.6933L21.2309 26.5395M21.2309 26.5395L30.0771 17.6933M21.2309 26.5395V5.30859"
+                                                    stroke="#1E1E1E"
+                                                    stroke-width="2.29523"
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                />
+                                            </svg>
+                                            <span class="opt-label">Download</span>
+                                        </div>
+                                        <div class="option" onclick="setupShareModal(window.location.pathname)"
+                                            >
+                                            <svg
+                                            class="share-icon"
+                                            width="40"
+                                            height="40"
+                                            viewBox="0 0 46 46"
+                                            fill="none"
+                                            xmlns="http://www.w3.org/2000/svg"
                                         >
-                                        <svg class="share-icon" width="40" height="40" viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg" >
-                                      <path d="M30.6079 32.5223L27.8819 29.8441L36.6816 21.0444L27.8819 12.2446L30.6079 9.56641L42.0858 21.0444L30.6079 32.5223ZM3.82599 36.3483V28.6963C3.82599 26.05 4.7506 23.8023 6.59983 21.953C8.48094 20.0719 10.7446 19.1314 13.391 19.1314H25.2037L18.3169 12.2446L21.0429 9.56641L32.5209 21.0444L21.0429 32.5223L18.3169 29.8441L25.2037 22.9574H13.391C11.7968 22.9574 10.4418 23.5153 9.32584 24.6312C8.20993 25.7471 7.65197 27.1022 7.65197 28.6963V36.3483H3.82599Z" fill="#1D1B20"/>
-                                  </svg>
-                                        <span class="opt-label">Share</span>
+                                        <path
+                                            d="M30.6079 32.5223L27.8819 29.8441L36.6816 21.0444L27.8819 12.2446L30.6079 9.56641L42.0858 21.0444L30.6079 32.5223ZM3.82599 36.3483V28.6963C3.82599 26.05 4.7506 23.8023 6.59983 21.953C8.48094 20.0719 10.7446 19.1314 13.391 19.1314H25.2037L18.3169 12.2446L21.0429 9.56641L32.5209 21.0444L21.0429 32.5223L18.3169 29.8441L25.2037 22.9574H13.391C11.7968 22.9574 10.4418 23.5153 9.32584 24.6312C8.20993 25.7471 7.65197 27.1022 7.65197 28.6963V36.3483H3.82599Z"
+                                            fill="#1D1B20"
+                                        />
+                                                </svg>
+                                            <span class="opt-label">Share</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                              </div>
-                          <div class="note-details">
-                              <div class="author-info">
-                                  <img src="${noteData.profile_pic}" class="author-img">
-                                  <div class="author-title-container">
-                                      <div class="note-title"><a href="/view/${noteData.noteID}" onclick='location.reload()'>${truncatedTitle(noteData.noteTitle)}</a></div>
-                                      <div class="author"><a class="author-prfl-link" href="/user/${noteData.ownerUserName}">${noteData.ownerDisplayName}</a></div>
-                                  </div>
-                              </div>
-                              <div class="note-engagement">
-                            <div class="vote-container">
-                                <div class="uv-container" id="upvote-container" data-isupvoted='${noteData.isUpvoted}' data-noteid='${noteData.noteID}' onclick="upvote(this, true)">
-                                    <svg class="uv-icon" width="18" height="19" viewBox="0 0 22 23" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        ${noteData.isUpvoted ?
-                                            // Upvoted (loved)
-                                            `<path d="M27.5227 2.53147C26.7991 1.80756 25.94 1.2333 24.9944 0.841502C24.0489 0.449705 23.0354 0.248047 22.0119 0.248047C20.9883 0.248047 19.9748 0.449705 19.0293 0.841502C18.0837 1.2333 17.2246 1.80756 16.501 2.53147L14.9994 4.03313L13.4977 2.53147C12.0361 1.0699 10.0538 0.248804 7.98685 0.248804C5.91989 0.248804 3.93759 1.0699 2.47602 2.53147C1.01446 3.99303 0.193359 5.97534 0.193359 8.0423C0.193359 10.1093 1.01446 12.0916 2.47602 13.5531L14.9994 26.0765L27.5227 13.5531C28.2466 12.8296 28.8209 11.9705 29.2126 11.0249C29.6044 10.0793 29.8061 9.06582 29.8061 8.0423C29.8061 7.01878 29.6044 6.00528 29.2126 5.05971C28.8209 4.11415 28.2466 3.25504 27.5227 2.53147Z" fill="url(#paint0_linear_4170_1047)"/>
-                                            <defs>
-                                            <linearGradient id="paint0_linear_4170_1047" x1="-53.407" y1="-16.9324" x2="14.9989" y2="40.0465" gradientUnits="userSpaceOnUse">
-                                            <stop stop-color="#04DBF7"/>
-                                            <stop offset="1" stop-color="#FF0000"/>
+                        </div>
+
+                        
+                        <div class="note-info-wrapper--second-row">
+                            <p class="fnc--note-desc">
+                                ${(new DOMParser()).parseFromString(note.description, 'text/html').querySelector('body').textContent.slice(0, 100)}...
+                                <span class="note-desc-see-more-btn" onclick="window.location.href='/view/${note.noteID}'">Read More</span>
+                            </p>
+                        </div>
+                        </div>
+                    </div>
+
+
+                    <div class="fnc__second-row">
+                        <div class="thumbnail-loading">
+                            <svg className="w-10 h-10" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 18">
+                                <path
+                                    d="M18 0H2a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2Zm-5.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm4.376 10.481A1 1 0 0 1 16 15H4a1 1 0 0 1-.895-1.447l3.5-7A1 1 0 0 1 7.468 6a.965.965 0 0 1 .9.5l2.775 4.757 1.546-1.887a1 1 0 0 1 1.618.1l2.541 4a1 1 0 0 1 .028 1.011Z"
+                                    style="fill: hsl(0, 0%, 80%);"
+                                />
+                            </svg>
+                        </div>
+
+                        <div class="thumbnail-grid" style="display: none;">
+                            <img class="thumbnail primary-img" src="" onclick="window.location.href='/view/${note.noteID}'" data-src='${note.content1}'/>
+                            <div class="thumbnail-secondary-wrapper">
+                                <img class="thumbnail secondary-img" src="" onclick="window.location.href='/view/${note.noteID}'" data-src='${note.content2}'/>
+                                ${ note.contentCount > 2 ? 
+                                    `<div class="thumbnail-overlay" onclick="window.location.href='/view/${note.noteID}'">+${parseInt(note.contentCount) - 2}</div>` : ''
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="fnc__third-row">
+                            <div class="fnc__tr--note-engagement-metrics">
+                                <div class="love-react-metric-wrapper">
+                                    <svg 
+                                        class="love-react-icon-static" 
+                                        width="30" 
+                                        height="27" 
+                                        viewBox="0 0 30 27" 
+                                        fill="none" 
+                                        xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                        <path
+                                            d="M27.5227 2.53147C26.7991 1.80756 25.94 1.2333 24.9944 0.841502C24.0489 0.449705 23.0354 0.248047 22.0119 0.248047C20.9883 0.248047 19.9748 0.449705 19.0293 0.841502C18.0837 1.2333 17.2246 1.80756 16.501 2.53147L14.9994 4.03313L13.4977 2.53147C12.0361 1.0699 10.0538 0.248804 7.98685 0.248804C5.91989 0.248804 3.93759 1.0699 2.47602 2.53147C1.01446 3.99303 0.193359 5.97534 0.193359 8.0423C0.193359 10.1093 1.01446 12.0916 2.47602 13.5531L14.9994 26.0765L27.5227 13.5531C28.2466 12.8296 28.8209 11.9705 29.2126 11.0249C29.6044 10.0793 29.8061 9.06582 29.8061 8.0423C29.8061 7.01878 29.6044 6.00528 29.2126 5.05971C28.8209 4.11415 28.2466 3.25504 27.5227 2.53147Z"
+                                            fill="url(#paint0_linear_4170_1047)"
+                                        />
+                                        <defs>
+                                            <linearGradient
+                                                id="paint0_linear_4170_1047"
+                                                x1="-53.407"
+                                                y1="-16.9324"
+                                                x2="14.9989"
+                                                y2="40.0465"
+                                                gradientUnits="userSpaceOnUse"
+                                            >
+                                            <stop stop-color="#04DBF7" />
+                                            <stop offset="1" stop-color="#FF0000" />
                                             </linearGradient>
-                                            </defs>`
-                                            : 
-                                            // Downvoted (no love)
-                                            `<path d="M26.0497 5.76283C25.4112 5.12408 24.6532 4.61739 23.8189 4.27168C22.9845 3.92598 22.0903 3.74805 21.1872 3.74805C20.2841 3.74805 19.3898 3.92598 18.5555 4.27168C17.7211 4.61739 16.9631 5.12408 16.3247 5.76283L14.9997 7.08783L13.6747 5.76283C12.385 4.47321 10.636 3.74872 8.81216 3.74872C6.98837 3.74872 5.23928 4.47321 3.94966 5.76283C2.66005 7.05244 1.93555 8.80154 1.93555 10.6253C1.93555 12.4491 2.66005 14.1982 3.94966 15.4878L14.9997 26.5378L26.0497 15.4878C26.6884 14.8494 27.1951 14.0913 27.5408 13.257C27.8865 12.4227 28.0644 11.5284 28.0644 10.6253C28.0644 9.72222 27.8865 8.82796 27.5408 7.99363C27.1951 7.15931 26.6884 6.40127 26.0497 5.76283Z" stroke="#1E1E1E" stroke-width="0.909091" stroke-linecap="round" stroke-linejoin="round"/>`
+                                        </defs>
+                                    </svg>
+                                    <span class="love-react-metric-count metric-count-font uv-count">${note.upvoteCount}</span>
+                                </div>
+
+                                <div class="review-metric-wrapper">
+                                    <span
+                                        class="review-count metric-count-font cmnt-count"
+                                        onclick="window.location.href='/view/<%= note._id %>/#feedbacks'"
+                                    >
+                                        ${ note.feedbackCount === 0 ? `No reviews yet` : `${note.feedbackCount} Review${note.feedbackCount === 1 ? "" : "s"}`}
+                                    </span>
+                                </div>
+                                </div>
+
+                                <!-- First Row of Third FNC row -->
+                                <div class="note-engagement">
+                                <div
+                                    class="uv-container"
+                                    id="upvote-container"
+                                    data-isupvoted="${note.isUpvoted}"
+                                    data-noteid="${note.noteID}"
+                                    onclick="upvote(this, true)"
+                                >
+                                    <svg
+                                        class="uv-icon"
+                                        width="18"
+                                        height="19"
+                                        viewBox="0 0 22 23"
+                                        fill="none"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                    ${note.isUpvoted ?  
+                                        `<path
+                                            d="M27.5227 2.53147C26.7991 1.80756 25.94 1.2333 24.9944 0.841502C24.0489 0.449705 23.0354 0.248047 22.0119 0.248047C20.9883 0.248047 19.9748 0.449705 19.0293 0.841502C18.0837 1.2333 17.2246 1.80756 16.501 2.53147L14.9994 4.03313L13.4977 2.53147C12.0361 1.0699 10.0538 0.248804 7.98685 0.248804C5.91989 0.248804 3.93759 1.0699 2.47602 2.53147C1.01446 3.99303 0.193359 5.97534 0.193359 8.0423C0.193359 10.1093 1.01446 12.0916 2.47602 13.5531L14.9994 26.0765L27.5227 13.5531C28.2466 12.8296 28.8209 11.9705 29.2126 11.0249C29.6044 10.0793 29.8061 9.06582 29.8061 8.0423C29.8061 7.01878 29.6044 6.00528 29.2126 5.05971C28.8209 4.11415 28.2466 3.25504 27.5227 2.53147Z"
+                                            fill="url(#paint0_linear_4170_1047)"
+                                        />
+                                        <defs>
+                                        <linearGradient
+                                            id="paint0_linear_4170_1047"
+                                            x1="-53.407"
+                                            y1="-16.9324"
+                                            x2="14.9989"
+                                            y2="40.0465"
+                                            gradientUnits="userSpaceOnUse"
+                                        >
+                                            <stop stop-color="#04DBF7" />
+                                            <stop offset="1" stop-color="#FF0000" />
+                                        </linearGradient>
+                                        </defs>`
+                                        :
+                                        `<path
+                                            d="M26.0497 5.76283C25.4112 5.12408 24.6532 4.61739 23.8189 4.27168C22.9845 3.92598 22.0903 3.74805 21.1872 3.74805C20.2841 3.74805 19.3898 3.92598 18.5555 4.27168C17.7211 4.61739 16.9631 5.12408 16.3247 5.76283L14.9997 7.08783L13.6747 5.76283C12.385 4.47321 10.636 3.74872 8.81216 3.74872C6.98837 3.74872 5.23928 4.47321 3.94966 5.76283C2.66005 7.05244 1.93555 8.80154 1.93555 10.6253C1.93555 12.4491 2.66005 14.1982 3.94966 15.4878L14.9997 26.5378L26.0497 15.4878C26.6884 14.8494 27.1951 14.0913 27.5408 13.257C27.8865 12.4227 28.0644 11.5284 28.0644 10.6253C28.0644 9.72222 27.8865 8.82796 27.5408 7.99363C27.1951 7.15931 26.6884 6.40127 26.0497 5.76283Z"
+                                            stroke="#1E1E1E"
+                                            stroke-width="0.909091"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                        />`
                                         }
-                                    </svg>									
-                                    <span class="uv-count">${noteData.upvoteCount || 0}</span>
-                                </div>
-                                <div class="divider-uv-dv"></div>
-                                <div class="dv-container">
-                                <svg class="dv-icon" width="18" height="19" viewBox="0 0 22 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M1.72696 13.8523L2.42297 13.1343L1.72696 13.8523ZM11.8598 22.2816L12.5779 22.9776L11.8598 22.2816ZM12.5779 22.9776L21.0288 14.2583L19.5926 12.8664L11.1418 21.5856L12.5779 22.9776ZM19.5614 10.8666L15.976 10.9226L16.0072 12.9223L19.5926 12.8664L19.5614 10.8666ZM15.976 10.9226L15.8746 4.42398L13.8748 4.45518L13.9762 10.9538L15.976 10.9226ZM12.3204 0.979002L9.3208 1.0258L9.352 3.02556L12.3516 2.97876L12.3204 0.979002ZM5.87582 4.57998L5.97721 11.0786L7.97697 11.0474L7.87558 4.54878L5.87582 4.57998ZM5.97721 11.0786L2.39177 11.1345L2.42297 13.1343L6.00841 13.0783L5.97721 11.0786ZM1.03095 14.5703L9.74973 23.0217L11.1418 21.5856L2.42297 13.1343L1.03095 14.5703ZM2.39177 11.1345C0.6102 11.1623 -0.24843 13.3302 1.03095 14.5703L2.42297 13.1343L2.42297 13.1343L2.39177 11.1345ZM5.97721 11.0786L5.97721 11.0786L6.00841 13.0783C7.11285 13.0611 7.9942 12.1518 7.97697 11.0474L5.97721 11.0786ZM9.3208 1.0258C7.38804 1.05596 5.84567 2.64721 5.87582 4.57998L7.87558 4.54878C7.86266 3.72045 8.52367 3.03848 9.352 3.02556L9.3208 1.0258ZM15.8746 4.42398C15.8445 2.49122 14.2532 0.948848 12.3204 0.979002L12.3516 2.97876C13.18 2.96584 13.8619 3.62685 13.8748 4.45518L15.8746 4.42398ZM15.976 10.9226L15.976 10.9226L13.9762 10.9538C13.9935 12.0582 14.9028 12.9395 16.0072 12.9223L15.976 10.9226ZM21.0288 14.2583C22.2689 12.9789 21.343 10.8388 19.5614 10.8666L19.5926 12.8664L19.5926 12.8664L21.0288 14.2583ZM11.1418 21.5856L11.1418 21.5856L9.74973 23.0217C10.5429 23.7905 11.8091 23.7708 12.5779 22.9776L11.1418 21.5856Z" fill="black"/>
                                     </svg>
+                                    <span class="fnc__tr--icon-label like-padding-top-5">Like</span>
+                                </div>
+
+                                <div
+                                    class="cmnt-engagement"
+                                    onclick="window.location.href='/view/${note.noteID}/#feedbacks'"
+                                >
+                                    <svg
+                                    width="24"
+                                    height="24"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    onclick="window.location.href='/view/${note.noteID}/#feedbacks'"
+                                    class="comment-icon"
+                                    >
+                                    <path
+                                        d="M23.25 15.75C23.25 16.413 22.9866 17.0489 22.5178 17.5178C22.0489 17.9866 21.413 18.25 20.75 18.25H5.75L0.75 23.25V3.25C0.75 2.58696 1.01339 1.95107 1.48223 1.48223C1.95107 1.01339 2.58696 0.75 3.25 0.75H20.75C21.413 0.75 22.0489 1.01339 22.5178 1.48223C22.9866 1.95107 23.25 2.58696 23.25 3.25V15.75Z"
+                                        stroke="#1E1E1E"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    />
+                                    </svg>
+                                    <span class="fnc__tr--icon-label">Review</span>
+                                </div>
                                 </div>
                             </div>
-                            <div class="cmnt-engagement" onclick="window.location.href='/view/${noteData.noteID}/#feedbacks'">
-                                <svg
-                                onclick="window.location.href='/view/${noteData.noteID}/#feedbacks'"
-                                class="comment-icon"
-                                width="20"
-                                height="20"
-                                viewBox="0 0 36 37"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                            >
-                            <path
-                                d="M34.4051 23.9151C34.4051 24.8838 34.0257 25.8128 33.3505 26.4978C32.6753 27.1828 31.7595 27.5676 30.8045 27.5676H9.20113L2 34.8726V5.65252C2 4.68381 2.37934 3.75478 3.05458 3.0698C3.72982 2.38482 4.64564 2 5.60057 2H30.8045C31.7595 2 32.6753 2.38482 33.3505 3.0698C34.0257 3.75478 34.4051 4.68381 34.4051 5.65252V23.9151Z"
-                                stroke="#1E1E1E"
-                                stroke-width="2.5"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            />
-                                    </svg>
-                                <span class="cmnt-count">${noteData.feedbackCount}</span>
-                            </div>
-                            
-                        </div>           
-                          </div>
-                      </div> `;
+                    </div>
+                </div> <br>
+            `
 
-            document.querySelector('.feed-container').insertAdjacentHTML('beforeend', noteCardsHtml); // 1
+            feedContainer.insertAdjacentHTML('beforeend', noteCardHtml);
 
-            let newNoteCard = document.querySelector('.feed-note-card:last-child')
-            observers.observer().observe(newNoteCard) // 2
-            document.querySelector('.fetch-loading').style.display = 'flex'
+            let newNoteCard = document.querySelector(`#note-${note.noteID}`)
+            observers.observer().observe(newNoteCard)
         }
     },
 
@@ -662,7 +783,7 @@ function finish() {
     ~       the platform a share link is created and a new window is opened to share the link. (2)
 */
 const linkElement = document.querySelector('._link_');
-function setupShareModal(noteID) {
+function setupShareModal(location) {
     const shareNoteModal = document.querySelector('.share-note-overlay');
     const closeNoteModalBtn = document.querySelector('.close-share-note-modal');
 
@@ -673,7 +794,7 @@ function setupShareModal(noteID) {
 
     // Open the modal and populate the link (immediate execution)
     shareNoteModal.style.display = 'flex';
-    linkElement.innerHTML = `${window.location.origin}/view/${noteID}`;
+    linkElement.innerHTML = `${window.location.origin}${location}`;
     requestAnimationFrame(() => {
         shareNoteModal.classList.add('visible');
     });

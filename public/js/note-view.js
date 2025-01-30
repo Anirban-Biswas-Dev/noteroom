@@ -6,10 +6,13 @@ let feedbackAddedObserver = new MutationObserver(entries => {
 })
 feedbackAddedObserver.observe(document.querySelector('.cmnts-list'), { childList: true })
 
+let splitted = window.location.pathname.split('/').filter(c => c !== '')
+const noteDocID = splitted[splitted.length - 1]
 
 window.addEventListener('load', async () => {
   try {
     document.querySelector('#editor').setAttribute('data-disabled', 'true') // No feedbacks can be given until the comments are fetched
+    let postType = document.querySelector('#postType').getAttribute('data-posttype')
     
     async function getNoteImages() {
       let imageContainer = document.querySelector('#note-image-container').querySelector('.carousel-wrapper')
@@ -21,18 +24,23 @@ window.addEventListener('load', async () => {
         return slideDiv
       }
   
-      let response = await fetch(`${window.location.pathname}/images`)
+      let response = await fetch(`/view/${noteDocID}/images`)
       let images = await response.json()
+      document.querySelector('#note-image-loader').remove()
       if (images.length !== 0) {
-        document.querySelector('#note-image-loader').remove()
         images.forEach(source => {
           imageContainer.appendChild(imageSliderElement(source))
         })
+        if(postType === "quick-post") {
+          document.querySelectorAll('.carousel-control').forEach(doc => doc.remove())
+        }
+      } else {
+        document.querySelectorAll('.carousel-control').forEach(doc => doc.remove())
       }
     }
   
     async function getNoteComments() {
-      let response = await fetch(`${window.location.pathname}/comments`)
+      let response = await fetch(`/view/${noteDocID}/comments`)
       let comments = await response.json()
   
       document.querySelector('.comments-loader').remove()
@@ -90,17 +98,22 @@ window.addEventListener('load', async () => {
 })
 
 
-socket.emit("join-room", window.location.pathname.split("/")[2] /* The note-id as the unique room name */);
+socket.emit("join-room", noteDocID);
 
 try {
 } catch (error) {}
 
 //* Broadcasted feedback handler. The extented-feedback is broadcasted
 socket.on('add-feedback', (feedbackData) => {
+  console.log(`Got that`)
 	try {
+    console.log(feedbackData)
 		document.querySelector('div.main-cmnt-container[data-temporary=true]')?.remove()  
 		manageNotes.addFeedback(feedbackData)
-	} catch (error) {}
+	} catch (error) {
+    console.log(`Error`)
+    console.log(error)
+  }
 })
 
 
@@ -368,9 +381,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const commentList = document.querySelector(".cmnts-list");
   const cmntBtn = document.querySelector("#cmnt-btn");
 
+  //CRITICAL: in quick-post, the temporary comment doesn't go away
   // Function to post a main comment
   const pathname = window.location.pathname
-  const noteDocID = window.location.pathname.split("/")[2]; // Note's document ID
   const commenterStudentID = Cookies.get("studentID"); // Commenter's document ID
 
   const postMainComment = async (event) => {
@@ -404,7 +417,7 @@ document.addEventListener('DOMContentLoaded', () => {
     feedbackData.append('commenterStudentID', commenterStudentID)
     feedbackData.append('feedbackContents', commentHTML)
 
-    let response = await fetch(`${pathname.endsWith('/') ? pathname : pathname + '/'}postFeedback`, {
+    let response = await fetch(`/view/${noteDocID}/postFeedback`, {
       body: feedbackData,
       method: 'post'
     })
@@ -495,7 +508,7 @@ document.addEventListener('DOMContentLoaded', () => {
         replyData.append('parentFeedbackDocID', parentFeedbackDocID)
         replyData.append('reply', true)
 
-        let response = await fetch(`${pathname.endsWith('/') ? pathname : pathname + '/'}postFeedback`, {
+        let response = await fetch(`/view/${noteDocID}/postFeedback`, {
           body: replyData,
           method: 'post'
         })
