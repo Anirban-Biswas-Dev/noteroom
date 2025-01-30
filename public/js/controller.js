@@ -209,6 +209,7 @@ const manageNotes = {
     },
     addNote: function (noteData) {
         let existingUNote = document.querySelector(`#note-${noteData.noteID}`)
+        let feedContainer = document.querySelector('.feed-container')
 
         if (!existingUNote) {
             let noteCardsHtml = `
@@ -304,11 +305,10 @@ const manageNotes = {
                           </div>
                       </div> `;
 
-            document.querySelector('.feed-container').insertAdjacentHTML('beforeend', noteCardsHtml); // 1
+            feedContainer.insertAdjacentHTML('beforeend', noteCardsHtml);
 
-            let newNoteCard = document.querySelector('.feed-note-card:last-child')
-            observers.observer().observe(newNoteCard) // 2
-            document.querySelector('.fetch-loading').style.display = 'flex'
+            let newNoteCard = document.querySelector(`#note-${noteData.noteID}`)
+            observers.observer().observe(newNoteCard)
         }
     },
 
