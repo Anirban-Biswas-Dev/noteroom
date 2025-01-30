@@ -34,8 +34,9 @@
     <title>Dashboard</title>
   </head>
   <body>
-    <%- include('../side-panel', { block: 'left-panel' }) %> <%-
-    include('../side-panel', { block: 'search-bar' }) %>
+    <%- include('../side-panel', { block: 'left-panel' }) %> 
+    <%- include('../side-panel', { block: 'right-panel' }) %> 
+    <%-include('../side-panel', { block: 'search-bar' }) %>
 
     <div class="middle-section">
       <div class="quick-post-container">
@@ -116,8 +117,10 @@
           </div>
         </div>
       </div>
+    <div class="feed-container">
+    </div>
 
-    <div class="feed-container"></div>
+
     <div class="search-results-loader" id="feed-note-loader"></div>
     <div class="finish-message" id="finish-message" style="display: none;">These are all we got!</div>
 
