@@ -6,7 +6,7 @@ let feedbackAddedObserver = new MutationObserver(entries => {
 })
 feedbackAddedObserver.observe(document.querySelector('.cmnts-list'), { childList: true })
 
-let splitted = window.location.pathname.split('/')
+let splitted = window.location.pathname.split('/').filter(c => c !== '')
 const noteDocID = splitted[splitted.length - 1]
 
 window.addEventListener('load', async () => {
