@@ -41,13 +41,13 @@ export function quickPostRouter(io: Server) {
         let notificationTitle = req.body["text"] ? `${(<string>req.body["text"]).slice(0, 20)}...` : 'Quick Post upload failure'
         let ownerDocID = (await Convert.getDocumentID_studentid(req.session["stdid"])).toString()
         let postID: string;
-
+        
         try {
             let postText = req.body["text"]
             let file = []; 
-
+            
             let finalPost: any;
-
+            
             let postData: IQuickPostDB = {
                 ownerDocID: ownerDocID,
                 description: postText,
@@ -55,6 +55,9 @@ export function quickPostRouter(io: Server) {
                 postType: 'quick-post'
             }
             res.json({ ok: true })
+
+            let contentCount: number = 0
+            let content = null
 
             finalPost = await addQuickPost(postData)
             postID = finalPost["_id"].toString()
@@ -64,6 +67,8 @@ export function quickPostRouter(io: Server) {
                 let compressedImage = await compressImage(fileObject)
                 let publicUrl = (await upload(compressedImage, `${ownerDocID}/quick-posts/${finalPost._id.toString()}/${fileObject.name}`)).toString()
                 file.push(publicUrl)
+                contentCount = 1
+                content = publicUrl
     
                 await notesModel.updateOne({ _id: finalPost._id }, { $set: { content: file, completed: true } })
             }
@@ -77,6 +82,30 @@ export function quickPostRouter(io: Server) {
                 content: "Your quick-post uploaded successfully!",
                 title: notificationTitle,
                 event: 'notification-note-upload-success'
+            })
+
+            let owner = await profileInfo(req.session["stdid"]) //* Getting the user information, basically the owner of the note
+            io.emit('note-upload', { //* Handler 1: Dashboard; for adding the note at feed via websockets
+                noteID /* Document ID of the note */: postID,
+                noteTitle /* Title of the note */: null,
+                description: postData.description,
+                createdAt: finalPost.createdAt,
+
+                content1: content,
+                content2: null,
+                contentCount /* The first image of the notes content as a thumbnail */: contentCount,
+                
+                ownerID /* Student ID of the owner of the note */: owner.studentID,
+                profile_pic /* Profile pic path of the owner of the note */: owner.profile_pic,
+                ownerDisplayName /* Displayname of the owener of the note*/: owner.displayname,
+                ownerUserName /* Username of the owner of the note */: owner.username,
+
+                isSaved: false,
+                isUpvoted: false,
+                feedbackCount: 0, 
+                upvoteCount: 0,
+
+                quickPost: true
             })
             
 

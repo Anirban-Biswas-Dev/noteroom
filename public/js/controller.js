@@ -215,6 +215,182 @@ const manageNotes = {
         });
         return formatter.format(date);
     },
+    addQuickPost: function(note) {
+        let existingPost = document.querySelector(`#note-${note.noteID}`)
+        let feedContainer = document.querySelector('.feed-container')
+
+        if (!existingPost) {
+            let postHtml = `
+                <div class="feed-note-card" id="note-${note.noteID}" data-posttype='quick-post'>
+                    <div class="fnc__first-row">
+                    <div class="fnc__fr-author-img-wrapper">
+                        <img src="${note.profile_pic}" class="fnc__fr-author-img" onclick="window.location.href='/user/${note.ownerUserName}'"/>
+                    </div>
+                    <div class="fnc__fr-note-info-wrapper">
+                        <div class="note-info-wrapper--first-row">
+                            <div class="niw--fr-first-col">
+                                <div class="niw--fr-first-col-fr">
+                                    <a class="author-prfl-link" href="/user/${note.ownerUserName}">${note.ownerDisplayName}</a>
+                                    <span class="niw--fr-first-col-fr-seperator"></span>
+                                    <a href="" class="db-note-card-request-option">Request</a>
+                                </div>
+                                <span class="niw--fr-first-col-note-pub-date">${(new Date(note.createdAt)).toDateString()}</span>
+                            </div>
+
+                            <div class="niw--fr-second-col">
+                                <div class="note-menu">
+                                    <button class="note-menu-btn">
+                                        <i class="fas fa-ellipsis-v" aria-hidden="true"></i>
+                                    </button>
+                                    <div class="menu-options">
+                                        <div class="option" onclick="setupShareModal('${note.noteID}', true)">
+                                            <svg
+                                                class="share-icon"
+                                                width="40"
+                                                height="40"
+                                                viewBox="0 0 46 46"
+                                                fill="none"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                            >
+                                                <path
+                                                d="M30.6079 32.5223L27.8819 29.8441L36.6816 21.0444L27.8819 12.2446L30.6079 9.56641L42.0858 21.0444L30.6079 32.5223ZM3.82599 36.3483V28.6963C3.82599 26.05 4.7506 23.8023 6.59983 21.953C8.48094 20.0719 10.7446 19.1314 13.391 19.1314H25.2037L18.3169 12.2446L21.0429 9.56641L32.5209 21.0444L21.0429 32.5223L18.3169 29.8441L25.2037 22.9574H13.391C11.7968 22.9574 10.4418 23.5153 9.32584 24.6312C8.20993 25.7471 7.65197 27.1022 7.65197 28.6963V36.3483H3.82599Z"
+                                                fill="#1D1B20"
+                                                ></path>
+                                            </svg>
+                                            <span class="opt-label">Share</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="note-info-wrapper--second-row">
+                            <p class="fnc--note-desc">${(new DOMParser()).parseFromString(note.description, 'text/html').querySelector('body').textContent.trim()}</p>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="fnc__second-row">
+                        ${ note.contentCount !== 0 ? 
+                            `<div class="quickpost-thumbnail-wrapper">
+                                <img class="quickpost-thumbnail" src="" data-src="${note.content1}"/>
+                            </div>`: ``
+                        }
+                    </div>
+
+                    <div class="fnc__third-row">
+                        <div class="fnc__tr--note-engagement-metrics">
+                            <div class="love-react-metric-wrapper">
+                                <svg
+                                    class="love-react-icon-static"
+                                    width="30"
+                                    height="27"
+                                    viewBox="0 0 30 27"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                    d="M27.5227 2.53147C26.7991 1.80756 25.94 1.2333 24.9944 0.841502C24.0489 0.449705 23.0354 0.248047 22.0119 0.248047C20.9883 0.248047 19.9748 0.449705 19.0293 0.841502C18.0837 1.2333 17.2246 1.80756 16.501 2.53147L14.9994 4.03313L13.4977 2.53147C12.0361 1.0699 10.0538 0.248804 7.98685 0.248804C5.91989 0.248804 3.93759 1.0699 2.47602 2.53147C1.01446 3.99303 0.193359 5.97534 0.193359 8.0423C0.193359 10.1093 1.01446 12.0916 2.47602 13.5531L14.9994 26.0765L27.5227 13.5531C28.2466 12.8296 28.8209 11.9705 29.2126 11.0249C29.6044 10.0793 29.8061 9.06582 29.8061 8.0423C29.8061 7.01878 29.6044 6.00528 29.2126 5.05971C28.8209 4.11415 28.2466 3.25504 27.5227 2.53147Z"
+                                    fill="url(#paint0_linear_4170_1047)"
+                                    ></path>
+                                    <defs>
+                                    <linearGradient
+                                        id="paint0_linear_4170_1047"
+                                        x1="-53.407"
+                                        y1="-16.9324"
+                                        x2="14.9989"
+                                        y2="40.0465"
+                                        gradientUnits="userSpaceOnUse"
+                                    >
+                                        <stop stop-color="#04DBF7"></stop>
+                                        <stop offset="1" stop-color="#FF0000"></stop>
+                                    </linearGradient>
+                                    </defs>
+                                </svg>
+                                <span class="love-react-metric-count metric-count-font uv-count">${note.upvoteCount}</span>
+                            </div>
+                
+                        <div class="review-metric-wrapper">
+                            <span
+                                class="review-count metric-count-font cmnt-count"
+                                onclick="window.location.href='/view/quick-post/${note.noteID}/#feedbacks'"
+                            >
+                                ${ note.feedbackCount === 0 ? `No reviews yet` : `${note.feedbackCount} Review${note.feedbackCount === 1 ? "" : "s"}`}
+                            </span>
+                            </div>
+                        </div>
+            
+                        <div class="note-engagement">
+                            <div class="uv-container" id="upvote-container" data-isupvoted="${note.isUpvoted}" data-noteid="${note.noteID}" onclick="upvote(this, true)">
+                            <svg
+                                class="uv-icon"
+                                width="18"
+                                height="19"
+                                viewBox="0 0 22 23"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                ${note.isUpvoted ?  
+                                    `<path
+                                        d="M27.5227 2.53147C26.7991 1.80756 25.94 1.2333 24.9944 0.841502C24.0489 0.449705 23.0354 0.248047 22.0119 0.248047C20.9883 0.248047 19.9748 0.449705 19.0293 0.841502C18.0837 1.2333 17.2246 1.80756 16.501 2.53147L14.9994 4.03313L13.4977 2.53147C12.0361 1.0699 10.0538 0.248804 7.98685 0.248804C5.91989 0.248804 3.93759 1.0699 2.47602 2.53147C1.01446 3.99303 0.193359 5.97534 0.193359 8.0423C0.193359 10.1093 1.01446 12.0916 2.47602 13.5531L14.9994 26.0765L27.5227 13.5531C28.2466 12.8296 28.8209 11.9705 29.2126 11.0249C29.6044 10.0793 29.8061 9.06582 29.8061 8.0423C29.8061 7.01878 29.6044 6.00528 29.2126 5.05971C28.8209 4.11415 28.2466 3.25504 27.5227 2.53147Z"
+                                        fill="url(#paint0_linear_4170_1047)"
+                                    />
+                                    <defs>
+                                    <linearGradient
+                                        id="paint0_linear_4170_1047"
+                                        x1="-53.407"
+                                        y1="-16.9324"
+                                        x2="14.9989"
+                                        y2="40.0465"
+                                        gradientUnits="userSpaceOnUse"
+                                    >
+                                        <stop stop-color="#04DBF7" />
+                                        <stop offset="1" stop-color="#FF0000" />
+                                    </linearGradient>
+                                    </defs>`
+                                    :
+                                    `<path
+                                        d="M26.0497 5.76283C25.4112 5.12408 24.6532 4.61739 23.8189 4.27168C22.9845 3.92598 22.0903 3.74805 21.1872 3.74805C20.2841 3.74805 19.3898 3.92598 18.5555 4.27168C17.7211 4.61739 16.9631 5.12408 16.3247 5.76283L14.9997 7.08783L13.6747 5.76283C12.385 4.47321 10.636 3.74872 8.81216 3.74872C6.98837 3.74872 5.23928 4.47321 3.94966 5.76283C2.66005 7.05244 1.93555 8.80154 1.93555 10.6253C1.93555 12.4491 2.66005 14.1982 3.94966 15.4878L14.9997 26.5378L26.0497 15.4878C26.6884 14.8494 27.1951 14.0913 27.5408 13.257C27.8865 12.4227 28.0644 11.5284 28.0644 10.6253C28.0644 9.72222 27.8865 8.82796 27.5408 7.99363C27.1951 7.15931 26.6884 6.40127 26.0497 5.76283Z"
+                                        stroke="#1E1E1E"
+                                        stroke-width="0.909091"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    />`
+                                }
+                            </svg>
+                
+                            <span class="fnc__tr--icon-label like-padding-top-5">Like</span>
+                            </div>
+                            <div class="cmnt-engagement" onclick="window.location.href='/view/quick-post/${note.noteID}/#feedbacks'">
+                            <svg
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                                onclick="window.location.href='/view/quick-post/${note.noteID}/#feedbacks'"
+                                class="comment-icon"
+                            >
+                                <path
+                                d="M23.25 15.75C23.25 16.413 22.9866 17.0489 22.5178 17.5178C22.0489 17.9866 21.413 18.25 20.75 18.25H5.75L0.75 23.25V3.25C0.75 2.58696 1.01339 1.95107 1.48223 1.48223C1.95107 1.01339 2.58696 0.75 3.25 0.75H20.75C21.413 0.75 22.0489 1.01339 22.5178 1.48223C22.9866 1.95107 23.25 2.58696 23.25 3.25V15.75Z"
+                                stroke="#1E1E1E"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                ></path>
+                            </svg>
+                
+                            <span class="fnc__tr--icon-label">Review</span>
+                            </div>
+                        </div>
+                        </div>
+                </div> <br>
+            `
+
+            feedContainer.insertAdjacentHTML('beforeend', postHtml);
+
+            let newNoteCard = document.querySelector(`#note-${note.noteID}`)
+            observers.observer().observe(newNoteCard)
+        }
+    },
     addNote: function (note) {
         let existingUNote = document.querySelector(`#note-${note.noteID}`)
         let feedContainer = document.querySelector('.feed-container')
@@ -224,7 +400,7 @@ const manageNotes = {
                 <div class="feed-note-card" id="note-${note.noteID}">
                     <div class="fnc__first-row">
                         <div class="fnc__fr-author-img-wrapper">
-                        <img src="${note.profile_pic}" class="fnc__fr-author-img" onclick="window.location.href='/view/${note.noteID}'"/>
+                        <img src="${note.profile_pic}" class="fnc__fr-author-img" onclick="window.location.href='/user/${note.ownerUserName}'"/>
                         </div>
                         <div class="fnc__fr-note-info-wrapper">
                         <div class="note-info-wrapper--first-row">
@@ -296,7 +472,7 @@ const manageNotes = {
                         
                         <div class="note-info-wrapper--second-row">
                             <p class="fnc--note-desc">
-                                ${(new DOMParser()).parseFromString(note.description, 'text/html').querySelector('body').textContent.slice(0, 100)}...
+                                ${(new DOMParser()).parseFromString(note.description, 'text/html').querySelector('body').textContent.trim().slice(0, 100)}...
                                 <span class="note-desc-see-more-btn" onclick="window.location.href='/view/${note.noteID}'">Read More</span>
                             </p>
                         </div>
@@ -305,15 +481,6 @@ const manageNotes = {
 
 
                     <div class="fnc__second-row">
-                        <div class="thumbnail-loading">
-                            <svg className="w-10 h-10" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 18">
-                                <path
-                                    d="M18 0H2a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2Zm-5.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm4.376 10.481A1 1 0 0 1 16 15H4a1 1 0 0 1-.895-1.447l3.5-7A1 1 0 0 1 7.468 6a.965.965 0 0 1 .9.5l2.775 4.757 1.546-1.887a1 1 0 0 1 1.618.1l2.541 4a1 1 0 0 1 .028 1.011Z"
-                                    style="fill: hsl(0, 0%, 80%);"
-                                />
-                            </svg>
-                        </div>
-
                         <div class="thumbnail-grid" style="display: none;">
                             <img class="thumbnail primary-img" src="" onclick="window.location.href='/view/${note.noteID}'" data-src='${note.content1}'/>
                             <div class="thumbnail-secondary-wrapper">
@@ -360,7 +527,7 @@ const manageNotes = {
                                 <div class="review-metric-wrapper">
                                     <span
                                         class="review-count metric-count-font cmnt-count"
-                                        onclick="window.location.href='/view/<%= note._id %>/#feedbacks'"
+                                        onclick="window.location.href='/view/${note.noteD}/#feedbacks'"
                                     >
                                         ${ note.feedbackCount === 0 ? `No reviews yet` : `${note.feedbackCount} Review${note.feedbackCount === 1 ? "" : "s"}`}
                                     </span>
@@ -449,11 +616,6 @@ const manageNotes = {
             observers.observer().observe(newNoteCard)
         }
     },
-
-    /**
-     * @param {Object} noteData - { noteID, noteTitle }
-     * @description First checks if there is already a saved note div with that noteID (saved-note-noteID). If not then adds one
-     */
     addSaveNote: function (noteData) {
         let savedNotesContainer = document.querySelector(".saved-notes-container");
         let existingNote = document.querySelector(`#saved-note-${noteData.noteID}`)
@@ -783,7 +945,7 @@ function finish() {
     ~       the platform a share link is created and a new window is opened to share the link. (2)
 */
 const linkElement = document.querySelector('._link_');
-function setupShareModal(location) {
+function setupShareModal(location, isPost=false) {
     const shareNoteModal = document.querySelector('.share-note-overlay');
     const closeNoteModalBtn = document.querySelector('.close-share-note-modal');
 
@@ -794,7 +956,7 @@ function setupShareModal(location) {
 
     // Open the modal and populate the link (immediate execution)
     shareNoteModal.style.display = 'flex';
-    linkElement.innerHTML = `${window.location.origin}${location}`;
+    linkElement.innerHTML = !isPost ? `${window.location.origin}view/${location}` : `${window.location.origin}/view/quick-post/${location}`;
     requestAnimationFrame(() => {
         shareNoteModal.classList.add('visible');
     });
@@ -1068,24 +1230,24 @@ notiLinks.forEach(notiLink => {
 
 
 try {
-    //* Mobile notification panel
-    const notificationPanel = document.querySelector('.notification-panel');
-    const notificationButton = document.querySelector('.mobile-nft-btn');
-    const backgroundOverlay = document.querySelector('.background-overlay');
-    const hideNotificationPanel = document.querySelector('.btn-hide-nft');
+    // Mobile notification panel
+    // const notificationPanel = document.querySelector('.notification-panel');
+    // const notificationButton = document.querySelector('.mobile-nft-btn');
+    // const backgroundOverlay = document.querySelector('.background-overlay');
+    // const hideNotificationPanel = document.querySelector('.btn-hide-nft');
 
-    notificationButton.addEventListener('click', () => {
-        notificationPanel.classList.toggle('show');
-        backgroundOverlay.classList.toggle('show-overlay');
-    });
-    backgroundOverlay.addEventListener('click', () => {
-        notificationPanel.classList.remove('show');
-        backgroundOverlay.classList.remove('show-overlay');
-    });
-    hideNotificationPanel.addEventListener('click', () => {
-        notificationPanel.classList.remove('show');
-        backgroundOverlay.classList.remove('show-overlay');
-    })
+    // notificationButton.addEventListener('click', () => {
+    //     notificationPanel.classList.toggle('show');
+    //     backgroundOverlay.classList.toggle('show-overlay');
+    // });
+    // backgroundOverlay.addEventListener('click', () => {
+    //     notificationPanel.classList.remove('show');
+    //     backgroundOverlay.classList.remove('show-overlay');
+    // });
+    // hideNotificationPanel.addEventListener('click', () => {
+    //     notificationPanel.classList.remove('show');
+    //     backgroundOverlay.classList.remove('show-overlay');
+    // })
 } catch (error) {
     console.log(error.message)
 }
@@ -1119,4 +1281,39 @@ function setupErrorPopup(errorMessage) {
         }
     });
 }
+
+/* || Notification Panel Open Handling */
+
+document.addEventListener("DOMContentLoaded", function () {
+    const overlay = document.querySelector(".notification-modal-overlay");
+    const modal = document.querySelector(".notification-modal");
+    const pcBtn = document.querySelector(".pc-nft-btn");
+    const mobileBtn = document.querySelector(".mobile-nft-btn");
+
+    function toggleOverlay() {
+        overlay.style.display = (overlay.style.display === "flex") ? "none" : "flex";
+    }
+
+    if (pcBtn) { // Ensure the PC button exists
+        pcBtn.addEventListener("click", function () {
+            console.log("PC Button Clicked!"); // Debug log
+            toggleOverlay();
+        });
+    }
+
+    if (mobileBtn) { // Ensure the mobile button exists
+        mobileBtn.addEventListener("click", function () {
+            console.log("Mobile Button Clicked!"); // Debug log
+            toggleOverlay();
+        });
+    }
+
+    overlay.addEventListener("click", function (event) {
+        if (!modal.contains(event.target)) {
+            console.log("Clicked Outside Modal - Closing"); // Debug log
+            overlay.style.display = "none";
+        }
+    });
+});
+
 

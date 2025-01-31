@@ -11,15 +11,15 @@ socket.on('update-upvote-dashboard', function (noteDocID, upvoteCount) {
 let nextPage = 2
 
 async function get_note(count, page) {
-	function getFeedbackNoteObject(note) {
+	function getFeedbackNoteObject(note, post = false) {
 		let noteData = {
 			noteID: note._id,
-			noteTitle: note.title,
+			noteTitle: !post ? note.title : null,
 			description: note.description,
 			createdAt: note.createdAt,
 
-			content1: note.content[0],
-			content2: note.content[1],
+			content1: !post || note.content.length === 1 ? note.content[0] : null ,
+			content2: !post ? note.content[1] : null,
 			contentCount: note.content.length,
 
 			ownerID: note.ownerDocID.studentID,
@@ -30,7 +30,9 @@ async function get_note(count, page) {
 			feedbackCount: note.feedbackCount,
 			upvoteCount: note.upvoteCount,
 			isSaved: note.isSaved,
-			isUpvoted: note.isUpvoted
+			isUpvoted: note.isUpvoted,
+
+			quickPost: post
 		}
 		return noteData
 	}
@@ -43,7 +45,11 @@ async function get_note(count, page) {
 
 		if (notes.length !== 0) {
 			notes.forEach(note => {
-				notesList.push(getFeedbackNoteObject(note)); 
+				if (note.postType === 'note') {
+					notesList.push(getFeedbackNoteObject(note)); 
+				} else {
+					notesList.push(getFeedbackNoteObject(note, true));
+				}
 			});
 		} else {
 			document.querySelector('#feed-note-loader').style.display = 'none'
@@ -61,7 +67,11 @@ window.addEventListener('load', async () => {
 		let feedContainer = document.querySelector('.feed-container')
 		let notes = await get_note(3, 1)
 		notes.forEach(note => {
-			manageNotes.addNote(note)
+			if(!note.quickPost) {
+				manageNotes.addNote(note)
+			} else {
+				manageNotes.addQuickPost(note)
+			}
 		})
 		observers.lastNoteObserver().observe(feedContainer.lastElementChild) // Initial tracking of the last note
 	}
@@ -84,20 +94,26 @@ const observers = {
 	observer: function () {
 		const _observer = new IntersectionObserver(entries => {
 			entries.forEach(entry => {
-				let thumbnails = entry.target.querySelectorAll('.thumbnail')
-				let imageUrls = []
-
-				thumbnails.forEach(thumbnail => {
-					let imageurl = thumbnail.getAttribute('data-src')
-					imageUrls.push(imageurl)
-				})
-				
-				entry.target.querySelector('.thumbnail-loading').style.display = 'none'
-				entry.target.querySelector('.thumbnail-grid').style.display = 'grid'
-				
-				entry.target.querySelector('.primary-img').src = imageUrls[0]
-				entry.target.querySelector('.secondary-img').src = imageUrls[1]
-
+				let isQuickPost = entry.target.getAttribute('data-posttype') ? true : false
+				if (!isQuickPost) {
+					let thumbnails = entry.target.querySelectorAll('.thumbnail')
+					let imageUrls = []
+	
+					thumbnails.forEach(thumbnail => {
+						let imageurl = thumbnail.getAttribute('data-src')
+						imageUrls.push(imageurl)
+					})
+					
+					entry.target.querySelector('.thumbnail-grid').style.display = 'grid'					
+					entry.target.querySelector('.primary-img').src = imageUrls[0]
+					entry.target.querySelector('.secondary-img').src = imageUrls[1]
+				} else {
+					let thumbnail = entry.target.querySelector('.quickpost-thumbnail')
+					if (thumbnail) {
+						let imageUrl = thumbnail.getAttribute('data-src')
+						thumbnail.src = imageUrl
+					}
+				}
 
 				_observer.unobserve(entry.target)
 			})
@@ -116,7 +132,7 @@ const observers = {
 					let notes = await get_note(3, nextPage)
 					if (notes.length !== 0) {
 						notes.forEach(note => {
-							manageNotes.addNote(note)
+							note.quickPost ? manageNotes.addQuickPost(note) : manageNotes.addNote(note)
 						})
 						nextPage += 1
 						_observer.unobserve(entry.target)
@@ -136,7 +152,7 @@ const observers = {
 
 //* Note upload WS event
 socket.on('note-upload', (noteData) => {
-	manageNotes.addNote(noteData)
+	noteData.quickPost ? manageNotes.addQuickPost(noteData) : manageNotes.addNote(noteData)
 	manageDb.add('notes', noteData)
 })
 

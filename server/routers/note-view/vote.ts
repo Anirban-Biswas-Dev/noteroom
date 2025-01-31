@@ -8,6 +8,7 @@ import addVote, { deleteVote, addCommentVote, deleteCommentVote } from "../../se
 const router = Router({ mergeParams: true})
 
 export function voteRouter(io: Server) {
+    //FIXME: the title for a quick post is not handled
     router.post('/vote/feedback', async (req, res) => {
         let action = req.query["action"]
         let feedbackDocID = req.body["feedbackDocID"]

@@ -76,13 +76,22 @@ function uploadRouter(io: Server) {
                 let owner = await profileInfo(req.session["stdid"]) //* Getting the user information, basically the owner of the note
                 io.emit('note-upload', { //* Handler 1: Dashboard; for adding the note at feed via websockets
                     noteID /* Document ID of the note */: noteDocId,
-                    thumbnail /* The first image of the notes content as a thumbnail */: allFilePaths[0],
-                    profile_pic /* Profile pic path of the owner of the note */: owner.profile_pic,
                     noteTitle /* Title of the note */: noteData.title,
-                    feedbackCount: 0, 
-                    ownerDisplayName /* Displayname of the owener of the note*/: owner.displayname,
+                    description: noteData.description,
+                    createdAt: note.createdAt,
+
+                    content1: allFilePaths[0],
+                    content2: allFilePaths[1],
+                    contentCount /* The first image of the notes content as a thumbnail */: allFilePaths.length,
+                    
                     ownerID /* Student ID of the owner of the note */: owner.studentID,
+                    profile_pic /* Profile pic path of the owner of the note */: owner.profile_pic,
+                    ownerDisplayName /* Displayname of the owener of the note*/: owner.displayname,
                     ownerUserName /* Username of the owner of the note */: owner.username,
+
+                    isSaved: false,
+                    isUpvoted: false,
+                    feedbackCount: 0, 
                     upvoteCount: 0
                 })
 
