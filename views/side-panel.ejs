@@ -32,29 +32,12 @@
     Upload
   </button>
   <span class="sv-header">Saved Notes</span>
-  <!-- dynamic content loading here -->
   <div class="saved-notes-container">
-    <div class="<%= savedNotes.length !== 0 ? 'hide' : '' %> no-saved-notes-message">
+    <div class="no-saved-notes-message">
       <p>It looks like you haven't saved any notes yet. Start saving them to read later</p>
-      
     </div>
-      
-    <% savedNotes.forEach(note => { %>
-    <div class="saved-note" id="saved-note-<%= note._id %>" onclick="location.href='/view/<%= note._id %>'">
-      <span class="saved-note-doc-id" style="display: none;"><%= note._id %></span>
-      <span class="sv-note-title">
-        <a class="sv-n-link" href='/view/<%= note._id %>'>
-          <% let title = note.title %>
-          <% if(title.length > 30) { %>
-          <%= title.slice(0, 30) %>...
-          <% } else { %>
-          <%= title %>
-          <% } %>
-        </a>
-      </span>
-    </div>
-    <% }) %>
   </div>
+
   <button class="right-panel-btn" onclick="location.href='/support'">Help & Support</button>
   <button class="right-panel-btn" onclick="window.open('https://app.hubspot.com/guide-creator/g/YPlbIIXPTt?uuid=f456224c-8bcd-4673-8a7d-573176e779bb', '_blank'); return false">User Guide</button>
 </div>

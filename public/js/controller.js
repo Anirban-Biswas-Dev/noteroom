@@ -9,6 +9,26 @@ let imageObject = {
     'English': `${baseURL}english.png`
 }
 
+let savedNoteObserver = new MutationObserver(entries => {
+    let entry = entries[0]
+    if (entry.addedNodes.length > 0) {
+        document.querySelector('.no-saved-notes-message').classList.add('hide')
+    }
+})
+savedNoteObserver.observe(document.querySelector('.saved-notes-container'), { childList: true })
+
+window.addEventListener('load', () => {
+    function addSavedNotes() {
+        let savedNotes = manageDb.get('savedNotes')
+        savedNotes.then(notes => {
+            notes.forEach(note => {
+                manageNotes.addSaveNote(note)
+            })
+        })    
+    }
+    addSavedNotes()
+})
+
 
 let toastData = (type, message, timer=2000) => {
     return {
@@ -395,6 +415,7 @@ const manageNotes = {
         let existingUNote = document.querySelector(`#note-${note.noteID}`)
         let feedContainer = document.querySelector('.feed-container')
 
+        //FIXME: there should be a skeleton loader for the note card or for the note image
         if (!existingUNote) {
             let noteCardHtml = `
                 <div class="feed-note-card" id="note-${note.noteID}">
@@ -1057,9 +1078,11 @@ async function saveNote(svButton, fromDashboard = false) {
         isSaved === "false" ? (async function() {
             Swal.fire(toastData('success', 'Note saved successfully!'))
             await manageDb.add('savedNotes', body.savedNote[0])
-        })() : manageDb.delete('savedNotes', noteDocID)
+        })() : (function() {
+            manageDb.delete('savedNotes', noteDocID)
+            body.count !== 0 || (document.querySelector('.no-saved-notes-message').classList.remove('hide'))
+        })()
 
-        document.querySelector('.no-saved-notes-message').classList[body.count === 0 ? 'remove' : 'add']('hide')
         svButton.removeAttribute('data-disabled')
     } else {
         Swal.fire(toastData('error', "Yikes! Try again later.", 3000))
