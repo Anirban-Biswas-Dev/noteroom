@@ -527,6 +527,7 @@ body {
   gap: 5px;
   transition: background-color 0.1s ease,
     opacity 0.1s ease;
+    cursor: pointer;
 }
 .notification:hover {
   background-color: #f8f8f8;
