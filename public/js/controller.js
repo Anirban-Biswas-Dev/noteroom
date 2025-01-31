@@ -1230,24 +1230,24 @@ notiLinks.forEach(notiLink => {
 
 
 try {
-    //* Mobile notification panel
-    const notificationPanel = document.querySelector('.notification-panel');
-    const notificationButton = document.querySelector('.mobile-nft-btn');
-    const backgroundOverlay = document.querySelector('.background-overlay');
-    const hideNotificationPanel = document.querySelector('.btn-hide-nft');
+    // Mobile notification panel
+    // const notificationPanel = document.querySelector('.notification-panel');
+    // const notificationButton = document.querySelector('.mobile-nft-btn');
+    // const backgroundOverlay = document.querySelector('.background-overlay');
+    // const hideNotificationPanel = document.querySelector('.btn-hide-nft');
 
-    notificationButton.addEventListener('click', () => {
-        notificationPanel.classList.toggle('show');
-        backgroundOverlay.classList.toggle('show-overlay');
-    });
-    backgroundOverlay.addEventListener('click', () => {
-        notificationPanel.classList.remove('show');
-        backgroundOverlay.classList.remove('show-overlay');
-    });
-    hideNotificationPanel.addEventListener('click', () => {
-        notificationPanel.classList.remove('show');
-        backgroundOverlay.classList.remove('show-overlay');
-    })
+    // notificationButton.addEventListener('click', () => {
+    //     notificationPanel.classList.toggle('show');
+    //     backgroundOverlay.classList.toggle('show-overlay');
+    // });
+    // backgroundOverlay.addEventListener('click', () => {
+    //     notificationPanel.classList.remove('show');
+    //     backgroundOverlay.classList.remove('show-overlay');
+    // });
+    // hideNotificationPanel.addEventListener('click', () => {
+    //     notificationPanel.classList.remove('show');
+    //     backgroundOverlay.classList.remove('show-overlay');
+    // })
 } catch (error) {
     console.log(error.message)
 }
@@ -1281,4 +1281,39 @@ function setupErrorPopup(errorMessage) {
         }
     });
 }
+
+/* || Notification Panel Open Handling */
+
+document.addEventListener("DOMContentLoaded", function () {
+    const overlay = document.querySelector(".notification-modal-overlay");
+    const modal = document.querySelector(".notification-modal");
+    const pcBtn = document.querySelector(".pc-nft-btn");
+    const mobileBtn = document.querySelector(".mobile-nft-btn");
+
+    function toggleOverlay() {
+        overlay.style.display = (overlay.style.display === "flex") ? "none" : "flex";
+    }
+
+    if (pcBtn) { // Ensure the PC button exists
+        pcBtn.addEventListener("click", function () {
+            console.log("PC Button Clicked!"); // Debug log
+            toggleOverlay();
+        });
+    }
+
+    if (mobileBtn) { // Ensure the mobile button exists
+        mobileBtn.addEventListener("click", function () {
+            console.log("Mobile Button Clicked!"); // Debug log
+            toggleOverlay();
+        });
+    }
+
+    overlay.addEventListener("click", function (event) {
+        if (!modal.contains(event.target)) {
+            console.log("Clicked Outside Modal - Closing"); // Debug log
+            overlay.style.display = "none";
+        }
+    });
+});
+
 

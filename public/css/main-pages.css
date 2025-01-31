@@ -390,7 +390,7 @@ body {
   background-color: #e2e5e9;
   border-radius: 15px;
   padding: 10px;
-  transition: transform 0.2s ease, fill 0.2s ease, color 0.2s ease;
+  transition: background-color 0.2s ease;
   cursor: pointer;
 }
 /* Hover and click effects with settings */
@@ -431,7 +431,6 @@ body {
   width: 50px;
   height: auto;
   padding: 5px;
-  height: auto;
   display: block;
   background-color: #e2e5e9;
   transition: background-color 0.2s ease;
@@ -444,7 +443,7 @@ body {
   background-color: #d7d8d9;
 }
 .settings-icon:active,
-.search-prfl-pc:hover,
+.search-prfl-pc:active,
 .pc-nft-btn:active {
   background-color: #c8cacc;
 }
@@ -456,7 +455,7 @@ body {
 }
 
 .notification-modal-overlay{
-  /* display: none; */
+  display: none;
   left: 0;
   top: 0;
   background-color: transparent;
@@ -465,14 +464,13 @@ body {
   padding: 10px;
   position: fixed;
   transition: opacity 0.3s ease, transform 0.3s ease;
-  z-index: 1026;
+  z-index: 1050;
 }
-
 
 .notification-modal {
   position: absolute;
   right: 10%;
-  top: 6%;
+  top: 8%;
   width: 95%;
   max-width: 400px;
   height: fit-content;
@@ -484,6 +482,8 @@ body {
   background: #FFFBFB;
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.15);
   border-radius: 25px;
+  z-index: 1050;
+  pointer-events: auto;
 }
 
 .notifications-container{
@@ -634,6 +634,26 @@ body {
   justify-content: space-between;
   width: 100%;
   padding: 0px 2px 0px 0px;
+}
+
+@media (max-width:360px) {
+  .notification-modal-overlay{
+    background-color: rgba(0, 0, 0, 0.2);
+  }
+  .notification-modal {
+    top: 8%;
+    right: 2%;
+  }
+}
+
+@media (max-width:480px) {
+  .notification-modal-overlay{
+    background-color: rgba(0, 0, 0, 0.2);
+  }
+  .notification-modal {
+    top: 8%;
+    right: 2%;
+  }
 }
 
 /* Left Panel */
@@ -906,16 +926,23 @@ canvas {
  Keep the Mobile Version of the code possibliy here
  ****************************************************** */
 .mbl-profile-pic {
-  box-sizing: border-box;
+  display: none;
   width: 40px;
   height: 40px;
-  border: 1px solid var(--squid-ink);
-  border-radius: 50px;
-  object-fit: cover;
-  display: none;
+  border: none;
+  border-radius: 50%;
+  overflow: hidden;
   aspect-ratio: 1 / 1;
-  align-items: center;
-  justify-content: center;
+  object-fit: cover;
+  transition: filter 0.3s ease;
+  cursor: pointer;
+}
+
+.mbl-profile-pic:hover {
+  filter: brightness(0.9);
+}
+.mbl-profile-pic:active {
+  filter: brightness(0.8);
 }
 .mbl-ctrl-panel {
   display: flex;
