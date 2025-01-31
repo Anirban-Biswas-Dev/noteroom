@@ -66,7 +66,41 @@ function updateProgressBar() {
 }
 
 // Event listener for the back button (go to previous slide)
-backButton.addEventListener("click", () => {
+backButton.addEventListener("click", async () => {
+  let isFirstSlide = document.querySelector('#slide-1').classList.contains('active')
+  if (isFirstSlide) {
+		let result = await Swal.fire({
+        icon: 'warning',
+        title: 'Are you sure you want to exit?',
+        text: 'If you leave now, your account and progress will be deleted. You’ll need to start over if you return. Would you like to continue onboarding instead?',
+
+        showConfirmButton: true,
+        confirmButtonColor: "#d33",
+        confirmButtonText: 'Exit Anyway',
+
+        showCancelButton: true,
+        cancelButtonColor: "#3085d6",
+        cancelButtonText: 'Continue Onboarding',
+
+        focusCancel: true,
+    })
+
+    if (result.isConfirmed) {
+      let response = await fetch('/api/user/delete')
+      let data = await response.json()
+      if (data.ok) {
+        window.location.href = '/'
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'An error occured!',
+          text: "Couldn't delete your account! Please try again a bit later.",
+          showConfirmButton: true,
+          confirmButtonText: 'OK',
+        })
+      }
+    }  
+  }
   updateSlides(currentSlide - 1, "prev");
 });
 
@@ -654,7 +688,6 @@ var util = {
     f: {
       init: {
         register: function () {
-          console.clear(); // just cuz codepen
           var child,
             children = document.getElementsByClassName("dropdown-field"),
             i;

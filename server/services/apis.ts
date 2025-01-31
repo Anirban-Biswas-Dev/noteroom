@@ -6,7 +6,7 @@ import Students from "../schemas/students.js";
 import archiver from "archiver";
 import { getNotifications } from "../helpers/rootInfo.js";
 import { addSaveNote, deleteNote, deleteSavedNote, getAllNotes, manageProfileNotes } from "./noteService.js";
-import { Convert } from "./userService.js";
+import { Convert, deleteAccount, deleteSessionsByStudentID } from "./userService.js";
 import { isUpVoted } from "./voteService.js";
 import { checkLoggedIn } from "../middlewares/checkLoggedIn.js";
 
@@ -169,6 +169,20 @@ export default function apiRouter(io: Server) {
         let studentID = req.query.studentID?.toString()
         let notifs = await getNotifications(studentID)
         res.json(notifs)
+    })
+
+
+    router.get('/user/delete', async (req, res) => {
+        try {
+            let studentID = req.session["stdid"]
+            let studentDocID = (await Convert.getDocumentID_studentid(studentID)).toString()
+            let response = await deleteAccount(studentDocID)
+            let sessiondeletion = await deleteSessionsByStudentID(studentID)
+
+            res.json({ ok: response.ok && sessiondeletion.ok })
+        } catch (error) {
+            res.json({ ok: false })
+        }
     })
     
 

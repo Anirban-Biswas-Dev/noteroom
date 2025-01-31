@@ -2,24 +2,8 @@ import { Router } from "express";
 import sendMail from "../services/emailService.js";
 import { getHash } from "../helpers/utils.js";
 import { addToken, deleteToken, getToken } from "../services/resetTokenService.js";
-import { changePassword, Convert } from "../services/userService.js";
-import mongoose from "mongoose";
+import { changePassword, Convert, deleteSessionsByStudentID } from "../services/userService.js";
 import { templates } from "../helpers/emailTemplates.js";
-
-
-const sessionSchema = new mongoose.Schema({}, { collection: 'sessions', strict: false });
-const Session = mongoose.model('Session', sessionSchema);
-
-
-async function deleteSessionsByStudentID(studentID: string) {
-    try {
-        await Session.deleteMany({
-            session: { $regex: `"stdid":"${studentID}"` } // Match the serialized JSON
-        });
-    } catch (error) {
-        console.error('Error deleting sessions:', error);
-    }
-}
 
 
 const router = Router()

@@ -1,6 +1,7 @@
 import Students from "../schemas/students.js";
 import Notes from "../schemas/notes.js";
 import { IStudentDB } from "../types/database.types.js";
+import mongoose from "mongoose";
 
 export const Convert = {
     async getStudentID_username(username: string) {
@@ -122,5 +123,38 @@ export async function changePassword(email: string, password: string, current_pa
         }
     } catch (error) {
         return false
+    }
+}
+
+
+export async function deleteAccount(studentDocID: string) {
+    try {
+        let deleteResult = await Students.deleteOne({ _id: studentDocID })
+        if (deleteResult.deletedCount !== 0) {
+            return { ok: true }
+        } else {
+            return { ok: false }
+        }
+    } catch (error) {
+        return { ok: false }
+    }
+    
+}
+
+export async function deleteSessionsByStudentID(studentID: string) {
+    const sessionSchema = new mongoose.Schema({}, { collection: 'sessions', strict: false });
+    const Session = mongoose.model('Session', sessionSchema);
+    
+    try {
+        let result = await Session.deleteMany({
+            session: { $regex: `"stdid":"${studentID}"` } // Match the serialized JSON
+        });
+        if (result.deletedCount !== 0) {
+            return { ok: true }
+        } else {
+            return { ok: false }
+        }
+    } catch (error) {
+        return { ok: false }
     }
 }
