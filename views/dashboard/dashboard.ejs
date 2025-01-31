@@ -117,6 +117,7 @@
           </div>
         </div>
       </div>
+
     <div class="feed-container">
     </div>
 
@@ -124,8 +125,11 @@
     <div class="search-results-loader" id="feed-note-loader"></div>
     <div class="finish-message" id="finish-message" style="display: none;">These are all we got!</div>
 
-    <%- include('../side-panel', { block: 'mbl-ctrl-panel' }) %> 
-    <%- include('../side-panel', { block: 'quick-post' }) %>
+  </div>
+
+	<%- include('../side-panel', { block: 'notification-modal' }) %>
+	<%- include('../side-panel', { block: 'mbl-ctrl-panel' }) %>
+	<%- include('../side-panel', { block: 'quick-post' }) %>
 
     <audio
       id="notificationAudio"

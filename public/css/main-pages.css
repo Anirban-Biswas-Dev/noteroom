@@ -390,7 +390,7 @@ body {
   background-color: #e2e5e9;
   border-radius: 15px;
   padding: 10px;
-  transition: transform 0.2s ease, fill 0.2s ease, color 0.2s ease;
+  transition: background-color 0.2s ease;
   cursor: pointer;
 }
 /* Hover and click effects with settings */
@@ -431,7 +431,6 @@ body {
   width: 50px;
   height: auto;
   padding: 5px;
-  height: auto;
   display: block;
   background-color: #e2e5e9;
   transition: background-color 0.2s ease;
@@ -444,7 +443,7 @@ body {
   background-color: #d7d8d9;
 }
 .settings-icon:active,
-.search-prfl-pc:hover,
+.search-prfl-pc:active,
 .pc-nft-btn:active {
   background-color: #c8cacc;
 }
@@ -454,29 +453,160 @@ body {
   align-content: center;
   width: 100%;
 }
-.notifications-container {
+
+.notification-modal-overlay{
+  display: none;
+  left: 0;
+  top: 0;
+  background-color: transparent;
+  height: 100%;
   width: 100%;
+  padding: 10px;
+  position: fixed;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  z-index: 1050;
+}
+
+.notification-modal {
+  position: absolute;
+  right: 10%;
+  top: 8%;
+  width: 95%;
+  max-width: 400px;
+  height: fit-content;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 15px;
+  gap: 20px;
+  padding: 25px 20px;
+  background: #FFFBFB;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.15);
+  border-radius: 25px;
+  z-index: 1050;
+  pointer-events: auto;
 }
+
+.notifications-container{
+  width: 100%;
+  height: fit-content;
+  height: 70vh;
+  max-height: 750px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  overflow-y: scroll;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+.notifications-container::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+.notifications-container::-webkit-scrollbar-track,
+.notifications-container::-webkit-scrollbar-thumb {
+  display: none;
+}
+.notification-header-label{
+  width: 100%;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 22px;
+  color: var(--squid-ink);
+}
+
 .notification {
-  width: 90%;
-  background: #ffffff;
-  box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.25);
-  border-radius: 15px;
-  padding: 5px 10px;
-  margin-bottom: 20px;
-  transition: background-color 0.3s ease, box-shadow 0.3s ease,
-    transform 0.2s ease, opacity 0.2s ease;
+  width: 100%;
+  background: transparent;
+  border-radius: 8px;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: background-color 0.1s ease,
+    opacity 0.1s ease;
+    cursor: pointer;
 }
 .notification:hover {
   background-color: #f8f8f8;
-  box-shadow: 0px 7px 10px rgba(0, 0, 0, 0.3);
-  transform: translateY(-2px);
   opacity: 0.98;
 }
+.noti__first-col--img-wrapper{
+  padding: 0 5px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.noti__source-user-img{
+  width: 45px;
+  height: 45px;
+  border: none;
+  border-radius: 50%;
+  overflow: hidden;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  transition: filter 0.3s ease;
+  cursor: pointer;
+}
+
+.noti__source-user-img:hover {
+  filter: brightness(0.9);
+}
+.noti__source-user-img:active {
+  filter: brightness(0.8);
+}
+
+.noti__sec-col--msg-wrapper{
+  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  padding-top: 2px;
+  gap: 5px;
+}
+
+.noti__sc--first-row-msg{
+  width: 100%;
+}
+
+.noti-msg{
+  width: 100%;
+  text-align: left;
+  font-weight: 550;
+  font-size: 14px;
+  line-height: 1.5;
+  letter-spacing: -0.01em;
+  color: #565656;
+}
+.noti-source-user-name{
+  color: #000000;
+}
+
+.noti__sc--second-row-noti-info{
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 5px;
+}
+
+.noti-time{
+  font-weight: 500;
+  font-size: 11px;
+  line-height: 1.5;
+  letter-spacing: -0.01em;
+  color: #000000;
+}
+
+
 /* Unread and Read Related */
 /* Process:
   through ejs we're adding a Boolean class on the elements where we're applying effects for read and unread.   
@@ -485,7 +615,6 @@ body {
 .isRead {
   padding: 5px;
   border-radius: 50%;
-  margin: 0 5px 0 0;
 }
 /* This targets the dot if noti is read */
 .true {
@@ -498,10 +627,7 @@ body {
 }
 /* This is to change the bg color of noti div as per read/unread status */
 .secondary-false {
-  background: var(--secondaryUnread);
-}
-.secondary-false:hover {
-  background-color: var(--secondaryUnreadHover);
+  font-weight: 800;
 }
 .first-row {
   display: flex;
@@ -510,53 +636,27 @@ body {
   width: 100%;
   padding: 0px 2px 0px 0px;
 }
-.frnt-wrapper {
-  display: flex;
-  align-items: center;
-  width: fit-content;
-  flex: 80%;
-}
-.notification-title {
-  font-weight: 550;
-  font-size: 1.05rem;
-  transition: color 0.3s ease;
-}
-div.frnt-wrapper > .notification-link {
-  display: block;
-  text-decoration: none;
-  color: inherit;
-}
-div.notification-msg > .notification-link-2 {
-  display: inline;
-  text-decoration: none;
-  color: inherit;
+
+@media (max-width:360px) {
+  .notification-modal-overlay{
+    background-color: rgba(0, 0, 0, 0.2);
+  }
+  .notification-modal {
+    top: 8%;
+    right: 2%;
+  }
 }
 
-.remove-notification {
-  font-size: 2rem;
-  cursor: pointer;
-  transition: transform 0.2s ease, color 0.2s ease;
-  text-decoration: none;
+@media (max-width:480px) {
+  .notification-modal-overlay{
+    background-color: rgba(0, 0, 0, 0.2);
+  }
+  .notification-modal {
+    top: 8%;
+    right: 2%;
+  }
 }
-.remove-notification:hover {
-  transform: scale(1.1);
-  color: #ff6666;
-}
-.notification-msg {
-  width: 100%;
-  font-weight: 400;
-  padding: 0 0 5px 0;
-}
-div.notification-msg > .commenter-prfl {
-  color: var(--squid-ink);
-  text-decoration: none;
-}
-div.notification-msg > .commenter-prfl:hover {
-  text-decoration: underline;
-}
-div.notification-msg > .commenter-prfl:visited {
-  color: var(--squid-ink);
-}
+
 /* Left Panel */
 .left-panel {
   position: fixed;
@@ -827,16 +927,23 @@ canvas {
  Keep the Mobile Version of the code possibliy here
  ****************************************************** */
 .mbl-profile-pic {
-  box-sizing: border-box;
+  display: none;
   width: 40px;
   height: 40px;
-  border: 1px solid var(--squid-ink);
-  border-radius: 50px;
-  object-fit: cover;
-  display: none;
+  border: none;
+  border-radius: 50%;
+  overflow: hidden;
   aspect-ratio: 1 / 1;
-  align-items: center;
-  justify-content: center;
+  object-fit: cover;
+  transition: filter 0.3s ease;
+  cursor: pointer;
+}
+
+.mbl-profile-pic:hover {
+  filter: brightness(0.9);
+}
+.mbl-profile-pic:active {
+  filter: brightness(0.8);
 }
 .mbl-ctrl-panel {
   display: flex;
