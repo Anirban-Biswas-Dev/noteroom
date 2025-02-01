@@ -1340,3 +1340,17 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 
+/* ||  Request Cards Handling */
+document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll(".request").forEach((requestCard) => {
+      const firstRow = requestCard.querySelector(".request__fr");
+      const secondRow = requestCard.querySelector(".request__sr");
+      const chevronIcon = requestCard.querySelector(".request-chevron-icon");
+  
+      firstRow.addEventListener("click", () => {
+        secondRow.classList.toggle("request__sr--expanded");
+        chevronIcon.classList.toggle("request__fr--chevron-rotated");
+      });
+    });
+  });
+  
