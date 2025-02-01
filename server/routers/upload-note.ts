@@ -34,7 +34,7 @@ function uploadRouter(io: Server) {
             res.send({ ok: false, message: 'No files have been selected to publish' })
         } else {
             let noteDocId: any;
-            let noteTitle = req.body['noteTitle'] || "Note upload failure!"
+            let noteTitle = req.body['noteTitle'] || "Untitled Note"
 
             try {
                 let noteData: INoteDB = {
@@ -68,8 +68,7 @@ function uploadRouter(io: Server) {
                     ownerStudentID: studentID,
                     redirectTo: `/view/${noteDocId}`
                 }).sendNotification({
-                    content: 'Your note is successfully uploaded!',
-                    title: completedNoteData["title"],
+                    content: `Your note '${completedNoteData["title"]}' is successfully uploaded!`,
                     event: 'notification-note-upload-success'
                 })
 
@@ -100,8 +99,7 @@ function uploadRouter(io: Server) {
                 await NotificationSender(io, {
                     ownerStudentID: studentID
                 }).sendNotification({
-                    content: "Your note couldn't be uploaded successfully!",
-                    title: noteTitle,
+                    content: `Your note '${noteTitle}' couldn't be uploaded successfully!`,
                     event: 'notification-note-upload-failure'
                 })
             }

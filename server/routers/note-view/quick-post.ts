@@ -38,7 +38,8 @@ export function quickPostRouter(io: Server) {
     })
 
     router.post('/', async (req, res) => {
-        let notificationTitle = req.body["text"] ? `${(<string>req.body["text"]).slice(0, 20)}...` : 'Quick Post upload failure'
+        let notificationTitle = req.body["text"] ? `${(<string>req.body["text"]).slice(0, 20)}...` : 'Untitled Post'
+        "Untitled Post"
         let ownerDocID = (await Convert.getDocumentID_studentid(req.session["stdid"])).toString()
         let postID: string;
         
@@ -79,8 +80,7 @@ export function quickPostRouter(io: Server) {
                 ownerStudentID: req.session["stdid"],
                 redirectTo: `/view/quick-post/${postID}`
             }).sendNotification({
-                content: "Your quick-post uploaded successfully!",
-                title: notificationTitle,
+                content: `Your quick-post '${notificationTitle}' uploaded successfully!`,
                 event: 'notification-note-upload-success'
             })
 
@@ -114,8 +114,7 @@ export function quickPostRouter(io: Server) {
             await NotificationSender(io, {
                 ownerStudentID: req.session["stdid"],
             }).sendNotification({
-                content: "Your quick-post couldn't be uploaded!",
-                title: notificationTitle,
+                content: `Your quick-post '${notificationTitle}' couldn't be uploaded!`,
                 event: 'notification-note-upload-failure'
             })
         }

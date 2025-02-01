@@ -669,23 +669,30 @@ const manageNotes = {
     },
 
     addNoti: function (notiData) {
-        let notificationContainer = document.querySelector('.notifications-container')
-        let existingNoti = document.querySelector(`#noti-${notiData.notiID}`)
+        let notificationContainer = document.querySelector('.notifications-container');
+        let existingNoti = document.querySelector(`#noti-${notiData.notiID}`);
 
         if (!existingNoti) {
+            let isInteraction = notiData.fromUserSudentDocID ? true : false;
             let notificationHtml = `
                 <div class="notification secondary-${notiData.isread}" id="noti-${notiData.notiID}">
-                    <div class="first-row">
-                        <div class="frnt-wrapper">
+                    ${isInteraction ? `
+                        <div class="noti__first-col--img-wrapper">
+                            <img src="${notiData.fromUserSudentDocID.profile_pic}" alt="notification" class="noti__source-user-img">
+                        </div>` : ''}
+                    <div class="noti__sec-col--msg-wrapper" onclick="window.location.href='${notiData.redirectTo}'">
+                        <div class="noti__sc--first-row-msg">
+                            <p class="noti-msg secondary-${notiData.isread}">
+                                ${isInteraction ? `<span class="noti-source-user-name">${notiData.fromUserSudentDocID.displayname}</span>` : ''}
+                                ${notiData.content}
+                            </p>
+                        </div>
+                        <div class="noti__sc--second-row-noti-info">
                             <span class="isRead ${notiData.isread}"></span>
-                            <span class="notification-title">
-                                <a class="notification-link-2" href='${notiData.redirectTo}'>${truncatedTitle(notiData.title)}</a>
-                            </span>
-                        </div>   
-                        <span class="remove-notification" onclick="deleteNoti('${notiData.notiID}')">&times;</span>
+                            <span class="noti-time secondary-${notiData.isread}">${this.formatDate(notiData.createdAt)}</span>
+                        </div>
                     </div>
-                    <a class="notification-link-2" href="${notiData.redirectTo}">${notiData.content}</a>
-                </div>`
+                </div>`;
             notificationContainer.insertAdjacentHTML('afterbegin', notificationHtml);
         }
     },

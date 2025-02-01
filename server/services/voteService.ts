@@ -12,7 +12,7 @@ export default async function addVote({ noteDocID, voterStudentDocID, voteType }
     if (!existingVoteData) {
         let voteData = await votesModel.create({noteDocID, voterStudentDocID, voteType})
         await Notes.findByIdAndUpdate(noteDocID, { $inc: { upvoteCount : 1 } })
-        return voteData.populate('noteDocID', 'title upvoteCount')
+        return voteData.populate('noteDocID', 'title upvoteCount postType')
     } else {
         return { saved: false }
     }
@@ -43,7 +43,7 @@ export async function addCommentVote({ noteDocID, voterStudentDocID, voteType, f
         let voteData = await CommentVotes.create({ noteDocID, voterStudentDocID, voteType, feedbackDocID })
         await feedbacksModel.findByIdAndUpdate(feedbackDocID, { $inc: { upvoteCount: 1 } })
         return voteData.populate([
-            { path: 'noteDocID', select: 'title' },
+            { path: 'noteDocID', select: 'title postType' },
             { path: 'voterStudentDocID', select: 'displayname' },
             { 
                 path: 'feedbackDocID', 

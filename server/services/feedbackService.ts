@@ -27,7 +27,7 @@ export async function addFeedback(feedbackData: IFeedBackDB) {
         .populate('commenterDocID', 'displayname username studentID profile_pic')
         .populate({
             path: 'noteDocID',
-            select: 'ownerDocID title description',
+            select: 'ownerDocID title description postType',
             populate: {
                 path: 'ownerDocID',
                 select: 'studentID username'
@@ -48,7 +48,7 @@ export async function getReply(replyDocID) {
                 select: 'studentID username'
             }
         })
-        .populate('noteDocID', 'title description')
+        .populate('noteDocID', 'title description postType')
     return extentedReply
 }
 

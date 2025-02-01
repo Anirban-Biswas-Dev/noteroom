@@ -41,18 +41,22 @@ export function postNoteFeedbackRouter(io: Server) {
             }
         }
 
-        async function sendMentionNotification(baseDocument, mentions: string[]) {
+        async function sendMentionNotification(baseDocument: any, mentions: string[], commenterDocID: string) {
             let mentionedStudentIDs = (await Students.find({ username: { $in: mentions } }, { studentID: 1 })).map(data => data.studentID)
 
             mentionedStudentIDs.forEach(async ownerStudentID => {
+                if (ownerStudentID === _commenterStudentID) return
+
+                let postTitle = (baseDocument["noteDocID"]["title"]?.slice(0, 20)  || baseDocument["noteDocID"]["description"].slice(0, 20)) + '...'
+                let isQuickPost = baseDocument["noteDocID"]["postType"] === 'quick-post'
+
                 await NotificationSender(io, {
                     ownerStudentID: ownerStudentID,
-                    redirectTo: `/view/${_noteDocID}`
+                    redirectTo: isQuickPost ? `/view/quick-post/${_noteDocID}` : `/view/${_noteDocID}`
                 }).sendNotification({
-                    content: `You were mentioned by ${baseDocument["commenterDocID"]["displayname"]}. Join the conversation!`,
-                    title: baseDocument["noteDocID"]["title"],
+                    content: `mentioned you in a comment on "${postTitle}". Join the conversation!`,
                     event: 'notification-mention'
-                })
+                }, commenterDocID)
             })
         }
 
@@ -70,18 +74,20 @@ export function postNoteFeedbackRouter(io: Server) {
                 io.to(feedbackData.noteDocID).emit('add-feedback', feedback.toObject())
                 
                 if (_ownerStudentID !== _commenterStudentID) {
+                    let postTitle = (feedback['noteDocID']['title']?.slice(0, 20) || feedback['noteDocID']['description']?.slice(0, 20)) + '...'
+                    let isQuickPost = feedback['noteDocID']['postType'] === 'quick-post'
+
                     await NotificationSender(io, {
                         ownerStudentID: _ownerStudentID,
-                        redirectTo: `/view/${_noteDocID}#${feedback["_id"].toString()}`
+                        redirectTo: (isQuickPost ? `/view/quick-post/${_noteDocID}` : `/view/${_noteDocID}`) + `#${feedback["_id"].toString()}`
                     }).sendNotification({
-                        title: feedback['noteDocID']['title'] || feedback['noteDocID']['description'].slice(0, 20) + '...',
-                        content: `${feedback['commenterDocID']['displayname']} left a comment on your notes. Check it out!`,
-                        event: 'notification-feedback'
-                    })
+                        content: `left a comment on "${postTitle}". Check it out!`,
+                        event: 'notification-feedback',
+                    }, commenterDocID)
                 }
         
                 let mentions = checkMentions(_feedbackContents)
-                await sendMentionNotification(feedback, mentions)
+                await sendMentionNotification(feedback, mentions, commenterDocID)
     
                 res.json({ sent: true })
             } catch (error) {
@@ -120,14 +126,16 @@ export function postNoteFeedbackRouter(io: Server) {
                 So, when a user won't give a reply on his own feedback and will give a reply to the parent-feedback, the person who gave the feedback will get a reply-notification. 
                 */
                 if(_commenterUserName !== parentFeedbackCommenterInfo.username && mentions_[0] === parentFeedbackCommenterInfo.username) {
+                    let postTitle = (reply['noteDocID']['title']?.slice(0, 20) || reply['noteDocID']['description']?.slice(0, 20)) + '...'
+                    let isQuickPost = reply['noteDocID']['postType'] === 'quick-post'
+
                     await NotificationSender(io, {
                         ownerStudentID: parentFeedbackCommenterInfo["studentID"],
-                        redirectTo: `/view/${_noteDocID}#${reply["_id"].toString()}`
+                        redirectTo: (isQuickPost ? `/view/quick-post/${_noteDocID}` : `/view/${_noteDocID}` + `#${reply["_id"].toString()}`)
                     }).sendNotification({
-                        title: reply['noteDocID']['title'] || reply['noteDocID']['description'].slice(0, 20) + '...',
-                        content: `${reply['commenterDocID']['displayname']} replied to your comment. See their response!`,
+                        content: `replied to your comment on "${postTitle}". See their response!`,
                         event: 'notification-reply'
-                    })
+                    }, commenterDocID)
                 }
     
     
@@ -137,7 +145,7 @@ export function postNoteFeedbackRouter(io: Server) {
                 This means, if you are replying someone's feedback, the feedbacker won't get a redundant mention notification, but they will get a reply notification
                 */
                 let modifiedMentions = mentions_[0] === parentFeedbackCommenterInfo.username ? mentions_.slice(1) : mentions_
-                await sendMentionNotification(reply, modifiedMentions)
+                await sendMentionNotification(reply, modifiedMentions, commenterDocID)
 
                 res.json({ sent: true })
             } catch (error) {

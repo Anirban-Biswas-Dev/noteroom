@@ -83,22 +83,22 @@
       <div class="notifications-container">
         <% if(notis.length != 0) { %>
           <%
-            function formatDate(date) {
+            function formatDate(dateString) {
+              let date = new Date(dateString)
               const formatter = new Intl.DateTimeFormat('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-                timeZone: 'Asia/Dhaka', 
-                hour12: true 
+                  year: 'numeric',
+                  month: 'short',
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                  timeZone: 'Asia/Dhaka',
+                  hour12: true
               });
-            const formattedDate = formatter.format(date);
-            return formattedDate
-            } 
+              return formatter.format(date);
+            }
           %>
           <% notis.forEach(noti => { %>
-            <%- include('partials/notification.ejs', { notiData: noti, message: noti.content, formatDate: formatDate }) %>
+            <%- include('partials/notification.ejs', { notiData: noti, formatDate: formatDate }) %>
           <% }) %>
         <% } %>
       </div>
