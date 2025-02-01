@@ -143,7 +143,7 @@ export async function deleteAccount(studentDocID: string) {
 
 export async function deleteSessionsByStudentID(studentID: string) {
     const sessionSchema = new mongoose.Schema({}, { collection: 'sessions', strict: false });
-    const Session = mongoose.model('Session', sessionSchema);
+    const Session = mongoose.models.Session || mongoose.model('Session', sessionSchema);
     
     try {
         let result = await Session.deleteMany({
