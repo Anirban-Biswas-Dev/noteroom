@@ -184,6 +184,27 @@
     </div>
   </div>
 
+<% } else if (block === 'request-modal') { %>
+
+    <div class="request-modal-overlay">
+      <div class="request-modal">
+          <div class="request-modal__fr">
+              <span class="request-modal__fr--requested-label">To:</span>
+              <img src="\images\NoteRoom Caricature Cartoonic  - Anirban.jpg.png" alt="UserName" class="request-modal__fr-requested-userpic">
+              <span class="request-modal__fr--requested-username">Anirban Biswas</span>
+          </div>
+          <div class="request-modal__sr">
+              <textarea name="Request Description" placeholder="Write your request" class="request-modal__sr--input"></textarea>
+              <span class="request-modal__sr--char-count">170/170</span>
+          </div>
+          <div class="request-modal__tr">
+              <button class="request-modal__tr--send-req-btn" disabled>Request</button>
+          </div>
+      </div>
+    </div>
+
+
+
 <% } else if (block === 'search-bar') { %>
 <div class="search-container">
   <div class="search-bar-box">

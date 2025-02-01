@@ -252,7 +252,7 @@ const manageNotes = {
                                 <div class="niw--fr-first-col-fr">
                                     <a class="author-prfl-link" href="/user/${note.ownerUserName}">${note.ownerDisplayName}</a>
                                     <span class="niw--fr-first-col-fr-seperator"></span>
-                                    <a href="" class="db-note-card-request-option">Request</a>
+                                    <span  class="db-note-card-request-option">Request</span>
                                 </div>
                                 <span class="niw--fr-first-col-note-pub-date">${(new Date(note.createdAt)).toDateString()}</span>
                             </div>
@@ -429,7 +429,7 @@ const manageNotes = {
                             <div class="niw--fr-first-col-fr">
                                 <a class="author-prfl-link" href="/user/${note.ownerUserName}">${note.ownerDisplayName}</a>
                                 <span class="niw--fr-first-col-fr-seperator"></span>
-                                <a href="" class="db-note-card-request-option">Request</a>
+                                <span class="db-note-card-request-option">Request</span>
                             </div>
                             <span class="niw--fr-first-col-note-pub-date">${(new Date(note.createdAt)).toDateString()}</span>
                             </div>
@@ -1353,4 +1353,65 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
   });
-  
+
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const modalOverlay = document.querySelector(".request-modal-overlay");
+    const requestTriggers = document.querySelectorAll(".db-note-card-request-option");
+    const textarea = document.querySelector(".request-modal__sr--input");
+    const charCountDisplay = document.querySelector(".request-modal__sr--char-count");
+    const sendButton = document.querySelector(".request-modal__tr--send-req-btn");
+    const maxChars = 170;
+
+    // Open modal when clicking on request options
+    requestTriggers.forEach(trigger => {
+        trigger.addEventListener("click", () => {
+            modalOverlay.style.display = "flex";
+            textarea.value = "";
+            charCountDisplay.textContent = `${maxChars} characters remaining`;
+            sendButton.disabled = true;
+        });
+    });
+
+    // Close modal when clicking outside the modal box
+    modalOverlay.addEventListener("click", (e) => {
+        if (e.target === modalOverlay) {
+            modalOverlay.style.display = "none";
+        }
+    });
+
+    // Update character counter and enable/disable send button
+    textarea.addEventListener("input", () => {
+        let remaining = maxChars - textarea.value.length;
+
+        if (remaining < 0) {
+            textarea.value = textarea.value.substring(0, maxChars);
+            remaining = 0;
+        }
+
+        charCountDisplay.textContent = `${remaining}/170`;
+        sendButton.disabled = textarea.value.trim().length === 0;
+    });
+
+    // Handle Ctrl + Enter to submit request
+    document.addEventListener("keydown", (e) => {
+        if (e.ctrlKey && e.key === "Enter" && modalOverlay.style.display === "flex") {
+            sendRequest();
+        }
+    });
+
+    // Send request function (just an alert for now)
+    function sendRequest() {
+        if (textarea.value.trim().length === 0) return;
+
+        console.log("Request Sent:", textarea.value);
+        alert("Request Sent Successfully!");
+
+        modalOverlay.style.display = "none";
+    }
+
+    // Attach event listener to the send button
+    sendButton.addEventListener("click", sendRequest);
+});
+
+
