@@ -16,8 +16,20 @@ export async function getSavedNotes(studentID: rootStudentID) {
 }
 
 export async function getNotifications(studentID: rootStudentID) {
-    let allNotifications = await Notifs.find({ ownerStudentID: studentID }).sort({ createdAt: -1 })
-    return allNotifications
+    let allNotifications = await Notifs.find({ ownerStudentID: studentID })
+    let populatedNotifications = []
+
+    await Promise.all(
+        allNotifications.map(async (notification) => {
+            if (notification["docType"] === 'interaction') {
+                let populatedNotification = await notification.populate('fromUserSudentDocID', 'displayname username profile_pic')
+                populatedNotifications.push(populatedNotification)
+            } else {
+                populatedNotifications.push(notification)
+            }
+        })
+    )
+    return populatedNotifications
 }
 
 

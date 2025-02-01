@@ -1,35 +1,24 @@
-<!-- <div class="notification secondary-<%= notiData.isRead %>" id="noti-<%= notiData._id %>">
-    <div class="first-row">
-        <a href="<%= notiData.redirectTo %>" class="notification-link-2">
-            <div class="frnt-wrapper">
-                <span class="isRead <%= notiData.isRead %>"></span>
-                <span class="notification-title"><%= notiData.title %></span>
-            </div>   
-        </a>
-        <span class="remove-notification" onclick="deleteNoti('<%= notiData._id %>')">&times;</span>
-    </div>
-    <div class="notification-msg">
-        <a class="notification-link-2" href="<%= notiData.redirectTo %>"><%= notiData.content %></a>
-    </div>
-</div> -->
-
-<!-- New Template to use rafi adjust the noti-msg inner content as dynamically as you want as this will highly depend on the noti content like whether love/comment/ something else that noti is about (use gpt for ux writing) -->
-<!-- Link the noti to the exact noti like before but don't wrap with a tag but rather use onclick on the most external parent - notification -->
+<% let isInteraction = notiData.fromUserSudentDocID ? true : false %>
 
 <div class="notification" id="noti-<%= notiData._id %>">
-    <div class="noti__first-col--img-wrapper">
-        <img src="\images\NoteRoom Caricature Cartoonic  - Anirban.jpg.png" alt="notification" class="noti__source-user-img">
-    </div>
+    <% if (isInteraction) { %>
+        <div class="noti__first-col--img-wrapper">
+            <img src="<%= notiData.fromUserSudentDocID.profile_pic %>" alt="notification" class="noti__source-user-img">
+        </div>
+    <% } %>
 
-    <div class="noti__sec-col--msg-wrapper">
+    <div class="noti__sec-col--msg-wrapper" onclick="window.location.href='<%= notiData.redirectTo %>'">
         <div class="noti__sc--first-row-msg">
             <p class="noti-msg secondary-<%= notiData.isRead %>">
-                <span class="noti-source-user-name">User</span> loved note-name
+                <% if (isInteraction) { %>
+                    <span class="noti-source-user-name"><%= notiData.fromUserSudentDocID.displayname %></span>
+                <% } %>
+                <%= notiData.content %>
             </p>
         </div>
         <div class="noti__sc--second-row-noti-info">
             <span class="isRead <%= notiData.isRead %>"></span>
-            <span class="noti-time  secondary-<%= notiData.isRead %>">19 Jan 2025</span>
+            <span class="noti-time secondary-<%= notiData.isRead %>"><%= formatDate(notiData.createdAt) %></span>
         </div>
     </div>
 </div>

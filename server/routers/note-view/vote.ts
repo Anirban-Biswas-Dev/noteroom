@@ -8,7 +8,6 @@ import addVote, { deleteVote, addCommentVote, deleteCommentVote } from "../../se
 const router = Router({ mergeParams: true})
 
 export function voteRouter(io: Server) {
-    //FIXME: the title for a quick post is not handled
     router.post('/vote/feedback', async (req, res) => {
         let action = req.query["action"]
         let feedbackDocID = req.body["feedbackDocID"]
@@ -24,15 +23,16 @@ export function voteRouter(io: Server) {
     
                 let feedbackOwner = voteData["feedbackDocID"]["commenterDocID"]
                 let upvoteCount = voteData["feedbackDocID"]["upvoteCount"]
+                let isQuickPost = voteData["noteDocID"]["postType"] === 'quick-post'
     
                 if (_voterStudentID !== feedbackOwner["studentID"]) {
+                    let postTitle = (voteData["noteDocID"]["title"]?.slice(0, 20) || voteData["noteDocID"]["description"].slice(0, 20)) + '...'
                     upvoteCount === 1 || upvoteCount % 5 ? (async function() {
                         await NotificationSender(io, {
                             ownerStudentID: feedbackOwner["studentID"],
-                            redirectTo: `/view/${noteDocID}`
+                            redirectTo: isQuickPost ? `/view/quick-post/${noteDocID}` : `/view/${noteDocID}`
                         }).sendNotification({
-                            content: 'Your comment is getting noticed! Someone liked what you said.',
-                            title: `${voteData["noteDocID"]["title"]}`,
+                            content: `Your comment on "${postTitle}" is getting noticed! It has received ${upvoteCount} like${upvoteCount === 1 ? '' : 's'}.`,
                             event: 'notification-comment-upvote'
                         })
                     })() : false
@@ -66,19 +66,20 @@ export function voteRouter(io: Server) {
                 let voteData = await addVote({ voteType, noteDocID, voterStudentDocID })
                 if (voteData["saved"]) return { ok: false }
 
+                let isQuickPost = voteData["noteDocID"]["postType"] === 'quick-post'
                 let upvoteCount = voteData["noteDocID"]["upvoteCount"]
     
                 io.emit('update-upvote-dashboard', noteDocID, upvoteCount)
                 io.to(noteDocID).emit('update-upvote', upvoteCount)
                 
                 if(_voterStudentID !== _ownerStudentID) {
+                    let postTitle = (voteData["noteDocID"]["title"]?.slice(0, 20) || voteData["noteDocID"]["description"].slice(0, 20)) + '...'
                     upvoteCount % 5 === 0 || upvoteCount === 1 ? (async function() {
                         await NotificationSender(io, {
                             ownerStudentID: _ownerStudentID,
-                            redirectTo: `/view/${noteDocID}`
+                            redirectTo: isQuickPost ? `/view/quick-post/${noteDocID}` : `/view/${noteDocID}`
                         }).sendNotification({
-                            content: 'Your note is making an impact! just got some upvotes.',
-                            title: `${voteData["noteDocID"]["title"]}`,
+                            content: `Your post "${postTitle}" is making an impact! It just got ${upvoteCount} like${upvoteCount === 1 ? '' : 's'}.`,
                             event: 'notification-upvote'
                         })
                     })() : false

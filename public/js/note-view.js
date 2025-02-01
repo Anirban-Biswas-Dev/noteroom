@@ -381,7 +381,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const commentList = document.querySelector(".cmnts-list");
   const cmntBtn = document.querySelector("#cmnt-btn");
 
-  //CRITICAL: in quick-post, the temporary comment doesn't go away
   // Function to post a main comment
   const pathname = window.location.pathname
   const commenterStudentID = Cookies.get("studentID"); // Commenter's document ID
