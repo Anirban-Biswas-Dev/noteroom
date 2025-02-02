@@ -108,7 +108,7 @@ body {
   cursor: pointer;
   min-width: 40px;
   width: 50px;
-  padding: 0px 2vw;
+  padding: 0px 8px;
   transition: transform 0.2s ease, opacity 0.2s ease, background-color 0.2s ease;
 }
 
@@ -1349,7 +1349,7 @@ canvas {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 5px 0px;
+  padding: 0 15px;
   position: fixed;
   z-index: 1001;
   width: 100vw;
@@ -1358,126 +1358,24 @@ canvas {
   background: var(--squid-ink);
   overflow-x: hidden;
   box-shadow: 0px -20px 40px rgba(0, 0, 0, 0.2);
+  transition: filter 0.1s ease;
 }
 
-.mbl-ctrl-panel svg {
+.mbl-ctrl-panel__icon{
+  width: 55px;
   height: auto;
-  min-width: 8vw; /* Proportional width for consistent scaling */
-  max-width: 12vw; /* To prevent icons from growing too large */
-  padding: 0px 2vw; /* Relative padding to ensure uniform spacing */
-  transition: transform 0.3s ease, color 0.3s ease;
-}
-
-.mbl-ctrl-panel svg:hover,
-.mbl-ctrl-panel svg:active {
-  transform: scale(1.1);
-  cursor: pointer;
-}
-
-/* UPLOAD BUTTON (Responsive special effects) */
-.mbl-ctrl-panel.mbl-upload-btn {
-  width: 50px !important;
-  position: relative;
-  transition: transform 0.4s ease, box-shadow 0.4s ease;
   border-radius: 50%;
-  min-width: 45px;
-  min-height: auto;
-  padding: 2vw;
+  padding: 10px;
+  background-color: transparent;
 }
 
-.mbl-upload-btn:hover,
-.mbl-upload-btn:active {
-  transform: scale(1.2);
-  box-shadow: 0px 0px 30px 10px rgba(255, 255, 255, 0.19);
+.mbl-ctrl-panel__icon:hover{
+  filter: brightness(0.8);
 }
 
-.mbl-upload-btn::before {
-  content: "";
-  position: absolute;
-  top: -15%;
-  left: -15%;
-  right: -15%;
-  bottom: -15%;
-  border-radius: 50%;
-  background-color: rgba(0, 183, 255, 0.4);
-  animation: pulse 2s infinite;
-  opacity: 0;
+.mbl-ctrl-panel__icon:active{
+  filter: brightness(0.8);
 }
-
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-    opacity: 0.7;
-  }
-  50% {
-    transform: scale(1.3);
-    opacity: 0.3;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 0.7;
-  }
-}
-
-/* Timed special effect after a few seconds (for upload button) */
-@keyframes spin-border {
-  0% {
-    border-color: transparent;
-  }
-  25% {
-    border-color: #00bfff;
-    transform: rotate(0deg);
-  }
-  50% {
-    border-color: #1e90ff;
-    transform: rotate(180deg);
-  }
-  75% {
-    border-color: #00bfff;
-    transform: rotate(360deg);
-  }
-  100% {
-    border-color: transparent;
-    transform: rotate(720deg);
-  }
-}
-
-.mbl-upload-btn-effect {
-  border: 3px solid transparent;
-  border-radius: 50%;
-  position: absolute;
-  top: -10%;
-  left: -10%;
-  right: -10%;
-  bottom: -10%;
-  animation: spin-border 2s ease infinite;
-  z-index: -1;
-  pointer-events: none;
-}
-
-.mbl-btn-home {
-  margin-left: 2vw;
-}
-
-.mbl-settings-icon {
-  margin-right: 2vw;
-}
-@keyframes blink-effect {
-  0%,
-  90% {
-    opacity: 0;
-  }
-  95%,
-  100% {
-    opacity: 1;
-  }
-}
-.search-prfls-mbl-btn {
-  height: auto;
-  width: 30px;
-  max-width: 45px;
-}
-/* ****** Responsiveness ***** */
 
 /* Temporarily Hiding the notification panel */
 @media (max-width: 1530px) {
@@ -1516,19 +1414,8 @@ canvas {
   .search-results {
     max-width: 500px;
   }
-  /* Only relevant for dashboard, don't use this class on other pages */
-  .thumbnail {
-    object-fit: cover;
-    height: 280px;
-  }
-  .feed-note-card {
-    width: 95%;
-  }
 }
 @media (max-width: 480px) {
-  .mbl-notification-elements {
-    display: inline-block;
-  }
   .search-bar-box {
     padding: 10px 0;
     justify-content: space-evenly;
@@ -1542,9 +1429,6 @@ canvas {
     height: 40px;
     width: 30px;
     font-size: 1.2rem;
-  }
-  .mbl-profile-pic {
-    display: block;
   }
 }
 @media (max-width: 360px) {
@@ -1619,35 +1503,16 @@ canvas {
     display: flex;
   }
   .mbl-upload-btn {
-    min-width: 40px;
+    width: 60px;
+  }
+  .mbl-profile-pic {
+    display: block;
+  }
+  .mbl-notification-elements {
+    display: inline-block;
   }
 }
-@media (max-width: 767px) {
-  .mbl-ctrl-panel svg {
-    min-width: 8vw;
-    max-width: 12vw;
-    padding: 0px 2vw;
-  }
 
-  .mbl-upload-btn {
-    min-width: 15vw; /* Slightly larger upload button */
-    min-height: 15vw;
-    padding: 3vw; /* Padding relative to the screen size */
-  }
-
-  .mbl-upload-btn::after {
-    content: "";
-    position: absolute;
-    top: -10%;
-    left: -10%;
-    right: -10%;
-    bottom: -10%;
-    border-radius: 50%;
-    border: 2px solid rgba(0, 183, 255, 0.5);
-    opacity: 0;
-    animation: blink-effect 5s ease-in-out infinite;
-  }
-}
 @media (min-width: 361px) and (max-width: 480px) {
   .middle-section {
     padding-top: 40px;
