@@ -697,16 +697,19 @@ const manageNotes = {
         }
     },
 
-    addProfile: function (student) {
-        let profileCard = `
-                    <div class="results-prfl">
-                        <img src="${student.profile_pic}" alt="Profile Pic" class="prfl-pic">
-                        <span class="prfl-name" onclick="window.location.href = '/user/${student.username}'">${student.displayname}</span>
-                        <span class="prfl-desc">${truncatedTitle(student.bio)}</span>
-                        <span class="badge" style="display: none;">${student.badge}</span>
-                        <img src="" alt="" class="user-badge">
-                    </div>`
-        document.querySelector('.results-prfls').insertAdjacentHTML('beforeend', profileCard);
+    addProfile: function (student, container) {
+        let profileContainer = document.querySelector(`.${container}`);
+        let existingUser = profileContainer.querySelector(`#user-${student.username}-results-prfls`)
+
+        if (!existingUser) {
+            let profileCard = `
+                <div class="results-prfl" id="user-${student.username}-${container}">
+                    <img src="${student.profile_pic}" alt="Profile Pic" class="prfl-pic">
+                    <span class="prfl-name" onclick="window.location.href = '/user/${student.username}'">${student.displayname}</span>
+                    <span class="prfl-desc">${truncatedTitle(student.bio)}</span>
+                </div>`
+            profileContainer.insertAdjacentHTML('beforeend', profileCard);
+        }
     },
 
     addFeedback: function (feedbackData) {
@@ -1100,13 +1103,6 @@ async function saveNote(svButton, fromDashboard = false) {
 
 //* Search Notes: All Pages
 async function searchNotes() {
-    /* 
-    # Process:
-    ~   when the search bar is clicked, an empty dropdown is opened (1). after clicking (either the enter/search button), the text is sent
-    ~   to the server via fetch request (2). the server returns possible notes in a json format (3). if there are notes returned, the notes'
-    ~   details are added in the dropdown (4). ottherwise, a message is shown that no notes are found (5). Also a loading runs in between the
-    ~   note fetching.
-    */
     let searchedResults = document.querySelector('.search-results')
     let existingNotes = searchedResults.querySelectorAll('div.results-card')
     let status = document.querySelector('.status')
@@ -1119,7 +1115,7 @@ async function searchNotes() {
     let searchTerm = document.querySelector('.search-bar').value
     if (searchTerm.length > 0) {
         status.style.display = 'flex' // Start of loading
-        let response = await fetch(`/api/search?q=${encodeURIComponent(searchTerm)}`) // 2
+        let response = await fetch(`/api/search/note?q=${encodeURIComponent(searchTerm)}`) // 2
         let notes = await response.json() // 3
         status.style.display = 'none' // End of loading
         if (notes.length > 0) {

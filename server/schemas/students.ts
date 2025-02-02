@@ -77,6 +77,10 @@ const studentsSchema = new Schema({
         unique: true,
         required: true
     },
+    visibility: {
+        type: String,
+        default: "public"
+    },
     owned_notes: {
         type: [Schema.Types.ObjectId],
         ref: 'notes',
