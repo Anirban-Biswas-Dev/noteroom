@@ -396,7 +396,6 @@ body {
 /* Hover and click effects with settings */
 
 .profile-pic {
-  box-sizing: border-box;
   width: 50px;
   height: 50px;
   border: none;
@@ -413,10 +412,6 @@ body {
 }
 .profile-pic:active {
   filter: brightness(0.8);
-}
-.btn-hide-nft {
-  display: none;
-  min-width: 40px;
 }
 .settings-icon {
   background-color: #e2e5e9;
@@ -447,12 +442,276 @@ body {
 .pc-nft-btn:active {
   background-color: #c8cacc;
 }
-.sub-header {
-  font-weight: 500;
-  font-size: 1.2rem;
-  align-content: center;
+
+/* || Request Component */
+
+.right-panel__requests-component{
+  width: 100%;
+  max-width: 450px;
+  padding: 15px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.requests-component__header{
   width: 100%;
 }
+.requests-component__header-label{
+  text-align: left;
+  font-weight: 600;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #565656;
+}
+
+.requests-container{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  padding: 5px;
+  width: 100%;
+  height: fit-content;
+  height: 50vh;
+  overflow-y: scroll;
+}
+
+.requests-container::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+.requests-container::-webkit-scrollbar-track,
+.requests-container::-webkit-scrollbar-thumb {
+  display: none;
+}
+
+.requests-container {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+.request{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 5px;
+  background: #FFFFFF;
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.25);
+  border-radius: 8px;
+}
+
+.request__fr{
+  width: 100%;
+  display: flex;
+  align-items:center;
+  gap: 5px;
+  cursor: pointer;
+  padding: 5px 0;
+}
+.open-request-card{
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.1s ease, transform 0.3s ease;
+}
+.request__fr--chevron-rotated {
+  transform: rotate(90deg);
+  transition: transform 0.1s ease;
+}
+
+.open-request-card:hover{
+  background-color: #f0f0f0;
+}
+.open-request-card:active{
+  background-color: #e0e0e0;
+}
+
+.request-chevron-icon{
+  font-size: 1rem;
+}
+
+.request__fr--requester-name{
+  flex: 1;
+  font-weight: 500;
+  text-align: left;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.request__fr--requested-date{
+  font-weight: 400;
+  text-align: left;
+  font-size: 12px;
+  line-height: 1;
+  padding: 0 5px;
+  color: #FF0000;
+}
+
+.request__sr{
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  height: 0;
+  overflow: hidden;
+  transition: height 0.3s ease-in-out;
+}
+
+.request__sr--expanded {
+  height: fit-content; 
+  transition: height 0.3s ease-in-out;
+}
+
+
+.request__sr--request-desc{
+  width: 100%;
+  text-align: left;
+  font-style: italic;
+  padding: 5px 10px;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 12px;
+}
+
+.request__sr--request-action-update{
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  padding: 10px 0;
+}
+
+.btn-request{
+  width: 40%;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  border-radius: 25px;
+  font-weight: 450;
+  font-size: 0.8rem;
+  line-height: 1;
+  padding: 5px;
+  transition: background-color 0.1s ease, color 0.1s ease;
+}
+
+.btn-accept-request {
+  border: 1px solid #66C591;
+  color: #66C591;
+}
+
+.btn-accept-request:hover {
+  background-color: #66C591;
+  color: white;
+}
+
+.btn-accept-request:active {
+  background-color: #4a9b6e;
+  color: white;
+}
+
+.btn-reject-request {
+  border: 1px solid #B7B7B7;
+  color: #B7B7B7;
+}
+
+.btn-reject-request:hover {
+  background-color: #B7B7B7;
+  color: white;
+}
+
+.btn-reject-request:active {
+  background-color: #8a8a8a;
+  color: white;
+}
+
+/* || Threads Section */
+.right-panel__threads-component {
+  width: 100%;
+  padding: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.threads-component__header-label {
+  width: 100%;
+  text-align: left;
+  font-weight: 600;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #565656;
+}
+.threads-component__subjects{
+  width: 100%;
+  cursor: pointer;
+}
+.threads-component__subject {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.threads-component__subject-title {
+  width: 100%;
+  font-size: 14px;
+  font-weight: 400;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px;
+  background-color: #e9ecef;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.threads-component__chapter-list {
+  width: 95%;
+  list-style: none;
+  padding: 0;
+  margin: 5px 0;
+}
+
+.threads-component__chapter-item {
+  background-color: #ffffff;
+  padding: 8px;
+  border-radius: 4px;
+  margin: 4px 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.threads-component__chapter-title {
+  font-size: 12px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.fa-lock {
+  color: #adb5bd;
+  font-size: 12px;
+}
+
+
 
 .notification-modal-overlay{
   display: none;
@@ -479,7 +738,7 @@ body {
   align-items: center;
   gap: 20px;
   padding: 25px 20px;
-  background: #FFFBFB;
+  background: #FFFfff;
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.15);
   border-radius: 25px;
   z-index: 1050;
@@ -656,6 +915,151 @@ body {
     right: 2%;
   }
 }
+
+/* || Request Modal */
+
+.request-modal-overlay{
+  left: 0;
+  top: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  height: 100%;
+  width: 100%;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  /* opacity: 0; */
+  /* visibility: hidden; */
+  position: fixed;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  z-index: 1035;
+}
+
+.request-modal{
+  width: 100%;;
+  max-width: 500px;
+  height: fit-content;
+  background: #FFFFFF;
+  box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.25);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 10px 0;
+}
+
+.request-modal__fr{
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 10px 25px;
+  padding-top: 0;
+  border-bottom: 1px solid #CCC4C4;
+}
+
+.request-modal__fr--requested-label{
+  font-weight: 400;
+  font-size: 15px;
+  color: #2C2B2B;
+}
+
+.request-modal__fr--requested-username{
+  font-weight: 400;
+  font-size: 14px;
+  color: #242424;
+}
+
+.request-modal__fr-requested-userpic{
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50px;
+  overflow: hidden;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  transition: filter 0.3s ease;
+  cursor: pointer;
+}
+
+.request-modal__fr-requested-userpic:hover {
+  filter: brightness(0.9);
+}
+.request-modal__fr-requested-userpic:active {
+  filter: brightness(0.8);
+}
+
+.request-modal__sr{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 15px;
+  padding: 5px 15px;
+}
+
+.request-modal__sr--input{
+  width: 100%;
+  height: 100px;
+  border: none;
+  border-radius: 8px;
+  padding: 5px 10px;
+  font-size: 15px;
+  font-weight: 500;
+  color: rgba(86, 86, 86, 0.52);
+  line-height: 1.5;
+  resize: none; 
+}
+
+.request-modal__sr--input:focus{
+  outline: none;
+  color: rgba(86, 86, 86, 1);
+}
+
+.request-modal__sr--char-count {
+  font-weight: 400;
+  font-size: 14px;
+  color: #242424;
+}
+
+.request-modal__tr{
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 10px;
+}
+
+.request-modal__tr--send-req-btn {
+  width: 100%;
+  max-width: 120px;
+  color: white;
+  background: var(--squid-ink);
+  border-radius: 8px;
+  padding: 10px 15px;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.1s ease;
+}
+
+.request-modal__tr--send-req-btn:hover {
+  background-color: #11283f;
+}
+
+.request-modal__tr--send-req-btn:active {
+  background-color: #000000;
+}
+
+.request-modal__tr--send-req-btn:disabled {
+  background-color: var(--border-color-1);
+  cursor: not-allowed;
+  border: none;
+  box-shadow: none;
+}
+
 
 /* Left Panel */
 .left-panel {
@@ -839,6 +1243,7 @@ body {
   box-sizing: border-box;
   width: 95%;
   height: 40px;
+  min-height: 40px;
   background: #ffffff;
   border: none;
   font-weight: 500;
@@ -1185,9 +1590,6 @@ canvas {
   .show {
     transform: translateX(-100%);
     left: 100%;
-  }
-  .btn-hide-nft {
-    display: block;
   }
   .notification-title {
     font-size: 0.9rem;

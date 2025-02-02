@@ -43,18 +43,8 @@
 </div>
 <% } else if (block === 'right-panel') { %>
 <div class="right-panel">
+
   <div class="right-panel-header">
-    <!-- This is button only visible on mobile -->
-    <svg class="btn-hide-nft" width="40" height="40" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-      <rect width="30" height="30" fill="url(#pattern0_1223_1186)" />
-      <path d="M27.4999 3.4985L0.999934 26" stroke="#EBEBEB" stroke-width="2" />
-      <defs>
-        <pattern id="pattern0_1223_1186" patternContentUnits="objectBoundingBox" width="1" height="1">
-          <use xlink:href="#image0_1223_1186" transform="scale(0.01)" />
-        </pattern>
-        <image id="image0_1223_1186" width="100" height="100" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAAAXNSR0IArs4c6QAABNJJREFUeAHtncuLFEccx79rV/UuSlwf/4D4AAkaun41u4sv3IPGi3hbEvAegklMwESFHKInPYkIXlUQER8I4v8QyE0FUcjjkIeYhyaEKPgO1WPNMuMyr+6a6qr+NQwFM9O/qvp8+lc10z1TDfDGBJgAE2ACTIAJMAEmwASYABNgAv0TGNdrIOgrJHQ2fwj9JSamVvcfgN9ZEoF3U0h9ClI9h6TX7Y/8uZOAliVVxmF6EFgEQdfbJXRKodcQ2TUAi3rE4pcLE5B6X08Z81nzUeH6OEAPAon+qW8hifqhRzR+uRABM2HPH/0dc8cCw5Z570S2qlCdvHMXAkJvHViIaGzpEpFfKkRANGaHEDJbqE7euQsBFtIFzqhfGs/WQdKJgTPE7GP25a0MAnoSUn0GoW4PIaJ90hd0E5I+BWaWltGymsWYWYpUHYWkvwuLePtT2SOkdATY8k7NoA7Z3VR9iFTddyCiM2N+Q0ofDNnKOuy2cTlkdsm5iLcz5iKgJ+tAuP8+jtNaCLrnQUYzaxL6Hqle33+DY36n1DOQ9MibjFbGqIeQqhEz6t59k41pSPWPfxmt0y7mQ4Tu3fAY32HOMUn1oEIy7KT/B8yFr3ptsxMQdKuCMppSzHcWzE7Ux4mk05WV0ZpT9Kl6CGmesX1VfSH0CkJtj1zKXFLKaZDWUdyajO34X26ZD10xXwZOaW8AmdEuNeJv82MQdCc4IebEZpTbMNcyRjU09arHzHvRbVKdCy47rKiEzkTmYy6BVH8GK0Sqv4C5JB4pItscrgz7SU7PRCREHwhfCH0RjxCpLkQg5HxMQr6LQMi38QgZxSVZ+4nIVSno13iESPovggz5NyYhLyMQ8jImIe3nh1wNK67jRmPENahRxWch9ktZRUoWUhERNgNZCAtxcwzYIyz00g0dD1FDF2Hb7wGdmypth0Iv3dDxEDV0Ebb9HtC5qdJ2KPTSDR0PUUMXYdvvAZ2bKm2HQi/d0PEQNXQRtv0e0Lmp0nYo9NINHQ9RQxdh2+8BnZsqbYdCL93Q8RA1dBG2/R7QuanSdij00g0dD1FDF2Hb7wGdmypth0Iv3dDxEDV0Ebb9HtC5qdJ2KPTSDR0PUUMXYdvvAZ2bKm2HQi/d0Bl11OmVEfxIrvm7MkyvHDW9cuuT2RQGWda16hkk9C8IdFHNMUj9OSQ9jSY7WgeLet5cAC2Yv0vrSQh9JT4RHT9JSrMbwKYV5Q4pZUczyxsl2Y/Ry5jPlp9h/q5XyU3q/XEOUR2Z0ZJhn1fPYPpeqU3QwfpkhRXRUZp7l1Rjy5ZBqse1F2IYVGLtRtHYyTLeZItQO/wniaBdLMQK0e/7F4J8yHrCUqoyZJlDQqhDtRdSnUn9TZJK+gSSfq+fGLOQp/q4AkPVQk2YS/Lb1pmlVuvwyG/RF9OiNAs55eeYABNgAoETaM5HlyGpyKOmS4i7cN9csL/gahDZlIum1TSmXlzsfJl6Ary3pKbwHHVb0NWhv+OYC2a8lUwg1Rsh1YvBpagXSBsbSm4Nh8sJCPp6YCFCH2Z67giMIdXH+5aSqmMAxtw1hyM3CYyrPV3vWSXUXSS0m3GNlIC50wJty3+Sk9BZmNWnBX2DfFlwPr80UhVcGRNgAkyACTABJsAEmAATYAJBE/gfawhHLlMvr4MAAAAASUVORK5CYII=" />
-      </defs>
-    </svg>
     <svg onclick="window.location.href = '/search-profile'" class="search-prfl-pc" width="45" height="46" viewBox="0 0 54 55" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M46.0139 46.4844L53 53.4992" stroke="#07192D" stroke-width="2.48493" />
       <ellipse cx="23.5019" cy="11.412" rx="10.8672" ry="10.912" fill="#07192D" />
@@ -74,8 +64,97 @@
       
     <a href='/user/<%= root.username %>'><img src="<%= root.profile_pic %>" class="profile-pic" id="root-profile-pic"/></a>
   </div>
- 
+
+  <div class="right-panel__requests-component">
+      <div class="requests-component__header">
+        <h4 class="requests-component__header-label">Requests</h4>
+      </div>
+      <div class="requests-container">
+        <!-- Here you go this is your template for use -->
+        <div class="request">
+          <div class="request__fr">
+            <span class="open-request-card"><i class="fa-solid fa-chevron-right request-chevron-icon"></i></span>
+            <span class="request__fr--requester-name">Anirban's Request</span>
+            <span class="request__fr--requested-date">19 Jan 2025</span>
+          </div>
+          <div class="request__sr">
+            <p class="request__sr--request-desc">Hey could you upload ctg yearly exam questions</p>
+            <div class="request__sr--request-action-update">
+              <button class="btn-request btn-accept-request">
+                <i class="fa-solid fa-check"></i>
+                Done
+              </button>
+              <button class="btn-request btn-reject-request">
+                <i class="fa-solid fa-x"></i>
+                Reject
+            </div>
+          </div>
+        </div>
+      </div>
+  </div>
+
+  <div class="right-panel__threads-component">
+    <h4 class="threads-component__header-label">Threads</h4>
+    <div class="threads-component__subjects">
+  
+      <!-- Physics -->
+      <div class="threads-component__subject">
+        <p class="threads-component__subject-title">
+          <i class="fa-solid fa-lock"></i> Physics
+        </p>
+        <ul class="threads-component__chapter-list">
+          <li class="threads-component__chapter-item">
+            <p class="threads-component__chapter-title">
+              <i class="fa-solid fa-lock"></i> Vector
+            </p>
+          </li>
+          <li class="threads-component__chapter-item">
+            <p class="threads-component__chapter-title">
+              <i class="fa-solid fa-lock"></i> Motion
+            </p>
+          </li>
+          <li class="threads-component__chapter-item">
+            <p class="threads-component__chapter-title">
+              <i class="fa-solid fa-lock"></i> Newton’s Laws of Motion
+            </p>
+          </li>
+          <li class="threads-component__chapter-item">
+            <p class="threads-component__chapter-title">
+              <i class="fa-solid fa-lock"></i> Gravitation
+            </p>
+          </li>
+        </ul>
+      </div>
+  
+      <!-- Bangla 1st Paper -->
+      <div class="threads-component__subject">
+        <p class="threads-component__subject-title">
+          <i class="fa-solid fa-lock"></i> Bangla 1st Paper
+        </p>
+        <ul class="threads-component__chapter-list">
+          <li class="threads-component__chapter-item">
+            <p class="threads-component__chapter-title">
+              <i class="fa-solid fa-lock"></i> অপরিচিতা
+            </p>
+          </li>
+          <li class="threads-component__chapter-item">
+            <p class="threads-component__chapter-title">
+              <i class="fa-solid fa-lock"></i> Suggestion of সৃজনশীল প্রশ্ন 
+            </p>
+          </li>
+        </ul>
+      </div>
+
+      <div class="threads-component__subject">
+        <p class="threads-component__subject-title">
+          <i class="fa-solid fa-lock"></i> More...
+        </p>
+      </div>
+  
+    </div>
+  </div>
 </div>
+
 <% } else if (block === 'notification-modal') { %>
   <div class="notification-modal-overlay">
     <div class="notification-modal">
@@ -104,6 +183,27 @@
       </div>
     </div>
   </div>
+
+<% } else if (block === 'request-modal') { %>
+
+    <div class="request-modal-overlay">
+      <div class="request-modal">
+          <div class="request-modal__fr">
+              <span class="request-modal__fr--requested-label">To:</span>
+              <img src="\images\NoteRoom Caricature Cartoonic  - Anirban.jpg.png" alt="UserName" class="request-modal__fr-requested-userpic">
+              <span class="request-modal__fr--requested-username">Anirban Biswas</span>
+          </div>
+          <div class="request-modal__sr">
+              <textarea name="Request Description" placeholder="Write your request" class="request-modal__sr--input"></textarea>
+              <span class="request-modal__sr--char-count">170/170</span>
+          </div>
+          <div class="request-modal__tr">
+              <button class="request-modal__tr--send-req-btn" disabled>Request</button>
+          </div>
+      </div>
+    </div>
+
+
 
 <% } else if (block === 'search-bar') { %>
 <div class="search-container">
