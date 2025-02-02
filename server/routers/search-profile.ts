@@ -5,6 +5,8 @@ import { getNotifications, getSavedNotes, profileInfo, unreadNotiCount } from '.
 const router = Router()
 
 function serachProfileRouter(io: Server) {
+    //FIXME: already have a route for /search/user
+    
     router.get('/', async (req, res, next) => {
         if (req.session["stdid"]) {
             try {

@@ -24,7 +24,7 @@ import noteViewRouter from './routers/note-view/note-view.js'
 import dashboardRouter from './routers/dashboard.js'
 import serachProfileRouter from './routers/search-profile.js'
 import settingsRouter from './routers/settings.js'
-import apiRouter  from './services/apis.js';
+import apiRouter  from './services/apis/apis.js';
 
 import Alerts from './schemas/alerts.js'
 

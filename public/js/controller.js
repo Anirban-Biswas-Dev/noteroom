@@ -1119,7 +1119,7 @@ async function searchNotes() {
     let searchTerm = document.querySelector('.search-bar').value
     if (searchTerm.length > 0) {
         status.style.display = 'flex' // Start of loading
-        let response = await fetch(`/api/search?q=${encodeURIComponent(searchTerm)}`) // 2
+        let response = await fetch(`/api/search/note?q=${encodeURIComponent(searchTerm)}`) // 2
         let notes = await response.json() // 3
         status.style.display = 'none' // End of loading
         if (notes.length > 0) {

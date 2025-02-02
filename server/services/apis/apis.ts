@@ -1,19 +1,22 @@
 import { Server } from "socket.io";
 import { Router } from "express";
 import { basename } from "path"
-import Notes from "../schemas/notes.js";
-import Students from "../schemas/students.js";
+import Notes from "../../schemas/notes.js";
+import Students from "../../schemas/students.js";
 import archiver from "archiver";
-import { getNotifications } from "../helpers/rootInfo.js";
-import { addSaveNote, deleteNote, deleteSavedNote, getAllNotes, manageProfileNotes } from "./noteService.js";
-import { Convert, deleteAccount, deleteSessionsByStudentID } from "./userService.js";
-import { isUpVoted } from "./voteService.js";
-import { checkLoggedIn } from "../middlewares/checkLoggedIn.js";
+import { getNotifications } from "../../helpers/rootInfo.js";
+import { getAllNotes } from "../noteService.js";
+import { Convert, deleteAccount, deleteSessionsByStudentID } from "../userService.js";
+import { checkLoggedIn } from "../../middlewares/checkLoggedIn.js";
+import noteRouter from "./note.js";
+import searchRouter from "./search.js";
 
-const router = Router()
+export const router = Router()
 
 export default function apiRouter(io: Server) {
-    // router.use(checkLoggedIn)
+    router.use(checkLoggedIn)
+    router.use('/note', noteRouter(io))
+    router.use('/search', searchRouter(io))
 
     router.post("/download" ,async (req, res) => {
         let noteID = req.body.noteID
@@ -49,64 +52,6 @@ export default function apiRouter(io: Server) {
             }
         }
         archive.finalize();
-    })
-
-
-    router.delete("/note/delete/:noteDocID", async (req, res) => {
-        let noteDocID = req.params.noteDocID
-        let studentDocID = (await Convert.getDocumentID_studentid(req.session["stdid"])).toString()
-        let deleted = await deleteNote({ studentDocID, noteDocID })
-        
-        res.send({ deleted: deleted })
-    })
-
-    router.post("/note/save", async (req, res) => {
-        try {
-            let action = req.query["action"]
-            let noteDocID = req.body["noteDocID"]
-            let studentDocID = (await Convert.getDocumentID_studentid(req.session["stdid"])).toString()
-    
-            if (action === 'save') {
-                let result = await addSaveNote({ studentDocID, noteDocID })
-                res.json({ ok: result.ok, count: result.count, savedNote: result.savedNote })
-            } else {
-                let result = await deleteSavedNote({ studentDocID, noteDocID })
-                res.json({ ok: result.ok, count: result.count })
-            }
-        } catch (error) {
-            res.json({ ok: false, count: undefined })
-        }
-    })
-
-
-    router.get('/search', async (req, res, next) => {
-        let searchTerm = req.query.q as string
-        const regex = new RegExp(searchTerm.split(' ').map(word => `(${word})`).join('.*'), 'i');
-        let notes = await Notes.find({ title: { $regex: regex } }, { title: 1 })
-        res.json(notes)
-    })
-
-    router.get('/searchUser', async (req, res) => {
-        if (req.query) {
-            let term = req.query.term
-            let students = await Students.aggregate([
-                {
-                    $match: {
-                        displayname: { $regex: `^${term}`, $options: 'i' } // Ensure case-insensitive search
-                    }
-                },
-                {
-                    $project: {
-                        displayname: 1,
-                        username: 1,
-                        profile_pic: 1,
-                        _id: 0
-                    }
-                }
-            ]);
-    
-            res.json(students)
-        }
     })
 
 
@@ -146,23 +91,7 @@ export default function apiRouter(io: Server) {
     })
 
 
-    router.get('/note', async (req, res) => {
-        try {
-            let username = <string>req.query["username"]
-            let studentID = await Convert.getStudentID_username(username)
-            let noteType = <"saved" | "owned">req.query["noteType"]
-            let isCount = req.query["count"] ? true : false
-            if (!isCount) {
-                let notes = await manageProfileNotes.getNote(noteType, studentID)
-                res.json(notes)
-            } else {
-                let noteCount = await manageProfileNotes.getNoteCount(noteType, studentID)
-                res.json({ noteType, count: noteCount })
-            }
-        } catch (error) {
-            
-        }
-    })
+    
 
 
     router.get('/getNotifs', async (req, res) => {
