@@ -2,6 +2,7 @@
     font-family: 'Inter', 'Hind Siliguri', sans-serif;
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
 }
 :root{
     --squid-ink:#06192D;

@@ -10,6 +10,11 @@ body {
   background-color: var(--main-bg);
 }
 
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+
 .search-container {
   width: 100vh;
   position: fixed;
@@ -35,15 +40,15 @@ body {
   align-items: center;
   width: fit-content;
   min-width: 120px;
-  background: #f2f2f2;
+  background: white;
   border: 1px solid #eaeaea;
   box-shadow: 0px 2px 3.7px -2px rgba(0, 0, 0, 0.25);
   border-radius: 25px;
 }
 .search-bar {
-  background: #f2f2f2;
-  border-bottom-right-radius: 0px;
+  background: white;
   border-radius: 25px;
+  border-bottom-right-radius: 0px;
   border-top-right-radius: 0px;
   border: none;
   box-sizing: border-box;
@@ -64,9 +69,8 @@ body {
 
 .search-bar-box button {
   align-items: center;
-  background: #f2f2f2;
+  background: white;
   border-bottom-right-radius: 25px;
-  border-left: none;
   border-top-right-radius: 25px;
   border: none;
   box-sizing: border-box;
@@ -925,7 +929,7 @@ body {
   height: 100%;
   width: 100%;
   padding: 10px;
-  display: flex;
+  display: none;
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -1216,7 +1220,7 @@ body {
   align-items: center;
   gap: 10px;
   max-width: 360px;
-  height: 40%;
+  height: 45%;
   padding: 15px 10px;
   overflow-y: scroll;
   margin-bottom: 8vh;
@@ -1242,6 +1246,7 @@ body {
   padding: 5px;
   box-sizing: border-box;
   width: 95%;
+  max-width: 320px;
   height: 40px;
   min-height: 40px;
   background: #ffffff;
@@ -1286,7 +1291,7 @@ body {
 }
 .right-panel-btn {
   box-sizing: border-box;
-  width: 100%;
+  width: 90%;
   max-width: 280px;
   height: 45px;
   background: #ffffff;
@@ -1308,16 +1313,6 @@ body {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   cursor: pointer;
 }
-
-/* .button {
-  margin-top: 20px;
-  padding: 10px 20px;
-  background-color: var(--squid-ink);
-  border: none;
-  border-radius: 5px;
-  color: var(--neon-blue);
-  cursor: pointer;
-} */
 
 canvas {
   position: absolute;
@@ -1580,9 +1575,6 @@ canvas {
     box-shadow: none;
     box-shadow: -10px 0px 30px rgba(255, 255, 255, 0.3);
   }
-  .profile-pic {
-    display: none;
-  }
   .show-overlay {
     display: block;
     opacity: 1;
@@ -1694,12 +1686,19 @@ canvas {
   }
 }
 @media (min-width: 1026px) and (max-width: 1380px) {
+  .right-panel-header{
+    padding: 10px 0;
+  }
   .profile-pic {
     width: 45px;
     height: 45px;
   }
+  .search-prfl-pc, .profile-pic, .pc-nft-btn {
+    width: 45px;
+    height: 45px;
+  }
   .settings-icon {
-    font-size: 2.6rem;
+    font-size: 1.5rem;
   }
 }
 
