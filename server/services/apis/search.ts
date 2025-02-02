@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { Server } from "socket.io";
 import Notes from "../../schemas/notes.js";
-import Students from "../../schemas/students.js";
+import { SearchProfile } from "../userService.js";
 
 const router = Router()
 
@@ -20,11 +20,8 @@ export default function searchRouter(io: Server) {
     router.get('/user', async (req, res, next) => {
         try {
             if (req.query) {
-                let term = req.query.term
-                let students = await Students.find(
-                    { displayname: { $regex: `^${term}`, $options: 'i' } },
-                    { displayname: 1, username: 1, profile_pic: 1, _id: 0 }
-                );
+                let term = <string>req.query.term
+                let students = await SearchProfile.getStudent(term)
         
                 res.json(students)
             }

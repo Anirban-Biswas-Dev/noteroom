@@ -4,25 +4,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/main-pages.css" />
-    <link rel="stylesheet" href="/css/search-profile.css">
+    <link rel="stylesheet" href="/css/main-pages.css" media="print" onload="this.media='all'" />
+    <link rel="stylesheet" href="/css/search-profile.css" media="print" onload="this.media='all'">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-	<link
-		href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
-		rel="stylesheet"
-	/>
-	<link 
-		href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" 
-		rel="stylesheet"
-	>
-	<script
-		src="https://kit.fontawesome.com/be4b1d4185.js"
-		crossorigin="anonymous"
-	></script>
-	<script src="https://cdn.socket.io/socket.io-3.0.1.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/dexie@latest/dist/dexie.min.js"></script>
+	<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet"/>
+	<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    
+	<script src="https://kit.fontawesome.com/be4b1d4185.js" crossorigin="anonymous" defer></script>
+	<script src="https://cdn.socket.io/socket.io-3.0.1.min.js" defer></script>
+	<script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/dexie@latest/dist/dexie.min.js" defer></script>
     <title>Find Other People in NoteRoom</title>
 
     <%- include('partials/links.ejs') %>
@@ -38,32 +30,27 @@
                 <i class="fa-solid fa-magnifying-glass search" onclick="search()"></i>
             </fieldset>
         </div>
-        <!-- Here are two section - 1. random profiles 2. search results. When there is a search query, remove the random one -->
+
         <div class="prfls-container">
-            <!-- random prfls is the whole container for showing random prfls -->
             <div class="random-prfls-container">
-                <h3 class="section-label">
-                    Recent
-                </h3>
+                <h3 class="section-label">People You Might Know</h3>
                 <div class="random-prfls">
-                    <% students.forEach(student => { %>
-                        <div onclick="window.location.href = '/user/<%= student.username %>'" class="random-prfl" id="random-<%= student._id %>">
-                            <img src="<%= student.profile_pic %>" alt="Profile Pic" class="prfl-pic">
-                            <span class="prfl-name"><%= student.displayname %></span>
-                            <span class="prfl-desc"><%= student.bio.slice(0, 30) %>...</span>
-                            <span class="badge" style="display: none;"><%= student.badge %></span>
-                            <img src="" alt="" class="user-badge">
-                            <span class="not-show-prfl" onclick="event.stopPropagation(); deleteProfile('<%= student._id %>')">&times;</span>
-                        </div>
-                    <% }) %>                    
+                    <div class="search-results-loader profile-loader-random"></div>
                 </div>
             </div>
+
+            <div class="random-prfls-container mtc-prfls-container">
+                <h3 class="section-label">Mutual College</h3>
+                <div class="random-prfls mtc-prfls">
+                    <div class="search-results-loader profile-loader-mtc"></div>
+                </div>
+            </div>
+
             <div class="search-result-prfls-container" style="display: none;">
-                <h3 class="section-label">
-                    Search Results
-                </h3>
+                <h3 class="section-label">Search Results</h3>
                 <div class="results-prfls">
-                    <p class="profile-status" style="display: none;"></p>
+                    <p class="profile-status" style="display: none;">No students found!</p>
+                    <div class="search-results-loader" id="searched-profile-loader"></div>
                 </div>
             </div>
          </div>
@@ -78,10 +65,9 @@
 	<div id="overlay" class="overlay"></div>
 	<audio id="notificationAudio" src="/sounds/notification-ping-sound.mp3" preload="auto"></audio>
 
-	<script src="/js/notificationHandler.js"></script>
-	<script src="/js/controller.js"></script>
-    <script src="/js/search-profile.js"></script>
+	<script src="/js/notificationHandler.js" defer></script>
+	<script src="/js/controller.js" defer></script>
+    <script src="/js/search-profile.js" defer></script>
 </body>
 
-</html> 
-               
+</html>

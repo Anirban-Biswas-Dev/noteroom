@@ -43,15 +43,22 @@ export const Convert = {
 export const SearchProfile = {
     async getRandomStudent(sampleSize: number) {
         let students = await Students.aggregate([
+            { $match: { visibility: "public" } },
             { $sample: { size: sampleSize } },
-            { $project: { profile_pic: 1, displayname: 1, bio: 1, badge: 1, studentID: 1, username: 1 } }
+            { $project: { profile_pic: 1, displayname: 1, bio: 1, username: 1, _id: 0 } }
         ])
+        return students
+    },
+
+    async getMutualCollegeStudents(studentDocID: string) {
+        let collegeID = (await Students.findOne({ _id: studentDocID }, { collegeID: 1 }))["collegeID"]
+        let students = await Students.find({ collegeID: collegeID, visibility: "public", _id: { $ne: studentDocID } }, { profile_pic: 1, displayname: 1, bio: 1, username: 1, _id: 0 })
         return students
     },
 
     async getStudent(searchTerm: string) {
         const regex = new RegExp(searchTerm.split(' ').map(word => `(${word})`).join('.*'), 'i');
-        let students = await Students.find({ displayname: { $regex: regex } }, { profile_pic: 1, displayname: 1, bio: 1, badge: 1, studentID: 1, username: 1 })
+        let students = await Students.find({ displayname: { $regex: regex }, visibility: "public" }, { profile_pic: 1, displayname: 1, bio: 1, username: 1, _id: 0 })
         return students
     }
 }
