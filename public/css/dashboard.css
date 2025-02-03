@@ -70,6 +70,7 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
+  gap: 20px;
 }
 .feed-note-card {
   display: flex;
@@ -80,7 +81,6 @@ body {
   background: #FFFFFF;
   box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.25);
   border-radius: 10px;  
-  padding: 0;
 }
 
 .fnc__first-row{
@@ -314,22 +314,6 @@ body {
 }
 
 
-/* .thumbnail {
-  width: 100%;
-  max-width: 250px;
-  height: auto;
-  border: none;
-  object-fit: cover;
-  display: none;
-}
-.thumbnail:hover{
-  cursor: pointer;
-}
-
-.thumbnail-container {
-  position: relative;
-  display: inline-block;
-} */
 .thumbnail-loading {
   width: 100%;
   height: 300px;
@@ -616,6 +600,172 @@ body {
   text-decoration: underline;
 }
 
+
+@media (max-width:360px) {
+  .middle-section{
+    padding: 45px 0;
+    padding-bottom: 100px;
+  }
+  .feed-container{
+    width: 100%;
+    gap: 5px;
+  }
+  .feed-note-card{
+    border-radius: 0;
+  }
+  .fnc__first-row{
+    padding: 10px 5px;
+  }
+  .fnc__fr-author-img-wrapper{
+    padding: 0 5px;
+  }
+  .fnc__fr-author-img{
+    width: 40px;
+    height: 40px;
+  }
+  .fnc__fr-note-info-wrapper{
+    padding: 0 5px;
+    gap: 5px;
+  }
+  .niw--fr-first-col{
+    gap: 5px;
+  }
+  .niw--fr-first-col-fr{
+    gap: 8px;
+  }
+  .author-prfl-link{
+    font-size: 14px;
+  }
+  .db-note-card-request-option{
+    font-size: 12px;
+    font-weight: 750;
+  }
+  .niw--fr-first-col-note-pub-date{
+    font-size: 11px;
+  }
+  .fnc--note-desc{
+    font-size: 12px;
+  }
+  .note-desc-see-more-btn{
+    font-size: 12px;
+    padding: 0;
+  }
+  .thumbnail-grid{
+    gap: 2px;
+  }
+  .thumbnail{
+    max-height: 300px;
+  } 
+  .thumbnail-loading{
+    height: 300px;
+  }
+  .thumbnail-overlay{
+    font-size: 1.5rem;
+  }
+  .quickpost-thumbnail-wrapper{
+    height: 250px;
+  }
+  .fnc__tr--note-engagement-metrics{
+    padding: 5px;
+  }
+  .love-react-icon-static{
+    width: 20px;
+    height: 20px;
+  }
+  .metric-count-font{
+    font-size: 12px;
+  }
+  .save-note-btn {
+    font-size: 1.2rem;
+    padding: 0 3px;
+  }
+}
+@media (min-width:361px) and ( max-width:480px) {
+  .middle-section{
+    padding: 50px 0;
+    padding-bottom: 100px;
+  }
+  .feed-container {
+    width: 100%;
+    gap: 8px;
+  }
+  .feed-note-card {
+    border-radius: 0;
+  }
+  .fnc__first-row {
+    padding: 12px 8px;
+  }
+  .fnc__fr-author-img-wrapper {
+    padding: 0 8px;
+  }
+  .fnc__fr-author-img {
+    width: 45px;
+    height: 45px;
+  }
+  .fnc__fr-note-info-wrapper {
+    padding: 0 8px;
+    gap: 8px;
+  }
+  .niw--fr-first-col {
+    gap: 8px;
+  }
+  .niw--fr-first-col-fr {
+    gap: 10px;
+  }
+  .author-prfl-link {
+    font-size: 15px;
+  }
+  .db-note-card-request-option {
+    font-size: 13px;
+    font-weight: 750;
+  }
+  .niw--fr-first-col-note-pub-date {
+    font-size: 12px;
+  }
+  .fnc--note-desc {
+    font-size: 13px;
+  }
+  .note-desc-see-more-btn {
+    font-size: 13px;
+    padding: 2px 0;
+  }
+  .thumbnail-grid {
+    gap: 4px;
+  }
+  .thumbnail {
+    max-height: 320px;
+  }
+  .thumbnail-loading {
+    height: 320px;
+  }
+  .thumbnail-overlay {
+    font-size: 1.6rem;
+  }
+  .quickpost-thumbnail-wrapper {
+    height: 270px;
+  }
+  .fnc__tr--note-engagement-metrics {
+    padding: 8px;
+  }
+  .love-react-icon-static {
+    width: 22px;
+    height: 22px;
+  }
+  .metric-count-font {
+    font-size: 13px;
+  }
+  .save-note-btn {
+    font-size: 1.3rem;
+    padding: 0 5px;
+  }
+  
+  .save-note-btn {
+    font-size: 1.3rem;
+    padding: 0 3px;
+  }
+
+}
+
 /* Confetti and Pop up for new user sign up celebration */
 .popup {
   display: none;
@@ -659,222 +809,4 @@ body {
   border-radius: 5px;
   color: var(--neon-blue);
   cursor: pointer;
-}
-
-canvas {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1008; /* Ensures confetti is in front of the overlay */
-  pointer-events: none;
-}
-  
-/* ****** Responsiveness ***** */
-
-@media (max-width:360px) {
-  .middle-section{
-    padding-top: 40px;
-    padding-bottom: 40px;
-  }
-
-  .feed-note-card{
-    margin-bottom:8vh;
-  }
-  .thumbnail{
-    height: 35vh;
-  }
-  .thumbnail-container{
-    width: 95vw;
-  }
-  .thumbnail-loading{
-    height: 220px;
-  }
-  .save-note-btn {
-    font-size: 1.8rem;
-  }
-  .note-details{
-    width: 95vw;
-    justify-content: around;
-  }
-  .author-img{
-    width: 40px;
-    height: 40px;
-    margin-right: 10px;
-  }
-  .note-title{
-    font-size: .7rem;
-    width: 25vw;
-    max-width: 180px;
-    min-width: 50px;
-  }
-  .author-info{
-    width: 80%;
-  }
-  .author{
-    font-size: .5rem;
-  }
-  .vote-container{
-    margin: 0 10px 0 0;
-  }
-  .uv-container{
-    padding: 8px 5px;
-  }
-  .note-engagement .uv-icon{
-    width: 10vw;
-    max-width: 12px;
-  }
-  .uv-count {
-    font-size: .7rem;
-  }
-  .divider-uv-dv{
-    min-height: 26px;
-  }
-  .uv-count{
-    padding: 0 0 0 2px;
-  }
-  .dv-container{
-    padding: 8px 5px;
-  }
-  .note-engagement .dv-icon{
-    width: 10vw;
-    max-width: 12px;
-  }
-  .cmnt-engagement{
-    padding: 5px 8px;
-    margin: 5px;
-    border-radius: 12px;
-  }
-  .cmnt-count{
-    font-size: .7rem;
-  }
-  .comment-icon{
-    width: 5vw;
-    max-width: 14px;
-  }
-  @media (max-width:310px) {
-    .cmnt-engagement{
-      display: none;
-    }
-  }
-  .note-menu-btn{
-    padding: 5px 10px;
-    font-size: 1.5rem;
-  }
-  .menu-options{
-    width: 150px;
-  }
-  .option{
-    gap: 10px;
-    padding: 8px 10px;
-  }
-  .option svg{
-    width: 20px;
-    height: 20px;
-  }
-  .opt-label{
-    font-size: .7rem;
-  }
-  .save-note-btn{
-    font-size: 1.2rem;
-    padding: 0 2.2px;
-  }
-}
-@media (min-width:361px) and ( max-width:480px) {
-  .middle-section{
-    padding-top: 40px;
-    padding-bottom: 40px;
-  }
-  .feed-note-card{
-    margin-bottom:8vh;
-  }
-  .thumbnail{
-    height: 35vh;
-  }
-  .thumbnail-container{
-    width: 95vw;
-  }
-  .thumbnail-loading{
-    height: 280px;
-  }
-  .save-note-btn {
-    font-size: 1.8rem;
-  }
-  .note-details{
-    width: 95vw;
-    justify-content: space-evenly;
-  }
-  .author-img{
-    width: 40px;
-    height: 40px;
-    margin-right: 10px;
-  }
-  .note-title{
-    font-size: .85rem;
-  }
-  .author-info, .author-title-container{
-    width: 70%;
-  }
-  .author{
-    font-size: .7rem;
-  }
-  .vote-container {
-    margin: 0 12px 0 0;
-  }
-  .uv-container {
-    padding: 10px 6px;
-  }
-  .note-engagement .uv-icon {
-    width: 12vw;
-    max-width: 14px;
-  }
-  .uv-count {
-    font-size: 0.8rem;
-    padding: 0 0 0 3px;
-  }
-  .divider-uv-dv {
-    min-height: 28px;
-  }
-  .dv-container {
-    padding: 10px 6px;
-  }
-  .note-engagement .dv-icon {
-    width: 12vw;
-    max-width: 14px;
-  }
-  .cmnt-engagement {
-    padding: 6px 10px;
-    margin: 6px;
-    border-radius: 14px;
-  }
-  .cmnt-count {
-    font-size: 0.75rem;
-  }
-  .comment-icon {
-    width: 6vw;
-    max-width: 16px;
-  }
-  .note-menu-btn {
-    padding: 6px 12px;
-    font-size: 1.6rem;
-  }
-  .menu-options {
-    width: 170px;
-  }
-  .option {
-    gap: 12px;
-    padding: 10px 12px;
-  }
-  .option svg {
-    width: 22px;
-    height: 22px;
-  }
-  .opt-label {
-    font-size: 0.75rem;
-  }
-  .save-note-btn {
-    font-size: 1.3rem;
-    padding: 0 3px;
-  }
 }

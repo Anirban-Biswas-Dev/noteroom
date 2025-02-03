@@ -10,6 +10,11 @@ body {
   background-color: var(--main-bg);
 }
 
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+
 .search-container {
   width: 100vh;
   position: fixed;
@@ -35,15 +40,15 @@ body {
   align-items: center;
   width: fit-content;
   min-width: 120px;
-  background: #f2f2f2;
+  background: white;
   border: 1px solid #eaeaea;
   box-shadow: 0px 2px 3.7px -2px rgba(0, 0, 0, 0.25);
   border-radius: 25px;
 }
 .search-bar {
-  background: #f2f2f2;
-  border-bottom-right-radius: 0px;
+  background: white;
   border-radius: 25px;
+  border-bottom-right-radius: 0px;
   border-top-right-radius: 0px;
   border: none;
   box-sizing: border-box;
@@ -64,9 +69,8 @@ body {
 
 .search-bar-box button {
   align-items: center;
-  background: #f2f2f2;
+  background: white;
   border-bottom-right-radius: 25px;
-  border-left: none;
   border-top-right-radius: 25px;
   border: none;
   box-sizing: border-box;
@@ -104,7 +108,7 @@ body {
   cursor: pointer;
   min-width: 40px;
   width: 50px;
-  padding: 0px 2vw;
+  padding: 0px 8px;
   transition: transform 0.2s ease, opacity 0.2s ease, background-color 0.2s ease;
 }
 
@@ -925,7 +929,7 @@ body {
   height: 100%;
   width: 100%;
   padding: 10px;
-  display: flex;
+  display: none;
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -1216,7 +1220,7 @@ body {
   align-items: center;
   gap: 10px;
   max-width: 360px;
-  height: 40%;
+  height: 45%;
   padding: 15px 10px;
   overflow-y: scroll;
   margin-bottom: 8vh;
@@ -1242,6 +1246,7 @@ body {
   padding: 5px;
   box-sizing: border-box;
   width: 95%;
+  max-width: 320px;
   height: 40px;
   min-height: 40px;
   background: #ffffff;
@@ -1286,7 +1291,7 @@ body {
 }
 .right-panel-btn {
   box-sizing: border-box;
-  width: 100%;
+  width: 90%;
   max-width: 280px;
   height: 45px;
   background: #ffffff;
@@ -1308,16 +1313,6 @@ body {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   cursor: pointer;
 }
-
-/* .button {
-  margin-top: 20px;
-  padding: 10px 20px;
-  background-color: var(--squid-ink);
-  border: none;
-  border-radius: 5px;
-  color: var(--neon-blue);
-  cursor: pointer;
-} */
 
 canvas {
   position: absolute;
@@ -1354,7 +1349,7 @@ canvas {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 5px 0px;
+  padding: 0 15px;
   position: fixed;
   z-index: 1001;
   width: 100vw;
@@ -1363,126 +1358,24 @@ canvas {
   background: var(--squid-ink);
   overflow-x: hidden;
   box-shadow: 0px -20px 40px rgba(0, 0, 0, 0.2);
+  transition: filter 0.1s ease;
 }
 
-.mbl-ctrl-panel svg {
+.mbl-ctrl-panel__icon{
+  width: 55px;
   height: auto;
-  min-width: 8vw; /* Proportional width for consistent scaling */
-  max-width: 12vw; /* To prevent icons from growing too large */
-  padding: 0px 2vw; /* Relative padding to ensure uniform spacing */
-  transition: transform 0.3s ease, color 0.3s ease;
-}
-
-.mbl-ctrl-panel svg:hover,
-.mbl-ctrl-panel svg:active {
-  transform: scale(1.1);
-  cursor: pointer;
-}
-
-/* UPLOAD BUTTON (Responsive special effects) */
-.mbl-ctrl-panel.mbl-upload-btn {
-  width: 50px !important;
-  position: relative;
-  transition: transform 0.4s ease, box-shadow 0.4s ease;
   border-radius: 50%;
-  min-width: 45px;
-  min-height: auto;
-  padding: 2vw;
+  padding: 10px;
+  background-color: transparent;
 }
 
-.mbl-upload-btn:hover,
-.mbl-upload-btn:active {
-  transform: scale(1.2);
-  box-shadow: 0px 0px 30px 10px rgba(255, 255, 255, 0.19);
+.mbl-ctrl-panel__icon:hover{
+  filter: brightness(0.8);
 }
 
-.mbl-upload-btn::before {
-  content: "";
-  position: absolute;
-  top: -15%;
-  left: -15%;
-  right: -15%;
-  bottom: -15%;
-  border-radius: 50%;
-  background-color: rgba(0, 183, 255, 0.4);
-  animation: pulse 2s infinite;
-  opacity: 0;
+.mbl-ctrl-panel__icon:active{
+  filter: brightness(0.8);
 }
-
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-    opacity: 0.7;
-  }
-  50% {
-    transform: scale(1.3);
-    opacity: 0.3;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 0.7;
-  }
-}
-
-/* Timed special effect after a few seconds (for upload button) */
-@keyframes spin-border {
-  0% {
-    border-color: transparent;
-  }
-  25% {
-    border-color: #00bfff;
-    transform: rotate(0deg);
-  }
-  50% {
-    border-color: #1e90ff;
-    transform: rotate(180deg);
-  }
-  75% {
-    border-color: #00bfff;
-    transform: rotate(360deg);
-  }
-  100% {
-    border-color: transparent;
-    transform: rotate(720deg);
-  }
-}
-
-.mbl-upload-btn-effect {
-  border: 3px solid transparent;
-  border-radius: 50%;
-  position: absolute;
-  top: -10%;
-  left: -10%;
-  right: -10%;
-  bottom: -10%;
-  animation: spin-border 2s ease infinite;
-  z-index: -1;
-  pointer-events: none;
-}
-
-.mbl-btn-home {
-  margin-left: 2vw;
-}
-
-.mbl-settings-icon {
-  margin-right: 2vw;
-}
-@keyframes blink-effect {
-  0%,
-  90% {
-    opacity: 0;
-  }
-  95%,
-  100% {
-    opacity: 1;
-  }
-}
-.search-prfls-mbl-btn {
-  height: auto;
-  width: 30px;
-  max-width: 45px;
-}
-/* ****** Responsiveness ***** */
 
 /* Temporarily Hiding the notification panel */
 @media (max-width: 1530px) {
@@ -1521,19 +1414,8 @@ canvas {
   .search-results {
     max-width: 500px;
   }
-  /* Only relevant for dashboard, don't use this class on other pages */
-  .thumbnail {
-    object-fit: cover;
-    height: 280px;
-  }
-  .feed-note-card {
-    width: 95%;
-  }
 }
 @media (max-width: 480px) {
-  .mbl-notification-elements {
-    display: inline-block;
-  }
   .search-bar-box {
     padding: 10px 0;
     justify-content: space-evenly;
@@ -1547,9 +1429,6 @@ canvas {
     height: 40px;
     width: 30px;
     font-size: 1.2rem;
-  }
-  .mbl-profile-pic {
-    display: block;
   }
 }
 @media (max-width: 360px) {
@@ -1579,9 +1458,6 @@ canvas {
     transform: translateX(0);
     box-shadow: none;
     box-shadow: -10px 0px 30px rgba(255, 255, 255, 0.3);
-  }
-  .profile-pic {
-    display: none;
   }
   .show-overlay {
     display: block;
@@ -1627,35 +1503,16 @@ canvas {
     display: flex;
   }
   .mbl-upload-btn {
-    min-width: 40px;
+    width: 60px;
+  }
+  .mbl-profile-pic {
+    display: block;
+  }
+  .mbl-notification-elements {
+    display: inline-block;
   }
 }
-@media (max-width: 767px) {
-  .mbl-ctrl-panel svg {
-    min-width: 8vw;
-    max-width: 12vw;
-    padding: 0px 2vw;
-  }
 
-  .mbl-upload-btn {
-    min-width: 15vw; /* Slightly larger upload button */
-    min-height: 15vw;
-    padding: 3vw; /* Padding relative to the screen size */
-  }
-
-  .mbl-upload-btn::after {
-    content: "";
-    position: absolute;
-    top: -10%;
-    left: -10%;
-    right: -10%;
-    bottom: -10%;
-    border-radius: 50%;
-    border: 2px solid rgba(0, 183, 255, 0.5);
-    opacity: 0;
-    animation: blink-effect 5s ease-in-out infinite;
-  }
-}
 @media (min-width: 361px) and (max-width: 480px) {
   .middle-section {
     padding-top: 40px;
@@ -1694,12 +1551,19 @@ canvas {
   }
 }
 @media (min-width: 1026px) and (max-width: 1380px) {
+  .right-panel-header{
+    padding: 10px 0;
+  }
   .profile-pic {
     width: 45px;
     height: 45px;
   }
+  .search-prfl-pc, .profile-pic, .pc-nft-btn {
+    width: 45px;
+    height: 45px;
+  }
   .settings-icon {
-    font-size: 2.6rem;
+    font-size: 1.5rem;
   }
 }
 
