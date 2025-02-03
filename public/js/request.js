@@ -74,6 +74,17 @@ function setupRequestModal() {
 }
 
 // Send Request Function
+let toastDataRequest = (type, message, timer) => {
+    return {    
+        toast: true,
+        position: "bottom-end",
+        icon: type,
+        title: message,
+        timer: timer,
+        timerProgressBar: true,
+        showConfirmButton: false
+    }
+}
 async function sendRequest(textarea, modalOverlay) {
     const message = textarea.value.trim();
     if (!message) return
@@ -87,7 +98,11 @@ async function sendRequest(textarea, modalOverlay) {
         body: requestData
     })
     let data = await response.json()
-    console.log(data)
+    if (data.ok) {
+        Swal.fire(toastDataRequest('success', 'Request Sent!', 2000))
+    } else {
+        Swal.fire(toastDataRequest('error', 'Request Failed!', 2000))
+    }
 
     modalOverlay.style.display = "none";
 }

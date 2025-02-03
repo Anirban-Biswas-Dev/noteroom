@@ -18,3 +18,8 @@ export async function getRequests(ownerDocID: string) {
     }))
     return extendedRecData
 }
+
+export async function deleteRequest(reqID: string) {
+    let deleteResult = await Requests.deleteOne({ _id: reqID })
+    return deleteResult.deletedCount !== 0
+}
