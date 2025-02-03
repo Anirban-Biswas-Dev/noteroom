@@ -55,116 +55,38 @@ function truncatedTitle(title) {
 
 
 const db = new Dexie("Notes")
-db.version(6).stores({
+db.version(7).stores({
     savedNotes: "++id,noteID,noteTitle,noteThumbnail",
-    notis: "++id,notiID,feedbackID,isread,noteID,nfnTitle,commenterUsername,commenterDisplayname",
-    notes: "++id,noteID,thumbnail,profile_pic,noteTitle,feedbackCount,ownerDisplayName,ownerID,ownerUserName"
+    ownedNotes: "++id,noteID,noteTitle,noteThumbnail",
 })
 
-/**
-* @param {string} store - 'savedNotes' or 'notis'
-* @param {Object} obj - The object to store
-*/
 const manageDb = {
-    /**
-    * @description For **savedNotes** store, `obj` = { noteID, noteTitle }
-    * @description For **notis** store, `obj` = { notiID, feedbackID, isread, noteID, nfnTitle, commenterUserName, commenterDisplayName }
-    * @description For **notes** store, `obj` = { noteID, thumbnail, profile_pic, noteTitle, ownerDisplayName, ownerID, ownerUserName }
-    */
     async add(store, obj) {
-        switch (store) {
-            case 'savedNotes':
-                let existingNote = await db.savedNotes.where("noteID").equals(obj._id).first()
-                if (!existingNote) {
-                    await db.savedNotes.add({
-                        noteID: obj._id,
-                        noteTitle: obj.title,
-                        noteThumbnail: obj.thumbnail
-                    })
-                }
-                break
-            case 'notis':
-                let existingNoti = await db.notis.where("notiID").equals(obj.notiID).first()
-                if (!existingNoti) {
-                    await db.notis.add({
-                        notiID: obj.notiID,
-                        feedbackID: obj.feedbackID,
-                        isread: true, //! this needs to be dynamic. this has to be sent via feedback-given WS event
-                        noteID: obj.noteID,
-                        nfnTitle: obj.nfnTitle,
-                        commenterUserName: obj.commenterUserName,
-                        commenterDisplayName: obj.commenterDisplayName
-                    })
-                }
-                break
-            case 'notes':
-                let existingUNote = await db.notes.where("noteID").equals(obj.noteID).first()
-                if (!existingUNote) {
-                    await db.notes.add({
-                        noteID: obj.noteID,
-                        thumbnail: obj.thumbnail,
-                        profile_pic: obj.profile_pic,
-                        noteTitle: obj.noteTitle,
-                        feedbackCount: obj.feedbackCount,
-                        ownerDisplayName: obj.ownerDisplayName,
-                        ownerID: obj.ownerID,
-                        ownerUserName: obj.ownerUserName
-                    })
-                }
-                break
+        let existingNote = await db[store].where("noteID").equals(obj._id).first()
+        if (!existingNote) {
+            await db[store].add({
+                noteID: obj._id,
+                noteTitle: obj.title,
+                noteThumbnail: obj.thumbnail
+            })
         }
     },
 
-    /**
-    * @param {string} id
-    * @description For **savedNotes** | **notes** = `noteID`, for **notis** = `notiID`
-    */
     async get(store, id) {
-        switch (store) {
-            case 'savedNotes':
-                if (id === undefined) {
-                    let allNotes = await db.savedNotes.toArray()
-                    return allNotes
-                } else {
-                    let note = await db.savedNotes.where("noteID").equals(id).first()
-                    return note
-                }
-            case 'notis':
-                if (id === undefined) {
-                    let allNotis = await db.notis.toArray()
-                    return allNotis
-                } else {
-                    let noti = await db.notis.where("notiID").equals(id).first()
-                    return noti
-                }
-            case 'notes':
-                if (id === undefined) {
-                    let allNotes = await db.notes.toArray()
-                    return allNotes
-                } else {
-                    let note = await db.notes.where("noteID").equals(id).first()
-                    return note
-                }
+        if (id === undefined) {
+            let allNotes = await db[store].toArray()
+            return allNotes
+        } else {
+            let note = await db[store].where("noteID").equals(id).first()
+            return note
         }
     },
 
-    /**
-    * @param {string} id
-    * @description For **savedNotes** | **notes** = `noteID`, for **notis** = `notiID`
-    */
     async delete(store, id) {
         switch (store) {
             case 'savedNotes':
                 let note = await db.savedNotes.where("noteID").equals(id).first()
                 await db.savedNotes.delete(note.id)
-                break
-            case 'notis':
-                let noti = await db.notis.where("notiID").equals(id).first()
-                await db.notis.delete(noti.id)
-                break
-            case 'notes':
-                let unote = await db.notes.where("noteID").equals(id).first()
-                await db.notes.delete(unote.id)
                 break
         }
     }
@@ -252,7 +174,12 @@ const manageNotes = {
                                 <div class="niw--fr-first-col-fr">
                                     <a class="author-prfl-link" href="/user/${note.ownerUserName}">${note.ownerDisplayName}</a>
                                     <span class="niw--fr-first-col-fr-seperator"></span>
-                                    <span  class="db-note-card-request-option">Request</span>
+                                    <span 
+                                        class="db-note-card-request-option"
+                                        data-req-pfp="${note.profile_pic}" 
+                                        data-req-dn="${note.ownerDisplayName}" 
+                                        data-req-un="${note.ownerUserName}"
+                                    >Request</span>
                                 </div>
                                 <span class="niw--fr-first-col-note-pub-date">${(new Date(note.createdAt)).toDateString()}</span>
                             </div>
@@ -421,7 +348,7 @@ const manageNotes = {
                 <div class="feed-note-card" id="note-${note.noteID}">
                     <div class="fnc__first-row">
                         <div class="fnc__fr-author-img-wrapper">
-                        <img src="${note.profile_pic}" class="fnc__fr-author-img" onclick="window.location.href='/user/${note.ownerUserName}'"/>
+                            <img src="${note.profile_pic}" class="fnc__fr-author-img" onclick="window.location.href='/user/${note.ownerUserName}'"/>
                         </div>
                         <div class="fnc__fr-note-info-wrapper">
                         <div class="note-info-wrapper--first-row">
@@ -429,7 +356,12 @@ const manageNotes = {
                             <div class="niw--fr-first-col-fr">
                                 <a class="author-prfl-link" href="/user/${note.ownerUserName}">${note.ownerDisplayName}</a>
                                 <span class="niw--fr-first-col-fr-seperator"></span>
-                                <span class="db-note-card-request-option">Request</span>
+                                <span 
+                                    class="db-note-card-request-option" 
+                                    data-req-pfp="${note.profile_pic}" 
+                                    data-req-dn="${note.ownerDisplayName}" 
+                                    data-req-un="${note.ownerUserName}"
+                                >Request</span>
                             </div>
                             <span class="niw--fr-first-col-note-pub-date">${(new Date(note.createdAt)).toDateString()}</span>
                             </div>
@@ -914,6 +846,35 @@ const manageNotes = {
 		mainCommentContainer.classList.add('main-cmnt-container')
 		mainCommentContainer.innerHTML = template
         commentsContainer.appendChild(mainCommentContainer)
+    },
+
+    addRequest: function (request) {
+        let requestContainer = document.querySelector('.requests-container')
+        let existingRequest = requestContainer.querySelector(`#request-${request.recID}`)
+
+        if (!existingRequest) {
+            let recTemplate = `
+                <div class="request" id="request-${request.recID}" data-senderusername="${request.senderUserName}">
+                    <div class="request__fr">
+                        <span class="open-request-card"><i class="fa-solid fa-chevron-right request-chevron-icon"></i></span>
+                        <span class="request__fr--requester-name">${request.senderDisplayName}'s Request</span>
+                        <span class="request__fr--requested-date">${(new Date(request.createdAt)).toLocaleDateString()}</span>
+                    </div>
+                    <div class="request__sr">
+                        <p class="request__sr--request-desc">${request.message}</p>
+                        <div class="request__sr--request-action-update">
+                        <button class="btn-request btn-accept-request">
+                            <i class="fa-solid fa-check"></i>
+                            Done
+                        </button>
+                        <button class="btn-request btn-reject-request">
+                            <i class="fa-solid fa-x"></i>
+                            Reject
+                        </div>
+                    </div>
+                </div>`
+            requestContainer.insertAdjacentHTML('beforeend', recTemplate)
+        }
     }
 }
 
@@ -1342,19 +1303,108 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
+window.addEventListener('load', async () => {
+    async function getRequests() {
+        let response = await fetch('/api/request/get')
+        let data = (await response.json()).requests
+        if (data.length !== 0) {
+            data.forEach(request => {
+                let requestObject = {
+                    recID: request._id,
+                    message: request.message,
+                    createdAt: request.createdAt,
+                    senderDisplayName: request.senderDocID.displayname,
+                    senderUserName : request.senderDocID.username
+                }
+                manageNotes.addRequest(requestObject)
+            })
+        }
+    }
+    await getRequests()
 
-/* ||  Request Cards Handling */
-document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll(".request").forEach((requestCard) => {
-      const firstRow = requestCard.querySelector(".request__fr");
-      const secondRow = requestCard.querySelector(".request__sr");
-      const chevronIcon = requestCard.querySelector(".request-chevron-icon");
-  
-      firstRow.addEventListener("click", () => {
-        secondRow.classList.toggle("request__sr--expanded");
-        chevronIcon.classList.toggle("request__fr--chevron-rotated");
-      });
-    });
-  });
+        const firstRow = requestCard.querySelector(".request__fr");
+        const secondRow = requestCard.querySelector(".request__sr");
+        const chevronIcon = requestCard.querySelector(".request-chevron-icon");
 
+        let reqID = requestCard.id.split('-')[1]
+        let senderUserName = requestCard.getAttribute("data-senderusername")
+
+        const acceptButton = requestCard.querySelector(".btn-accept-request");
+        const rejectButton = requestCard.querySelector(".btn-reject-request")
+    
+        firstRow.addEventListener("click", () => {
+            secondRow.classList.toggle("request__sr--expanded");
+            chevronIcon.classList.toggle("request__fr--chevron-rotated");
+        });
+
+        acceptButton.addEventListener("click", async function() {
+            let notes = await manageDb.get('ownedNotes')
+            let noteObjects = {}
+            notes.forEach(note => {
+                noteObjects[note.noteID] = note.noteTitle
+            })
+
+            let { value } = await Swal.fire({
+                title: "Select a post to bind the request",
+                input: "select",
+                inputOptions: {
+                    Notes: noteObjects
+                },
+                inputPlaceholder: "Select a post",
+                showCancelButton: true,
+            })
+            if (value) {
+                let noteDocID = value
+
+                let requestData = new FormData()
+                requestData.append('senderUserName', senderUserName)
+                requestData.append('reqID', reqID)
+                requestData.append('noteDocID', noteDocID)
+                
+                let response = await fetch('/api/request/done', {
+                    method: 'post',
+                    body: requestData
+                })
+                let data = await response.json()
+                if (data.ok) {
+                    Swal.fire(toastData('success', 'Request marked as done successfully!'))
+                    requestCard.remove()
+                } else {
+                    Swal.fire(toastData('error', 'Failed to mark request as done. Please try again later.', 3000))
+                }
+            }
+        })
+
+        rejectButton.addEventListener("click", async function() {
+            let result = await Swal.fire({
+                icon: "question",
+                title: "Are you sure you want to reject the request?",
+                text: "You can send a small message to the sender for clarification (optional)",
+                input: "text",
+                inputPlaceholder: "Message",
+                showCancelButton: true,
+                showConfirmButton: true
+            })
+            
+            let message = result.value
+            let requestData = new FormData()
+            requestData.append("reqID", reqID)
+            requestData.append('message', message)
+            requestData.append('senderUserName', senderUserName)
+
+            let response = await fetch('/api/request/reject', {
+                method: 'post',
+                body: requestData
+            })
+            let data = await response.json()
+            if (data.ok) {
+                requestCard.remove()
+                Swal.fire(toastData("success", "Requested has been rejected"))
+            } else {
+                Swal.fire(toastData("error", "Failed to reject the request. Please try again later.", 3000))
+            }
+        })
+    });
+})
 

@@ -1,3 +1,4 @@
+
 // Main Initialization Function
 function initializeRequestHandlers() {
     console.log("Initializing Request Handlers...");
@@ -5,6 +6,7 @@ function initializeRequestHandlers() {
     setupRequestModal();
 }
 
+let recUsername = ''
 // Modal Setup Function with Event Delegation
 function setupRequestModal() {
     console.log("Setting up Request Modal...");
@@ -20,7 +22,14 @@ function setupRequestModal() {
     // Event Delegation for Request Triggers
     document.body.addEventListener("click", (event) => {
         if (event.target.classList.contains("db-note-card-request-option")) {
-            console.log("Opening modal for dynamic trigger");
+
+            let recProfilePic = event.target.getAttribute("data-req-pfp");
+            let recDisplayname = event.target.getAttribute("data-req-dn");
+            recUsername = event.target.getAttribute("data-req-un");
+
+            document.querySelector('#request-rec-pfp').src = recProfilePic; 
+            document.querySelector('#request-rec-dn').textContent = recDisplayname;
+
             modalOverlay.style.display = "flex";
             textarea.value = "";
             charCountDisplay.textContent = `${maxChars} characters remaining`;
@@ -65,15 +74,36 @@ function setupRequestModal() {
 }
 
 // Send Request Function
-function sendRequest(textarea, modalOverlay) {
+let toastDataRequest = (type, message, timer) => {
+    return {    
+        toast: true,
+        position: "bottom-end",
+        icon: type,
+        title: message,
+        timer: timer,
+        timerProgressBar: true,
+        showConfirmButton: false
+    }
+}
+async function sendRequest(textarea, modalOverlay) {
     const message = textarea.value.trim();
-    if (!message) {
-        console.warn("Cannot send an empty request.");
-        return;
+    if (!message) return
+
+    let requestData = new FormData()
+    requestData.append('recUsername', recUsername)
+    requestData.append('message', message)
+    
+    let response = await fetch('/api/request/send', {
+        method: 'POST',
+        body: requestData
+    })
+    let data = await response.json()
+    if (data.ok) {
+        Swal.fire(toastDataRequest('success', 'Request Sent!', 2000))
+    } else {
+        Swal.fire(toastDataRequest('error', 'Request Failed!', 2000))
     }
 
-    console.log("Sending request:", message);
-    alert("Request Sent Successfully!");
     modalOverlay.style.display = "none";
 }
 

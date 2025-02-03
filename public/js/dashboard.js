@@ -84,8 +84,17 @@ window.addEventListener('load', async () => {
 			manageDb.add('savedNotes', note)
 		})
 	}
+
+	async function getOwnedNotes() {
+		let response = await fetch('/api/note?noteType=owned')
+		let ownedNotes = await response.json()
+		ownedNotes.forEach(note => {
+			manageDb.add('ownedNotes', note)
+		})
+	}
 	
 	await getSavedNotes()
+	await getOwnedNotes()
 })
 
 
