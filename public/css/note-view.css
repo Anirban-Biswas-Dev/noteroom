@@ -842,6 +842,16 @@ body {
   opacity: 0.8;
 }
 
+.no-comments-container{
+  padding: 15px;
+  text-align: center;
+  width: 100%;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  
+}
+
 @media (max-width: 400px) {
   .cmnt-btn {
     right: 10px;
