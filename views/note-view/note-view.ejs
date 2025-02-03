@@ -44,7 +44,7 @@
         <div class="fb__col-1">
           <img class="note-author-img" src="<%= owner.profile_pic %>" alt="Author Picture" onclick="location.href='/user/<%= owner.username %>'" />
           <div class="fb__col-1-wrapper-1">
-            <span class="author-name">Posted by <a href="/user/<%= owner.username %>"><%= owner.displayname %></a></span>
+            <span class="author-name"><a href="/user/<%= owner.username %>"><%= owner.displayname %></a></span>
             <% if (postType !== "quick-post") { %>
               <h1 class="section-title"><%= note.title %></h1>
             <% } %>
@@ -92,7 +92,7 @@
         <%- include('components/comment-box', { type: 'main'}) %>
         
         <div class="no-comments-container">No Feedbacks yet. Be the first to provide</div>
-        <div class="comments-loader" style="display: flex; justify-content: center; align-items: center;">Getting conversations...<div class="search-results-loader" style="display: block;"></div></div>
+        <div class="comments-loader" style="display: flex; justify-content: center; align-items: center;"><div class="search-results-loader" style="display: block;"></div></div>
         
         <div class="cmnts-list"></div>
     
