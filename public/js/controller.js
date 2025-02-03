@@ -924,6 +924,35 @@ const manageNotes = {
 		mainCommentContainer.classList.add('main-cmnt-container')
 		mainCommentContainer.innerHTML = template
         commentsContainer.appendChild(mainCommentContainer)
+    },
+
+    addRequest: function (request) {
+        let requestContainer = document.querySelector('.requests-container')
+        let existingRequest = requestContainer.querySelector(`#request-${request.recID}`)
+
+        if (!existingRequest) {
+            let recTemplate = `
+                <div class="request" id="request-${request.recID}">
+                    <div class="request__fr">
+                        <span class="open-request-card"><i class="fa-solid fa-chevron-right request-chevron-icon"></i></span>
+                        <span class="request__fr--requester-name">${request.senderDisplayName}'s Request</span>
+                        <span class="request__fr--requested-date">${(new Date(request.createdAt)).toLocaleDateString()}</span>
+                    </div>
+                    <div class="request__sr">
+                        <p class="request__sr--request-desc">${request.message}</p>
+                        <div class="request__sr--request-action-update">
+                        <button class="btn-request btn-accept-request">
+                            <i class="fa-solid fa-check"></i>
+                            Done
+                        </button>
+                        <button class="btn-request btn-reject-request">
+                            <i class="fa-solid fa-x"></i>
+                            Reject
+                        </div>
+                    </div>
+                </div>`
+            requestContainer.insertAdjacentHTML('beforeend', recTemplate)
+        }
     }
 }
 
@@ -1352,19 +1381,33 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
+window.addEventListener('load', async () => {
+    async function getRequests() {
+        let response = await fetch('/api/request/get')
+        let data = (await response.json()).requests
+        if (data.length !== 0) {
+            data.forEach(request => {
+                let requestObject = {
+                    recID: request._id,
+                    message: request.message,
+                    createdAt: request.createdAt,
+                    senderDisplayName: request.receiverDocID.displayname,
+                }
+                manageNotes.addRequest(requestObject)
+            })
+        }
+    }
+    await getRequests()
 
-/* ||  Request Cards Handling */
-document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll(".request").forEach((requestCard) => {
-      const firstRow = requestCard.querySelector(".request__fr");
-      const secondRow = requestCard.querySelector(".request__sr");
-      const chevronIcon = requestCard.querySelector(".request-chevron-icon");
-  
-      firstRow.addEventListener("click", () => {
-        secondRow.classList.toggle("request__sr--expanded");
-        chevronIcon.classList.toggle("request__fr--chevron-rotated");
-      });
+        const firstRow = requestCard.querySelector(".request__fr");
+        const secondRow = requestCard.querySelector(".request__sr");
+        const chevronIcon = requestCard.querySelector(".request-chevron-icon");
+    
+        firstRow.addEventListener("click", () => {
+            console.log(`Hllo!`)
+            secondRow.classList.toggle("request__sr--expanded");
+            chevronIcon.classList.toggle("request__fr--chevron-rotated");
+        });
     });
-  });
-
-
+})
