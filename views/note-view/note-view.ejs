@@ -64,8 +64,9 @@
       </div>
 
       <!-- COMPONENT: note image carousel -->
+      <!-- FIXME: quick-posts which don't have any image still have this image container. so they take empty spaces. have to remove them -->
       <%- include('components/note-images', { note: note }) %>
-
+      
       <% if (postType !== "quick-post") { %>
         <div class="third-box">
           <div class="third-box__row-1">

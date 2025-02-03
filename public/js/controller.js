@@ -1387,22 +1387,24 @@ window.addEventListener('load', async () => {
                 showConfirmButton: true
             })
             
-            let message = result.value
-            let requestData = new FormData()
-            requestData.append("reqID", reqID)
-            requestData.append('message', message)
-            requestData.append('senderUserName', senderUserName)
-
-            let response = await fetch('/api/request/reject', {
-                method: 'post',
-                body: requestData
-            })
-            let data = await response.json()
-            if (data.ok) {
-                requestCard.remove()
-                Swal.fire(toastData("success", "Requested has been rejected"))
-            } else {
-                Swal.fire(toastData("error", "Failed to reject the request. Please try again later.", 3000))
+            if (result.isConfirmed) {
+                let message = result.value
+                let requestData = new FormData()
+                requestData.append("reqID", reqID)
+                requestData.append('message', message)
+                requestData.append('senderUserName', senderUserName)
+    
+                let response = await fetch('/api/request/reject', {
+                    method: 'post',
+                    body: requestData
+                })
+                let data = await response.json()
+                if (data.ok) {
+                    requestCard.remove()
+                    Swal.fire(toastData("success", "Requested has been rejected"))
+                } else {
+                    Swal.fire(toastData("error", "Failed to reject the request. Please try again later.", 3000))
+                }
             }
         })
     });
