@@ -252,7 +252,12 @@ const manageNotes = {
                                 <div class="niw--fr-first-col-fr">
                                     <a class="author-prfl-link" href="/user/${note.ownerUserName}">${note.ownerDisplayName}</a>
                                     <span class="niw--fr-first-col-fr-seperator"></span>
-                                    <span  class="db-note-card-request-option">Request</span>
+                                    <span 
+                                        class="db-note-card-request-option"
+                                        data-req-pfp="${note.profile_pic}" 
+                                        data-req-dn="${note.ownerDisplayName}" 
+                                        data-req-un="${note.ownerUserName}"
+                                    >Request</span>
                                 </div>
                                 <span class="niw--fr-first-col-note-pub-date">${(new Date(note.createdAt)).toDateString()}</span>
                             </div>
@@ -421,7 +426,7 @@ const manageNotes = {
                 <div class="feed-note-card" id="note-${note.noteID}">
                     <div class="fnc__first-row">
                         <div class="fnc__fr-author-img-wrapper">
-                        <img src="${note.profile_pic}" class="fnc__fr-author-img" onclick="window.location.href='/user/${note.ownerUserName}'"/>
+                            <img src="${note.profile_pic}" class="fnc__fr-author-img" onclick="window.location.href='/user/${note.ownerUserName}'"/>
                         </div>
                         <div class="fnc__fr-note-info-wrapper">
                         <div class="note-info-wrapper--first-row">
@@ -429,7 +434,12 @@ const manageNotes = {
                             <div class="niw--fr-first-col-fr">
                                 <a class="author-prfl-link" href="/user/${note.ownerUserName}">${note.ownerDisplayName}</a>
                                 <span class="niw--fr-first-col-fr-seperator"></span>
-                                <span class="db-note-card-request-option">Request</span>
+                                <span 
+                                    class="db-note-card-request-option" 
+                                    data-req-pfp="${note.profile_pic}" 
+                                    data-req-dn="${note.ownerDisplayName}" 
+                                    data-req-un="${note.ownerUserName}"
+                                >Request</span>
                             </div>
                             <span class="niw--fr-first-col-note-pub-date">${(new Date(note.createdAt)).toDateString()}</span>
                             </div>

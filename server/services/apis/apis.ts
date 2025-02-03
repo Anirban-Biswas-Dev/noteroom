@@ -10,6 +10,7 @@ import { Convert, deleteAccount, deleteSessionsByStudentID } from "../userServic
 import { checkLoggedIn } from "../../middlewares/checkLoggedIn.js";
 import noteRouter from "./note.js";
 import searchRouter from "./search.js";
+import { requestApi } from "./request.js";
 
 export const router = Router()
 
@@ -17,6 +18,7 @@ export default function apiRouter(io: Server) {
     router.use(checkLoggedIn)
     router.use('/note', noteRouter(io))
     router.use('/search', searchRouter(io))
+    router.use('/request', requestApi(io))
 
     router.post("/download" ,async (req, res) => {
         let noteID = req.body.noteID
