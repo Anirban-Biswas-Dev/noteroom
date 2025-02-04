@@ -131,6 +131,15 @@ export async function getNoteForShare({noteDocID, studentDocID}: IManageUserNote
 }
 
 export async function getAllNotes(studentDocID: string, options?: any) { 
+    /*
+    Linear Congruential Generator (LCG):
+        X_n+1 = (A * X_n + C) mod M
+
+        A = feedbackCount + 1234567
+        C = (upvoteCount + 10) × 9876543 + (contentSize × 22695477)
+        M = 2 ^ 32
+        X_n = seed
+    */
     let notes = await Notes.aggregate([
         { $match: { completed: { $eq: true } } },
         { $lookup: {
@@ -140,14 +149,16 @@ export async function getAllNotes(studentDocID: string, options?: any) {
             as: 'ownerDocID'
         } },
         { $addFields: {
+            A: { $add: [ "$feedbackCount", 1234567 ] },
+            C: { $add: [
+                { $multiply: [{ $add: [ "$upvoteCount", 10 ] }, 9876543] },
+                { $multiply: [{ $add: [{ $size: "$content" }, 1] }, 22695477] }
+            ]}
+        } },
+        { $addFields: {
             randomSort: { 
                 $mod: [
-                    { $add: [
-                        { $multiply: [ 22695477, { $add: [ "$feedbackCount", { $multiply: [ { $size: "$content" }, 1234567 ] } ] } ] },
-                        { $multiply: [ { $add: ["$upvoteCount", 1] }, 9876543 ] },
-                        parseInt(options.seed), 
-                        1013904223
-                    ] },
+                    { $add: [{ $multiply: ["$A", parseInt(options.seed)] }, "$C"] },
                     Math.pow(2, 32)
                 ] 
             }
