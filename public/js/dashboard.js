@@ -9,7 +9,7 @@ socket.on('update-upvote-dashboard', function (noteDocID, upvoteCount) {
 })
 
 let nextPage = 2
-
+let seed = Math.floor(Math.random() * 1000000000)
 async function get_note(count, page) {
 	function getFeedbackNoteObject(note, post = false) {
 		let noteData = {
@@ -40,9 +40,9 @@ async function get_note(count, page) {
 	let notesList = [];
 
 	try {
-		let response = await fetch(`/api/getnote?type=seg&page=${page}&count=${count}`); // 1
+		let response = await fetch(`/api/getnote?type=seg&seed=${seed}&page=${page}&count=${count}`); 
 		let notes = await response.json(); 
-
+		
 		if (notes.length !== 0) {
 			notes.forEach(note => {
 				if (note.postType === 'note') {

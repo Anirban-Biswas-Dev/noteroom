@@ -80,9 +80,10 @@ export default function apiRouter(io: Server) {
             let page = req.query.page as unknown as number
             let count = req.query.count as unknown as number
             let skip: number = (page - 1) * count
+            let seed: number = req.query.seed as unknown as number
             
             let studentDocID = (await Convert.getDocumentID_studentid(req.session["stdid"])).toString()
-            let notes = await getAllNotes(studentDocID, { skip: skip, limit: count })
+            let notes = await getAllNotes(studentDocID, { skip: skip, limit: count, seed: seed })
             
             if (notes.length != 0) {
                 res.json(notes)

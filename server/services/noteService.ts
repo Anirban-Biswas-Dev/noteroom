@@ -139,13 +139,26 @@ export async function getAllNotes(studentDocID: string, options?: any) {
             foreignField: '_id',
             as: 'ownerDocID'
         } },
+        { $addFields: {
+            randomSort: { 
+                $mod: [
+                    { $add: [
+                        { $multiply: [ 22695477, { $add: [ "$feedbackCount", { $multiply: [ { $size: "$content" }, 1234567 ] } ] } ] },
+                        { $multiply: [ { $add: ["$upvoteCount", 1] }, 9876543 ] },
+                        parseInt(options.seed), 
+                        1013904223
+                    ] },
+                    Math.pow(2, 32)
+                ] 
+            }
+        } },
         { $unwind: {
             path: '$ownerDocID',
         } },
         { $project: {
             title: 1, description: 1,  
             feedbackCount: 1, upvoteCount: 1, 
-            postType: 1, content: 1,
+            postType: 1, content: 1, randomSort: 1,
             createdAt: 1,
             "ownerDocID._id": 1,
             "ownerDocID.profile_pic": 1,
@@ -153,15 +166,15 @@ export async function getAllNotes(studentDocID: string, options?: any) {
             "ownerDocID.studentID": 1,
             "ownerDocID.username": 1
         } },
-        { $skip: parseInt(options.skip || "0") },
-        { $limit: parseInt(options.limit || "3") },
-        { $sort: { createdAt: 1 } }
-    ])    
+        { $sort: { randomSort: 1 } },
+        { $skip: parseInt(options.skip) },
+        { $limit: parseInt(options.limit) }
+    ])
     
     let extentedNotes = await Promise.all(
-        notes.map(async note => {
-            let isupvoted = await isUpVoted({ noteDocID: note._id.toString(), voterStudentDocID: studentDocID, voteType: 'upvote' })
-            let issaved = await isSaved({ noteDocID: note._id.toString(), studentDocID: studentDocID }) 
+        notes.map(async (note: any) => {
+            let isupvoted = await isUpVoted({ noteDocID: note["_id"].toString(), voterStudentDocID: studentDocID, voteType: 'upvote' })
+            let issaved = await isSaved({ noteDocID: note["_id"].toString(), studentDocID: studentDocID }) 
             return { ...note, isUpvoted: isupvoted, isSaved: issaved }
         })
     )
