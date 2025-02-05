@@ -18,8 +18,7 @@ function handleNotifications(events) {
     events.forEach(event => {
         ioSocket.on(event, (data) => {
             addNoti(data)
-            manageDb.add('notis', data)
-            
+            manageDb.add('notifications', Object.assign(data, { _id: data.notiID }))
             
             const nftShake = document.querySelector('.mobile-nft-btn')
             nftShake.classList.add('shake') 

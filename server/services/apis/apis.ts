@@ -20,6 +20,16 @@ export default function apiRouter(io: Server) {
     router.use('/search', searchRouter(io))
     router.use('/request', requestApi(io))
 
+    router.get('/notifs', async (req, res) => {
+        try {
+            let studentID = req.session["stdid"]
+            let notifs = await getNotifications(studentID)
+            res.json(notifs)
+        } catch (error) {
+            res.json([])
+        }
+    })
+
     router.post("/download" ,async (req, res) => {
         let noteID = req.body.noteID
         let noteTitle = req.body.noteTitle
@@ -91,16 +101,6 @@ export default function apiRouter(io: Server) {
                 res.json([])
             }
         }
-    })
-
-
-    
-
-
-    router.get('/getNotifs', async (req, res) => {
-        let studentID = req.query.studentID?.toString()
-        let notifs = await getNotifications(studentID)
-        res.json(notifs)
     })
 
 

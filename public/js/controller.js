@@ -17,20 +17,60 @@ let savedNoteObserver = new MutationObserver(entries => {
 })
 savedNoteObserver.observe(document.querySelector('.saved-notes-container'), { childList: true })
 
-window.addEventListener('load', () => {
-    function addSavedNotes() {
-        let savedNotes = manageDb.get('savedNotes')
-        savedNotes.then(notes => {
-            notes.forEach(note => {
-                manageNotes.addSaveNote(note)
-            })
-        })    
+
+async function updateFromIndexedDB(store) {
+    let objects = await manageDb.get(store)
+    objects.forEach(object => {
+        if (store === "savedNotes") {
+            manageNotes.addSaveNote(object);
+        } else {
+            manageNotes.addNoti(object);
+        }
+    })
+}
+
+function readNoti(noti) {
+    noti.addEventListener('click', async () => {
+        let isread = noti.getAttribute('data-isread')
+        if (isread === "false") {
+            let notiID = noti.getAttribute('data-notiid')
+
+            noti.querySelector('p.noti-msg').classList.replace('secondary-false', 'secondary-true')
+            noti.querySelector('.noti__sc--second-row-noti-info span').classList.replace('false', 'true')
+            noti.querySelector('.noti__sc--second-row-noti-info span:last-child').classList.replace('secondary-false', 'secondary-true')
+
+            let notification = await db['notifications'].where('notiID').equals(notiID).first()
+            notification["isread"] = true
+            await db["notifications"].put(notification)
+
+            conSock.emit('read-noti', notiID)
+        }
+
+        let redirectTo = noti.getAttribute('data-redirectTo')
+        if (redirectTo && redirectTo !== "") window.location.href = redirectTo  
+    })
+}
+
+const dashboardJSScriptLoader = document.querySelector('#is-script-loaded')
+let dashboardScriptLoadObserver = new MutationObserver(async entries => {
+    if (entries[0]) {
+        await updateFromIndexedDB("notifications")
     }
-    addSavedNotes()
+    dashboardScriptLoadObserver.disconnect()
+})
+if (dashboardJSScriptLoader) {
+    dashboardScriptLoadObserver.observe(dashboardJSScriptLoader, {attributes: true})
+}
+
+window.addEventListener('load', async () => {
+    if (window.location.pathname !== "/dashboard") {
+        await updateFromIndexedDB("notifications")
+    }
+    await updateFromIndexedDB("savedNotes")
 })
 
 
-let toastData = (type, message, timer=2000) => {
+let toastData = (type, message, timer = 2000) => {
     return {
         toast: true,
         position: "bottom-end",
@@ -55,31 +95,44 @@ function truncatedTitle(title) {
 
 
 const db = new Dexie("Notes")
-db.version(7).stores({
+db.version(9).stores({
     savedNotes: "++id,noteID,noteTitle,noteThumbnail",
     ownedNotes: "++id,noteID,noteTitle,noteThumbnail",
+    notifications: "++id,notiID,content,fromUserSudentDocID,redirectTo,isread,createdAt"
 })
 
 const manageDb = {
     async add(store, obj) {
-        let existingNote = await db[store].where("noteID").equals(obj._id).first()
-        if (!existingNote) {
-            await db[store].add({
-                noteID: obj._id,
-                noteTitle: obj.title,
-                noteThumbnail: obj.thumbnail
-            })
+        if (store !== "notifications") {
+            let existingNote = await db[store].where("noteID").equals(obj._id).first()
+            if (!existingNote) {
+                await db[store].add({
+                    noteID: obj._id,
+                    noteTitle: obj.title,
+                    noteThumbnail: obj.thumbnail
+                })
+            }
+        } else {
+            let existingNoti = await db[store].where("notiID").equals(obj._id).first()
+            if (!existingNoti) {
+                await db[store].add({
+                    notiID: obj._id,
+                    content: obj.content,
+                    fromUserSudentDocID: obj.fromUserSudentDocID,
+                    redirectTo: obj.redirectTo,
+                    isread: obj.isRead,
+                    createdAt: obj.createdAt
+                })
+            } else {
+                existingNoti["isread"] = obj.isRead
+                await db[store].put(existingNoti)
+            }
         }
     },
 
-    async get(store, id) {
-        if (id === undefined) {
-            let allNotes = await db[store].toArray()
-            return allNotes
-        } else {
-            let note = await db[store].where("noteID").equals(id).first()
-            return note
-        }
+    async get(store) {
+        let allObjects = await db[store].toArray()
+        return allObjects
     },
 
     async delete(store, id) {
@@ -102,7 +155,7 @@ async function upvote(voteContainer, fromDashboard = false) {
     const noteDocID = voteContainer.getAttribute('data-noteid')
     const isUpvoted = voteContainer.getAttribute('data-isupvoted') === "true" ? true : false
     const voteCard = fromDashboard ? document.querySelector(`#note-${noteDocID}`) : document
-    
+
     let uvCount = voteCard.querySelector('.uv-count')
     const DOWNVOTE_SVG = `
         <path d="M26.0497 5.76283C25.4112 5.12408 24.6532 4.61739 23.8189 4.27168C22.9845 3.92598 22.0903 3.74805 21.1872 3.74805C20.2841 3.74805 19.3898 3.92598 18.5555 4.27168C17.7211 4.61739 16.9631 5.12408 16.3247 5.76283L14.9997 7.08783L13.6747 5.76283C12.385 4.47321 10.636 3.74872 8.81216 3.74872C6.98837 3.74872 5.23928 4.47321 3.94966 5.76283C2.66005 7.05244 1.93555 8.80154 1.93555 10.6253C1.93555 12.4491 2.66005 14.1982 3.94966 15.4878L14.9997 26.5378L26.0497 15.4878C26.6884 14.8494 27.1951 14.0913 27.5408 13.257C27.8865 12.4227 28.0644 11.5284 28.0644 10.6253C28.0644 9.72222 27.8865 8.82796 27.5408 7.99363C27.1951 7.15931 26.6884 6.40127 26.0497 5.76283Z" stroke="#1E1E1E" stroke-width="0.909091" stroke-linecap="round" stroke-linejoin="round"/>
@@ -115,11 +168,11 @@ async function upvote(voteContainer, fromDashboard = false) {
         </linearGradient>
         </defs>`
 
-    
+
     let voteData = new FormData()
     voteData.append('noteDocID', noteDocID)
     voteData.append('voterStudentID', voterStudentID)
-    
+
     function replaceUpvoteArrow(svg, increment) {
         voteCard.querySelector('#upvote-container .uv-icon').innerHTML = svg
         voteCard.querySelector('.uv-count').innerHTML = parseInt(uvCount.innerHTML) + (increment ? 1 : -1)
@@ -128,7 +181,7 @@ async function upvote(voteContainer, fromDashboard = false) {
 
     const url = `/view/${noteDocID}/vote?type=upvote${isUpvoted ? '&action=delete' : ''}`
     replaceUpvoteArrow(isUpvoted ? DOWNVOTE_SVG : UPVOTE_SVG, !isUpvoted)
-    
+
     let response = await fetch(url, {
         body: voteData,
         method: 'post'
@@ -144,7 +197,7 @@ async function upvote(voteContainer, fromDashboard = false) {
 
 //* The main dynamic content loading manager object
 const manageNotes = {
-    formatDate: function(dateString) {
+    formatDate: function (dateString) {
         let date = new Date(dateString)
         const formatter = new Intl.DateTimeFormat('en-US', {
             year: 'numeric',
@@ -157,7 +210,7 @@ const manageNotes = {
         });
         return formatter.format(date);
     },
-    addQuickPost: function(note) {
+    addQuickPost: function (note) {
         let existingPost = document.querySelector(`#note-${note.noteID}`)
         let feedContainer = document.querySelector('.feed-container')
 
@@ -217,11 +270,11 @@ const manageNotes = {
                     </div>
                     </div>
                     <div class="fnc__second-row">
-                        ${ note.contentCount !== 0 ? 
-                            `<div class="quickpost-thumbnail-wrapper">
+                        ${note.contentCount !== 0 ?
+                    `<div class="quickpost-thumbnail-wrapper">
                                 <img class="quickpost-thumbnail" src="" data-src="${note.content1}"/>
                             </div>`: ``
-                        }
+                }
                     </div>
 
                     <div class="fnc__third-row">
@@ -261,7 +314,7 @@ const manageNotes = {
                                 class="review-count metric-count-font cmnt-count"
                                 onclick="window.location.href='/view/quick-post/${note.noteID}/#feedbacks'"
                             >
-                                ${ note.feedbackCount === 0 ? `No reviews yet` : `${note.feedbackCount} Review${note.feedbackCount === 1 ? "" : "s"}`}
+                                ${note.feedbackCount === 0 ? `No reviews yet` : `${note.feedbackCount} Review${note.feedbackCount === 1 ? "" : "s"}`}
                             </span>
                             </div>
                         </div>
@@ -276,8 +329,8 @@ const manageNotes = {
                                 fill="none"
                                 xmlns="http://www.w3.org/2000/svg"
                             >
-                                ${note.isUpvoted ?  
-                                    `<path
+                                ${note.isUpvoted ?
+                    `<path
                                         d="M27.5227 2.53147C26.7991 1.80756 25.94 1.2333 24.9944 0.841502C24.0489 0.449705 23.0354 0.248047 22.0119 0.248047C20.9883 0.248047 19.9748 0.449705 19.0293 0.841502C18.0837 1.2333 17.2246 1.80756 16.501 2.53147L14.9994 4.03313L13.4977 2.53147C12.0361 1.0699 10.0538 0.248804 7.98685 0.248804C5.91989 0.248804 3.93759 1.0699 2.47602 2.53147C1.01446 3.99303 0.193359 5.97534 0.193359 8.0423C0.193359 10.1093 1.01446 12.0916 2.47602 13.5531L14.9994 26.0765L27.5227 13.5531C28.2466 12.8296 28.8209 11.9705 29.2126 11.0249C29.6044 10.0793 29.8061 9.06582 29.8061 8.0423C29.8061 7.01878 29.6044 6.00528 29.2126 5.05971C28.8209 4.11415 28.2466 3.25504 27.5227 2.53147Z"
                                         fill="url(#paint0_linear_4170_1047)"
                                     />
@@ -294,15 +347,15 @@ const manageNotes = {
                                         <stop offset="1" stop-color="#FF0000" />
                                     </linearGradient>
                                     </defs>`
-                                    :
-                                    `<path
+                    :
+                    `<path
                                         d="M26.0497 5.76283C25.4112 5.12408 24.6532 4.61739 23.8189 4.27168C22.9845 3.92598 22.0903 3.74805 21.1872 3.74805C20.2841 3.74805 19.3898 3.92598 18.5555 4.27168C17.7211 4.61739 16.9631 5.12408 16.3247 5.76283L14.9997 7.08783L13.6747 5.76283C12.385 4.47321 10.636 3.74872 8.81216 3.74872C6.98837 3.74872 5.23928 4.47321 3.94966 5.76283C2.66005 7.05244 1.93555 8.80154 1.93555 10.6253C1.93555 12.4491 2.66005 14.1982 3.94966 15.4878L14.9997 26.5378L26.0497 15.4878C26.6884 14.8494 27.1951 14.0913 27.5408 13.257C27.8865 12.4227 28.0644 11.5284 28.0644 10.6253C28.0644 9.72222 27.8865 8.82796 27.5408 7.99363C27.1951 7.15931 26.6884 6.40127 26.0497 5.76283Z"
                                         stroke="#1E1E1E"
                                         stroke-width="0.909091"
                                         stroke-linecap="round"
                                         stroke-linejoin="round"
                                     />`
-                                }
+                }
                             </svg>
                 
                             <span class="fnc__tr--icon-label like-padding-top-5">Like</span>
@@ -438,9 +491,9 @@ const manageNotes = {
                             <img class="thumbnail primary-img" src="" onclick="window.location.href='/view/${note.noteID}'" data-src='${note.content1}'/>
                             <div class="thumbnail-secondary-wrapper">
                                 <img class="thumbnail secondary-img" src="" onclick="window.location.href='/view/${note.noteID}'" data-src='${note.content2}'/>
-                                ${ note.contentCount > 2 ? 
-                                    `<div class="thumbnail-overlay" onclick="window.location.href='/view/${note.noteID}'">+${parseInt(note.contentCount) - 2}</div>` : ''
-                                }
+                                ${note.contentCount > 2 ?
+                    `<div class="thumbnail-overlay" onclick="window.location.href='/view/${note.noteID}'">+${parseInt(note.contentCount) - 2}</div>` : ''
+                }
                             </div>
                         </div>
                     </div>
@@ -482,7 +535,7 @@ const manageNotes = {
                                         class="review-count metric-count-font cmnt-count"
                                         onclick="window.location.href='/view/${note.noteD}/#feedbacks'"
                                     >
-                                        ${ note.feedbackCount === 0 ? `No reviews yet` : `${note.feedbackCount} Review${note.feedbackCount === 1 ? "" : "s"}`}
+                                        ${note.feedbackCount === 0 ? `No reviews yet` : `${note.feedbackCount} Review${note.feedbackCount === 1 ? "" : "s"}`}
                                     </span>
                                 </div>
                                 </div>
@@ -504,8 +557,8 @@ const manageNotes = {
                                         fill="none"
                                         xmlns="http://www.w3.org/2000/svg"
                                     >
-                                    ${note.isUpvoted ?  
-                                        `<path
+                                    ${note.isUpvoted ?
+                    `<path
                                             d="M27.5227 2.53147C26.7991 1.80756 25.94 1.2333 24.9944 0.841502C24.0489 0.449705 23.0354 0.248047 22.0119 0.248047C20.9883 0.248047 19.9748 0.449705 19.0293 0.841502C18.0837 1.2333 17.2246 1.80756 16.501 2.53147L14.9994 4.03313L13.4977 2.53147C12.0361 1.0699 10.0538 0.248804 7.98685 0.248804C5.91989 0.248804 3.93759 1.0699 2.47602 2.53147C1.01446 3.99303 0.193359 5.97534 0.193359 8.0423C0.193359 10.1093 1.01446 12.0916 2.47602 13.5531L14.9994 26.0765L27.5227 13.5531C28.2466 12.8296 28.8209 11.9705 29.2126 11.0249C29.6044 10.0793 29.8061 9.06582 29.8061 8.0423C29.8061 7.01878 29.6044 6.00528 29.2126 5.05971C28.8209 4.11415 28.2466 3.25504 27.5227 2.53147Z"
                                             fill="url(#paint0_linear_4170_1047)"
                                         />
@@ -522,15 +575,15 @@ const manageNotes = {
                                             <stop offset="1" stop-color="#FF0000" />
                                         </linearGradient>
                                         </defs>`
-                                        :
-                                        `<path
+                    :
+                    `<path
                                             d="M26.0497 5.76283C25.4112 5.12408 24.6532 4.61739 23.8189 4.27168C22.9845 3.92598 22.0903 3.74805 21.1872 3.74805C20.2841 3.74805 19.3898 3.92598 18.5555 4.27168C17.7211 4.61739 16.9631 5.12408 16.3247 5.76283L14.9997 7.08783L13.6747 5.76283C12.385 4.47321 10.636 3.74872 8.81216 3.74872C6.98837 3.74872 5.23928 4.47321 3.94966 5.76283C2.66005 7.05244 1.93555 8.80154 1.93555 10.6253C1.93555 12.4491 2.66005 14.1982 3.94966 15.4878L14.9997 26.5378L26.0497 15.4878C26.6884 14.8494 27.1951 14.0913 27.5408 13.257C27.8865 12.4227 28.0644 11.5284 28.0644 10.6253C28.0644 9.72222 27.8865 8.82796 27.5408 7.99363C27.1951 7.15931 26.6884 6.40127 26.0497 5.76283Z"
                                             stroke="#1E1E1E"
                                             stroke-width="0.909091"
                                             stroke-linecap="round"
                                             stroke-linejoin="round"
                                         />`
-                                        }
+                }
                                     </svg>
                                     <span class="fnc__tr--icon-label like-padding-top-5">Like</span>
                                 </div>
@@ -593,7 +646,7 @@ const manageNotes = {
         }
     },
 
-    removeSaveNote: function(noteData) {
+    removeSaveNote: function (noteData) {
         let existingNote = document.querySelector(`#saved-note-${noteData.noteID}`)
         if (existingNote) {
             existingNote.remove()
@@ -607,12 +660,12 @@ const manageNotes = {
         if (!existingNoti) {
             let isInteraction = notiData.fromUserSudentDocID ? true : false;
             let notificationHtml = `
-                <div class="notification secondary-${notiData.isread}" id="noti-${notiData.notiID}">
+                <div class="notification" id="noti-${notiData.notiID}" onclick='readNoti(this.querySelector(".noti__sec-col--msg-wrapper"))'>
                     ${isInteraction ? `
                         <div class="noti__first-col--img-wrapper">
                             <img src="${notiData.fromUserSudentDocID.profile_pic}" alt="notification" class="noti__source-user-img">
                         </div>` : ''}
-                    <div class="noti__sec-col--msg-wrapper" onclick="window.location.href='${notiData.redirectTo}'">
+                    <div class="noti__sec-col--msg-wrapper" data-redirectTo='${notiData.redirectTo}' data-notiID='${notiData.notiID}' data-isread='${notiData.isread}'>
                         <div class="noti__sc--first-row-msg">
                             <p class="noti-msg secondary-${notiData.isread}">
                                 ${isInteraction ? `<span class="noti-source-user-name">${notiData.fromUserSudentDocID.displayname}</span>` : ''}
@@ -655,7 +708,7 @@ const manageNotes = {
                 ~ displayname
                 
         */
-        
+
         let isTemporary = feedbackData.temporary
 
         let feedbackCard = `
@@ -679,7 +732,7 @@ const manageNotes = {
                         <span class="main__author-name">${feedbackData.commenterDocID.displayname}</span>
                         <span class="reply-date">${this.formatDate(feedbackData.createdAt)}</span>
                     </div>
-                    <div class="main__reply-msg reply-msg">${isTemporary ? 'Sending feedback...<div class="search-results-loader"></div>' : feedbackData.feedbackContents }</div>
+                    <div class="main__reply-msg reply-msg">${isTemporary ? 'Sending feedback...<div class="search-results-loader"></div>' : feedbackData.feedbackContents}</div>
                     ${!isTemporary ? `
                         <div class="main__engagement-opts engagement-opts">
                             <div class="like-wrapper" data-noteid=${feedbackData.noteDocID._id} data-feedbackid=${feedbackData._id} data-isupvoted="false" onclick="upvoteComment(this)">   
@@ -720,7 +773,7 @@ const manageNotes = {
 
         replyMessage = `
         <div class='thread-msg' data-temporary=${isTemporary}>
-            ${!isTemporary ? `<img src="${replyData.commenterDocID.profile_pic}" alt="User Avatar" class="cmnt-author-img thread-avatar">` : '' }
+            ${!isTemporary ? `<img src="${replyData.commenterDocID.profile_pic}" alt="User Avatar" class="cmnt-author-img thread-avatar">` : ''}
             <div class="cmnt-body-3rows">
                 <div class="reply-info">
                     <span id="commenterUsername" style="display: none;">${replyData.commenterDocID.username}</span>
@@ -733,7 +786,7 @@ const manageNotes = {
                     <svg class="reply-icon thread-opener" data-tippy-content="Reply" width="25" height="24" viewBox="0 0 22 21" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M18.7186 12.9452C18.7186 13.401 18.5375 13.8382 18.2152 14.1605C17.8929 14.4829 17.4557 14.6639 16.9999 14.6639H6.68747L3.25 18.1014V4.35155C3.25 3.89571 3.43108 3.45854 3.75341 3.13622C4.07573 2.81389 4.5129 2.63281 4.96873 2.63281H16.9999C17.4557 2.63281 17.8929 2.81389 18.2152 3.13622C18.5375 3.45854 18.7186 3.89571 18.7186 4.35155V12.9452Z" stroke="#1E1E1E" stroke-width="1.14582" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>` : ''
-                }                    
+            }                    
                 </div>
             </div>
         </div>
@@ -772,7 +825,7 @@ const manageNotes = {
                 <div class="note-card" id="${noteElementID}">
                     <a href="/view/${noteData.noteID}">
                         <h3>
-                            ${noteData.noteTitle > 30 ? noteData.noteTitle.slice(0, 30) : noteData.noteTitle }
+                            ${noteData.noteTitle > 30 ? noteData.noteTitle.slice(0, 30) : noteData.noteTitle}
                         </h3>
                         <img src='${noteData.noteThumbnail}' alt="No thumbnail?!">
                     </a>
@@ -781,8 +834,8 @@ const manageNotes = {
         }
     },
 
-    addAllFeedback: function(feedback) {
-	    let commentsContainer = document.querySelector('.cmnts-list')
+    addAllFeedback: function (feedback) {
+        let commentsContainer = document.querySelector('.cmnts-list')
 
         let template = `
 			<div class="main__author-threadline-wrapper">
@@ -802,11 +855,10 @@ const manageNotes = {
 					<div class="main__engagement-opts engagement-opts">
 						<div class="like-wrapper" data-noteid='${feedback[0].noteDocID}' data-feedbackid="${feedback[0]._id}" data-isupvoted="${feedback[0].isUpVoted}" onclick="upvoteComment(this)">
 							<svg class="like-icon" data-tippy-content="Like" width="20" height="22" viewBox="0 0 115 117" fill="none" xmlns="http://www.w3.org/2000/svg">
-								${
-									feedback[0].isUpVoted ? 
-        								`<path class='like-icon-fill' d="M28.4938 47.5373C28.4938 47.5373 28.4863 108.91 28.493 110.455C28.4996 112 84.4861 110.998 88.993 110.998C93.5 110.998 108.994 88.5431 109.494 70.581C109.994 52.6188 107.998 49.9985 107.498 49.9985L66 49.9982C78.4744 33.916 62.958 -7.56607 57.9956 8.99958C53.0332 25.5652 49.9956 32.4996 49.9956 32.4996L28.4938 47.5373Z" fill="black"/>`:
-										`<path d="M107.498 49.9985C107.998 49.9985 109.994 52.6188 109.494 70.581C108.994 88.5431 93.5 110.998 88.993 110.998C84.4861 110.998 28.4996 112 28.493 110.455C28.4863 108.91 28.4938 47.5373 28.4938 47.5373L49.9956 32.4996C49.9956 32.4996 53.0332 25.5652 57.9956 8.99958C62.958 -7.56607 78.4744 33.916 66 49.9982M107.498 49.9985C106.998 49.9985 66 49.9982 66 49.9982M107.498 49.9985L66 49.9982" stroke="#606770" stroke-width="10" stroke-linecap="round"/>`
-								}
+								${feedback[0].isUpVoted ?
+                `<path class='like-icon-fill' d="M28.4938 47.5373C28.4938 47.5373 28.4863 108.91 28.493 110.455C28.4996 112 84.4861 110.998 88.993 110.998C93.5 110.998 108.994 88.5431 109.494 70.581C109.994 52.6188 107.998 49.9985 107.498 49.9985L66 49.9982C78.4744 33.916 62.958 -7.56607 57.9956 8.99958C53.0332 25.5652 49.9956 32.4996 49.9956 32.4996L28.4938 47.5373Z" fill="black"/>` :
+                `<path d="M107.498 49.9985C107.998 49.9985 109.994 52.6188 109.494 70.581C108.994 88.5431 93.5 110.998 88.993 110.998C84.4861 110.998 28.4996 112 28.493 110.455C28.4863 108.91 28.4938 47.5373 28.4938 47.5373L49.9956 32.4996C49.9956 32.4996 53.0332 25.5652 57.9956 8.99958C62.958 -7.56607 78.4744 33.916 66 49.9982M107.498 49.9985C106.998 49.9985 66 49.9982 66 49.9982M107.498 49.9985L66 49.9982" stroke="#606770" stroke-width="10" stroke-linecap="round"/>`
+            }
 							</svg>
 							<span class="like-count">${feedback[0].upvoteCount}</span>
 						</div>
@@ -818,7 +870,7 @@ const manageNotes = {
 
 				<div class='thread-section' id='thread-${feedback[0]._id}'>
 					${feedback[1].map(reply => {
-						return `
+                return `
 						<div class='thread-msg'>
 							<img src="${reply.commenterDocID.profile_pic}" alt="User Avatar" class="cmnt-author-img thread-avatar">
 							<div class="cmnt-body-3rows">
@@ -837,14 +889,14 @@ const manageNotes = {
 							</div>
 						</div>
 						`
-					})}
+            })}
 				</div>
 			</div>
 		`
 
         let mainCommentContainer = document.createElement('div')
-		mainCommentContainer.classList.add('main-cmnt-container')
-		mainCommentContainer.innerHTML = template
+        mainCommentContainer.classList.add('main-cmnt-container')
+        mainCommentContainer.innerHTML = template
         commentsContainer.appendChild(mainCommentContainer)
     },
 
@@ -937,7 +989,7 @@ function finish() {
     ~       the platform a share link is created and a new window is opened to share the link. (2)
 */
 const linkElement = document.querySelector('._link_');
-function setupShareModal(location, isPost=false) {
+function setupShareModal(location, isPost = false) {
     const shareNoteModal = document.querySelector('.share-note-overlay');
     const closeNoteModalBtn = document.querySelector('.close-share-note-modal');
 
@@ -1018,27 +1070,27 @@ async function saveNote(svButton, fromDashboard = false) {
     if (svButton.getAttribute('data-disabled')) return
 
     svButton.setAttribute('data-disabled', 'true')
-    
+
     let noteTitle = svButton.getAttribute('data-notetitle')
     let noteDocID = svButton.getAttribute('data-noteid')
-    
+
     let noteData = new FormData()
     noteData.append("noteDocID", noteDocID)
-    
+
     let isSaved = svButton.getAttribute('data-issaved')
     let url = `/api/note/save?action=${isSaved === 'true' ? 'delete' : 'save'}`
     let mainsvButton = fromDashboard ? svButton.querySelector('#save-note-btn') : svButton
 
     const SAVE_SVG = () => mainsvButton.classList.add('saved')
     const UNSAVE_SVG = () => mainsvButton.classList.remove('saved')
-    
+
     function replaceSaveButton() {
         isSaved === 'false' ? SAVE_SVG() : UNSAVE_SVG()
         svButton.setAttribute('data-issaved', isSaved === 'false' ? 'true' : 'false')
     }
 
     replaceSaveButton()
-    manageNotes[isSaved === "true" ? "removeSaveNote" : "addSaveNote"]({ noteTitle, noteID: noteDocID})
+    manageNotes[isSaved === "true" ? "removeSaveNote" : "addSaveNote"]({ noteTitle, noteID: noteDocID })
 
     let response = await fetch(url, {
         method: 'post',
@@ -1046,10 +1098,10 @@ async function saveNote(svButton, fromDashboard = false) {
     })
     let body = await response.json()
     if (body.ok) {
-        isSaved === "false" ? (async function() {
+        isSaved === "false" ? (async function () {
             Swal.fire(toastData('success', 'Note saved successfully!'))
             await manageDb.add('savedNotes', body.savedNote[0])
-        })() : (function() {
+        })() : (function () {
             manageDb.delete('savedNotes', noteDocID)
             body.count !== 0 || (document.querySelector('.no-saved-notes-message').classList.remove('hide'))
         })()
@@ -1176,15 +1228,10 @@ async function deleteNoti(id) {
 
 //* Adding notifications: all pages
 
-function addNoti(feedbackData) {
-    /* 
-    # Process: The main function is manageNotes.addNoti. Related to feedback-given WS event
-    ~   the noti. data is got via feedback-given WS event. the process handles the main addNoti funnction (1). then the number got increased
-    ~   and shown in the noti. badge (2)
-    */
-    manageNotes.addNoti(feedbackData) // 1
+function addNoti(notiData) {
+    manageNotes.addNoti(notiData) 
     notificationCount++;
-    updateNotificationBadge(); // 2
+    updateNotificationBadge(); 
 }
 function updateNotificationBadge() {
     const badge = document.getElementById('notification-count');
@@ -1200,20 +1247,6 @@ function updateNotificationBadge() {
         console.error('Notification badge element not found');
     }
 }
-
-
-//* Event that will be triggerd when a notification is clicked to make it "read" (true)
-let notiLinks = document.querySelectorAll('.notiLink');
-notiLinks.forEach(notiLink => {
-    notiLink.addEventListener("click", function (event) {
-        // Traverse up to the parent notification div (ensuring correct targeting)
-        let notiElement = event.currentTarget.closest('.notification');
-        if (!notiElement) return; // Ensure notiElement is found
-        let notiID = notiElement.getAttribute("id").split("-")[1];
-        conSock.emit("read-noti", notiID);
-    });
-});
-
 
 
 try {
@@ -1314,7 +1347,7 @@ window.addEventListener('load', async () => {
                     message: request.message,
                     createdAt: request.createdAt,
                     senderDisplayName: request.senderDocID.displayname,
-                    senderUserName : request.senderDocID.username
+                    senderUserName: request.senderDocID.username
                 }
                 manageNotes.addRequest(requestObject)
             })
@@ -1332,13 +1365,13 @@ window.addEventListener('load', async () => {
 
         const acceptButton = requestCard.querySelector(".btn-accept-request");
         const rejectButton = requestCard.querySelector(".btn-reject-request")
-    
+
         firstRow.addEventListener("click", () => {
             secondRow.classList.toggle("request__sr--expanded");
             chevronIcon.classList.toggle("request__fr--chevron-rotated");
         });
 
-        acceptButton.addEventListener("click", async function() {
+        acceptButton.addEventListener("click", async function () {
             let notes = await manageDb.get('ownedNotes')
             let noteObjects = {}
             notes.forEach(note => {
@@ -1361,7 +1394,7 @@ window.addEventListener('load', async () => {
                 requestData.append('senderUserName', senderUserName)
                 requestData.append('reqID', reqID)
                 requestData.append('noteDocID', noteDocID)
-                
+
                 let response = await fetch('/api/request/done', {
                     method: 'post',
                     body: requestData
@@ -1376,7 +1409,7 @@ window.addEventListener('load', async () => {
             }
         })
 
-        rejectButton.addEventListener("click", async function() {
+        rejectButton.addEventListener("click", async function () {
             let result = await Swal.fire({
                 icon: "question",
                 title: "Are you sure you want to reject the request?",
@@ -1386,14 +1419,14 @@ window.addEventListener('load', async () => {
                 showCancelButton: true,
                 showConfirmButton: true
             })
-            
+
             if (result.isConfirmed) {
                 let message = result.value
                 let requestData = new FormData()
                 requestData.append("reqID", reqID)
                 requestData.append('message', message)
                 requestData.append('senderUserName', senderUserName)
-    
+
                 let response = await fetch('/api/request/reject', {
                     method: 'post',
                     body: requestData

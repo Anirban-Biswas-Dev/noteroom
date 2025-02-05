@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import Alerts from '../schemas/alerts.js'
 import { Server } from 'socket.io'
-import { getNotifications, getSavedNotes, profileInfo, unreadNotiCount } from '../helpers/rootInfo.js'
+import { getSavedNotes, profileInfo, unreadNotiCount } from '../helpers/rootInfo.js'
 const router = Router()
 
 function dashboardRouter(io: Server) {
@@ -15,12 +15,10 @@ function dashboardRouter(io: Server) {
             let alert = await getAlert()
 
             let root = await profileInfo(req.session["stdid"])
-            let notis = await getNotifications(req.session["stdid"])
             let unReadCount = await unreadNotiCount(req.session["stdid"])
-
             let savedNotes = await getSavedNotes(req.session["stdid"])
 
-            res.render('dashboard/dashboard', { root: root, notis: notis, savedNotes: savedNotes, alert: alert, unReadCount: unReadCount })
+            res.render('dashboard/dashboard', { root: root, savedNotes: savedNotes, alert: alert, unReadCount: unReadCount })
         } else {
             res.redirect('login')
         }
