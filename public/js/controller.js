@@ -47,7 +47,7 @@ function readNoti(noti) {
         }
 
         let redirectTo = noti.getAttribute('data-redirectTo')
-        if (redirectTo && redirectTo !== "") window.location.href = redirectTo  
+        if (redirectTo && redirectTo !== "") window.location.href = redirectTo
     })
 }
 
@@ -59,7 +59,7 @@ let dashboardScriptLoadObserver = new MutationObserver(async entries => {
     dashboardScriptLoadObserver.disconnect()
 })
 if (dashboardJSScriptLoader) {
-    dashboardScriptLoadObserver.observe(dashboardJSScriptLoader, {attributes: true})
+    dashboardScriptLoadObserver.observe(dashboardJSScriptLoader, { attributes: true })
 }
 
 window.addEventListener('load', async () => {
@@ -99,6 +99,19 @@ db.version(9).stores({
     savedNotes: "++id,noteID,noteTitle,noteThumbnail",
     ownedNotes: "++id,noteID,noteTitle,noteThumbnail",
     notifications: "++id,notiID,content,fromUserSudentDocID,redirectTo,isread,createdAt"
+})
+db.on('versionchange', async (event) => {
+    try {
+        if (event.oldVersion < 9) {
+            await db.delete()
+            await db.open()
+        }
+    } catch (error) { }
+})
+db.open().then(() => {
+    console.log(`indexedDB is initialized`)
+}).catch((error) => {
+    console.log(`Cannot initialize indexedDB: ${error}`)
 })
 
 const manageDb = {
@@ -1229,9 +1242,9 @@ async function deleteNoti(id) {
 //* Adding notifications: all pages
 
 function addNoti(notiData) {
-    manageNotes.addNoti(notiData) 
+    manageNotes.addNoti(notiData)
     notificationCount++;
-    updateNotificationBadge(); 
+    updateNotificationBadge();
 }
 function updateNotificationBadge() {
     const badge = document.getElementById('notification-count');
