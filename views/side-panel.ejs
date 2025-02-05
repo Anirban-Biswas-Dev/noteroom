@@ -138,33 +138,11 @@
   <div class="notification-modal-overlay">
     <div class="notification-modal">
       <h4 class="notification-header-label">Notifications</h4>
-      <div class="notifications-container">
-        <% if(notis.length != 0) { %>
-          <%
-            function formatDate(dateString) {
-              let date = new Date(dateString)
-              const formatter = new Intl.DateTimeFormat('en-US', {
-                  year: 'numeric',
-                  month: 'short',
-                  day: 'numeric',
-                  hour: '2-digit',
-                  minute: '2-digit',
-                  timeZone: 'Asia/Dhaka',
-                  hour12: true
-              });
-              return formatter.format(date);
-            }
-          %>
-          <% notis.forEach(noti => { %>
-            <%- include('partials/notification.ejs', { notiData: noti, formatDate: formatDate }) %>
-          <% }) %>
-        <% } %>
-      </div>
+      <div class="notifications-container"></div>
     </div>
   </div>
 
 <% } else if (block === 'request-modal') { %>
-
     <div class="request-modal-overlay"  style="display: none;">
       <div class="request-modal">
           <div class="request-modal__fr">

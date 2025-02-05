@@ -1,12 +1,8 @@
 import Students from "../schemas/students.js";
 import Notes from "../schemas/notes.js";
 import { Notifs } from "../schemas/notifications.js";
-import {ENotificationType} from "../types/notificationService.type.js";
 
 type rootStudentID = string
-
-//* This is for side-panel data collection
-
 
 export async function getSavedNotes(studentID: rootStudentID) {
     let student = await Students.findOne({ studentID: studentID }, { saved_notes: 1 })

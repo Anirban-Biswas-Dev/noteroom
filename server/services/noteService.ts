@@ -1,14 +1,12 @@
 import Students from '../schemas/students.js'
 import Notes from '../schemas/notes.js'
-import Comments, { feedbacksModel as Feedbacks, replyModel as Reply} from '../schemas/comments.js'
+import Comments, { } from '../schemas/comments.js'
 import { INoteDB, IQuickPostDB } from '../types/database.types.js'
 import { IManageUserNote, INoteDetails } from '../types/noteService.types.js'
-import { Notifs } from '../schemas/notifications.js'
 import { deleteNoteImages } from './firebaseService.js'
-import { isCommentUpVoted, isUpVoted } from './voteService.js'
+import { isUpVoted } from './voteService.js'
 import mongoose from 'mongoose'
 import { JSDOM }  from 'jsdom'
-import { getComments } from './feedbackService.js'
 
 
 export async function addNote(noteData: INoteDB) {
@@ -132,18 +130,63 @@ export async function getNoteForShare({noteDocID, studentDocID}: IManageUserNote
     return { ...note, description: description }
 }
 
-export async function getAllNotes(studentDocID: string, options = { skip: 0, limit: 3 }) {
-    let notes = await Notes.find({ completed: true }, { ownerDocID: 1, title: 1, content: 1, feedbackCount: 1, upvoteCount: 1, description: 1, createdAt: 1, postType: 1 })
-        .sort({ createdAt: -1 })
-        .skip(options.skip)
-        .limit(options.limit)
-        .populate('ownerDocID', 'profile_pic displayname studentID username')
+export async function getAllNotes(studentDocID: string, options?: any) { 
+    /*
+    Linear Congruential Generator (LCG):
+        X_n+1 = (A * X_n + C) mod M
+
+        A = feedbackCount + 1234567
+        C = (upvoteCount + 10) × 9876543 + (contentSize × 22695477)
+        M = 2 ^ 32
+        X_n = seed
+    */
+    let notes = await Notes.aggregate([
+        { $match: { completed: { $eq: true } } },
+        { $lookup: {
+            from: 'students',
+            localField: 'ownerDocID',
+            foreignField: '_id',
+            as: 'ownerDocID'
+        } },
+        { $addFields: {
+            A: { $add: [ "$feedbackCount", 1234567 ] },
+            C: { $add: [
+                { $multiply: [{ $add: [ "$upvoteCount", 10 ] }, 9876543] },
+                { $multiply: [{ $add: [{ $size: "$content" }, 1] }, 22695477] }
+            ]}
+        } },
+        { $addFields: {
+            randomSort: { 
+                $mod: [
+                    { $add: [{ $multiply: ["$A", parseInt(options.seed)] }, "$C"] },
+                    Math.pow(2, 32)
+                ] 
+            }
+        } },
+        { $unwind: {
+            path: '$ownerDocID',
+        } },
+        { $project: {
+            title: 1, description: 1,  
+            feedbackCount: 1, upvoteCount: 1, 
+            postType: 1, content: 1, randomSort: 1,
+            createdAt: 1,
+            "ownerDocID._id": 1,
+            "ownerDocID.profile_pic": 1,
+            "ownerDocID.displayname": 1,
+            "ownerDocID.studentID": 1,
+            "ownerDocID.username": 1
+        } },
+        { $sort: { randomSort: 1 } },
+        { $skip: parseInt(options.skip) },
+        { $limit: parseInt(options.limit) }
+    ])
     
     let extentedNotes = await Promise.all(
-        notes.map(async note => {
-            let isupvoted = await isUpVoted({ noteDocID: note._id.toString(), voterStudentDocID: studentDocID, voteType: 'upvote' })
-            let issaved = await isSaved({ noteDocID: note._id.toString(), studentDocID: studentDocID }) 
-            return { ...note.toObject(), isUpvoted: isupvoted, isSaved: issaved }
+        notes.map(async (note: any) => {
+            let isupvoted = await isUpVoted({ noteDocID: note["_id"].toString(), voterStudentDocID: studentDocID, voteType: 'upvote' })
+            let issaved = await isSaved({ noteDocID: note["_id"].toString(), studentDocID: studentDocID }) 
+            return { ...note, isUpvoted: isupvoted, isSaved: issaved }
         })
     )
 

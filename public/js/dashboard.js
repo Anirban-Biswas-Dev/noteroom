@@ -9,7 +9,7 @@ socket.on('update-upvote-dashboard', function (noteDocID, upvoteCount) {
 })
 
 let nextPage = 2
-
+let seed = Math.floor(Math.random() * 1000000000)
 async function get_note(count, page) {
 	function getFeedbackNoteObject(note, post = false) {
 		let noteData = {
@@ -40,9 +40,9 @@ async function get_note(count, page) {
 	let notesList = [];
 
 	try {
-		let response = await fetch(`/api/getnote?type=seg&page=${page}&count=${count}`); // 1
+		let response = await fetch(`/api/getnote?type=seg&seed=${seed}&page=${page}&count=${count}`); 
 		let notes = await response.json(); 
-
+		
 		if (notes.length !== 0) {
 			notes.forEach(note => {
 				if (note.postType === 'note') {
@@ -61,7 +61,6 @@ async function get_note(count, page) {
 	return notesList; 
 }
 
-
 window.addEventListener('load', async () => {
 	async function initialFeedSetup() {
 		let feedContainer = document.querySelector('.feed-container')
@@ -77,28 +76,21 @@ window.addEventListener('load', async () => {
 	}
 	await initialFeedSetup()
 
-	async function getSavedNotes() {
-		let response = await fetch('/api/note?noteType=saved')
-		let savedNotes = await response.json()
-		savedNotes.forEach(note => {
-			manageDb.add('savedNotes', note)
-		})
+	async function getResourcees(collection) {
+		let response = await fetch(collection.api)
+		let objects = await response.json()
+		for (const object of objects) {
+			await manageDb.add(collection.store, object);
+		}
 	}
+	await getResourcees({api: '/api/note?noteType=saved', store: 'savedNotes'})
+	await getResourcees({api: '/api/note?noteType=owned', store: 'ownedNotes'})
+	await getResourcees({api: '/api/notifs', store: 'notifications'})
 
-	async function getOwnedNotes() {
-		let response = await fetch('/api/note?noteType=owned')
-		let ownedNotes = await response.json()
-		ownedNotes.forEach(note => {
-			manageDb.add('ownedNotes', note)
-		})
-	}
-	
-	await getSavedNotes()
-	await getOwnedNotes()
+	document.querySelector('#is-script-loaded').setAttribute('data-loaded', 'true')
 })
 
 
-//* Observer's object
 const observers = {
 	observer: function () {
 		const _observer = new IntersectionObserver(entries => {
@@ -159,7 +151,6 @@ const observers = {
 }
 
 
-//* Note upload WS event
 socket.on('note-upload', (noteData) => {
 	noteData.quickPost ? manageNotes.addQuickPost(noteData) : manageNotes.addNote(noteData)
 	manageDb.add('notes', noteData)
