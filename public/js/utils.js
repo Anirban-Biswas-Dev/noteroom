@@ -2,10 +2,20 @@
 function goPrevPage() {
       history.back();
 };
-// ToolTip trigger
+
 const isMobile = window.innerWidth <= 768;
-tippy('[data-tippy-content]', {
-    placement: isMobile ? 'bottom' : 'right', 
-    animation: 'scale', 
-    theme: 'light', 
+
+if (!isMobile) {
+  tippy('[data-tippy-content]', {
+    placement: 'top',
+    arrow: false,
+    theme: 'custom-modern',
+    hideOnClick: false, // Ensures tooltip doesn't hide immediately on click
+    onShow(instance) {
+      setTimeout(() => {
+        instance.hide(); // Hides tooltip after 2 seconds
+      }, 1500);
+    }
   });
+}
+
