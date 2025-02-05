@@ -86,11 +86,21 @@ window.addEventListener('load', async () => {
       currentIndex = (currentIndex + 1) % slides.length;
       showSlide(currentIndex);
     });
-  
+    
     prevButton.addEventListener("click", () => {
       currentIndex = (currentIndex - 1 + slides.length) % slides.length;
       showSlide(currentIndex);
     });
+    
+    // Add keyboard event listener
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowRight") {
+        nextButton.click();
+      } else if (event.key === "ArrowLeft") {
+        prevButton.click();
+      }
+    });
+    
   
     // Initially show the first slide
     showSlide(currentIndex);
@@ -328,10 +338,6 @@ const editor = new Quill('#editor', {
 });
 document.getElementById('editor').style.height = '120px';
 
-tippy("[data-tippy-content]", {
-  placement: "top",
-  theme: "light",
-});
 
 // *****   Complete Frontend Thread Related  *******
 
@@ -423,16 +429,25 @@ document.addEventListener('DOMContentLoaded', () => {
     let data = await response.json()
     if(data.sent) {
       document.querySelector('#editor').removeAttribute('data-disabled') 
-      Swal.fire(toastData('success', "Feedback delivered with care!", 2000))
+      Swal.fire(toastData('success', "Feedback sent", 2000))
       editor.root.innerHTML = ''; // reseting toast ui editor content
       adjustThreadLineHeights();
     } else {
-      Swal.fire(toastData('error', "Yikes! Try again later.", 3000))
+      Swal.fire(toastData('error', "Sorry, couldn't send message", 3000))
     }
 
   };
 
   cmntBtn.addEventListener("click", postMainComment);
+
+  document.addEventListener("keydown", function (event) {
+      if (event.ctrlKey && event.key === "Enter") {
+          event.preventDefault(); // Prevents unintended behavior
+          postMainComment(event); // Pass event object
+      }
+  });
+  
+
 
   // Function to setup thread reply listeners
 
@@ -479,48 +494,67 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       // Handle posting replies
-      if (event.target.closest('.thread__cmnt-btn')) {
-        const textarea = event.target.closest('.thread-editor-container').querySelector('.thread-editor');
-        const replyContent = document.querySelector('#mentioneduser').innerHTML + " " + textarea.value.trim();
-
-        if (!textarea.value.trim() || textarea.getAttribute('data-disabled')) return; // Prevents posting empty replies
-        
-        textarea.setAttribute('data-disabled', 'true')
-        const threadSection = event.target.closest('.thread-section');
-
-        manageNotes.addReply(threadSection, {
-          createdAt: new Date(),
-          feedbackContents: '',
-          commenterDocID: {
-            profile_pic: '__profile_pic__',
-            username: '__username__',
-            displayname: 'User'
-          },
-          temporary: true
-        })
-        
-        const parentFeedbackDocID = threadSection.previousElementSibling.querySelector('.reply-info #parentFeedbackDocID').innerHTML
-        const replyData = new FormData()
-        replyData.append('noteDocID', noteDocID)
-        replyData.append('commenterStudentID', commenterStudentID)
-        replyData.append('replyContent', replyContent)
-        replyData.append('parentFeedbackDocID', parentFeedbackDocID)
-        replyData.append('reply', true)
-
-        let response = await fetch(`/view/${noteDocID}/postFeedback`, {
-          body: replyData,
-          method: 'post'
-        })
-        let data = await response.json()
-        if (data.sent) {
-          textarea.removeAttribute('data-disabled')
-          adjustThreadLineHeights(); // Adjust thread height again
-          textarea.value = '';
-        } else {
-          Swal.fire(toastData('error', "Yikes! Try again later.", 3000))    
+      document.addEventListener("keydown", async function (event) {
+        const activeElement = document.activeElement;
+    
+        // Check if the focused element is inside a thread editor container
+        if (activeElement && activeElement.classList.contains("thread-editor")) {
+            if (event.ctrlKey && event.key === "Enter") {
+                event.preventDefault(); // Prevent unintended behavior
+    
+                const threadContainer = activeElement.closest('.thread-editor-container');
+                if (!threadContainer) return; // Ensure it's inside a valid container
+    
+                const textarea = threadContainer.querySelector('.thread-editor');
+                const replyContent = document.querySelector('#mentioneduser').innerHTML + " " + textarea.value.trim();
+    
+                if (!textarea.value.trim() || textarea.getAttribute('data-disabled')) return; // Prevent empty replies
+    
+                textarea.setAttribute('data-disabled', 'true');
+                const threadSection = threadContainer.closest('.thread-section');
+    
+                manageNotes.addReply(threadSection, {
+                    createdAt: new Date(),
+                    feedbackContents: '',
+                    commenterDocID: {
+                        profile_pic: '__profile_pic__',
+                        username: '__username__',
+                        displayname: 'User'
+                    },
+                    temporary: true
+                });
+    
+                const parentFeedbackDocID = threadSection.previousElementSibling.querySelector('.reply-info #parentFeedbackDocID').innerHTML;
+                const replyData = new FormData();
+                replyData.append('noteDocID', noteDocID);
+                replyData.append('commenterStudentID', commenterStudentID);
+                replyData.append('replyContent', replyContent);
+                replyData.append('parentFeedbackDocID', parentFeedbackDocID);
+                replyData.append('reply', true);
+    
+                let response = await fetch(`/view/${noteDocID}/postFeedback`, {
+                    body: replyData,
+                    method: 'post'
+                });
+    
+                let data = await response.json();
+                if (data.sent) {
+                    textarea.removeAttribute('data-disabled');
+                    adjustThreadLineHeights(); // Adjust thread height again
+                    textarea.value = '';
+                } else {
+                    Swal.fire(toastData('error', "Sorry, couldn't send the message", 3000));
+                }
+    
+                // === Clear the Main Quill Editor ===
+                const mainEditor = document.querySelector('.ql-editor'); // Find the main Quill editor
+                if (mainEditor) {
+                    mainEditor.innerHTML = ''; // Clear the content
+                }
+            }
         }
-
-      }
+    });
+    
     });
   };
 
