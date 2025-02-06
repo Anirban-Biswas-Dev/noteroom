@@ -35,7 +35,7 @@ export function NotificationSender(io: Server, globals?: any) {
                     title: notification_db.title,
                     content: notification_db.content,
                     redirectTo: redirectTo,
-                    isread: "false",
+                    isRead: "false",
                     createdAt: notification_document["createdAt"],
                     fromUserSudentDocID: !fromUserSudentDocID ? null : notification_document["fromUserSudentDocID"]
                 }

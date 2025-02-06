@@ -40,7 +40,8 @@ function readNoti(noti) {
             noti.querySelector('.noti__sc--second-row-noti-info span:last-child').classList.replace('secondary-false', 'secondary-true')
 
             let notification = await db['notifications'].where('notiID').equals(notiID).first()
-            notification["isread"] = true
+            console.log(notification)
+            notification["isRead"] = true
             await db["notifications"].put(notification)
 
             conSock.emit('read-noti', notiID)
@@ -95,18 +96,23 @@ function truncatedTitle(title) {
 
 
 const db = new Dexie("Notes")
-db.version(9).stores({
+const dbVersion = 13
+
+db.version(dbVersion).stores({
     savedNotes: "++id,noteID,noteTitle,noteThumbnail",
     ownedNotes: "++id,noteID,noteTitle,noteThumbnail",
-    notifications: "++id,notiID,content,fromUserSudentDocID,redirectTo,isread,createdAt"
+    notifications: "++id,notiID,content,fromUserSudentDocID,redirectTo,isRead,createdAt,notiType"
 })
 db.on('versionchange', async (event) => {
+    console.log(`Changed the version to ${dbVersion}`)
     try {
-        if (event.oldVersion < 9) {
+        if (event.oldVersion < dbVersion) {
             await db.delete()
             await db.open()
         }
-    } catch (error) { }
+    } catch (error) { 
+        console.log(`Error: ${error}`)
+    }
 })
 db.open().then(() => {
     console.log(`indexedDB is initialized`)
@@ -133,11 +139,12 @@ const manageDb = {
                     content: obj.content,
                     fromUserSudentDocID: obj.fromUserSudentDocID,
                     redirectTo: obj.redirectTo,
-                    isread: obj.isRead,
-                    createdAt: obj.createdAt
+                    isRead: obj.isRead,
+                    createdAt: obj.createdAt,
+                    notiType: obj.notiType
                 })
             } else {
-                existingNoti["isread"] = obj.isRead
+                existingNoti = Object.assign(existingNoti, obj)
                 await db[store].put(existingNoti)
             }
         }
@@ -673,20 +680,33 @@ const manageNotes = {
             let isInteraction = notiData.fromUserSudentDocID ? true : false;
             let notificationHtml = `
                 <div class="notification" id="noti-${notiData.notiID}" onclick='readNoti(this.querySelector(".noti__sec-col--msg-wrapper"))'>
+                    <div class="noti__first-col--img-wrapper">
                     ${isInteraction ? `
-                        <div class="noti__first-col--img-wrapper">
-                            <img src="${notiData.fromUserSudentDocID.profile_pic}" alt="notification" class="noti__source-user-img">
-                        </div>` : ''}
-                    <div class="noti__sec-col--msg-wrapper" data-redirectTo='${notiData.redirectTo}' data-notiID='${notiData.notiID}' data-isread='${notiData.isread}'>
+                        <img src="${notiData.fromUserSudentDocID.profile_pic}" alt="notification" class="noti__source-user-img">
+                        ` : `
+                        <svg width="40" height="41" viewBox="0 0 40 41" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M34.7333 8.18296C33.8821 7.3313 32.8714 6.6557 31.7589 6.19476C30.6465 5.73383 29.4541 5.49658 28.25 5.49658C27.0459 5.49658 25.8535 5.73383 24.7411 6.19476C23.6286 6.6557 22.6179 7.3313 21.7667 8.18296L20 9.94963L18.2333 8.18296C16.5138 6.46347 14.1817 5.49747 11.75 5.49747C9.31827 5.49747 6.98615 6.46347 5.26666 8.18296C3.54717 9.90245 2.58118 12.2346 2.58118 14.6663C2.58118 17.098 3.54717 19.4301 5.26666 21.1496L20 35.883L34.7333 21.1496C35.585 20.2984 36.2606 19.2876 36.7215 18.1752C37.1825 17.0628 37.4197 15.8704 37.4197 14.6663C37.4197 13.4621 37.1825 12.2698 36.7215 11.1574C36.2606 10.0449 35.585 9.03422 34.7333 8.18296Z" fill="url(#paint0_linear_4451_1899)"/>
+                            <defs>
+                            <linearGradient id="paint0_linear_4451_1899" x1="-60.478" y1="-14.7157" x2="19.9995" y2="52.3183" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#04DBF7"/>
+                            <stop offset="1" stop-color="#FF0000"/>
+                            </linearGradient>
+                            </defs>
+                        </svg>
+                        `
+                    }
+                    </div>
+
+                    <div class="noti__sec-col--msg-wrapper" data-redirectTo='${notiData.redirectTo}' data-notiID='${notiData.notiID}' data-isread='${notiData.isRead}'>
                         <div class="noti__sc--first-row-msg">
-                            <p class="noti-msg secondary-${notiData.isread}">
+                            <p class="noti-msg secondary-${notiData.isRead}">
                                 ${isInteraction ? `<span class="noti-source-user-name">${notiData.fromUserSudentDocID.displayname}</span>` : ''}
                                 ${notiData.content}
                             </p>
                         </div>
                         <div class="noti__sc--second-row-noti-info">
-                            <span class="isRead ${notiData.isread}"></span>
-                            <span class="noti-time secondary-${notiData.isread}">${this.formatDate(notiData.createdAt)}</span>
+                            <span class="isRead ${notiData.isRead}"></span>
+                            <span class="noti-time secondary-${notiData.isRead}">${this.formatDate(notiData.createdAt)}</span>
                         </div>
                     </div>
                 </div>`;
@@ -697,15 +717,20 @@ const manageNotes = {
     addProfile: function (student, container) {
         let profileContainer = document.querySelector(`.${container}`);
         let existingUser = profileContainer.querySelector(`#user-${student.username}-results-prfls`)
+        const randomProfileLoader = document.querySelector('.profile-loader-random')
 
         if (!existingUser) {
             let profileCard = `
-                <div class="results-prfl" id="user-${student.username}-${container}">
+                <div class="results-prfl" id="user-${student.username}-${container}" data-username="${student.username}">
                     <img src="${student.profile_pic}" alt="Profile Pic" class="prfl-pic">
                     <span class="prfl-name" onclick="window.location.href = '/user/${student.username}'">${student.displayname}</span>
                     <span class="prfl-desc">${truncatedTitle(student.bio)}</span>
                 </div>`
             profileContainer.insertAdjacentHTML('beforeend', profileCard);
+
+            if (container === "random-prfls") {
+                profileContainer.appendChild(randomProfileLoader)
+            }
         }
     },
 

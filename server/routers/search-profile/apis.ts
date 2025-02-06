@@ -8,7 +8,8 @@ export function searchProfileApiRouter(io: Server) {
     router.get('/random', async (req, res, next) => {
         try {
             let count = parseInt(req.query.count as string) || 5
-            let students = await SearchProfile.getRandomStudent(count)
+            let exclude = JSON.parse(req.query.exclude ? <string>req.query.exclude : '[]')
+            let students = await SearchProfile.getRandomStudent(count, exclude)
             res.json(students)
         } catch (error) {
             res.json([])

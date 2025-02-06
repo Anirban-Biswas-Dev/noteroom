@@ -2,7 +2,7 @@ window.addEventListener('load', async () => {
     async function fetchRandomProfiles() {
         let response = await fetch('/search-profile/student/random')
         let profiles = await response.json()
-        document.querySelector('.profile-loader-random').remove()      
+        document.querySelector('.profile-loader-random').style.display = 'none'      
         profiles.forEach(profile => addProfile(profile, 'random-prfls'))
     }
 
@@ -25,10 +25,27 @@ function addProfile(student, random) {
     manageNotes.addProfile(student, random)
 }
 
-function deleteProfile(studentDocID) {
-    let profile = document.querySelector(`#random-${studentDocID}`)
-    profile.remove()
-}
+document.querySelector('#load-more-random-profiles-btn').addEventListener('click', async function(event) {
+    if (event.target.getAttribute('data-disabled')) return
+    
+    const randomProfileLoader = document.querySelector('.profile-loader-random')
+    randomProfileLoader.style.display = 'block'
+    event.target.setAttribute('data-disabled', true)
+
+    let prevProfiles = document.querySelector('.random-prfls').querySelectorAll('.results-prfl')
+    let prevPrflsUsernames = []
+    for (const profile of prevProfiles) {
+        prevPrflsUsernames.push(profile.getAttribute('data-username'))
+    }
+    let response = await fetch(`/search-profile/student/random?exclude=${JSON.stringify(prevPrflsUsernames)}&count=3`)
+    let profiles = await response.json()
+    if (profiles.length !== 0) {
+        profiles.forEach(profile => addProfile(profile, 'random-prfls'))
+    }
+
+    randomProfileLoader.style.display = 'none'
+    event.target.removeAttribute('data-disabled')
+})
 
 
 

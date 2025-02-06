@@ -140,6 +140,47 @@ export async function getAllNotes(studentDocID: string, options?: any) {
         M = 2 ^ 32
         X_n = seed
     */
+    // let notes = await Notes.aggregate([
+    //     { $match: { completed: { $eq: true } } },
+    //     { $lookup: {
+    //         from: 'students',
+    //         localField: 'ownerDocID',
+    //         foreignField: '_id',
+    //         as: 'ownerDocID'
+    //     } },
+    //     { $addFields: {
+    //         A: { $add: [ "$feedbackCount", 1234567 ] },
+    //         C: { $add: [
+    //             { $multiply: [{ $add: [ "$upvoteCount", 10 ] }, 9876543] },
+    //             { $multiply: [{ $add: [{ $size: "$content" }, 1] }, 22695477] }
+    //         ]}
+    //     } },
+    //     { $addFields: {
+    //         randomSort: { 
+    //             $mod: [
+    //                 { $add: [{ $multiply: ["$A", parseInt(options.seed)] }, "$C"] },
+    //                 Math.pow(2, 32)
+    //             ] 
+    //         }
+    //     } },
+    //     { $unwind: {
+    //         path: '$ownerDocID',
+    //     } },
+    //     { $project: {
+    //         title: 1, description: 1,  
+    //         feedbackCount: 1, upvoteCount: 1, 
+    //         postType: 1, content: 1, randomSort: 1,
+    //         createdAt: 1,
+    //         "ownerDocID._id": 1,
+    //         "ownerDocID.profile_pic": 1,
+    //         "ownerDocID.displayname": 1,
+    //         "ownerDocID.studentID": 1,
+    //         "ownerDocID.username": 1
+    //     } },
+    //     { $sort: { randomSort: 1 } },
+    //     { $skip: parseInt(options.skip) },
+    //     { $limit: parseInt(options.limit) }
+    // ])
     let notes = await Notes.aggregate([
         { $match: { completed: { $eq: true } } },
         { $lookup: {
@@ -148,28 +189,13 @@ export async function getAllNotes(studentDocID: string, options?: any) {
             foreignField: '_id',
             as: 'ownerDocID'
         } },
-        { $addFields: {
-            A: { $add: [ "$feedbackCount", 1234567 ] },
-            C: { $add: [
-                { $multiply: [{ $add: [ "$upvoteCount", 10 ] }, 9876543] },
-                { $multiply: [{ $add: [{ $size: "$content" }, 1] }, 22695477] }
-            ]}
-        } },
-        { $addFields: {
-            randomSort: { 
-                $mod: [
-                    { $add: [{ $multiply: ["$A", parseInt(options.seed)] }, "$C"] },
-                    Math.pow(2, 32)
-                ] 
-            }
-        } },
         { $unwind: {
             path: '$ownerDocID',
         } },
         { $project: {
             title: 1, description: 1,  
             feedbackCount: 1, upvoteCount: 1, 
-            postType: 1, content: 1, randomSort: 1,
+            postType: 1, content: 1,
             createdAt: 1,
             "ownerDocID._id": 1,
             "ownerDocID.profile_pic": 1,
@@ -177,10 +203,10 @@ export async function getAllNotes(studentDocID: string, options?: any) {
             "ownerDocID.studentID": 1,
             "ownerDocID.username": 1
         } },
-        { $sort: { randomSort: 1 } },
-        { $skip: parseInt(options.skip) },
-        { $limit: parseInt(options.limit) }
-    ])
+        { $skip: parseInt(options.skip || "0") },
+        { $limit: parseInt(options.limit || "3") },
+        { $sort: { createdAt: 1 } }
+    ])    
     
     let extentedNotes = await Promise.all(
         notes.map(async (note: any) => {

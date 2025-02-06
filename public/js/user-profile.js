@@ -70,7 +70,6 @@ let observer = new IntersectionObserver(entries => {
     entries.forEach(async entry => {
         if (entry.isIntersecting) {
             let username = document.querySelector('#ownedNotes').getAttribute('data-username')
-            console.log(username)
             let response = await fetch(`/api/note?noteType=owned&username=${username}`)
             let notes = await response.json()
             if (notes.length !== 0) {

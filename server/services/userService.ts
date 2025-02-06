@@ -41,13 +41,17 @@ export const Convert = {
 
 
 export const SearchProfile = {
-    async getRandomStudent(sampleSize: number) {
-        let students = await Students.aggregate([
-            { $match: { visibility: "public" } },
-            { $sample: { size: sampleSize } },
-            { $project: { profile_pic: 1, displayname: 1, bio: 1, username: 1, _id: 0 } }
-        ])
-        return students
+    async getRandomStudent(sampleSize: number, exclude?: string[]) {
+        try {
+            let students = await Students.aggregate([
+                { $match: { visibility: "public", username: { $nin: exclude } } },
+                { $sample: { size: sampleSize } },
+                { $project: { profile_pic: 1, displayname: 1, bio: 1, username: 1, _id: 0 } }
+            ])
+            return students
+        } catch (error) {
+            return []
+        }
     },
 
     async getMutualCollegeStudents(studentDocID: string) {
