@@ -23,30 +23,64 @@
     
     <div class="middle-section">
     <div class="ms-first-row">
-        <img class="user-prfl-pic" src="<%= student.profile_pic %>" alt="Profile Picture">
-        <div class="info-items-1">
+        <div class="user-prfl-pic-wrapper">
+            <img class="user-prfl-pic" src="<%= student.profile_pic %>" alt="Profile Picture">
+        </div>
+        <div class="info-items">
             <!-- We'll update the frontend js codes for these element soon -->
             <span class="display-name"><%= student.displayname %></span>
             <!-- for this non-editable data, basic data fetch will do or even DOM -->
             <div class="user-group"><%= student.group %></div>
-            <!-- fetching exam rank needs to be discussed -->
-            <!-- <div class="exam-ranking">Previous Exam Ranking: No Exams Yet</div> -->
-        </div>
-        <div class="divider"></div>
-        <div class="user-gains">
-            <!-- this is another core feature we need to develop -->
-            <div class="badge">
-                <img class="badge-logo" src"dynamic">
-                <!-- The badge-logo will be dynamically added; see public/js/user-profile.js -->
-                <div class="top-voice-badge"><%= student.badge %></div>
-            </div>
-            <% let featuredNotesCount = student.featured_notes.length %>
+            <div class="user-gains">    
+                <div class="badge">
+                    <img class="badge-logo" src"dynamic">
+                    <div class="top-voice-badge"><%= student.badge %></div>
+                </div>
+                <% let featuredNotesCount = student.featured_notes.length %>
             <% if (featuredNotesCount) { %>
-                <div class="featured-note">Featured notes count: <%= featuredNotesCount %></div>
+                <div class="featured-note">
+                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                        <rect x="0.5" y="0.365234" width="39.0075" height="39.0075" fill="url(#pattern0_4312_5887)"/>
+                        <defs>
+                        <pattern id="pattern0_4312_5887" patternContentUnits="objectBoundingBox" width="1" height="1">
+                        <use xlink:href="#image0_4312_5887" transform="scale(0.01)"/>
+                        </pattern>
+                        <image id="image0_4312_5887" width="100" height="100" xlink:href="data:image/png;base64,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"/>
+                        </defs>
+                        </svg>                        
+                    Featured Notes <span class="featured-notes-count"><%= featuredNotesCount %></span></div>
             <% } else { %>
-                <div class="no featured-note">No notes to be featured</div>
+                <div class="no featured-note">
+                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                        <rect x="0.5" y="0.365234" width="39.0075" height="39.0075" fill="url(#pattern0_4312_5887)"/>
+                        <defs>
+                        <pattern id="pattern0_4312_5887" patternContentUnits="objectBoundingBox" width="1" height="1">
+                        <use xlink:href="#image0_4312_5887" transform="scale(0.01)"/>
+                        </pattern>
+                        <image id="image0_4312_5887" width="100" height="100" xlink:href="data:image/png;base64,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"/>
+                        </defs>
+                        </svg>
+                        
+                    No featured notes</div>
             <% } %>
+            </div>
         </div>
+        <div class="user-profile-interaction-container">
+            <button class="user-profile-request-btn">
+                Request
+            </button>
+            <svg data-tippy-content="Share" class="share-user-profile" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                <rect width="27.9032" height="27.9032" fill="url(#pattern0_4312_5925)"/>
+                <defs>
+                <pattern id="pattern0_4312_5925" patternContentUnits="objectBoundingBox" width="1" height="1">
+                <use xlink:href="#image0_4312_5925" transform="scale(0.01)"/>
+                </pattern>
+                <image id="image0_4312_5925" width="100" height="100" xlink:href="data:image/png;base64,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"/>
+                </defs>
+                </svg>
+                
+        </div>
+
     </div>
     
     <div class="ms-personal-info-container">
@@ -141,5 +175,6 @@
     <script src="/js/onboarding-data.js"></script>
     <script src="/js/controller.js"></script> 
     <script src="/js/user-profile.js"></script> 
+    <script src="/js/utils.js"></script> 
 </body>
 </html>
