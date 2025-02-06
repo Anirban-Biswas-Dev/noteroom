@@ -52,18 +52,9 @@ let collegeID = document.querySelector('.user-clg').getAttribute('data-collegeid
 let collegeName = document.querySelector('#college-name')
 let collegeLogo = document.querySelector('.user-clg--img')
 
-if (!Number.isNaN(parseInt(collegeID))) {
-    let collegeDistrict = Object.keys(districtCollegeData)[parseInt(collegeID / 100) - 1]
-    let collegeObject = districtCollegeData[collegeDistrict].filter(data => data.id == parseInt(collegeID))[0]
-    
-    collegeName.innerHTML = collegeObject.name
-    collegeLogo.src = `\\images\\onboarding-assets\\College-logos\\${collegeObject.logo}`
-
-} else {
-    collegeName.innerHTML = collegeID    
-    collegeLogo.src = `\\images\\onboarding-assets\\College-logos\\college-placeholder.png`
-}
-
+let collegeData = getCollegeFromID(collegeID)
+collegeName.innerHTML = collegeData.name
+collegeLogo.src = `\\images\\onboarding-assets\\College-logos\\${collegeData.logo}`
 
 
 let observer = new IntersectionObserver(entries => {

@@ -9,6 +9,16 @@ let imageObject = {
     'English': `${baseURL}english.png`
 }
 
+function getCollegeFromID(collegeID) {
+    if (!Number.isNaN(parseInt(collegeID))) {
+        let collegeDistrict = Object.keys(districtCollegeData)[parseInt(collegeID / 100) - 1]
+        let collegeObject = districtCollegeData[collegeDistrict].filter(data => data.id == parseInt(collegeID))[0]
+        return collegeObject
+    } else {
+        return { name: collegeID, logo: 'college-placeholder.png' }
+    }
+}
+
 let savedNoteObserver = new MutationObserver(entries => {
     let entry = entries[0]
     if (entry.addedNodes.length > 0) {
@@ -715,10 +725,34 @@ const manageNotes = {
     },
 
     addProfile: function (student, container) {
-        let profileContainer = document.querySelector(`.${container}`);
+        const containerClass = {
+            random: '.random-prfls',
+            mtcCollege: '.mtc-prfls',
+            searched: '.results-prfls'
+        }
+
+        let profileContainer = document.querySelector(containerClass[container]);
         let existingUser = profileContainer.querySelector(`#user-${student.username}-results-prfls`)
         const randomProfileLoader = document.querySelector('.profile-loader-random')
 
+        /* 
+        This is the college name and logo. you can use them directly now, for logo I am just fetching the name of the image. use the full url given below. 
+
+        => Logo Url: `\\images\\onboarding-assets\\College-logos\\${logo}`         * just copy and paste it accordingly, the two-slashes are important here. so don't remove them.
+
+        Problems:
+            Some students have a collegeID==null cause they are not onboarded. So I can't get their college name (but their logo is the general placeholder one). 
+            If you have a solution for that, do that and ask me anything related to that.
+
+        Development:
+            This template below is used for adding mutual college students, random students and searched students (3 kinds). their class and id changes according to that kind. 
+            So if you want to add a specific feature to a specific kind of student card, use trinary logics (condition ? true-action : false-action) along with dynamic templates, 
+            that will be a bit complex but minimal and less DRY.
+        */
+
+        const {name, logo} = getCollegeFromID(student.collegeID)
+        console.log([name, logo])
+        
         if (!existingUser) {
             let profileCard = `
                 <div class="results-prfl" id="user-${student.username}-${container}" data-username="${student.username}">
@@ -728,7 +762,7 @@ const manageNotes = {
                 </div>`
             profileContainer.insertAdjacentHTML('beforeend', profileCard);
 
-            if (container === "random-prfls") {
+            if (container === "random") {
                 profileContainer.appendChild(randomProfileLoader)
             }
         }

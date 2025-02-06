@@ -46,7 +46,7 @@ export const SearchProfile = {
             let students = await Students.aggregate([
                 { $match: { visibility: "public", username: { $nin: exclude } } },
                 { $sample: { size: sampleSize } },
-                { $project: { profile_pic: 1, displayname: 1, bio: 1, username: 1, _id: 0 } }
+                { $project: { profile_pic: 1, displayname: 1, bio: 1, username: 1, _id: 0, collegeID: 1 } }
             ])
             return students
         } catch (error) {
@@ -56,7 +56,7 @@ export const SearchProfile = {
 
     async getMutualCollegeStudents(studentDocID: string) {
         let collegeID = (await Students.findOne({ _id: studentDocID }, { collegeID: 1 }))["collegeID"]
-        let students = await Students.find({ collegeID: collegeID, visibility: "public", _id: { $ne: studentDocID } }, { profile_pic: 1, displayname: 1, bio: 1, username: 1, _id: 0 })
+        let students = await Students.find({ collegeID: collegeID, visibility: "public", _id: { $ne: studentDocID } }, { profile_pic: 1, displayname: 1, bio: 1, username: 1, _id: 0, collegeID: 1 })
         return students
     },
 

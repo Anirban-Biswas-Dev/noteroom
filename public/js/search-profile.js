@@ -3,7 +3,7 @@ window.addEventListener('load', async () => {
         let response = await fetch('/search-profile/student/random')
         let profiles = await response.json()
         document.querySelector('.profile-loader-random').style.display = 'none'      
-        profiles.forEach(profile => addProfile(profile, 'random-prfls'))
+        profiles.forEach(profile => addProfile(profile, 'random'))
     }
 
     async function fetchMutualProfiles() {
@@ -13,7 +13,7 @@ window.addEventListener('load', async () => {
         if (profiles.length === 0) {
             document.querySelector('.mtc-prfls-container').style.display = 'none'
         } else {
-            profiles.forEach(profile => addProfile(profile, 'mtc-prfls'))
+            profiles.forEach(profile => addProfile(profile, 'mtcCollege'))
         }
     }
 
@@ -40,7 +40,7 @@ document.querySelector('#load-more-random-profiles-btn').addEventListener('click
     let response = await fetch(`/search-profile/student/random?exclude=${JSON.stringify(prevPrflsUsernames)}&count=3`)
     let profiles = await response.json()
     if (profiles.length !== 0) {
-        profiles.forEach(profile => addProfile(profile, 'random-prfls'))
+        profiles.forEach(profile => addProfile(profile, 'random'))
     }
 
     randomProfileLoader.style.display = 'none'
@@ -75,7 +75,7 @@ async function search() {
                 profileStatus.style.display = 'none'
 
                 students.forEach(student => {
-                    addProfile(student, 'results-prfls') 
+                    addProfile(student, 'searched') 
                 })
             } else {
                 profileStatus.style.display = 'block'
