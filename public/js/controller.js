@@ -731,6 +731,7 @@ const manageNotes = {
                     <img
                         src="${feedbackData.commenterDocID.profile_pic}"
                         alt="User Avatar"
+                        onclick="location.href=/user/'${feedbackData.commenterDocID.username}'"
                         class="main__cmnt-author-img cmnt-author-img"
                     />
                 ` : ''}
@@ -851,8 +852,10 @@ const manageNotes = {
         let commentsContainer = document.querySelector('.cmnts-list')
 
         let template = `
-			<div class="main__author-threadline-wrapper">
-				<img src="${feedback[0].commenterDocID.profile_pic}" alt="User Avatar" class="main__cmnt-author-img cmnt-author-img" />
+			<div class="main__author-threadline-wrapper" onclick="location.href=/user/${feedback[0].commenterDocID.username}" >
+				<img src="${feedback[0].commenterDocID.profile_pic}" 
+                onclick="location.href=/user/${feedback[0].commenterDocID.username}"
+                alt="User Avatar" class="main__cmnt-author-img cmnt-author-img" />
 				<div class="thread-line"></div>
 			</div>
 
