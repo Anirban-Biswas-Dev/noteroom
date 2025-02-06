@@ -256,7 +256,7 @@ const manageNotes = {
                                         <i class="fas fa-ellipsis-v" aria-hidden="true"></i>
                                     </button>
                                     <div class="menu-options">
-                                        <div class="option" onclick="setupShareModal('${note.noteID}', true)">
+                                        <div class="option" onclick="setupShareModal(this, true)" data-noteid="${note.noteID}">
                                             <svg
                                                 class="share-icon"
                                                 width="40"
@@ -466,8 +466,7 @@ const manageNotes = {
                                             </svg>
                                             <span class="opt-label">Download</span>
                                         </div>
-                                        <div class="option" onclick="setupShareModal(window.location.pathname)"
-                                            >
+                                        <div class="option" onclick="setupShareModal(this)" data-noteid="${note.noteID}" data-notetitle="${note.noteTitle}">
                                             <svg
                                             class="share-icon"
                                             width="40"
@@ -992,17 +991,15 @@ function finish() {
 
 
 
-/* 
-* Share Model: Dashboard + Note View
-# Funtions:
-    => copy: copies the url of the note (copyLink)
-    => share: shares the note in fb or whatsapp (share)
-        # process
-    ~       when fb/wp is clicked, the platform is also sent, the link from the _link_ element is grabed (1) and based on 
-    ~       the platform a share link is created and a new window is opened to share the link. (2)
-*/
+
 const linkElement = document.querySelector('._link_');
-function setupShareModal(location, isPost = false) {
+let noteTitle = undefined
+function setupShareModal(container, isPost = false) {
+    let noteID = container.getAttribute('data-noteid')
+    if (!isPost) {
+        noteTitle = container.getAttribute('data-notetitle')
+    }
+
     const shareNoteModal = document.querySelector('.share-note-overlay');
     const closeNoteModalBtn = document.querySelector('.close-share-note-modal');
 
@@ -1013,7 +1010,7 @@ function setupShareModal(location, isPost = false) {
 
     // Open the modal and populate the link (immediate execution)
     shareNoteModal.style.display = 'flex';
-    linkElement.innerHTML = !isPost ? `${window.location.origin}view/${location}` : `${window.location.origin}/view/quick-post/${location}`;
+    linkElement.innerHTML = !isPost ? `${window.location.origin}/view/${noteID}` : `${window.location.origin}/view/quick-post/${noteID}`;
     requestAnimationFrame(() => {
         shareNoteModal.classList.add('visible');
     });
@@ -1052,18 +1049,20 @@ function copyLink() {
 }
 function share(platform) {
     const linkElement = document.querySelector('._link_').innerHTML; // 1
+    let partial = noteTitle ? `note "${noteTitle}"` : 'post'
+
     let messages = [
-        `Check out this note on NoteRoom: ${linkElement}`,
-        `Explore this amazing note on NoteRoom: ${linkElement}`,
-        `Take a look at this note I found on NoteRoom: ${linkElement}`,
-        `Don't miss this note on NoteRoom! Check it out here: ${linkElement}`,
-        `Here's something worth reading on NoteRoom: ${linkElement}`,
-        `Check out this awesome note on NoteRoom: ${linkElement}`,
-        `I came across this great note on NoteRoom, have a look: ${linkElement}`,
-        `Found something interesting on NoteRoom! See it here: ${linkElement}`,
-        `This note on NoteRoom is worth your time: ${linkElement}`,
-        `Take a moment to check out this note on NoteRoom: ${linkElement}`,
-        `Here's a note you'll find interesting on NoteRoom: ${linkElement}`
+        `Check out this ${partial} on NoteRoom: ${linkElement}`,
+        `Explore this amazing ${partial} on NoteRoom: ${linkElement}`,
+        `Take a look at this ${partial} I found on NoteRoom: ${linkElement}`,
+        `Don't miss this ${partial} on NoteRoom! Check it out here: ${linkElement}`,
+        `Here's something worth reading "${noteTitle}" on NoteRoom: ${linkElement}`,
+        `Check out this awesome ${partial} on NoteRoom: ${linkElement}`,
+        `I came across this great ${partial} on NoteRoom, have a look: ${linkElement}`,
+        `Found something interesting ${partial} on NoteRoom! See it here: ${linkElement}`,
+        `This ${partial} on NoteRoom is worth your time: ${linkElement}`,
+        `Take a moment to check out this ${partial} on NoteRoom: ${linkElement}`,
+        `Here's a ${partial} you'll find interesting on NoteRoom: ${linkElement}`
     ]
 
     switch (platform) {

@@ -51,7 +51,7 @@
     id="upvote-container"
     data-isupvoted="<%- note.isUpvoted %>"
     data-noteid="<%= note._id %>"
-    onclick="upvote(this, true)"
+    onclick="upvote(this)"
   >
     <svg
       class="uv-icon"
@@ -111,10 +111,14 @@
       />
     </svg>
   <% } %>
-  <svg class="share-icon"
-  onclick="setupShareModal(window.location.pathname)" 
-  width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M28.0003 15.2775L15.2003 6.79883L15.2003 11.5988C4 13.9988 4 25.1988 4 25.1988C4 25.1988 8.8 18.7988 15.2003 19.5988L15.2003 24.5588L28.0003 15.2775Z" stroke="black" stroke-linejoin="round"/>
+    <svg 
+      class="share-icon"
+      data-noteid="<%= note._id %>"
+      data-notetitle="<%= note.title %>"
+      onclick="setupShareModal(this)" 
+      width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M28.0003 15.2775L15.2003 6.79883L15.2003 11.5988C4 13.9988 4 25.1988 4 25.1988C4 25.1988 8.8 18.7988 15.2003 19.5988L15.2003 24.5588L28.0003 15.2775Z" stroke="black" stroke-linejoin="round"/>
     </svg>
     
 </div>
