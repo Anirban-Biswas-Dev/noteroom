@@ -13,103 +13,139 @@
 /* Middle Section */
 .middle-section {
     padding-top: 125px;
+    padding-bottom: 125px;
 }
   
 /* First Row */
 .ms-first-row {
     width: 100%;
     display: flex;
-    overflow: hidden;
-    justify-content: space-evenly;
+    justify-content: flex-start;
     align-items: center;
+    max-width: 900px;
+    gap: 10px;
+}
+
+.user-prfl-pic-wrapper{
+    width: fit-content;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: flex-start;
 }
 
 .user-prfl-pic {
-    box-sizing: border-box;
-    width: 125px;
-    height: 125px;
-    border: 1px solid #000000;
+    width: 100px;
+    height: 100px;
     border-radius: 50%;
-    margin-left: 5vw;
     object-fit: cover;
     aspect-ratio: 1 / 1;
 }
 
 /* Information Items */
-.info-items-1 {
-    width: 30%;
+.info-items {
+    width: 60%;
     min-width: fit-content;
-    padding: 1vw 1vw;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    gap: 8px;
+    padding: 10px;
 }
 
 .display-name {
+    width: 100%;
+    font-weight: 450;
     font-size: 1.2rem;
-    font-weight: 600;
+    line-height: 1.5;
 }
 
 .user-group {
-    width: 95%;
-    height: 35px;
-    background: linear-gradient(89.76deg, #07192D 0.19%, #FFFFFF 99.81%);
-    font-weight: 400;
-    font-size: 14px;
-    color: #FFFFFF;
-    text-align: center;
-    align-content: center;
-}
-
-.divider {
-    width: 5px;
-    min-width: 2px;
-    height: 15vh;
-    background: #07192D;
-    margin:5px 4% 0px 4%; 
+    width: 100%;
+    font-style: normal;
+    font-weight: 500;
+    font-size: .9rem;
+    text-transform: capitalize;
+    letter-spacing: -0.01em;
 }
 
 .user-gains {
-    width: 50%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 15px;
 }
 
 .badge {
-    width: 90%;
     display: flex;
     align-items: center;
+    gap: 10px;
 }
 
-.badge img {
-    box-sizing: border-box;
-    width: 80px;
-    height: 80px;
+.badge-logo {
+    width: 50px;
+    height: 50px;
     border: none;
-    margin: 0px;
     object-fit: contain;
 }
 
 .top-voice-badge, .no-badge {
-    width: 100%;
-    height: 40%;
-    align-content: center;
-    text-align: center;
-    font-size: 1.3rem;
-    padding:1.5vh 0px;
+    width: fit-content;
+    text-align: left;
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 16px;
+    letter-spacing: -0.02em;
 }
 
 /* Featured Note */
 .featured-note {
-    width: 100%;
-    height: 40px;
-    background: linear-gradient(90deg, #FDDD37 0%, #EDB015 53%, #FFFFFF 100%);
-    border-radius: 15px;
-    align-content: center;
-    padding-left: 10px;
-    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 16px;
+    letter-spacing: -0.02em;
 }
-
 .no {
     background: none;
+}
+.featured-notes-count{
+    background: #FEE819;
+    border-radius: 5px;
+    font-size: 1em;
+    padding: 2px 5px;
+
+}
+
+.user-profile-interaction-container{
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.user-profile-request-btn{
+    background: var(--squid-ink);
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 13px;
+    line-height: 14px;
+    padding: 12px 20px;
+    color: #FFFFFF;
+    cursor: pointer;
+    transition: background-color 0.1s ease;
+}
+
+.user-profile-request-btn:hover{
+    background-color: #11283f;
+}
+.user-profile-request-btn:active{
+    background-color: #000000;
+}
+
+.share-user-profile{
+    cursor: pointer;
 }
 
 /* User Personal Info Section */
@@ -254,60 +290,58 @@
 
 /* Individual Note Card */
 .note-card{
-    width: 100%; /* Fills the column width entirely */
-    max-width: 250px; /* Ensure the card doesn't grow too big */
-    height: auto; /* Let height adjust based on content */
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 15px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s, box-shadow 0.2s;
+    align-items: center;
+    background: #FFFFFF;
+    border-radius: 5px;
+    box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.15);
     cursor: pointer;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-}
-
-
-.note-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    gap: 2px;
+    height: auto; /* Let height adjust based on content */
+    max-width: 250px; /* Ensure the card doesn't grow too big */
+    width: 100%; /* Fills the column width entirely */
+    overflow: hidden;
 }
 
 .note-card img {
-    width: 100%; 
-    height: 180px; 
+    width: 100%;
+    height: 100%; 
     object-fit: cover; 
-    border-radius: 3px;
-    max-height: 180px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    max-height: 150px;
+    transition: filter 0.1s ease;
+}
+
+.note-card img:hover{
+    filter: brightness(.9);
 }
 
 .note-card h3 {
-    font-size: 18px;
-    margin-bottom: 10px;
+    width: 100%;
+    min-height: 49px;
+    height: 20%;
+    max-height: fit-content;
+    text-align: left;
+    font-weight: 400;
+    font-size: 1rem;
+    padding: 5px 10px;
+    line-height: 1.2;
 }
-
-.note-card p {
-    font-size: 14px;
-    color: #555;
-    padding-bottom: 10px;
+.note-card__tr{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 10px;
 }
-
-.note-card a {
-    display: block;
-    text-decoration: none;
-    transition: color 0.2s;
+.note-author-name{
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 1;
+    letter-spacing: -0.01em;
 }
-
-.note-card a:hover {
-    color: #04DBF7;
-}
-
-.note-card a:visited {
-    color: #07192D;
-}
-
 /* No Notes Content */
 .no-notes-content {
     display: flex;
@@ -388,30 +422,6 @@
     .display-name{
         font-size: .9rem;
     }
-    .info-items-1 {
-        padding: 1vw 2vw;
-    }
-    .user-group {
-        width: 90%;
-        height: 30px;
-        font-size: .8rem;
-    }
-    .divider{
-        display: none;
-    }
-    .badge img {
-        height: 15vw;
-        min-width: 40px;
-        min-height: 40px;
-    }
-    .top-voice-badge, .no-badge{
-        font-size: .8rem;
-        font-weight: 500;
-        padding:1vh 0px;
-    }
-    .featured-note {
-        font-size: .8rem;
-    }
     .ms-personal-info-container{
         width: 98%;
         padding: 5px;
@@ -468,37 +478,6 @@
     .display-name {
         font-size: 1rem; 
     }
-    .info-items-1 {
-        padding: 1.2vw 2.2vw; 
-    }
-    .user-group {
-        width: 92%; 
-        height: 35px; 
-        font-size: .9rem; 
-    }
-    .divider {
-        display: none;
-    }
-    .badge img {
-        height: 20vw;
-        width: 20vw;
-        min-width: 50px;
-        min-height: 50px;
-    }
-    .top-voice-badge, .no-badge {
-        font-size: .85rem; 
-        font-weight: 500;
-        padding: 1.2vh 0px; 
-    }
-    .featured-note {
-        font-size: .9rem; 
-    }
-
-    .ms-personal-info-container{
-        width: 98%;
-        padding: 8px;
-        gap: 12px;
-    }
     .user-clg--img{
         width: 30px;
         height: 30px;
@@ -547,31 +526,7 @@
     .display-name {
         font-size: 1.1rem; /* Increased font size */
     }
-    .info-items-1 {
-        padding: 1.5vw 2.5vw; /* Adjusted padding */
-    }
-    .user-group {
-        width: 95%; /* Increased width */
-        height: 40px; /* Taller group elements */
-        font-size: 1rem; /* Increased font size */
-    }
-    .divider {
-        display: none;
-    }
-    .badge img {
-        height: 19vw;
-        min-width: 50px;
-        min-height: 50px; /* Increased badge size */
-    }
-    .top-voice-badge, .no-badge {
-        font-size: 1rem; /* Slightly larger font */
-        font-weight: 500;
-        padding: 1.5vh 0px; /* Adjust padding */
-    }
-    .featured-note {
-        font-size: 1rem; /* Larger featured note text */
-    }
-    .input-label {
+       .input-label {
         font-size: 1rem; /* Increased input label font */
     }
     .toggle-header-uploaded-notes{

@@ -836,13 +836,26 @@ const manageNotes = {
 
         if (!existingNote) {
             let noteCard = `
-                <div class="note-card" id="${noteElementID}">
-                    <a href="/view/${noteData.noteID}">
-                        <h3>
-                            ${noteData.noteTitle > 30 ? noteData.noteTitle.slice(0, 30) : noteData.noteTitle}
-                        </h3>
-                        <img src='${noteData.noteThumbnail}' alt="No thumbnail?!">
-                    </a>
+                <div class="note-card" id="${noteElementID}" onclick="window.location.href='/view/${noteData.noteID}'" >
+                    <img class="profile-note-card-thumbnail" src='${noteData.noteThumbnail}' alt="Note Thumbnail">
+                    <h3>
+                        ${noteData.noteTitle > 30 ? noteData.noteTitle.slice(0, 30) : noteData.noteTitle}
+                    </h3>
+                    <div class="note-card__tr">
+                        <span class="note-author-name">User Name</span>
+                        <div class="user-profile-note-action-items">
+                            <svg class="user-profile-note-download-icon" width="28" height="29" viewBox="0 0 28 29" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                                <rect y="0.912109" width="28" height="28" fill="url(#pattern0_4312_5870)"/>
+                                <defs>
+                                <pattern id="pattern0_4312_5870" patternContentUnits="objectBoundingBox" width="1" height="1">
+                                <use xlink:href="#image0_4312_5870" transform="scale(0.01)"/>
+                                </pattern>
+                                <image id="image0_4312_5870" width="100" height="100" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAAAXNSR0IArs4c6QAAAuRJREFUeAHt3DtuFEEUheEjkIBVEDglIEACIuTVkAAxGREBy+C1AwICFoWRHGO7JJc0Krm6quvWGbl7fqRWM4+6bv+fZwa3x0j8oQAFKEABClCAAhSgAAUoQAEKUIACFKAABRwFnkr6WNkcH4+ZjQLnkq4qW2MpNzsKAOKoGpgJSCCeYykgjqqBmYAE4jmWAuKoGpgJSCCeYykgjqqBmYAE4jmWAuKoGpgJSCCeYykgjqqBmYAE4jmWAuKoGpgJSCCeYykgjqqBmYAE4jmWAuKoGpgJSCCeYykgjqqBmYAE4jmWAuKoGpgJSCCeYykgjqqBmYAE4jmWAuKoGpgJSCCeYykgE6s+kfQsOM8J8iJ4bJta/kjSL0kXkl4FjtwF8lbS/5vtU+DYNrM0Y+R3rUdQHCAZIx/fl82UHTjQEiN/0qMos0FKjHx8u0R5fPP09LvyuxzpE/8r6eVK5Jkg726fpjJCuf+88tju/d0fSPq6AJICrH2kzAKpPTIySno9+XDvCw8cYEL5NhFlBsjJYmS/h50or/OChX0U5OQxcttZKBEQMLLG7X4GyigIGAVGvhhFGQEBI9ev7HtQ/km66zVlLQgYFYTy6lGUNSBglNUbl0dQekHAaMSv3ZxQvje+Tzl8+uoBAaNWu/P6HpRLSW8ktUDA6IzeulsvSjo9nk9vlHswWpVX3p5Qfi4ETwDpHFMJkS+3bnu/8ni4u6SeR0oG6N3v9kThsb5iZqKAMUltBgoYkzDymAgKGLni5P0IChiTEcpxCeXHwr+uDl/cwSjrmS73oIBhil8bu4QCRq2a+fq7UMAwR2+NP0QBo1XrSLcnlHSWeJdv1TlSQz4MBShAAQpQgAIUoAAFKEABClCAAhQ45QLPJf3Z+bYp36V3FR7+VG/Lfwek80e3x0IGBJDxrwGessbbWVYCYsk6PvRMUvovKfa8jddhJQUoQAEKUIACFKAABShAAQpQgAIUoAAFdlbgGtK0BPsd1TRyAAAAAElFTkSuQmCC"/>
+                                </defs>
+                                </svg>
+                                
+                        </div>
+                    </div>
                 </div>`
             notesContainer.insertAdjacentHTML('afterbegin', noteCard);
         }
