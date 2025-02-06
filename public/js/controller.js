@@ -789,7 +789,7 @@ const manageNotes = {
                     <img
                         src="${feedbackData.commenterDocID.profile_pic}"
                         alt="User Avatar"
-                        onclick="location.href=/user/'${feedbackData.commenterDocID.username}'"
+                        onclick="window.location.href='/user/${feedbackData.commenterDocID.username}'"
                         class="main__cmnt-author-img cmnt-author-img"
                     />
                 ` : ''}
@@ -801,7 +801,7 @@ const manageNotes = {
                         <span id="parentFeedbackDocID" style="display: none;">${feedbackData._id}</span>
                         <span id="commenterUsername" style="display: none;">${feedbackData.commenterDocID.username}</span>
 
-                        <span class="main__author-name">${feedbackData.commenterDocID.displayname}</span>
+                        <span class="main__author-name" onclick="window.location.href='/user/${feedbackData.commenterDocID.username}'">${feedbackData.commenterDocID.displayname}</span>
                         <span class="reply-date">${this.formatDate(feedbackData.createdAt)}</span>
                     </div>
                     <div class="main__reply-msg reply-msg">${isTemporary ? 'Sending feedback...<div class="search-results-loader"></div>' : feedbackData.feedbackContents}</div>
@@ -849,7 +849,7 @@ const manageNotes = {
             <div class="cmnt-body-3rows">
                 <div class="reply-info">
                     <span id="commenterUsername" style="display: none;">${replyData.commenterDocID.username}</span>
-                    <span class="main__author-name">${replyData.commenterDocID.displayname}</span>
+                    <span class="main__author-name" onclick="window.location.href='/user/${replyData.commenterDocID.username}'">${replyData.commenterDocID.displayname}</span>
                     <span class="reply-date">${this.formatDate(replyData.createdAt)}</span>
                 </div>
                 <div class="reply-msg">${isTemporary ? 'Sending reply...<div class="search-results-loader"></div>' : replyData.feedbackContents}</div>
@@ -923,9 +923,9 @@ const manageNotes = {
         let commentsContainer = document.querySelector('.cmnts-list')
 
         let template = `
-			<div class="main__author-threadline-wrapper" onclick="location.href=/user/${feedback[0].commenterDocID.username}" >
+			<div class="main__author-threadline-wrapper" onclick="window.location.href='/user/${feedback[0].commenterDocID.username}'" >
 				<img src="${feedback[0].commenterDocID.profile_pic}" 
-                onclick="location.href=/user/${feedback[0].commenterDocID.username}"
+                onclick="window.location.href='/user/${feedback[0].commenterDocID.username}'"
                 alt="User Avatar" class="main__cmnt-author-img cmnt-author-img" />
 				<div class="thread-line"></div>
 			</div>
@@ -935,7 +935,7 @@ const manageNotes = {
 					<div class="main__reply-info reply-info"> 
             			<span id="parentFeedbackDocID" style="display: none;">${feedback[0]._id}</span>
         				<span id="commenterUsername" style="display: none;">${feedback[0].commenterDocID.username}</span> 
-						<span class="main__author-name">${feedback[0].commenterDocID.displayname}</span>
+						<span class="main__author-name" onclick="window.location.href='/user/${feedback[0].commenterDocID.username}'">${feedback[0].commenterDocID.displayname}</span>
 						<span class="reply-date">${this.formatDate(feedback[0].createdAt)}</span>
 					</div>
 					<div class='reply-msg'>${feedback[0].feedbackContents}</div>
@@ -963,7 +963,7 @@ const manageNotes = {
 							<div class="cmnt-body-3rows">
 								<div class="reply-info">
         							<span id="commenterUsername" style="display: none;">${reply.commenterDocID.username}</span> 
-									<span class="main__author-name">${reply.commenterDocID.displayname}</span>
+									<span class="main__author-name" onclick="window.location.href='/user/${reply.commenterDocID.username}'">${reply.commenterDocID.displayname}</span>
 									<span class="reply-date">${this.formatDate(reply.createdAt)}</span>
 								</div>
 								<div class="reply-msg">${reply.feedbackContents}</div>
