@@ -9,7 +9,8 @@ socket.on('update-upvote-dashboard', function (noteDocID, upvoteCount) {
 })
 
 let nextPage = 2
-let seed = Math.floor(Math.random() * 1000000000)
+let seed = 10
+// let seed = Math.floor(Math.random() * 1000000000)
 async function get_note(count, page) {
 	function getFeedbackNoteObject(note) {
 		let quickPost = note.postType === "quick-post"
