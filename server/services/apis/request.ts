@@ -3,7 +3,7 @@ import { Server } from "socket.io"
 import { Convert } from "../userService"
 import { addRequest, deleteRequest, getRequests } from "../requestService"
 import { NotificationSender } from "../io/ioNotifcationService"
-import { getNote, manageProfileNotes } from "../noteService"
+import { manageProfileNotes } from "../noteService"
 
 const router = Router()
 
@@ -14,29 +14,33 @@ export function requestApi(io: Server) {
             let senderDocumentID = (await Convert.getDocumentID_studentid(senderStudentID)).toString()
 
             let recUsername = req.body["recUsername"]
-            let message = req.body["message"]
-            let recDocID = (await Convert.getDocumentID_username(recUsername)).toString()
             let recStudentID = (await Convert.getStudentID_username(recUsername)).toString()
-            
-            let requestData = {
-                senderDocID: senderDocumentID,
-                receiverDocID: recDocID,
-                message: message
+
+            if (recStudentID !== senderStudentID) {
+                let message = req.body["message"]
+                let recDocID = (await Convert.getDocumentID_username(recUsername)).toString()
+                
+                let requestData = {
+                    senderDocID: senderDocumentID,
+                    receiverDocID: recDocID,
+                    message: message
+                }
+                await addRequest(requestData)
+                
+                await NotificationSender(io, { 
+                    ownerStudentID: recStudentID,
+                    redirectTo: ``
+                }).sendNotification({
+                    event: 'notification-request',
+                    content: 'sent you a request',
+                }, senderDocumentID)
+                
+                res.json({ ok: true })
+            } else {
+                res.json({ ok: false, message: "You can't request something to yourself!"})
             }
-            await addRequest(requestData)
-            
-            await NotificationSender(io, { 
-                ownerStudentID: recStudentID,
-                redirectTo: ``
-            }).sendNotification({
-                event: 'notification-request',
-                content: 'sent you a request',
-            }, senderDocumentID)
-            
-            res.json({ ok: true })
         } catch (error) {
             res.json({ ok: false })
-            console.log(error)
         } 
     })
 

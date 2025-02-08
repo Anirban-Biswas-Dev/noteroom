@@ -28,6 +28,13 @@ export async function deleteVote({ noteDocID, voterStudentDocID }: IVoteDB) {
 }
 
 
+export async function deleteAllVotes(noteDocID: string) {
+    try {
+        await votesModel.deleteMany({ noteDocID: noteDocID })
+    } catch (error) {}
+}
+
+
 export async function isUpVoted({ noteDocID, voterStudentDocID }: IVoteDB) {
     let upvote_doc = await votesModel.findOne({ $and: [ { docType: { $ne: 'feedback' } }, { noteDocID: noteDocID }, { voterStudentDocID: voterStudentDocID } ] })
     return upvote_doc ? true : false

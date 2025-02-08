@@ -11,28 +11,30 @@ socket.on('update-upvote-dashboard', function (noteDocID, upvoteCount) {
 let nextPage = 2
 let seed = Math.floor(Math.random() * 1000000000)
 async function get_note(count, page) {
-	function getFeedbackNoteObject(note, post = false) {
+	function getFeedbackNoteObject(note) {
+		let quickPost = note.postType === "quick-post"
 		let noteData = {
 			noteID: note._id,
-			noteTitle: !post ? note.title : null,
+			noteTitle: !quickPost ? note.title : null,
 			description: note.description,
 			createdAt: note.createdAt,
 
-			content1: !post || note.content.length === 1 ? note.content[0] : null ,
-			content2: !post ? note.content[1] : null,
+			content1: quickPost || note.content.length > 1 ? note.content[0] : null ,
+			content2: !quickPost ? note.content[1] : null,
 			contentCount: note.content.length,
 
 			ownerID: note.ownerDocID.studentID,
 			profile_pic: note.ownerDocID.profile_pic,
 			ownerDisplayName: note.ownerDocID.displayname,
 			ownerUserName: note.ownerDocID.username,
+			isOwner: note.isOwner,
 
 			feedbackCount: note.feedbackCount,
 			upvoteCount: note.upvoteCount,
 			isSaved: note.isSaved,
 			isUpvoted: note.isUpvoted,
 
-			quickPost: post
+			quickPost: quickPost
 		}
 		return noteData
 	}
@@ -45,11 +47,7 @@ async function get_note(count, page) {
 		
 		if (notes.length !== 0) {
 			notes.forEach(note => {
-				if (note.postType === 'note') {
-					notesList.push(getFeedbackNoteObject(note)); 
-				} else {
-					notesList.push(getFeedbackNoteObject(note, true));
-				}
+				notesList.push(getFeedbackNoteObject(note, true));
 			});
 		} else {
 			document.querySelector('#feed-note-loader').style.display = 'none'
@@ -66,11 +64,7 @@ window.addEventListener('load', async () => {
 		let feedContainer = document.querySelector('.feed-container')
 		let notes = await get_note(3, 1)
 		notes.forEach(note => {
-			if(!note.quickPost) {
-				manageNotes.addNote(note)
-			} else {
-				manageNotes.addQuickPost(note)
-			}
+			manageNotes.addNote(note)
 		})
 		observers.lastNoteObserver().observe(feedContainer.lastElementChild) // Initial tracking of the last note
 	}
@@ -95,7 +89,7 @@ const observers = {
 	observer: function () {
 		const _observer = new IntersectionObserver(entries => {
 			entries.forEach(entry => {
-				let isQuickPost = entry.target.getAttribute('data-posttype') ? true : false
+				let isQuickPost = entry.target.getAttribute('data-posttype') === 'quick-post' ? true : false
 				if (!isQuickPost) {
 					let thumbnails = entry.target.querySelectorAll('.thumbnail')
 					let imageUrls = []
@@ -133,7 +127,7 @@ const observers = {
 					let notes = await get_note(3, nextPage)
 					if (notes.length !== 0) {
 						notes.forEach(note => {
-							note.quickPost ? manageNotes.addQuickPost(note) : manageNotes.addNote(note)
+							manageNotes.addNote(note)
 						})
 						nextPage += 1
 						_observer.unobserve(entry.target)
@@ -152,7 +146,7 @@ const observers = {
 
 
 socket.on('note-upload', (noteData) => {
-	noteData.quickPost ? manageNotes.addQuickPost(noteData) : manageNotes.addNote(noteData)
+	manageNotes.addNote(noteData)
 	manageDb.add('notes', noteData)
 })
 

@@ -4,7 +4,7 @@ import Comments, { } from '../schemas/comments.js'
 import { INoteDB, IQuickPostDB } from '../types/database.types.js'
 import { IManageUserNote, INoteDetails } from '../types/noteService.types.js'
 import { deleteNoteImages } from './firebaseService.js'
-import { isUpVoted } from './voteService.js'
+import { deleteAllVotes, isUpVoted } from './voteService.js'
 import mongoose from 'mongoose'
 import { JSDOM }  from 'jsdom'
 
@@ -36,7 +36,7 @@ export async function addQuickPost(postData: IQuickPostDB) {
 */
 export async function deleteNote({studentDocID, noteDocID}: IManageUserNote, post: boolean = false) {
     try {
-        let deleteResult = await Notes.deleteOne({ _id: noteDocID })
+        let deleteResult = await Notes.deleteOne({ _id: noteDocID, ownerDocID: studentDocID })
         if (deleteResult.deletedCount !== 0) {
             post ? 
                 await Students.updateOne(
@@ -47,7 +47,8 @@ export async function deleteNote({studentDocID, noteDocID}: IManageUserNote, pos
                     { $pull: { owned_notes: noteDocID } }
                 )
 
-            await Comments.deleteMany({ _id: noteDocID })
+            await Comments.deleteMany({ noteDocID: noteDocID })
+            await deleteAllVotes(noteDocID)
             await deleteNoteImages({ studentDocID, noteDocID }, post)
         }
         return true
@@ -177,6 +178,9 @@ export async function getAllNotes(studentDocID: string, options?: any) {
             "ownerDocID.studentID": 1,
             "ownerDocID.username": 1
         } },
+        { $addFields: {
+            isOwner: { $eq: ["$ownerDocID._id", new mongoose.Types.ObjectId(studentDocID)] }
+        } },
         { $sort: { randomSort: 1 } },
         { $skip: parseInt(options.skip) },
         { $limit: parseInt(options.limit) }
@@ -205,10 +209,13 @@ export async function getAllNotes(studentDocID: string, options?: any) {
     //         "ownerDocID.studentID": 1,
     //         "ownerDocID.username": 1
     //     } },
+    //     { $addFields: {
+    //         isOwner: { $eq: ["$ownerDocID._id", new mongoose.Types.ObjectId(studentDocID)] }
+    //     } },
     //     { $skip: parseInt(options.skip || "0") },
     //     { $limit: parseInt(options.limit || "3") },
     //     { $sort: { createdAt: 1 } }
-    // ])    
+    // ])
     
     let extentedNotes = await Promise.all(
         notes.map(async (note: any) => {

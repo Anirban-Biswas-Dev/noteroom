@@ -35,7 +35,7 @@ window.addEventListener('load', async () => {
           document.querySelectorAll('.carousel-control').forEach(doc => doc.remove())
         }
       } else {
-        document.querySelectorAll('.carousel-control').forEach(doc => doc.remove())
+        document.querySelector('#note-image-container').remove()
       }
     }
   
