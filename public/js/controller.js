@@ -220,7 +220,7 @@ async function upvote(voteContainer, fromDashboard = false) {
     if (data.ok) {
         voteContainer.removeAttribute('data-disabled')
     } else {
-        Swal.fire(toastData('error', "Yikes! Try again later.", 3000))
+        Swal.fire(toastData('error', "Sorry, please try again", 3000))
     }
 }
 
@@ -1198,7 +1198,7 @@ async function saveNote(svButton, fromDashboard = false) {
 
         svButton.removeAttribute('data-disabled')
     } else {
-        Swal.fire(toastData('error', "Yikes! Try again later.", 3000))
+        Swal.fire(toastData('error', "Couldn't save. Try again.", 3000))
     }
 }
 
@@ -1480,7 +1480,7 @@ window.addEventListener('load', async () => {
                 })
                 let data = await response.json()
                 if (data.ok) {
-                    Swal.fire(toastData('success', 'Request marked as done successfully!'))
+                    Swal.fire(toastData('success', "You've the completed the request. Kudos!"))
                     requestCard.remove()
                 } else {
                     Swal.fire(toastData('error', 'Failed to mark request as done. Please try again later.', 3000))
