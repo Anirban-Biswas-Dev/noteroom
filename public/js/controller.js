@@ -221,7 +221,7 @@ async function upvote(voteContainer, fromDashboard = false) {
     if (data.ok) {
         voteContainer.removeAttribute('data-disabled')
     } else {
-        Swal.fire(toastData('error', "Yikes! Try again later.", 3000))
+        Swal.fire(toastData('error', "Sorry, please try again", 3000))
     }
 }
 
@@ -1034,7 +1034,7 @@ async function saveNote(svButton, fromDashboard = false) {
 
         svButton.removeAttribute('data-disabled')
     } else {
-        Swal.fire(toastData('error', "Yikes! Try again later.", 3000))
+        Swal.fire(toastData('error', "Couldn't save. Try again.", 3000))
     }
 }
 
@@ -1316,7 +1316,7 @@ window.addEventListener('load', async () => {
                 })
                 let data = await response.json()
                 if (data.ok) {
-                    Swal.fire(toastData('success', 'Request marked as done successfully!'))
+                    Swal.fire(toastData('success', "You've the completed the request. Kudos!"))
                     requestCard.remove()
                 } else {
                     Swal.fire(toastData('error', 'Failed to mark request as done. Please try again later.', 3000))
@@ -1358,3 +1358,45 @@ window.addEventListener('load', async () => {
     });
 })
 
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".threads-component__subject").forEach((element) => {
+      element.addEventListener("click", function () {
+        Swal.fire({
+          title: "Unlock Threads and Join Exclusive Discussions! 🚀",
+          html: `<p>Want to join the most insightful study groups on NoteRoom? Start <b>uploading notes</b>, <b>helping others with requests</b>, <b>sharing insights</b>, and <b>engaging with fellow learners</b> to unlock <b>Threads</b>—your gateway to structured, chapter-wise discussions.</p>
+                 <p>💡 <b>The most active contributors are already in! Don’t miss out. Start engaging today!</b></p>`,
+          icon: "info",
+          confirmButtonText: "Start Now!",
+        });
+      });
+    });
+  });
+  
+// @ Threads Update Pop Up
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".threads-component__subject").forEach((element) => {
+      element.addEventListener("click", function () {
+        Swal.fire({
+          title: "🔓 Unlock Threads & Join the Conversation!",
+          html: `
+            <p class="swal-description">
+              Start by sharing your notes, engaging with others, and giving feedback. 
+              Keep contributing, and you’ll be able to join discussions as well!
+            </p>
+            <div class="swal-body-image-container">
+              <img src="\\images\\threads-unload-update.png" alt="Threads Feature Image" class="swal-body-image">
+            </div>
+          `,
+          background: "", 
+          customClass: {
+            popup: 'custom-swal-popup',
+            title: 'custom-swal-title',
+            confirmButton: 'custom-swal-button'
+          },
+          showConfirmButton: true,
+          confirmButtonText: "Got it!",
+        });
+      });
+    });
+  });
+  

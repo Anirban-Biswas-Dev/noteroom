@@ -15,7 +15,18 @@
     padding-top: 125px;
     padding-bottom: 125px;
 }
-  
+
+@media (min-width:1425px) and (max-width:1625px) {
+        .middle-section{
+            max-width: 650px;
+        }
+}
+ 
+@media (min-width: 1025px) and (max-width: 1485px) {
+    .middle-section {
+      max-width: 580px;
+    }
+}
 /* First Row */
 .ms-first-row {
     width: 100%;
