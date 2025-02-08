@@ -183,7 +183,7 @@ async function publish() {
     }
     
     try {
-        if (stackFiles.length != 0) {
+        if (stackFiles.length >= 2) {
             let noteSubject = document.querySelector('.note-subject').value;
             let noteTitle = document.querySelector('.note-title').value
             const noteDescription = editor.root.innerHTML;

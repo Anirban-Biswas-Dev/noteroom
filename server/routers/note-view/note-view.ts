@@ -5,7 +5,6 @@ import {getNote, getNoteForShare} from '../../services/noteService.js'
 import {Convert} from '../../services/userService.js'
 import { postNoteFeedbackRouter } from './post-feedback.js';
 import { voteRouter } from './vote.js';
-import { INoteDetails } from '../../types/noteService.types.js'
 import apisRouter from './apis.js'
 import { quickPostRouter } from './quick-post.js'
 

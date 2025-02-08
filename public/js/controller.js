@@ -50,7 +50,6 @@ function readNoti(noti) {
             noti.querySelector('.noti__sc--second-row-noti-info span:last-child').classList.replace('secondary-false', 'secondary-true')
 
             let notification = await db['notifications'].where('notiID').equals(notiID).first()
-            console.log(notification)
             notification["isRead"] = true
             await db["notifications"].put(notification)
 
@@ -58,7 +57,11 @@ function readNoti(noti) {
         }
 
         let redirectTo = noti.getAttribute('data-redirectTo')
-        if (redirectTo && redirectTo !== "") window.location.href = redirectTo
+        if (redirectTo && redirectTo !== "") {
+            window.location.href = redirectTo
+        } else if (redirectTo === "") {
+            window.location.reload()
+        }
     })
 }
 
@@ -166,11 +169,9 @@ const manageDb = {
     },
 
     async delete(store, id) {
-        switch (store) {
-            case 'savedNotes':
-                let note = await db.savedNotes.where("noteID").equals(id).first()
-                await db.savedNotes.delete(note.id)
-                break
+        if (store === "savedNotes" || store === "ownedNotes") {
+            let note = await db[store].where("noteID").equals(id).first()
+            await db[store].delete(note.id)
         }
     }
 }
@@ -240,187 +241,7 @@ const manageNotes = {
         });
         return formatter.format(date);
     },
-    addQuickPost: function (note) {
-        let existingPost = document.querySelector(`#note-${note.noteID}`)
-        let feedContainer = document.querySelector('.feed-container')
 
-        if (!existingPost) {
-            let postHtml = `
-                <div class="feed-note-card" id="note-${note.noteID}" data-posttype='quick-post'>
-                    <div class="fnc__first-row">
-                    <div class="fnc__fr-author-img-wrapper">
-                        <img src="${note.profile_pic}" class="fnc__fr-author-img" onclick="window.location.href='/user/${note.ownerUserName}'"/>
-                    </div>
-                    <div class="fnc__fr-note-info-wrapper">
-                        <div class="note-info-wrapper--first-row">
-                            <div class="niw--fr-first-col">
-                                <div class="niw--fr-first-col-fr">
-                                    <a class="author-prfl-link" href="/user/${note.ownerUserName}">${note.ownerDisplayName}</a>
-                                    <span class="niw--fr-first-col-fr-seperator"></span>
-                                    <span 
-                                        class="db-note-card-request-option"
-                                        data-req-pfp="${note.profile_pic}" 
-                                        data-req-dn="${note.ownerDisplayName}" 
-                                        data-req-un="${note.ownerUserName}"
-                                    >Request</span>
-                                </div>
-                                <span class="niw--fr-first-col-note-pub-date">${(new Date(note.createdAt)).toDateString()}</span>
-                            </div>
-
-                            <div class="niw--fr-second-col">
-                                <div class="note-menu">
-                                    <button class="note-menu-btn">
-                                        <i class="fas fa-ellipsis-v" aria-hidden="true"></i>
-                                    </button>
-                                    <div class="menu-options">
-                                        <div class="option" onclick="setupShareModal(this, true)" data-noteid="${note.noteID}">
-                                            <svg
-                                                class="share-icon"
-                                                width="40"
-                                                height="40"
-                                                viewBox="0 0 46 46"
-                                                fill="none"
-                                                xmlns="http://www.w3.org/2000/svg"
-                                            >
-                                                <path
-                                                d="M30.6079 32.5223L27.8819 29.8441L36.6816 21.0444L27.8819 12.2446L30.6079 9.56641L42.0858 21.0444L30.6079 32.5223ZM3.82599 36.3483V28.6963C3.82599 26.05 4.7506 23.8023 6.59983 21.953C8.48094 20.0719 10.7446 19.1314 13.391 19.1314H25.2037L18.3169 12.2446L21.0429 9.56641L32.5209 21.0444L21.0429 32.5223L18.3169 29.8441L25.2037 22.9574H13.391C11.7968 22.9574 10.4418 23.5153 9.32584 24.6312C8.20993 25.7471 7.65197 27.1022 7.65197 28.6963V36.3483H3.82599Z"
-                                                fill="#1D1B20"
-                                                ></path>
-                                            </svg>
-                                            <span class="opt-label">Share</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="note-info-wrapper--second-row">
-                            <p class="fnc--note-desc">${(new DOMParser()).parseFromString(note.description, 'text/html').querySelector('body').textContent.trim()}</p>
-                        </div>
-                    </div>
-                    </div>
-                    <div class="fnc__second-row">
-                        ${note.contentCount !== 0 ?
-                    `<div class="quickpost-thumbnail-wrapper">
-                                <img class="quickpost-thumbnail" src="" data-src="${note.content1}"/>
-                            </div>`: ``
-                }
-                    </div>
-
-                    <div class="fnc__third-row">
-                        <div class="fnc__tr--note-engagement-metrics">
-                            <div class="love-react-metric-wrapper">
-                                <svg
-                                    class="love-react-icon-static"
-                                    width="30"
-                                    height="27"
-                                    viewBox="0 0 30 27"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                >
-                                    <path
-                                    d="M27.5227 2.53147C26.7991 1.80756 25.94 1.2333 24.9944 0.841502C24.0489 0.449705 23.0354 0.248047 22.0119 0.248047C20.9883 0.248047 19.9748 0.449705 19.0293 0.841502C18.0837 1.2333 17.2246 1.80756 16.501 2.53147L14.9994 4.03313L13.4977 2.53147C12.0361 1.0699 10.0538 0.248804 7.98685 0.248804C5.91989 0.248804 3.93759 1.0699 2.47602 2.53147C1.01446 3.99303 0.193359 5.97534 0.193359 8.0423C0.193359 10.1093 1.01446 12.0916 2.47602 13.5531L14.9994 26.0765L27.5227 13.5531C28.2466 12.8296 28.8209 11.9705 29.2126 11.0249C29.6044 10.0793 29.8061 9.06582 29.8061 8.0423C29.8061 7.01878 29.6044 6.00528 29.2126 5.05971C28.8209 4.11415 28.2466 3.25504 27.5227 2.53147Z"
-                                    fill="url(#paint0_linear_4170_1047)"
-                                    ></path>
-                                    <defs>
-                                    <linearGradient
-                                        id="paint0_linear_4170_1047"
-                                        x1="-53.407"
-                                        y1="-16.9324"
-                                        x2="14.9989"
-                                        y2="40.0465"
-                                        gradientUnits="userSpaceOnUse"
-                                    >
-                                        <stop stop-color="#04DBF7"></stop>
-                                        <stop offset="1" stop-color="#FF0000"></stop>
-                                    </linearGradient>
-                                    </defs>
-                                </svg>
-                                <span class="love-react-metric-count metric-count-font uv-count">${note.upvoteCount}</span>
-                            </div>
-                
-                        <div class="review-metric-wrapper">
-                            <span
-                                class="review-count metric-count-font cmnt-count"
-                                onclick="window.location.href='/view/quick-post/${note.noteID}/#feedbacks'"
-                            >
-                                ${note.feedbackCount === 0 ? `No reviews yet` : `${note.feedbackCount} Review${note.feedbackCount === 1 ? "" : "s"}`}
-                            </span>
-                            </div>
-                        </div>
-            
-                        <div class="note-engagement">
-                            <div class="uv-container" id="upvote-container" data-isupvoted="${note.isUpvoted}" data-noteid="${note.noteID}" onclick="upvote(this, true)">
-                            <svg
-                                class="uv-icon"
-                                width="18"
-                                height="19"
-                                viewBox="0 0 22 23"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                            >
-                                ${note.isUpvoted ?
-                    `<path
-                                        d="M27.5227 2.53147C26.7991 1.80756 25.94 1.2333 24.9944 0.841502C24.0489 0.449705 23.0354 0.248047 22.0119 0.248047C20.9883 0.248047 19.9748 0.449705 19.0293 0.841502C18.0837 1.2333 17.2246 1.80756 16.501 2.53147L14.9994 4.03313L13.4977 2.53147C12.0361 1.0699 10.0538 0.248804 7.98685 0.248804C5.91989 0.248804 3.93759 1.0699 2.47602 2.53147C1.01446 3.99303 0.193359 5.97534 0.193359 8.0423C0.193359 10.1093 1.01446 12.0916 2.47602 13.5531L14.9994 26.0765L27.5227 13.5531C28.2466 12.8296 28.8209 11.9705 29.2126 11.0249C29.6044 10.0793 29.8061 9.06582 29.8061 8.0423C29.8061 7.01878 29.6044 6.00528 29.2126 5.05971C28.8209 4.11415 28.2466 3.25504 27.5227 2.53147Z"
-                                        fill="url(#paint0_linear_4170_1047)"
-                                    />
-                                    <defs>
-                                    <linearGradient
-                                        id="paint0_linear_4170_1047"
-                                        x1="-53.407"
-                                        y1="-16.9324"
-                                        x2="14.9989"
-                                        y2="40.0465"
-                                        gradientUnits="userSpaceOnUse"
-                                    >
-                                        <stop stop-color="#04DBF7" />
-                                        <stop offset="1" stop-color="#FF0000" />
-                                    </linearGradient>
-                                    </defs>`
-                    :
-                    `<path
-                                        d="M26.0497 5.76283C25.4112 5.12408 24.6532 4.61739 23.8189 4.27168C22.9845 3.92598 22.0903 3.74805 21.1872 3.74805C20.2841 3.74805 19.3898 3.92598 18.5555 4.27168C17.7211 4.61739 16.9631 5.12408 16.3247 5.76283L14.9997 7.08783L13.6747 5.76283C12.385 4.47321 10.636 3.74872 8.81216 3.74872C6.98837 3.74872 5.23928 4.47321 3.94966 5.76283C2.66005 7.05244 1.93555 8.80154 1.93555 10.6253C1.93555 12.4491 2.66005 14.1982 3.94966 15.4878L14.9997 26.5378L26.0497 15.4878C26.6884 14.8494 27.1951 14.0913 27.5408 13.257C27.8865 12.4227 28.0644 11.5284 28.0644 10.6253C28.0644 9.72222 27.8865 8.82796 27.5408 7.99363C27.1951 7.15931 26.6884 6.40127 26.0497 5.76283Z"
-                                        stroke="#1E1E1E"
-                                        stroke-width="0.909091"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                    />`
-                }
-                            </svg>
-                
-                            <span class="fnc__tr--icon-label like-padding-top-5">Like</span>
-                            </div>
-                            <div class="cmnt-engagement" onclick="window.location.href='/view/quick-post/${note.noteID}/#feedbacks'">
-                            <svg
-                                width="24"
-                                height="24"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                                onclick="window.location.href='/view/quick-post/${note.noteID}/#feedbacks'"
-                                class="comment-icon"
-                            >
-                                <path
-                                d="M23.25 15.75C23.25 16.413 22.9866 17.0489 22.5178 17.5178C22.0489 17.9866 21.413 18.25 20.75 18.25H5.75L0.75 23.25V3.25C0.75 2.58696 1.01339 1.95107 1.48223 1.48223C1.95107 1.01339 2.58696 0.75 3.25 0.75H20.75C21.413 0.75 22.0489 1.01339 22.5178 1.48223C22.9866 1.95107 23.25 2.58696 23.25 3.25V15.75Z"
-                                stroke="#1E1E1E"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                ></path>
-                            </svg>
-                
-                            <span class="fnc__tr--icon-label">Review</span>
-                            </div>
-                        </div>
-                        </div>
-                </div> <br>
-            `
-
-            feedContainer.insertAdjacentHTML('beforeend', postHtml);
-
-            let newNoteCard = document.querySelector(`#note-${note.noteID}`)
-            observers.observer().observe(newNoteCard)
-        }
-    },
     addNote: function (note) {
         let existingUNote = document.querySelector(`#note-${note.noteID}`)
         let feedContainer = document.querySelector('.feed-container')
@@ -428,24 +249,26 @@ const manageNotes = {
         //FIXME: there should be a skeleton loader for the note card or for the note image
         if (!existingUNote) {
             let noteCardHtml = `
-                <div class="feed-note-card" id="note-${note.noteID}">
+                <div class="feed-note-card" id="note-${note.noteID}" data-posttype="${note.quickPost ? 'quick-post' : 'note'}">
                     <div class="fnc__first-row">
                         <div class="fnc__fr-author-img-wrapper">
                             <img src="${note.profile_pic}" class="fnc__fr-author-img" onclick="window.location.href='/user/${note.ownerUserName}'"/>
                         </div>
                         <div class="fnc__fr-note-info-wrapper">
-                        <div class="note-info-wrapper--first-row">
-                            <div class="niw--fr-first-col">
-                            <div class="niw--fr-first-col-fr">
+                            <div class="note-info-wrapper--first-row">
+                                <div class="niw--fr-first-col">
+                                <div class="niw--fr-first-col-fr">
                                 <a class="author-prfl-link" href="/user/${note.ownerUserName}">${note.ownerDisplayName}</a>
-                                <span class="niw--fr-first-col-fr-seperator"></span>
-                                <span 
-                                    class="db-note-card-request-option" 
-                                    data-req-pfp="${note.profile_pic}" 
-                                    data-req-dn="${note.ownerDisplayName}" 
-                                    data-req-un="${note.ownerUserName}"
-                                >Request</span>
-                            </div>
+                                ${!note.isOwner ? `
+                                        <span class="niw--fr-first-col-fr-seperator"></span>
+                                        <span 
+                                            class="db-note-card-request-option" 
+                                            data-req-pfp="${note.profile_pic}" 
+                                            data-req-dn="${note.ownerDisplayName}" 
+                                            data-req-un="${note.ownerUserName}"
+                                        >Request</span>
+                                ` : ``}
+                                </div>
                             <span class="niw--fr-first-col-note-pub-date">${(new Date(note.createdAt)).toDateString()}</span>
                             </div>
 
@@ -454,35 +277,38 @@ const manageNotes = {
                                     <button class="note-menu-btn">
                                         <i class="fas fa-ellipsis-v"></i>
                                     </button>
-                                    <div class="menu-options">    
-                                        <div class="option svn-btn-parent" id="save-btn-${note.noteID}" onclick="saveNote(this, true)" data-notetitle="${note.noteTitle}" data-noteid="${note.noteID}" data-issaved="${note.isSaved}">
-                                            <button class="${note.isSaved ? "saved" : ""} save-note-btn" id="save-note-btn">
-                                                <i class="fa-regular fa-bookmark"></i>
-                                                <i class="fa-solid fa-bookmark saved"></i>
-                                            </button>
-                                            <span class="opt-label">Save Note</span>
-                                        </div>
+                                    <div class="menu-options">   
+                                        ${!note.quickPost ? `
+                                            <div class="option svn-btn-parent" id="save-btn-${note.noteID}" onclick="saveNote(this, true)" data-notetitle="${note.noteTitle}" data-noteid="${note.noteID}" data-issaved="${note.isSaved}">
+                                                <button class="${note.isSaved ? "saved" : ""} save-note-btn" id="save-note-btn">
+                                                    <i class="fa-regular fa-bookmark"></i>
+                                                    <i class="fa-solid fa-bookmark saved"></i>
+                                                </button>
+                                                <span class="opt-label">Save Note</span>
+                                            </div>
 
 
-                                        <div class="option" onclick="download('${note.noteID}', '${note.noteTitle}')">
-                                                <svg
-                                                    class="download-icon"
-                                                    width="40"
-                                                    height="40"
-                                                    viewBox="0 0 43 43"
-                                                    fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                >
-                                                <path
-                                                    d="M37.1541 26.5395V33.6165C37.1541 34.555 36.7813 35.455 36.1177 36.1186C35.4541 36.7822 34.5541 37.155 33.6156 37.155H8.84623C7.90776 37.155 7.00773 36.7822 6.34414 36.1186C5.68054 35.455 5.30774 34.555 5.30774 33.6165V26.5395M12.3847 17.6933L21.2309 26.5395M21.2309 26.5395L30.0771 17.6933M21.2309 26.5395V5.30859"
-                                                    stroke="#1E1E1E"
-                                                    stroke-width="2.29523"
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                />
-                                            </svg>
-                                            <span class="opt-label">Download</span>
-                                        </div>
+                                            <div class="option" onclick="download('${note.noteID}', '${note.noteTitle}')">
+                                                    <svg
+                                                        class="download-icon"
+                                                        width="40"
+                                                        height="40"
+                                                        viewBox="0 0 43 43"
+                                                        fill="none"
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                    >
+                                                    <path
+                                                        d="M37.1541 26.5395V33.6165C37.1541 34.555 36.7813 35.455 36.1177 36.1186C35.4541 36.7822 34.5541 37.155 33.6156 37.155H8.84623C7.90776 37.155 7.00773 36.7822 6.34414 36.1186C5.68054 35.455 5.30774 34.555 5.30774 33.6165V26.5395M12.3847 17.6933L21.2309 26.5395M21.2309 26.5395L30.0771 17.6933M21.2309 26.5395V5.30859"
+                                                        stroke="#1E1E1E"
+                                                        stroke-width="2.29523"
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                    />
+                                                </svg>
+                                                <span class="opt-label">Download</span>
+                                            </div>
+                                        ` : ``} 
+
                                         <div class="option" onclick="setupShareModal(this)" data-noteid="${note.noteID}" data-notetitle="${note.noteTitle}">
                                             <svg
                                             class="share-icon"
@@ -507,8 +333,15 @@ const manageNotes = {
                         
                         <div class="note-info-wrapper--second-row">
                             <p class="fnc--note-desc">
-                                ${(new DOMParser()).parseFromString(note.description, 'text/html').querySelector('body').textContent.trim().slice(0, 100)}...
-                                <span class="note-desc-see-more-btn" onclick="window.location.href='/view/${note.noteID}'">Read More</span>
+                                ${
+                                    (function() {
+                                        let description = (new DOMParser()).parseFromString(note.description, 'text/html').querySelector('body').textContent.trim()
+                                        return note.quickPost ? `${description}` : `
+                                            ${description.slice(0, 100)}...
+                                            <span class="note-desc-see-more-btn" onclick="window.location.href='/view/${note.noteID}'">Read More</span>
+                                        `
+                                    })()
+                                }
                             </p>
                         </div>
                         </div>
@@ -516,15 +349,22 @@ const manageNotes = {
 
 
                     <div class="fnc__second-row">
-                        <div class="thumbnail-grid" style="display: none;">
-                            <img class="thumbnail primary-img" src="" onclick="window.location.href='/view/${note.noteID}'" data-src='${note.content1}'/>
-                            <div class="thumbnail-secondary-wrapper">
-                                <img class="thumbnail secondary-img" src="" onclick="window.location.href='/view/${note.noteID}'" data-src='${note.content2}'/>
-                                ${note.contentCount > 2 ?
-                    `<div class="thumbnail-overlay" onclick="window.location.href='/view/${note.noteID}'">+${parseInt(note.contentCount) - 2}</div>` : ''
-                }
-                            </div>
-                        </div>
+                        ${note.quickPost ?
+                            `${note.contentCount !== 0 ?
+                                `<div class="quickpost-thumbnail-wrapper">
+                                    <img class="quickpost-thumbnail" src="" data-src="${note.content1}"/>
+                                </div>`: ``} `
+                            :
+                            `<div class="thumbnail-grid">
+                                <img class="thumbnail primary-img" src="" onclick="window.location.href='/view/${note.noteID}'" data-src='${note.content1}'/>
+                                <div class="thumbnail-secondary-wrapper">
+                                    <img class="thumbnail secondary-img" src="" onclick="window.location.href='/view/${note.noteID}'" data-src='${note.content2}'/>
+                                    ${note.contentCount > 2 ?
+                                        `<div class="thumbnail-overlay" onclick="window.location.href='/view/${note.noteID}'">+${parseInt(note.contentCount) - 2}</div>` : ''
+                                    }
+                                </div>
+                            </div>`
+                        }
                     </div>
 
                     <div class="fnc__third-row">
@@ -562,7 +402,7 @@ const manageNotes = {
                                 <div class="review-metric-wrapper">
                                     <span
                                         class="review-count metric-count-font cmnt-count"
-                                        onclick="window.location.href='/view/${note.noteD}/#feedbacks'"
+                                        onclick="window.location.href='/view/${note.quickPost ? `quick-post/${note.noteID}` : note.noteID}/#feedbacks'"
                                     >
                                         ${note.feedbackCount === 0 ? `No reviews yet` : `${note.feedbackCount} Review${note.feedbackCount === 1 ? "" : "s"}`}
                                     </span>
@@ -587,7 +427,7 @@ const manageNotes = {
                                         xmlns="http://www.w3.org/2000/svg"
                                     >
                                     ${note.isUpvoted ?
-                    `<path
+                                        `<path
                                             d="M27.5227 2.53147C26.7991 1.80756 25.94 1.2333 24.9944 0.841502C24.0489 0.449705 23.0354 0.248047 22.0119 0.248047C20.9883 0.248047 19.9748 0.449705 19.0293 0.841502C18.0837 1.2333 17.2246 1.80756 16.501 2.53147L14.9994 4.03313L13.4977 2.53147C12.0361 1.0699 10.0538 0.248804 7.98685 0.248804C5.91989 0.248804 3.93759 1.0699 2.47602 2.53147C1.01446 3.99303 0.193359 5.97534 0.193359 8.0423C0.193359 10.1093 1.01446 12.0916 2.47602 13.5531L14.9994 26.0765L27.5227 13.5531C28.2466 12.8296 28.8209 11.9705 29.2126 11.0249C29.6044 10.0793 29.8061 9.06582 29.8061 8.0423C29.8061 7.01878 29.6044 6.00528 29.2126 5.05971C28.8209 4.11415 28.2466 3.25504 27.5227 2.53147Z"
                                             fill="url(#paint0_linear_4170_1047)"
                                         />
@@ -604,22 +444,22 @@ const manageNotes = {
                                             <stop offset="1" stop-color="#FF0000" />
                                         </linearGradient>
                                         </defs>`
-                    :
-                    `<path
+                                            :
+                                        `<path
                                             d="M26.0497 5.76283C25.4112 5.12408 24.6532 4.61739 23.8189 4.27168C22.9845 3.92598 22.0903 3.74805 21.1872 3.74805C20.2841 3.74805 19.3898 3.92598 18.5555 4.27168C17.7211 4.61739 16.9631 5.12408 16.3247 5.76283L14.9997 7.08783L13.6747 5.76283C12.385 4.47321 10.636 3.74872 8.81216 3.74872C6.98837 3.74872 5.23928 4.47321 3.94966 5.76283C2.66005 7.05244 1.93555 8.80154 1.93555 10.6253C1.93555 12.4491 2.66005 14.1982 3.94966 15.4878L14.9997 26.5378L26.0497 15.4878C26.6884 14.8494 27.1951 14.0913 27.5408 13.257C27.8865 12.4227 28.0644 11.5284 28.0644 10.6253C28.0644 9.72222 27.8865 8.82796 27.5408 7.99363C27.1951 7.15931 26.6884 6.40127 26.0497 5.76283Z"
                                             stroke="#1E1E1E"
                                             stroke-width="0.909091"
                                             stroke-linecap="round"
                                             stroke-linejoin="round"
                                         />`
-                }
+                                    }
                                     </svg>
                                     <span class="fnc__tr--icon-label like-padding-top-5">Like</span>
                                 </div>
 
                                 <div
                                     class="cmnt-engagement"
-                                    onclick="window.location.href='/view/${note.noteID}/#feedbacks'"
+                                    onclick="window.location.href='/view/${note.quickPost ? `quick-post/${note.noteID}` : note.noteID}/#feedbacks'"
                                 >
                                     <svg
                                     width="24"
@@ -627,7 +467,7 @@ const manageNotes = {
                                     viewBox="0 0 24 24"
                                     fill="none"
                                     xmlns="http://www.w3.org/2000/svg"
-                                    onclick="window.location.href='/view/${note.noteID}/#feedbacks'"
+                                    onclick="window.location.href='/view/${note.quickPost ? `quick-post/${note.noteID}` : note.noteID}/#feedbacks'"
                                     class="comment-icon"
                                     >
                                     <path
@@ -897,26 +737,22 @@ const manageNotes = {
 
         if (!existingNote) {
             let noteCard = `
-                <div class="note-card" id="${noteElementID}" onclick="window.location.href='/view/${noteData.noteID}'" >
-                    <img class="profile-note-card-thumbnail" src='${noteData.noteThumbnail}' alt="Note Thumbnail">
-                    <h3>
-                        ${noteData.noteTitle > 30 ? noteData.noteTitle.slice(0, 30) : noteData.noteTitle}
+                <div class="note-card" id="${noteElementID}">
+                    <img class="profile-note-card-thumbnail" src='${noteData.noteThumbnail}' alt="Note Thumbnail" onclick="window.location.href='/view/${noteData.noteID}'">
+                    <h3 id="note-title">
+                        ${noteData.noteTitle.length > 25 ? `${noteData.noteTitle.slice(0, 25)}...` : noteData.noteTitle}
                     </h3>
-                    <div class="note-card__tr">
-                        <span class="note-author-name">User Name</span>
-                        <div class="user-profile-note-action-items">
-                            <svg class="user-profile-note-download-icon" width="28" height="29" viewBox="0 0 28 29" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                                <rect y="0.912109" width="28" height="28" fill="url(#pattern0_4312_5870)"/>
-                                <defs>
-                                <pattern id="pattern0_4312_5870" patternContentUnits="objectBoundingBox" width="1" height="1">
-                                <use xlink:href="#image0_4312_5870" transform="scale(0.01)"/>
-                                </pattern>
-                                <image id="image0_4312_5870" width="100" height="100" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAAAXNSR0IArs4c6QAAAuRJREFUeAHt3DtuFEEUheEjkIBVEDglIEACIuTVkAAxGREBy+C1AwICFoWRHGO7JJc0Krm6quvWGbl7fqRWM4+6bv+fZwa3x0j8oQAFKEABClCAAhSgAAUoQAEKUIACFKAABRwFnkr6WNkcH4+ZjQLnkq4qW2MpNzsKAOKoGpgJSCCeYykgjqqBmYAE4jmWAuKoGpgJSCCeYykgjqqBmYAE4jmWAuKoGpgJSCCeYykgjqqBmYAE4jmWAuKoGpgJSCCeYykgjqqBmYAE4jmWAuKoGpgJSCCeYykgjqqBmYAE4jmWAuKoGpgJSCCeYykgjqqBmYAE4jmWAuKoGpgJSCCeYykgE6s+kfQsOM8J8iJ4bJta/kjSL0kXkl4FjtwF8lbS/5vtU+DYNrM0Y+R3rUdQHCAZIx/fl82UHTjQEiN/0qMos0FKjHx8u0R5fPP09LvyuxzpE/8r6eVK5Jkg726fpjJCuf+88tju/d0fSPq6AJICrH2kzAKpPTIySno9+XDvCw8cYEL5NhFlBsjJYmS/h50or/OChX0U5OQxcttZKBEQMLLG7X4GyigIGAVGvhhFGQEBI9ev7HtQ/km66zVlLQgYFYTy6lGUNSBglNUbl0dQekHAaMSv3ZxQvje+Tzl8+uoBAaNWu/P6HpRLSW8ktUDA6IzeulsvSjo9nk9vlHswWpVX3p5Qfi4ETwDpHFMJkS+3bnu/8ni4u6SeR0oG6N3v9kThsb5iZqKAMUltBgoYkzDymAgKGLni5P0IChiTEcpxCeXHwr+uDl/cwSjrmS73oIBhil8bu4QCRq2a+fq7UMAwR2+NP0QBo1XrSLcnlHSWeJdv1TlSQz4MBShAAQpQgAIUoAAFKEABClCAAhQ45QLPJf3Z+bYp36V3FR7+VG/Lfwek80e3x0IGBJDxrwGessbbWVYCYsk6PvRMUvovKfa8jddhJQUoQAEKUIACFKAABShAAQpQgAIUoAAFdlbgGtK0BPsd1TRyAAAAAElFTkSuQmCC"/>
-                                </defs>
-                                </svg>
-                                
+                    ${noteType === 'owned' ? `
+                        <div class="note-card__tr">
+                            <span class="note-author-name">Delete Note</span>
+                            <div class="user-profile-note-action-items" data-id="${noteData.noteID}" data-notetitle="${noteData.noteTitle}" onclick="deleteNote(this)">
+                                <svg class="user-profile-note-download-icon" width="28" height="29" viewBox="0 0 28 29" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                                    <rect width="28" height="28" fill="white"/>
+                                    <path d="M9 9H19M11 9V7C11 6.44772 11.4477 6 12 6H16C16.5523 6 17 6.44772 17 7V9M12 13V18M16 13V18M6 9H22L20.5 22C20.3914 22.8242 19.7103 23.5 18.8824 23.5H9.11765C8.28972 23.5 7.60862 22.8242 7.5 22L6 9Z" stroke="red" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>    
+                            </div>
                         </div>
-                    </div>
+                    ` : ``}
                 </div>`
             notesContainer.insertAdjacentHTML('afterbegin', noteCard);
         }

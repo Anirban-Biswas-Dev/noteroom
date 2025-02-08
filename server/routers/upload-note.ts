@@ -91,7 +91,9 @@ function uploadRouter(io: Server) {
                     isSaved: false,
                     isUpvoted: false,
                     feedbackCount: 0, 
-                    upvoteCount: 0
+                    upvoteCount: 0,
+
+                    quickPost: false
                 })
 
             } catch (error) {

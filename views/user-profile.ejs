@@ -9,9 +9,9 @@
 
     <meta name="robots" content="index, follow">
     
-    <script src="https://cdn.socket.io/socket.io-3.0.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/dexie@latest/dist/dexie.min.js"></script>
+    <script src="https://cdn.socket.io/socket.io-3.0.1.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/dexie@latest/dist/dexie.min.js" defer></script>
 
     <%- include('partials/links.ejs') %>
 
@@ -67,10 +67,18 @@
             <% } %>
             </div>
         </div>
+        
         <div class="user-profile-interaction-container">
-            <button class="user-profile-request-btn">
-                Request
-            </button>
+            <% if (visiting) { %>
+                <button 
+                    class="user-profile-request-btn db-note-card-request-option"
+                    data-req-pfp="<%= student.profile_pic %>" 
+                    data-req-dn="<%= student.displayname %>" 
+                    data-req-un="<%= student.username%>"
+                >
+                    Request
+                </button>
+            <% } %>
             <svg data-tippy-content="Share" class="share-user-profile" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                 <rect width="27.9032" height="27.9032" fill="url(#pattern0_4312_5925)"/>
                 <defs>
@@ -79,8 +87,7 @@
                 </pattern>
                 <image id="image0_4312_5925" width="100" height="100" xlink:href="data:image/png;base64,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"/>
                 </defs>
-                </svg>
-                
+            </svg>    
         </div>
 
     </div>
@@ -172,10 +179,11 @@
 
 	<audio id="notificationAudio" src="/sounds/notification-ping-sound.mp3" preload="auto"></audio>
 
-	<script src="/js/notificationHandler.js"></script>
-    <script src="/js/onboarding-data.js"></script>
-    <script src="/js/controller.js"></script> 
-    <script src="/js/user-profile.js"></script> 
-    <script src="/js/utils.js"></script> 
+	<script src="/js/notificationHandler.js" defer></script>
+    <script src="/js/onboarding-data.js" defer></script>
+    <script src="/js/controller.js" defer></script> 
+    <script src="/js/user-profile.js" defer></script> 
+    <script src="/js/utils.js" defer></script> 
+    <script src="/js/request.js" defer></script>
 </body>
 </html>

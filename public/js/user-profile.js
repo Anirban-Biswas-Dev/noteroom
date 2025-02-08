@@ -82,22 +82,52 @@ window.addEventListener('load', () => {
 })
 
 //* The delete note eventhandler
-// document.addEventListener('click', function (event) {
-//     if (event.target.classList.contains('delete-note')) {
-//         let noteDocID = event.target.getAttribute('data-id')
-//         fetch(`/api/note/delete/${noteDocID}`, {
-//             method: 'delete'
-//         })
-//             .then(response => response.json())
-//             .then(data => {
-//                 if (data.deleted) {
-//                     console.log(`Note deleted`)
-//                     document.querySelector(`#owned-note-${noteDocID}`).remove()
-//                 }
-//                 else console.log(`Something went wrong!`)
-//             })
-//     }
-// })
+const deleteNoteToastData = (type, message, timer = 2000) => {
+    return {
+        toast: true,
+        position: "bottom-end",
+        icon: type,
+        title: message,
+        timer: timer,
+        timerProgressBar: true,
+        showConfirmButton: false
+    }
+}
+
+function deleteNote(container) {
+    let noteTitle = container.getAttribute('data-notetitle')
+    Swal.fire({
+        icon: 'warning',
+        title: `Are you sure you want to delete the note "<b>${noteTitle}</b>"?`,
+        text: 'This action cannot be undone',
+        confirmButtonText: 'Proceed',
+        showConfirmButton: true,
+        showCancelButton: true
+    }).then(result => {
+        if (result.isConfirmed) {
+            Swal.fire(deleteNoteToastData('success', 'Note will be deleted soon.'))
+
+            let noteDocID = container.getAttribute('data-id')
+
+            fetch(`/api/note/delete/${noteDocID}`, {
+                method: 'delete'
+            })
+                .then(response => response.json())
+                .then(async data => {
+                    if (data.deleted) {
+                        await manageDb.delete('ownedNotes', noteDocID)
+                        document.querySelector(`#own-note-${noteDocID}`).remove()
+                    } else {
+                        Swal.fire(deleteNoteToastData('error', 'Cannot delete the note right now!', 3000))
+                    }
+                })
+                .catch((error) => {
+                    Swal.fire(deleteNoteToastData('error', 'Cannot delete the note right now!', 3000))
+                })
+        }
+    })
+}
+
 
 
 // ********** Nav Bar for User Notes And Saved Notes *********
