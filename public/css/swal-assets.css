@@ -1,0 +1,90 @@
+/* Apply global styles to the popup */
+.custom-swal-popup {
+    font-family: 'Inter', sans-serif !important;
+    border-radius: 20px !important;
+    padding: 10px !important;
+    padding-top: 50px !important;
+    background: linear-gradient(180deg, #F9F9F9 0%, #EAFDFF 100%) !important;
+  }
+  
+  /* Style the title */
+  .custom-swal-title {
+    font-family: 'Inter', sans-serif !important;
+    font-size: 1.2rem !important;
+    color: #222 !important;
+    padding: 10px 8px;
+    font-weight: 600;
+
+  }
+  
+  /* Description text */
+  .swal-description {
+    margin-bottom: 10px;
+    font-family: "Inter";
+    font-weight: 400;
+    font-size: .9rem;
+    line-height: 1.2;
+    text-align: center;
+    color: #4E4E4E;
+
+  }
+  
+  .swal-body-image-container {
+    display: flex;
+    justify-content: center;
+  }
+  
+  .swal-body-image {
+    width: 100%;
+    border-radius: 20px;
+    margin-top: 10px;
+
+  }
+  /* Custom button styling */
+  .custom-swal-button {
+    font-family: 'Inter', sans-serif !important;
+    background: white !important;
+    color: black !important;
+    border: 1px solid #D8D8D8 !important;
+    padding: 8px 15px !important;
+    font-weight: 500 !important;
+    border-radius: 10px !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease-in-out !important;
+  }
+  
+  .custom-swal-button:hover {
+    background: black !important;
+    color: white !important;
+  }
+  
+  @media (max-width: 480px) {
+    .custom-swal-popup {
+        padding: 5px !important;
+        padding-top: 30px !important;
+        border-radius: 10px !important;
+    }
+
+    .custom-swal-title {
+        font-size: 1rem !important;
+        padding: 8px 6px;
+    }
+
+    .swal-description {
+        font-size: 0.8rem;
+        line-height: 1.1;
+    }
+
+    .swal-body-image {
+        margin-top: 5px;
+    }
+
+    .custom-swal-button {
+        padding: 6px 10px !important;
+        border-radius: 5px !important;
+        margin-top: 5px !important;
+    }
+    .swal2-actions{
+        margin: 0;
+    }
+}
