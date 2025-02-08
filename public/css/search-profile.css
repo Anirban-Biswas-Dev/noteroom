@@ -27,39 +27,45 @@ body {
   box-sizing: border-box;
 }
 .field-container {
-  width: 80%;
-  max-width: 400px;
+  width: 100%;
+  max-width: 480px;
   min-width: 200px;
   border: none;
   display: flex;
   align-items: center;
   justify-content: space-around;
-  box-sizing: border-box;
 }
 .field {
   width: 90%;
   height: 40px;
   padding: 10px;
+  background-color: transparent;
   font-size: 14px;
-  border: solid 2px;
-  border-right: none;
+  border: none;
+  border-bottom: 1px solid var(--neon-blue);
   flex: 1;
-  border-radius: 25px 0 0 25px;
-  box-sizing: border-box;
+  transition: box-shadow 0.3s ease;
 }
-.field:focus {
+
+.field:focus, .field:focus ~ .search {
   outline: none;
+  box-shadow: 0 1px 0 0 var(--neon-blue);
 }
 .field-container i {
   height: 40px;
-  border: 2px solid;
+  border: none;
+  border-bottom: 1px solid var(--neon-blue);
   font-size: 1.2rem;
+  color: #8c8c8c;
   padding: 10px;
-  border-radius: 0 25px 25px 0;
-  box-sizing: border-box;
+  transition: box-shadow 0.3s ease;
 }
-.field-container i {
+.field-container i:hover {
+  color: rgba(0, 0, 0, 0.7);
   cursor: pointer;
+}
+.field-container i:active {
+  color: black;
 }
 .prfls-container {
   padding: 2vh 2vw;
@@ -70,12 +76,18 @@ body {
   flex-direction: column;
   align-items: center;
   box-sizing: border-box;
+  gap: 15px;
 }
 .random-prfls-container,
 .search-result-prfls-container {
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
 }
 .section-label {
+  width: 100%;
   font-weight: 500;
   padding: 10px 0;
   letter-spacing: -0.06em;
@@ -87,65 +99,79 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  box-sizing: border-box;
+  gap: 15px;
 }
 .random-prfl,
 .results-prfl {
   width: 95%;
   min-width: 250px;
   height: 60px;
-  padding: 5px;
-  background-color: var(--light-gray);
-  box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.2);
+  padding: 10px;
+  background-color: transparent;
   border-radius: 12px;
-  margin: 10px 0px;
   display: flex;
   align-items: center;
-  justify-content: space-evenly;
-  transition: background-color 0.3s ease, box-shadow 0.3s ease,
+  justify-content: flex-start;
+  gap: 15px;
+  transition: background-color 0.3s ease,
     transform 0.2s ease;
 }
 
 .random-prfl:active,
 .results-prfl:active {
   transform: scale(0.99);
-  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .random-prfl:hover,
 .results-prfl:hover {
   background-color: #f8f9fa;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
   cursor: pointer;
 }
 
 .prfl-pic {
   width: 50px;
   height: 50px;
-  border-radius: 50%;
-  object-fit: cover;
-  padding: 0 5px;
+  border: none;
+  border-radius: 50px;
+  overflow: hidden;
   aspect-ratio: 1 / 1;
+  object-fit: cover;
+  transition: filter 0.3s ease;
+  cursor: pointer;
 }
+
+.prfl-pic:hover {
+  filter: brightness(0.9);
+}
+.prfl-pic:active {
+  filter: brightness(0.8);
+}
+
+.results-prfl-info{
+  width: 80%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+}
+
 .prfl-name {
-  padding: 0 0 0 10px;
-  width: 25%;
-  max-width: 150px;
-  height: fit-content;
-  font-size: 15px;
-  letter-spacing: -0.06em;
-  box-sizing: border-box;
+  width: 100%;
+  max-width: fit-content;
+  font-weight: 500;
+  font-size: 1rem;
+  line-height: 20px;
+
 }
 .prfl-desc {
-  padding: 0 5px;
+  width: 100%;
   font-weight: 300;
   font-size: 13px;
-  line-height: 15px;
+  line-height: 1;
   letter-spacing: -0.07em;
   width: 30%;
   min-width: 200px;
   height: fit-content;
-  box-sizing: border-box;
 }
 .user-badge {
   width: 40px;
@@ -166,6 +192,46 @@ body {
 .not-show-prfl:active {
   transform: scale(0.8);
 }
+.load-more-btn {
+  width: 100%;
+  max-width: 130px;
+  background-color: transparent; /* Soft, neutral gray */
+  color: #444; /* Dark gray for readability */
+  padding: 5px 8px;
+  border: none; 
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  line-height: 2;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.load-more-btn .fa-chevron-down {
+  line-height: 1;
+  transition: transform 0.2s ease;
+}
+
+.load-more-btn:hover .fa-chevron-down {
+  transform: translateY(2px);
+}
+
+.load-more-btn:hover {
+  background-color: #EAEAEA; /* Slightly darker on hover */
+  border-color: #C8C8C8;
+}
+
+.load-more-btn:active {
+  background-color: #DADADA; /* Pressed effect */
+  border-color: #BEBEBE;
+  transform: scale(0.98);
+}
+
 
 @media (max-width: 360px) {
   .prfls-container {
@@ -181,15 +247,11 @@ body {
   }
   .prfl-name {
     font-size: 12px;
-    width: 20%;
-    padding-left: 5px;
   }
   .prfl-desc {
     font-size: 10px;
     font-weight: 400;
     letter-spacing: 0px;
-    width: 25%;
-    min-width: 100px;
   }
   .user-badge {
     width: 30px;
@@ -213,15 +275,11 @@ body {
   }
   .prfl-name {
     font-size: 14px;
-    width: 30%;
-    padding-left: 10px;
   }
   .prfl-desc {
     font-size: 12px;
     font-weight: 400;
     letter-spacing: 0px;
-    width: 30%;
-    min-width: 120px;
   }
   .user-badge {
     width: 35px;
@@ -246,15 +304,11 @@ body {
   }
   .prfl-name {
     font-size: 16px;
-    width: 35%;
-    padding-left: 15px;
   }
   .prfl-desc {
     font-size: 14px;
     font-weight: 400;
     letter-spacing: 0px;
-    width: 35%;
-    min-width: 150px;
   }
   .user-badge {
     width: 40px;

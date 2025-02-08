@@ -93,7 +93,6 @@ body {
 }
 .fa-magnifying-glass:active,
 .search-bar-box button:active {
-  transform: scale(0.95);
   color: black;
 }
 .mbl-notification-elements {

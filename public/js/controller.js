@@ -755,11 +755,14 @@ const manageNotes = {
         
         if (!existingUser) {
             let profileCard = `
-                <div class="results-prfl" id="user-${student.username}-${container}" data-username="${student.username}">
+                <div class="results-prfl" onclick="window.location.href = '/user/${student.username}'" id="user-${student.username}-${container}" data-username="${student.username}"
+                >
                     <img src="${student.profile_pic}" alt="Profile Pic" class="prfl-pic">
-                    <span class="prfl-name" onclick="window.location.href = '/user/${student.username}'">${student.displayname}</span>
-                    <span class="prfl-desc">${truncatedTitle(student.bio)}</span>
-                </div>`
+                    <div class="results-prfl-info">
+                        <span class="prfl-name" onclick="window.location.href = '/user/${student.username}'">${student.displayname}</span>
+                        <span class="prfl-desc">${truncatedTitle(student.bio)}</span>
+                    </div>
+                </div>` 
             profileContainer.insertAdjacentHTML('beforeend', profileCard);
 
             if (container === "random") {
