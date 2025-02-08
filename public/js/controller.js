@@ -402,7 +402,7 @@ const manageNotes = {
                                 <div class="review-metric-wrapper">
                                     <span
                                         class="review-count metric-count-font cmnt-count"
-                                        onclick="window.location.href='/view/${note.quickPost ? `quick-post/${note.noteID}` : note.noteD}/#feedbacks'"
+                                        onclick="window.location.href='/view/${note.quickPost ? `quick-post/${note.noteID}` : `${note.noteID}`}/#feedbacks'"
                                     >
                                         ${note.feedbackCount === 0 ? `No reviews yet` : `${note.feedbackCount} Review${note.feedbackCount === 1 ? "" : "s"}`}
                                     </span>
@@ -459,7 +459,7 @@ const manageNotes = {
 
                                 <div
                                     class="cmnt-engagement"
-                                    onclick="window.location.href='/view/${note.quickPost ? `quick-post/${note.noteID}` : note.noteD}/#feedbacks'"
+                                    onclick="window.location.href='/view/${note.quickPost ? `quick-post/${note.noteID}` : note.noteID}/#feedbacks'"
                                 >
                                     <svg
                                     width="24"
@@ -467,7 +467,7 @@ const manageNotes = {
                                     viewBox="0 0 24 24"
                                     fill="none"
                                     xmlns="http://www.w3.org/2000/svg"
-                                    onclick="window.location.href='/view/${note.quickPost ? `quick-post/${note.noteID}` : note.noteD}/#feedbacks'"
+                                    onclick="window.location.href='/view/${note.quickPost ? `quick-post/${note.noteID}` : note.noteID}/#feedbacks'"
                                     class="comment-icon"
                                     >
                                     <path
