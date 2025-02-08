@@ -147,11 +147,22 @@ function hideLoader() {
     document.querySelector('.loader-overlay').style.display = 'none';
 }
 
-const editor = new Quill('#editor', {
+const toolbarOptions = [
+    ['bold', 'italic', 'underline'], // Essential text styling
+    ['code-block'],
+    [{ 'script': 'sub' }, { 'script': 'super' }], // Subscript, Superscript
+    ['formula'], // Math formulas
+  ];
+  
+  const editor = new Quill('#editor', {
     theme: 'snow',
-    placeholder: "Describe your note in detail so others can know it's unique", 
-});
-document.getElementById('editor').style.height = '120px';
+    placeholder: "What makes this study note special? Highlight its key insights, unique takeaways, or how it helps others learn better.",
+    modules: {
+      toolbar: toolbarOptions
+    }
+  });
+  
+document.getElementById('editor').style.height = '200px';
 
 
 const uploadToastData = (message, type) => {
