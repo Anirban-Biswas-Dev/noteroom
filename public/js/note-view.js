@@ -332,11 +332,22 @@ const tribute = new Tribute({
 })
 tribute.attach(document.querySelector('#editor'))
 
+const toolbarOptions = [
+  ['bold', 'italic', 'underline'], // Essential text styling
+  ['code-block'],
+  [{ 'script': 'sub' }, { 'script': 'super' }], // Subscript, Superscript
+  ['formula'], // Math formulas
+];
+
 const editor = new Quill('#editor', {
   theme: 'snow',
-  placeholder: 'Give a feeback'
+  placeholder: "What makes this study note special? Highlight its key insights, unique takeaways, or how it helps others learn better.",
+  modules: {
+    toolbar: toolbarOptions
+  }
 });
-document.getElementById('editor').style.height = '120px';
+
+document.getElementById('editor').style.height = '200px';
 
 
 // *****   Complete Frontend Thread Related  *******

@@ -16,62 +16,61 @@ body {
     justify-content: center;
     flex-direction: column;
 }
+
+.middle-section{
+    gap: 10px;
+}
+
 .middle-section h2{
     padding: 15px;
     margin-top: 15px;
-    overflow: hidden;
 }
 
 .upload-container{
+    padding: 10px 0;
     width: 65%;
-    border: 2px solid rgba(0, 0, 0, 0.3);
+    border: none;
     display: flex;
     flex-direction: column;
     justify-content:space-evenly;
+    gap: 5px;
     align-items: center;
+    background: #FFFFFF;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+
 }
 .upload-container svg{
-    min-width: 70px;
-    padding: 5%;
+    width: 75px;
+    padding: 10px;
 }
 .upload-msg{
     width: 100%;
     text-align: center;
-    font-style: normal;
-    font-weight: 400;
-    font-size: 1.5rem;
-    line-height: 30px;
-    letter-spacing: -0.06em;
     padding: 1%;
+    font-weight: 400;
+    font-size: 1.1rem;
+    line-height: 16px;
 }
 .suggested-formats-msg{
-    width: 90%;
+    width: 100%;
     text-align: center;
-    font-weight: 300;
-    font-size:1.2rem ;
+    font-weight: 400;
+    font-size: .95rem;
     line-height: 24px;
-    letter-spacing: -0.03em;
-    padding: .5%;
     color: rgba(0, 0, 0, 0.42);
 }
-.device-upload-sep{
-    font-style: normal;
-    font-weight: 400;
-    font-size: 20px;
-    line-height: 30px;
-    letter-spacing: -0.03em;
-    color: var(--neon-blue);
-    margin: 1.5vh 0px;
-}
 .browse-file-container{
-    box-sizing: border-box;
     width: 60%;
+    border: none;
     height: 70px;
-    border: 1px solid #000000;
     display: flex;
     justify-content: center;
     align-items: center;
     margin: 30px 0px 30px 0px;
+    background: #FFFFFF;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.15);
+
 
 }
 
@@ -82,26 +81,24 @@ body {
 .browse-files-btn {
     background: #FFFFFF;
     width: 125px;
-    height: 30px;
-    border: 1px solid #000000;
-    box-shadow: 0px 4.2px 4.2px rgba(0, 0, 0, 0.25);
-    border-radius: 10px;
     font-size:  1.1rem; 
-    font-weight: 300;
-    line-height: 16px;
+    font-weight: 400;
+    line-height: 1.2;
     letter-spacing: -0.06em;
-    padding: 5px 10px 5px 10px;
+    padding: 5px 8px;
     transition: transform 0.2s ease;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
     cursor: pointer;
+    border: 1px solid #F0F0F0;
+    box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.15);
+    letter-spacing: -0.06em;
+    border-radius: 10px;
     will-change: transform;
     display: flex;
     justify-content: center;
     align-items: center;
     i{
         font-size: 1.3rem;
+        line-height: 1;
     }
 }
 
@@ -199,15 +196,15 @@ body {
     flex-direction: column;
     width: 65%;
     padding: 20px 0px 20px 0px;
-    gap: 20px; 
+    gap: 15px; 
 }
 .note-subject{
-    box-sizing: border-box;
-    background-color: #f7f9fc;
     border-radius: 10px;
+    border-radius: 8px;
+    background: #FFFFFF;
     width: 45%;
     height: 40px;
-    font-size: 1rem;
+    font-size: .9rem;
     appearance: none; 
     -webkit-appearance: none; 
     -moz-appearance: none;
@@ -216,52 +213,36 @@ body {
     background-repeat: no-repeat;
     background-position: right 10px center;
     background-size: 16px 8px;
-    padding: 0px 0px 0px 5px;
+    padding: 0px 0px 0px 10px;
     border: 1px solid rgb(218, 221, 230);
 }
 .note-subject:focus {
     outline: none;
-    border-color: var(--squid-ink);
-    border: solid 1px rgba(0, 0, 0, 0.5);
+    border: 1px solid #C9C9C9;
+
 }
 
 .note-title{
-    box-sizing: border-box;
-    background-color: #f7f9fc;
-    border-radius: 10px;
+    border-radius: 8px;
+    background: #FFFFFF;
     height: 40px;
-    font-size: 1rem;
-    padding: 0px 0px 0px 5px;
+    font-size: .9rem;
+    padding: 0px 0px 0px 10px;
     border: 1px solid rgb(218, 221, 230);
 }
 .note-title:focus {
     outline: none;
-    border-color: var(--squid-ink);
-    border: solid 1px rgba(0, 0, 0, 0.5);
+    border: 1px solid #C9C9C9;
 }
 
-.note-description, .editor {
-    resize: none; 
-    width: 100%; 
-    max-width: 100%; 
-    height: 300px; 
-    padding: 10px; 
-    box-sizing: border-box;
-    font-size: 16px; 
-    border: 1px solid; 
-    border-radius: 10px;
-    background: var(--light-gray); 
+.ql-toolbar, .ql-editor {
+    background-color: white !important;
 }
-.note-description:focus {
-    outline: none;
-    border-color: var(--squid-ink);
-    border: solid 2px;
-}
+
 .publish-note-btn{
-    box-sizing: border-box;
     background: var(--squid-ink);
-    border: 0.5px solid #000000;
-    border-radius: 7px;
+    border-radius: 8px;
+    border: none;
     font-weight: 400;
     font-size: 18px;
     line-height: 26px;
@@ -291,11 +272,11 @@ body {
     transform: translate(-50%, -50%);
     width: 100%; 
     max-width: 980px;
+    border-radius: 8px;
     display: none; 
     flex-direction: column;
     align-items: center;
     overflow-x: hidden;
-    box-sizing: border-box;
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2), 
                 0 3px 6px rgba(0, 0, 0, 0.15);
     transition: opacity 0.3s ease, visibility 0.3s ease; 
@@ -303,46 +284,40 @@ body {
 }
 .popup-heading {
     display: flex;
-    justify-content: space-between; 
+    justify-content: center; 
     align-items: center;
-    padding: 15px 25px; 
+    padding: 15px 5px; 
     width: 100%;
     position: relative; 
 }
 
 .popup-heading h2 {
-    position: absolute; 
-    left: 50%; 
-    transform: translateX(-50%); 
     font-weight: 400;
-    font-size: 2.2rem;
-    line-height: 43px;
-    letter-spacing: -0.06em;
-    margin: 0; 
+    font-size: 2rem;
 }
 
 .discard-btn {
-    box-sizing: border-box;
-    width: 100px; 
+    width: 50%;
+    max-width: 40px;
     height: 40px;
-    background-color: white;
-    border: 2px solid #000000;
-    box-shadow:0px 1.8px 2.3px rgba(0, 0, 0, 0.25); 
-    border-radius: 10px;
+    border-radius: 100%; 
+    background-color: transparent;
+    position: absolute;
+    right: 1%;
+    border: none;
     font-weight: 500;
     font-size: 1.2rem;
-    line-height: 23px;
-    letter-spacing: -0.06em;
-    margin-left: auto;
-    margin-right: 15px;
     cursor: pointer;
     z-index: 1011; 
-    transition: background-color 0.2s ease, transform 0.2s ease; 
+    transition: background-color 0.2s ease; 
 }
-.discard-btn:hover{
-    background-color: rgba(255, 0, 0, 0.78);
-    color: white;
-    transform: scale(1.05); 
+.discard-btn:hover {
+    background-color: #EAEAEA; /* Soft hover effect */
+    border-color: #C0C0C0;
+}
+
+.discard-btn:active {
+    background-color: #D9D9D9;
 }
 
 /* Responsive Grid for Image Cards */
@@ -364,65 +339,6 @@ body {
     display: flex;
     justify-content: center;
 }
-/* Responsive Breakpoints for Grid */
-@media (max-width: 360px) {
-    .thumbnail-container {
-        grid-template-columns: repeat(2, 1fr);
-        max-height: 450px;
-        overflow-y:scroll;
-        padding: 15px;
-    }
-    .thumbnail-card {
-        width: 100%;
-        max-width: 100px;
-        height: 100px;
-    }
-}
-
-@media (min-width: 361px) and (max-width: 480px) {
-    .thumbnail-container {
-        grid-template-columns: repeat(3, 1fr);
-    }
-    .thumbnail-card {
-        max-width: 120px;
-        height: 120px;
-    }
-}
-
-@media (min-width: 481px) and (max-width: 768px) {
-    .thumbnail-container {
-        grid-template-columns: repeat(4, 1fr);
-    }
-    .thumbnail-card {
-        max-width: 150px;
-        height: 150px;
-    }
-}
-
-@media (min-width: 769px) {
-    .thumbnail-container {
-        grid-template-columns: repeat(5, 1fr);
-    }
-    .thumbnail-card {
-        max-width: 180px;
-        height: 180px;
-    }
-}
-
-.thumbnail-card {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid #000000;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
-    transition: transform 0.2s ease;
-    cursor: pointer;
-}
-.thumbnail-card:hover {
-    transform: scale(1.05);
-}
 
 .thumbnail-card img.noteImage {
     object-fit: cover;
@@ -436,12 +352,16 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid #ddd;
-    border-radius: 10px;
+    border: none;
+    border-radius: 3px;
     overflow: hidden;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: filter 0.2s ease;
     cursor: pointer;
+}
+.thumbnail-card:hover {
+    filter: brightness(0.9);
 }
 
 .thumbnail-card .noteImage {
@@ -461,13 +381,18 @@ body {
     color: #757575; /* Dark contrast color for default state */
     cursor: pointer;
     opacity: 0; /* Hidden by default */
-    transition: color 0.3s ease, opacity 0.3s ease, transform 0.2s ease;
+    transition: color 0.1s ease, opacity 0.1s ease;
 }
 
-/* Dimming the background and showing delete icon on hover */
-.thumbnail-card:hover .noteImage {
-    opacity: 0.4; /* Slightly dim image */
-    background-color: rgba(0, 0, 0, 0.3); /* Dark overlay on image */
+/* Show Delete Icon at the corner on touch devices */
+@media (max-width:768px) {
+    .thumbnail-card .delete-btn{
+        top: 12%;
+        left: unset;
+        right: 0;
+        font-size: 1rem;
+        opacity: 1;
+    }
 }
 
 .thumbnail-card:hover .delete-btn {
@@ -477,37 +402,13 @@ body {
 /* Hover effect for delete icon */
 .thumbnail-card .delete-btn:hover {
     color: #d9534f; /* Slightly brighter red */
-    transform: translate(-50%, -50%) scale(1.1); /* Keep centered, add subtle scale effect */
 }
 
 /* Click effect for delete icon */
 .thumbnail-card .delete-btn:active {
     color: #c9302c; /* Darker red for click */
-    transform: translate(-50%, -50%) scale(0.9); /* Slightly smaller on click, still centered */
-    opacity: 0.8; /* Slight dimming on click */
 }
 
-
-
-/* .thumbnail-addstack-btn {
-    box-sizing: border-box;
-    width: 150px;
-    height: 50px;
-    background: var(--neon-blue);
-    border: 1px solid #07192D;
-    border-radius: 15px;
-    font-weight: 300;
-    font-size: 1.3rem;
-    line-height: 27px;
-    letter-spacing: -0.06em;
-    align-self: center;
-    transition: background-color 0.2s ease, transform 0.2s ease; 
-}
-
-.thumbnail-addstack-btn:hover {
-    background-color: #02c8e2;
-    transform: scale(1.03);
-} */
 .thumbnail-container::-webkit-scrollbar {
     width: 8px; /* Width of the vertical scrollbar */
 }
@@ -527,6 +428,53 @@ body {
 .thumbnail-container::-webkit-scrollbar-thumb:hover {
     background-color: #555; /* Darken the thumb on hover */
 }
+
+
+/* Responsive Breakpoints for Grid */
+@media (max-width: 360px) {
+    .thumbnail-container {
+        grid-template-columns: repeat(2, 1fr);
+        max-height: 450px;
+        overflow-y:scroll;
+        padding: 15px;
+    }
+    .thumbnail-card {
+        width: 100%;
+        max-width: 150px;
+        height: auto;
+    }
+}
+
+@media (min-width: 361px) and (max-width: 480px) {
+    .thumbnail-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .thumbnail-card {
+        max-width: 180px;
+        height: auto;
+    }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+    .thumbnail-container {
+        grid-template-columns: repeat(4, 1fr);
+    }
+    .thumbnail-card {
+        max-width: 250px;
+        height: auto;
+    }
+}
+
+@media (min-width: 769px) {
+    .thumbnail-container {
+        grid-template-columns: repeat(5, 1fr);
+    }
+    .thumbnail-card {
+        max-width: 300px;
+        height: auto;
+    }
+}
+
 
 .overlay {
     display: none; 
@@ -640,65 +588,43 @@ body {
         margin-top: 0px;
     }
     .upload-container{
-        width: 90%;
+        width: 95%;
         min-width: 200px;
     }
     .upload-container svg{
-        min-width: 40px;
-        min-height: 40px;
-        max-width: 50px;
-        max-height: 50px;
-        padding: 5vw;
+        width: 50px;
+        height: auto;
+        padding: 8px;
     }
     .upload-msg{
-        font-size: 1.5rem;
-        padding: 1vw;
-        font-weight: 400;
         font-size: 1rem;
         line-height: 17px;
-        letter-spacing: -0.06em;
-        color: rgba(0, 0, 0, 0.5);
     }
     .suggested-formats-msg{
-        font-weight: 300;
-        font-size: .8rem;;
-    }
-    .device-upload-sep{
-        font-size: 1rem;
-        margin: 1vh 0px;
+        font-size: .85rem;
     }
     .browse-file-container{
         width: 80%;
         min-width: 150px;
-        margin: 20px 0px 30px 0px;
     }
     .browse-files-btn{
-        height: 30%;
         width: 50%;
+        font-size: .9rem;
         i {
             font-size: 1rem;
         }
     }
     .text-form, .stack-status{
-        width: 90%;
+        width: 95%;
         min-width: 150px;
     }
     .note-subject{
         width: 100%;
         min-width: fit-content;
         font-size: .85rem;
-        background: rgb(247, 249, 252);
-        box-shadow: 0px 1.5px 2px rgba(0, 0, 0, 0.25);
     }
     .note-title{
         font-size: .85rem;
-        background: rgb(247, 249, 252);
-        box-shadow: 0px 1.5px 2px rgba(0, 0, 0, 0.25);
-    }
-    .note-description{
-        background: rgb(247, 249, 252);
-        font-size: .85rem;
-        box-shadow: 0px 1.5px 2px rgba(0, 0, 0, 0.25);
     }
     .publish-note-btn{
         font-size: 1rem;
@@ -708,19 +634,15 @@ body {
         font-weight: 600;   
     }
     .thumbnail-pop-up{
-        width: 90%;
+        width: 95%;
         padding: 5px;
     }
     .popup-heading h2{
-        font-size: 1.5rem;
+        font-size: 1.2rem;
         font-weight: 500;
     }
     .discard-btn{
-        width: 30%;
-        min-height: fit-content;
-        height: 35px;
         font-size: .9rem;
-        margin-right: 1vw;
     }
     .popup-footer{
         padding: 10px 10px;
@@ -773,63 +695,17 @@ body {
     }
     .upload-container {
         width: 95%; 
-        min-width: 220px;
     }
-    .upload-container svg {
-        min-width: 45px;
-        min-height: 45px;
-        max-width: 55px;
-        max-height: 55px;
-        padding: 6vw; 
-    }
-    .upload-msg {
-        font-size: 1.2rem; 
-        padding: 1.2vw;
-        font-weight: 400;
-        line-height: 18px;
-        letter-spacing: -0.05em;
-        color: rgba(0, 0, 0, 0.6);
-    }
-    .suggested-formats-msg {
-        font-weight: 300;
-        font-size: .9rem; 
-    }
-    .device-upload-sep {
-        font-size: 1.1rem; 
-        margin: 1.2vh 0px;
-    }
-    .browse-file-container {
-        width: 85%; 
-        min-width: 170px; 
-        margin: 25px 0px 35px 0px; 
-    }
-    .browse-files-btn {
-        height: 32%;
-        width: 55%;
-        max-width: 150px; 
-        i {
-            font-size: 1.1rem; 
-        }
+    .browse-files-btn{
+        font-size: .9rem;
+        border-radius: 5px;
     }
     .text-form, .stack-status {
         width: 95%; 
         min-width: 160px; 
     }
-    .note-subject {
+    .note-subject{
         width: 100%;
-        font-size: .9rem; 
-        background: rgb(247, 249, 252);
-        box-shadow: 0px 1.5px 2px rgba(0, 0, 0, 0.3); 
-    }
-    .note-title {
-        font-size: .9rem;
-        background: rgb(247, 249, 252);
-        box-shadow: 0px 1.5px 2px rgba(0, 0, 0, 0.3); 
-    }
-    .note-description {
-        background: rgb(247, 249, 252);
-        font-size: .9rem;
-        box-shadow: 0px 1.5px 2px rgba(0, 0, 0, 0.3); 
     }
     .publish-note-btn {
         font-size: 1.1rem; 
@@ -846,10 +722,7 @@ body {
         font-weight: 500;
     }
     .discard-btn {
-        width: 35%; 
-        height: 38px;
         font-size: 1rem; 
-        margin-right: 1.2vw;
     }
     .popup-footer {
         padding: 12px 12px; 
@@ -903,11 +776,9 @@ body {
         min-width: 240px; 
     }
     .upload-container svg {
-        min-width: 50px;
-        min-height: 50px;
-        max-width: 60px;
-        max-height: 60px;
-        padding: 7vw; 
+        width: 60px;
+        height: auto;
+        padding: 10px;
     }
     .upload-msg {
         font-size: 1.2rem; 
@@ -921,46 +792,12 @@ body {
         font-weight: 300;
         font-size: 1rem; 
     }
-    .device-upload-sep {
-        font-size: 1.2rem; 
-        margin: 1.5vh 0px;
-    }
-    .browse-file-container {
-        width: 90%; 
-        min-width: 150px; 
-        margin: 30px 0px 40px 0px;
-    }
-    .browse-files-btn {
-        height: 35%;
-        width: 60%;
-        max-width: 200px; 
-        i {
-            font-size: 1.2rem; 
-        }
-    }
     .stack-status{
         width: 80%;
     }
     .text-form {
         width: 80%; 
-        min-width: 180px; 
     }    
-    .note-subject {
-        width: 100%;
-        font-size: 1rem; 
-        background-color:rgb(247, 249, 252);
-        box-shadow: 0px 1.5px 2px rgba(0, 0, 0, 0.35); 
-    }
-    .note-title {
-        font-size: 1rem;
-        background:rgb(247, 249, 252);
-        box-shadow: 0px 1.5px 2px rgba(0, 0, 0, 0.35);
-    }
-    .note-description {
-        background:rgb(247, 249, 252);
-        font-size: 1rem;
-        box-shadow: 0px 1.5px 2px rgba(0, 0, 0, 0.35);
-    }
     .publish-note-btn {
         font-size: 1.2rem; 
         width: 60%;
@@ -978,9 +815,7 @@ body {
         font-weight: 500;
     }
     .discard-btn {
-        width: 40%; 
         font-size: 1.1rem; 
-        margin-right: 1.5vw;
     }
     .popup-footer {
         padding: 15px 15px; 
@@ -991,6 +826,9 @@ body {
         height: 50px;
         font-size: 1.2rem;
         font-weight: 500;
+    }
+    .note-subject{
+        width: 70%;
     }
 }
 
