@@ -341,7 +341,7 @@ const toolbarOptions = [
 
 const editor = new Quill('#editor', {
   theme: 'snow',
-  placeholder: "What makes this study note special? Highlight its key insights, unique takeaways, or how it helps others learn better.",
+  placeholder: "Share your thoughts and feedback here...",
   modules: {
     toolbar: toolbarOptions
   }
