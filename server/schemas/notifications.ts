@@ -2,7 +2,7 @@ import { Schema, model } from 'mongoose'
 
 const baseOptions = {
     discriminatorKey: 'docType',
-    collection: 'notification-test-ok'
+    collection: 'notifications'
 }
 
 const NotifsSchema = new Schema({
@@ -31,7 +31,7 @@ const NotifsSchema = new Schema({
     },
     ownerStudentID: String
 }, baseOptions)
-const NotifsModel = model('notification-test-ok', NotifsSchema)
+const NotifsModel = model('notifications', NotifsSchema)
 
 
 //FOR: comments (notification-feedback, notification-reply), mentions (notification-mention)
