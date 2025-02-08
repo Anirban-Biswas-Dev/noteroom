@@ -110,7 +110,7 @@ async function getNoteForShare({ noteDocID, studentDocID }) {
 }
 async function getAllNotes(studentDocID, options) {
     let notes = await notes_js_1.default.aggregate([
-        { $match: { completed: { $eq: true } } },
+        { $match: { completed: { $eq: true }, type_: { $eq: 'public' } } },
         { $lookup: {
                 from: 'students',
                 localField: 'ownerDocID',

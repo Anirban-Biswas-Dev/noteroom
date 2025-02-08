@@ -142,7 +142,7 @@ export async function getAllNotes(studentDocID: string, options?: any) {
         X_n = seed
     */
     let notes = await Notes.aggregate([
-        { $match: { completed: { $eq: true } } },
+        { $match: { completed: { $eq: true }, type_: { $eq: 'public' } } },
         { $lookup: {
             from: 'students',
             localField: 'ownerDocID',
