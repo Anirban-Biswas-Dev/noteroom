@@ -21,8 +21,13 @@
     <div class="middle-section">
         <div class="prfl-search-container">
             <fieldset class="field-container">
-                <input type="text" placeholder="Search other people..." class="field" />
-                <i class="fa-solid fa-magnifying-glass search" onclick="search()"></i>
+                <input type="text" placeholder="Who are you looking for?" class="field" />
+                <i class="fa-solid fa-magnifying-glass search" onclick="search()
+                "
+                onkeydown="if(event.key === 'Enter') search()"
+
+                data-tippy-content="Enter"
+                ></i>
             </fieldset>
         </div>
 
@@ -32,7 +37,7 @@
                 <div class="random-prfls">
                     <div class="search-results-loader profile-loader-random"></div>
                 </div>
-                <button id="load-more-random-profiles-btn">Load more</button>
+                <button class="load-more-btn" id="load-more-random-profiles-btn">See More <i class="fa-solid fa-chevron-down"></i></button>
             </div>
 
             <div class="random-prfls-container mtc-prfls-container">
@@ -57,7 +62,6 @@
 	<%- include('side-panel', { block: 'mbl-ctrl-panel' }) %>
 	<%- include('side-panel', { block: 'request-modal' }) %>
     
-    <div class="background-overlay"></div>
 	<div id="overlay" class="overlay"></div>
 	<audio id="notificationAudio" src="/sounds/notification-ping-sound.mp3" preload="auto"></audio>
 
@@ -65,6 +69,7 @@
     <script src="/js/onboarding-data.js"></script>
 	<script src="/js/controller.js" defer></script>
     <script src="/js/search-profile.js" defer></script>
+    <script src="/js/utils.js" defer></script>
 </body>
 
 </html>

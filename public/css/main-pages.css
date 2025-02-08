@@ -93,7 +93,6 @@ body {
 }
 .fa-magnifying-glass:active,
 .search-bar-box button:active {
-  transform: scale(0.95);
   color: black;
 }
 .mbl-notification-elements {
@@ -591,56 +590,76 @@ body {
   width: 100%;
   display: flex;
   align-items: center;
-  justify-content: space-evenly;
+  justify-content: flex-end;
   padding: 10px 0;
+  gap: 15px;
 }
-
-.btn-request{
-  width: 40%;
+.btn-request {
+  width: 100%;
+  max-width: 100px;
   height: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 5px;
+  gap: 8px;
   cursor: pointer;
-  border: none;
-  background: transparent;
-  border-radius: 25px;
-  font-weight: 450;
+  border: 1px solid #D8D8D8;
+  background: #FFFFFF;
   font-size: 0.8rem;
   line-height: 1;
+  font-weight: 600;
   padding: 5px;
-  transition: background-color 0.1s ease, color 0.1s ease;
+  border-radius: 5px;
+  transition: background-color 0.1s ease, color 0.1s ease, border-color 0.1s ease;
 }
 
-.btn-accept-request {
-  border: 1px solid #66C591;
-  color: #66C591;
+.btn-accept-request .fa-check {
+  color: var(--neon-blue);
+  transition: color 0.1s ease;
 }
 
-.btn-accept-request:hover {
-  background-color: #66C591;
-  color: white;
-}
-
+.btn-accept-request:hover,
 .btn-accept-request:active {
-  background-color: #4a9b6e;
+  background-color: #66C591;
+  border-color: #66C591;
   color: white;
 }
 
-.btn-reject-request {
-  border: 1px solid #B7B7B7;
-  color: #B7B7B7;
-}
-
-.btn-reject-request:hover {
-  background-color: #B7B7B7;
+.btn-accept-request:hover .fa-check,
+.btn-accept-request:active .fa-check {
   color: white;
 }
 
+.btn-reject-request .fa-x {
+  color: #FA5252;
+  transition: color 0.1s ease;
+}
+
+.btn-reject-request:hover,
 .btn-reject-request:active {
-  background-color: #8a8a8a;
+  background-color: #B7B7B7;
+  border-color: #B7B7B7;
   color: white;
+}
+
+.btn-reject-request:hover .fa-x,
+.btn-reject-request:active .fa-x {
+  color: white;
+}
+
+@media (max-width: 480px) {
+  .btn-request {
+    max-width: 90px;
+    height: 28px;
+    font-size: 0.7rem;
+    gap: 6px;
+    padding: 4px;
+  }
+
+  .btn-accept-request .fa-check,
+  .btn-reject-request .fa-x {
+    font-size: 0.75rem;
+  }
 }
 
 /* || Threads Section */
@@ -1362,7 +1381,7 @@ canvas {
 }
 
 .mbl-ctrl-panel__icon{
-  width: 55px;
+  width: 45px;
   height: auto;
   border-radius: 50%;
   padding: 10px;
@@ -1447,17 +1466,22 @@ canvas {
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 767px) {
   .right-panel {
     position: fixed;
     overflow-x: hidden;
     top: 0;
     right: -100%;
-    width: 80vw;
+    width: 100vw;
     height: 100vh;
     transform: translateX(0);
     box-shadow: none;
-    box-shadow: -10px 0px 30px rgba(255, 255, 255, 0.3);
+  }
+  .right-panel-header{
+    display: none;
+  }
+  .mbl-ctrl-panel{
+    z-index: 1004;
   }
   .show-overlay {
     display: block;
@@ -1466,19 +1490,6 @@ canvas {
   .show {
     transform: translateX(-100%);
     left: 100%;
-  }
-  .notification-title {
-    font-size: 0.9rem;
-  }
-  .notification-msg {
-    font-size: 0.8rem;
-    width: 100%;
-  }
-  .commenter-prfl {
-    text-decoration: underline;
-  }
-  .notification {
-    margin-bottom: 15px;
   }
 }
 @media (max-width: 768px) {
@@ -1503,7 +1514,7 @@ canvas {
     display: flex;
   }
   .mbl-upload-btn {
-    width: 60px;
+    width: 52px;
   }
   .mbl-profile-pic {
     display: block;

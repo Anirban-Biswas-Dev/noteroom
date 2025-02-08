@@ -755,11 +755,14 @@ const manageNotes = {
         
         if (!existingUser) {
             let profileCard = `
-                <div class="results-prfl" id="user-${student.username}-${container}" data-username="${student.username}">
+                <div class="results-prfl" onclick="window.location.href = '/user/${student.username}'" id="user-${student.username}-${container}" data-username="${student.username}"
+                >
                     <img src="${student.profile_pic}" alt="Profile Pic" class="prfl-pic">
-                    <span class="prfl-name" onclick="window.location.href = '/user/${student.username}'">${student.displayname}</span>
-                    <span class="prfl-desc">${truncatedTitle(student.bio)}</span>
-                </div>`
+                    <div class="results-prfl-info">
+                        <span class="prfl-name" onclick="window.location.href = '/user/${student.username}'">${student.displayname}</span>
+                        <span class="prfl-desc">${truncatedTitle(student.bio)}</span>
+                    </div>
+                </div>` 
             profileContainer.insertAdjacentHTML('beforeend', profileCard);
 
             if (container === "random") {
@@ -1003,12 +1006,12 @@ const manageNotes = {
                         <p class="request__sr--request-desc">${request.message}</p>
                         <div class="request__sr--request-action-update">
                         <button class="btn-request btn-accept-request">
+                            Accept
                             <i class="fa-solid fa-check"></i>
-                            Done
                         </button>
                         <button class="btn-request btn-reject-request">
-                            <i class="fa-solid fa-x"></i>
                             Reject
+                            <i class="fa-solid fa-x"></i>
                         </div>
                     </div>
                 </div>`
@@ -1337,26 +1340,15 @@ function updateNotificationBadge() {
 
 
 try {
-    // Mobile notification panel
-    // const notificationPanel = document.querySelector('.notification-panel');
-    // const notificationButton = document.querySelector('.mobile-nft-btn');
-    // const backgroundOverlay = document.querySelector('.background-overlay');
-    // const hideNotificationPanel = document.querySelector('.btn-hide-nft');
+    // Mobile control panel button
+    const rightPanel = document.querySelector('.right-panel');
+    const panelOpener = document.querySelector('.mbl-ctrl-panel--rp-opener');
 
-    // notificationButton.addEventListener('click', () => {
-    //     notificationPanel.classList.toggle('show');
-    //     backgroundOverlay.classList.toggle('show-overlay');
-    // });
-    // backgroundOverlay.addEventListener('click', () => {
-    //     notificationPanel.classList.remove('show');
-    //     backgroundOverlay.classList.remove('show-overlay');
-    // });
-    // hideNotificationPanel.addEventListener('click', () => {
-    //     notificationPanel.classList.remove('show');
-    //     backgroundOverlay.classList.remove('show-overlay');
-    // })
+    panelOpener.addEventListener('click', () => {
+        rightPanel.classList.toggle('show');
+    });
 } catch (error) {
-    console.log(error.message)
+    console.log(error.message);
 }
 
 
