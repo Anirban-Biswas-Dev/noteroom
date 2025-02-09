@@ -109,11 +109,11 @@ function truncatedTitle(title) {
 
 
 const db = new Dexie("Notes")
-const dbVersion = 13
+const dbVersion = 14
 
 db.version(dbVersion).stores({
-    savedNotes: "++id,noteID,noteTitle,noteThumbnail",
-    ownedNotes: "++id,noteID,noteTitle,noteThumbnail",
+    savedNotes: "++id,noteID,noteTitle,noteThumbnail,ownerDisplayName,ownerUserName",
+    ownedNotes: "++id,noteID,noteTitle,noteThumbnail,ownerDisplayName,ownerUserName",
     notifications: "++id,notiID,content,fromUserSudentDocID,redirectTo,isRead,createdAt,notiType"
 })
 db.on('versionchange', async (event) => {
@@ -141,7 +141,9 @@ const manageDb = {
                 await db[store].add({
                     noteID: obj._id,
                     noteTitle: obj.title,
-                    noteThumbnail: obj.thumbnail
+                    noteThumbnail: obj.thumbnail,
+                    ownerDisplayName: obj.ownerDocID.displayname,
+                    ownerUserName: obj.ownerDocID.username
                 })
             }
         } else {
@@ -730,7 +732,7 @@ const manageNotes = {
         threadSection.querySelector('.thread-editor-container').insertAdjacentHTML('beforebegin', replyMessage);
     },
 
-    addNoteProfile: function (noteData, noteType) {
+    addNoteProfile: function (noteData, noteType, isOwner) {
         let notesContainer = document.querySelector(noteType === 'saved' ? '.sv-notes-container' : '.notes-container')
         let noteElementID = `${noteType === 'saved' ? "sv-note" : "own-note"}-${noteData.noteID}`
         let existingNote = notesContainer.querySelector(`#${noteElementID}`)
@@ -742,17 +744,18 @@ const manageNotes = {
                     <h3 id="note-title">
                         ${noteData.noteTitle.length > 25 ? `${noteData.noteTitle.slice(0, 25)}...` : noteData.noteTitle}
                     </h3>
-                    ${noteType === 'owned' ? `
-                        <div class="note-card__tr">
-                            <span class="note-author-name">Delete Note</span>
+                    <div class="note-card__tr">
+                        ${noteType === 'saved' ? `<span class="note-author-name">Posted by <b>${noteData.ownerDisplayName}</b></span>` : ``}
+                        ${isOwner ? `
+                            <span class="note-author-name delete-option">Delete note</span>
                             <div class="user-profile-note-action-items" data-id="${noteData.noteID}" data-notetitle="${noteData.noteTitle}" onclick="deleteNote(this)">
                                 <svg class="user-profile-note-download-icon" width="28" height="29" viewBox="0 0 28 29" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                                     <rect width="28" height="28" fill="white"/>
                                     <path d="M9 9H19M11 9V7C11 6.44772 11.4477 6 12 6H16C16.5523 6 17 6.44772 17 7V9M12 13V18M16 13V18M6 9H22L20.5 22C20.3914 22.8242 19.7103 23.5 18.8824 23.5H9.11765C8.28972 23.5 7.60862 22.8242 7.5 22L6 9Z" stroke="red" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                 </svg>    
                             </div>
-                        </div>
-                    ` : ``}
+                        ` : ``} 
+                    </div>
                 </div>`
             notesContainer.insertAdjacentHTML('afterbegin', noteCard);
         }

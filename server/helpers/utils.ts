@@ -64,13 +64,17 @@ export async function compressImage(fileObject: fileUpload.UploadedFile) {
     return compressFileObject
 }
 
-export function setSession({ recordID, studentID }, req: any, res: any) {
+export function setSession({ recordID, studentID, username }, req: any, res: any) {
     req["session"]["stdid"] = studentID // setting the session with the student ID
     res["cookie"]('recordID', recordID, {
         secure: false,
         maxAge: 1000 * 60 * 60 * 720
     }) // setting a cookie with a value of the document ID of the user
     res["cookie"]('studentID', studentID, {
+        secure: false,
+        maxAge: 1000 * 60 * 60 * 720
+    }),
+    res["cookie"]('username', username, {
         secure: false,
         maxAge: 1000 * 60 * 60 * 720
     })

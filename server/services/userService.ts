@@ -84,6 +84,7 @@ export const LogIn = {
                     studentPass: student["password"],
                     recordID: student["_id"],
                     studentID: student["studentID"],
+                    username: student["username"],
                     authProvider: student["authProvider"]
                 })
             } else {

@@ -13,16 +13,17 @@ export default function noteRouter(io: Server) {
             let studentID = await Convert.getStudentID_username(username)
             let noteType = <"saved" | "owned">req.query["noteType"]
             let isCount = req.query["count"] ? true : false
+            let isOwner = req.session["stdid"] === studentID
             
             if (!isCount) {
                 let notes = await manageProfileNotes.getNote(noteType, studentID)
-                res.json(notes)
+                res.json({notes, isOwner})
             } else {
                 let noteCount = await manageProfileNotes.getNoteCount(noteType, studentID)
                 res.json({ noteType, count: noteCount })
             }
         } catch (error) {
-            res.json([])
+            res.json({ notes: [] })
         }
     })
 

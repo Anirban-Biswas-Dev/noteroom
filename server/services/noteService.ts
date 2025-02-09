@@ -236,9 +236,20 @@ export const manageProfileNotes = {
             let notes_ids = student[type === "saved" ? "saved_notes" : "owned_notes"]
             let notes = await Notes.aggregate([
                 { $match: { _id: { $in: notes_ids } } },
+                { $lookup: {
+                    from: 'students',
+                    localField: 'ownerDocID',
+                    foreignField: '_id',
+                    as: 'ownerDocID'
+                } },
+                { $unwind: {
+                    path: '$ownerDocID'
+                } },
                 { $project: {
                     title: 1,
-                    thumbnail: { $first: '$content' }
+                    thumbnail: { $first: '$content' },
+                    "ownerDocID.displayname": 1,
+                    "ownerDocID.username": 1,
                 } }
             ])
             return notes

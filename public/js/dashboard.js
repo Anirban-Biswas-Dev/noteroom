@@ -73,7 +73,8 @@ window.addEventListener('load', async () => {
 
 	async function getResourcees(collection) {
 		let response = await fetch(collection.api)
-		let objects = await response.json()
+		let objects = (await response.json()).notes
+		
 		for (const object of objects) {
 			await manageDb.add(collection.store, object);
 		}

@@ -47,7 +47,7 @@ function signupRouter(io: Server) {
             let student = await SignUp.addStudent(studentData)
             let studentDocID = student._id
 
-            setSession({recordID: studentDocID, studentID: student["studentID"]}, req, res)
+            setSession({recordID: studentDocID, studentID: student["studentID"], username: student["username"] }, req, res)
             res.json({ redirect: "/onboarding" })
             
             
@@ -77,7 +77,7 @@ function signupRouter(io: Server) {
             let student = await SignUp.addStudent(studentData)
             let studentDocID = student._id
 
-            setSession({recordID: studentDocID, studentID: student['studentID']}, req, res)
+            setSession({recordID: studentDocID, studentID: student['studentID'], username: student["username"]}, req, res)
             res.json({ url: `/onboarding` })
             
         } catch (error) {
