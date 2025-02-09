@@ -10,6 +10,7 @@ const userOnboarding = {
   profilePic: ""
 };
 
+
 // ************ Slider Moving Codes ***********
 
 // Select necessary elements
@@ -312,9 +313,6 @@ function storeCollegeSelection() {
   if (continueButton) {
     continueButton.addEventListener("click", () => {
       if (!userOnboarding.collegeName) {
-        alert(
-          "Please select a college or enter one in 'Other' before proceeding."
-        );
         return;
       }
 
@@ -328,7 +326,6 @@ function storeCollegeSelection() {
 if (continueButtons[0]) {
   continueButtons[0].addEventListener("click", () => {
     if (!userOnboarding.district) {
-      alert("Please select a district before proceeding.");
       return;
     }
 
@@ -407,7 +404,6 @@ function handleGroupYearRollSelection() {
   // Initialize the continue button click logic
   continueButton.addEventListener("click", () => {
     if (!groupSelected || !yearSelected || !rollEntered) {
-      alert("Please complete all the fields before proceeding.");
       return;
     }
 
@@ -561,13 +557,12 @@ function handleSubjectAndBioSelection() {
   });
 
   // Handle the continue button click
-  continueButton.addEventListener("click", () => {
+  continueButton.addEventListener("click", async () => {
     if (
       !favSubjectSelected ||
       !nonFavSubjectSelected ||
       bioTextarea.value.trim().length === 0
     ) {
-      alert("Please complete the required fields before proceeding.");
       return;
     }
 
@@ -578,14 +573,30 @@ function handleSubjectAndBioSelection() {
     Object.entries(userOnboarding).forEach(entry => {
       onboardData.append(entry[0], entry[1])
     })
-    fetch('/sign-up/onboard', {
+
+    document.querySelector('div#onboard-loader').style.display = 'flex'
+    continueButton.style.display = 'none'
+
+    let response = await fetch('/sign-up/onboard', {
       body: onboardData,
       method: 'post'
     })
-      .then(response => response.json())
-      .then(data => {
-        data.url ? window.location.href = data.url : setupErrorPopup(data.message)
+    let data = await response.json()
+    if (data.url) {
+      window.location.href = data.url
+    } else {
+      Swal.fire({
+        icon: 'error',
+        title: 'Something went wrong!!',
+        text: "Couldn't onboard you currectly!! Please try again a bit later",
+        showConfirmButton: true,
+        confirmButtonText: 'OK',
+      }).then(result => {
+        if (result.isConfirmed) {
+          window.location.href = '/dashboard'
+        }
       })
+    }
     
     // Placeholder for next-step logic
   });

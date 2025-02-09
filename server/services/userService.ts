@@ -2,6 +2,7 @@ import Students from "../schemas/students.js";
 import Notes from "../schemas/notes.js";
 import { IStudentDB } from "../types/database.types.js";
 import mongoose from "mongoose";
+import { deleteNoteImages } from "./firebaseService.js";
 
 export const Convert = {
     async getStudentID_username(username: string) {
@@ -139,11 +140,16 @@ export async function changePassword(email: string, password: string, current_pa
 }
 
 
-export async function deleteAccount(studentDocID: string) {
+export async function deleteAccount(studentDocID: string, firebase=false) {
     try {
         let deleteResult = await Students.deleteOne({ _id: studentDocID })
         if (deleteResult.deletedCount !== 0) {
-            return { ok: true }
+            if (!firebase) {
+                return { ok: true }
+            } else {
+                await deleteNoteImages({ studentDocID, noteDocID: ''}, false, true)
+                return { ok: true }
+            }
         } else {
             return { ok: false }
         }

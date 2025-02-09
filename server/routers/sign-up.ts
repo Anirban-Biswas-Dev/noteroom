@@ -122,7 +122,7 @@ function signupRouter(io: Server) {
             }) 
 
         } catch (error) {
-            res.json({ ok: false, message: "Something went wrong!" })
+            res.json({ ok: false })
         }
     })
 
