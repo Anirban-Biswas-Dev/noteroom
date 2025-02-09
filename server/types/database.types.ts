@@ -23,7 +23,8 @@ export interface IStudentDB {
     notfavsubject?: string,
     group?: string,
     username: string,
-    authProvider: string | null
+    authProvider: string | null,
+    onboarded: boolean
 }
 
 

@@ -83,7 +83,7 @@ app.use('/view', checkOnboarded(false), noteViewRouter(io))
 app.use('/dashboard',checkOnboarded(false), dashboardRouter(io))
 app.use('/search-profile', checkOnboarded(false), serachProfileRouter(io))
 app.use('/auth', resetPasswordRouter())
-app.use('/settings', settingsRouter(io))
+app.use('/settings', checkOnboarded(false), settingsRouter(io))
 app.use('/api', apiRouter(io))
 app.use(errorHandler) // Middleware for handling errors
 

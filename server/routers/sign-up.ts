@@ -41,7 +41,8 @@ function signupRouter(io: Server) {
                 password: null,
                 studentID: identifier["userID"],
                 username: identifier["username"],
-                authProvider: "google"
+                authProvider: "google",
+                onboarded: false
             }
 
             let student = await SignUp.addStudent(studentData)
@@ -70,7 +71,8 @@ function signupRouter(io: Server) {
                 password: req.body.password,
                 studentID: identifier["userID"],
                 username: identifier["username"],
-                authProvider: null
+                authProvider: null,
+                onboarded: false
             } //* Getting all the data posted by the client except the onboarding data
 
             
@@ -113,7 +115,8 @@ function signupRouter(io: Server) {
                 favouritesubject: req.body['favSub'],
                 notfavsubject: req.body['nonFavSub'],
                 profile_pic: profilePicUrl,
-                rollnumber: req.body["collegeRoll"]
+                rollnumber: req.body["collegeRoll"],
+                onboarded: true
             }
             
                         
