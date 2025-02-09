@@ -6,7 +6,7 @@ function checkOnboarded(isOnBoardingFile: boolean) {
         try {
             if (req.session["stdid"]) {
                 let student = await Students.findOne({ studentID: req.session["stdid"] })
-                if (student["collegeID"] === null) {
+                if (student["onboarded"] === false) {
                     isOnBoardingFile ? res.render("onboarding") : res.redirect("/onboarding")
                 } else {
                     next()

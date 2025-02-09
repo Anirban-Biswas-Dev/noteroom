@@ -7,6 +7,7 @@
 
     <link rel="stylesheet" href="/css/onboarding.css" />
 	<link rel="stylesheet" href="/css/error-popup.css" />
+	<link rel="stylesheet" href="/css/main-pages.css" />
 
     <script src="https://cdn.socket.io/socket.io-3.0.1.min.js"></script>
 	<link rel="apple-touch-icon" sizes="180x180" href="\assets\apple-touch-icon.png">
@@ -243,10 +244,15 @@
                               
                         </div>
                         <div class="move-section-ctrl-container flex-row-center">
-                        <button class="move-section-btn req-">Submit</button>
-                    </div>
+                            <div style="display: none;" id="onboard-loader">
+                                <div class="search-results-loader"></div> Getting you onboarded
+                            </div>
+                            <button class="move-section-btn req-">Submit</button>
+                        </div>
                     </div>
                 </div>
+
+
             </div>
         </div>
     </div>

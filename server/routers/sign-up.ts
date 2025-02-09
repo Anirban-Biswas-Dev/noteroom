@@ -32,7 +32,7 @@ function signupRouter(io: Server) {
     router.post('/auth/google', async (req, res) => {
         try {
             let { id_token } = req.body
-
+            
             let userData = await verifyToken(client_id, id_token)
             let identifier = generateRandomUsername(userData.name)
             let studentData: IStudentDB = {
@@ -41,13 +41,14 @@ function signupRouter(io: Server) {
                 password: null,
                 studentID: identifier["userID"],
                 username: identifier["username"],
-                authProvider: "google"
+                authProvider: "google",
+                onboarded: false
             }
 
             let student = await SignUp.addStudent(studentData)
             let studentDocID = student._id
 
-            setSession({recordID: studentDocID, studentID: student["studentID"]}, req, res)
+            setSession({recordID: studentDocID, studentID: student["studentID"], username: student["username"] }, req, res)
             res.json({ redirect: "/onboarding" })
             
             
@@ -56,7 +57,7 @@ function signupRouter(io: Server) {
                 let duplicate_field = Object.keys(error.keyValue)[0] // Sending the first duplicated field name to the client-side to show an error
                 io.emit('duplicate-value', duplicate_field)
             } else {
-                console.log(error)
+                res.json({ ok: false })
             }
         }
     })
@@ -70,14 +71,15 @@ function signupRouter(io: Server) {
                 password: req.body.password,
                 studentID: identifier["userID"],
                 username: identifier["username"],
-                authProvider: null
+                authProvider: null,
+                onboarded: false
             } //* Getting all the data posted by the client except the onboarding data
 
             
             let student = await SignUp.addStudent(studentData)
             let studentDocID = student._id
 
-            setSession({recordID: studentDocID, studentID: student['studentID']}, req, res)
+            setSession({recordID: studentDocID, studentID: student['studentID'], username: student["username"]}, req, res)
             res.json({ url: `/onboarding` })
             
         } catch (error) {
@@ -113,7 +115,8 @@ function signupRouter(io: Server) {
                 favouritesubject: req.body['favSub'],
                 notfavsubject: req.body['nonFavSub'],
                 profile_pic: profilePicUrl,
-                rollnumber: req.body["collegeRoll"]
+                rollnumber: req.body["collegeRoll"],
+                onboarded: true
             }
             
                         
@@ -122,7 +125,7 @@ function signupRouter(io: Server) {
             }) 
 
         } catch (error) {
-            res.json({ ok: false, message: "Something went wrong!" })
+            res.json({ ok: false })
         }
     })
 

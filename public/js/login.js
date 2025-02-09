@@ -1,15 +1,28 @@
 const host = window.location.origin
 const socket = io(host)
 
+let loginSpinner = document.querySelector('#login-spinner')
+
 socket.on('wrong-cred', function () {
-    document.querySelector('#login-spinner').style.display = "none"
-    setupErrorPopup("Sorry! Credentials are not accepted")
+    loginSpinner.style.display = "none"
+    Swal.fire({
+        icon: 'error',
+        title: 'An error occured',
+        text: "Sorry! Credentials are not accepted",
+        showConfirmButton: true
+    })
 })
 
 socket.on('no-email', function () {
-    document.querySelector('#login-spinner').style.display = "none"
-    setupErrorPopup("Sorry! No student account is associated with that email account")
+    loginSpinner.style.display = "none"
+    Swal.fire({
+        icon: 'error',
+        title: 'An error occured',
+        text: "Sorry! No student account is associated with that email account",
+        showConfirmButton: true
+    })
 })
+
 
 document.querySelectorAll('.custom__input-field').forEach(inputField => {
     inputField.addEventListener('input', function (e) {
@@ -33,17 +46,29 @@ function handleCredentialResponse(response) {
     })
         .then(response => response.json())
         .then(data => {
-            data.message ? (function () {
-                setupErrorPopup(data.message)
-                document.querySelector('#login-spinner').style.display = "none"
-            })() : data.redirect ? window.location.href = data.redirect : ""
+            if (data.redirect) {
+                window.location.href = data.redirect
+            } else {
+                loginSpinner.style.display = 'none'
+                Swal.fire({
+                    icon: 'error',
+                    title: 'An error occured',
+                    text: data.message,
+                    showConfirmButton: true
+                })
+            }
         })
         .catch(error => (function () {
-            document.querySelector('#login-spinner').style.display = "none";
-            setupErrorPopup("Sorry! Something went wrong with the server. Please try again a bit later!")
+            loginSpinner.style.display = 'none'
+            Swal.fire({
+                icon: 'error',
+                title: 'An error occured',
+                text: "Sorry! Something went wrong with the server. Please try again a bit later!",
+                showConfirmButton: true
+            })
         })())
 
-    document.querySelector('#login-spinner').style.display = "flex";
+    loginSpinner.style.display = "flex";
 }
 
 
@@ -71,7 +96,6 @@ document.addEventListener('DOMContentLoaded', function () {
 document.querySelector('.primary-btn').addEventListener('click', function () {
     let email = document.querySelector('input[name="email"]').value
     let password = document.querySelector('input[name="password"]').value
-    let loginSpinner = document.querySelector('#login-spinner')
     
     if (email.trim() !== "" && password.trim() !== "") {
         let formData = new FormData()
@@ -81,15 +105,30 @@ document.querySelector('.primary-btn').addEventListener('click', function () {
         fetch('/login', {
             method: 'POST',
             body: formData
-        }).then(response => { return response.json() })
+        })
+            .then(response => { return response.json() })
             .then(data => {
-                console.log(data)
-                loginSpinner.style.display = 'none'
-
-                data.ok ? window.location.href = data.url :
-                    data.field ? setupErrorPopup(`On <b>${data.field}</b>: ${data.field} is not provided`) : false; se
+                if (data.ok) {
+                    window.location.href = data.url
+                } else {
+                    loginSpinner.style.display = 'none'
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'An error occured',
+                        html: `On <b>${data.field}</b>: ${data.field} is not provided`,
+                        showConfirmButton: true
+                    })
+                }
             })
-            .catch(error => { console.error(error) })
+            .catch(error => { 
+                loginSpinner.style.display = 'none'
+                Swal.fire({
+                    icon: 'error',
+                    title: 'An error occured',
+                    text: 'Sorry! Cannot log you in right now. Try again a bit later.',
+                    showConfirmButton: true
+                })
+            })
 
         loginSpinner.style.display = 'flex'
     }

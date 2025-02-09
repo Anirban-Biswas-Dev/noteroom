@@ -7,5 +7,6 @@ logs.log
 /server/routers/db/
 /experiment/
 /dist
+*.drawio
 /.idea
 /views/test.*

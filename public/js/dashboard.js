@@ -63,7 +63,7 @@ async function get_note(count, page) {
 window.addEventListener('load', async () => {
 	async function initialFeedSetup() {
 		let feedContainer = document.querySelector('.feed-container')
-		let notes = await get_note(3, 1)
+		let notes = await get_note(10, 1)
 		notes.forEach(note => {
 			manageNotes.addNote(note)
 		})
@@ -73,16 +73,18 @@ window.addEventListener('load', async () => {
 
 	async function getResourcees(collection) {
 		let response = await fetch(collection.api)
-		let objects = await response.json()
+		let objects = (await response.json()).notes
 		for (const object of objects) {
 			await manageDb.add(collection.store, object);
 		}
 	}
-	await getResourcees({api: '/api/note?noteType=saved', store: 'savedNotes'})
-	await getResourcees({api: '/api/note?noteType=owned', store: 'ownedNotes'})
-	await getResourcees({api: '/api/notifs', store: 'notifications'})
-
-	document.querySelector('#is-script-loaded').setAttribute('data-loaded', 'true')
+	try {
+		await getResourcees({api: '/api/note?noteType=saved', store: 'savedNotes'})
+		await getResourcees({api: '/api/note?noteType=owned', store: 'ownedNotes'})
+		await getResourcees({api: '/api/notifs', store: 'notifications'})
+	} finally {
+		document.querySelector('#is-script-loaded').setAttribute('data-loaded', 'true')
+	}
 })
 
 
@@ -125,7 +127,7 @@ const observers = {
 		const _observer = new IntersectionObserver(async entries => {
 			entries.forEach(async entry => {
 				if (entry.isIntersecting) {
-					let notes = await get_note(3, nextPage)
+					let notes = await get_note(10, nextPage)
 					if (notes.length !== 0) {
 						notes.forEach(note => {
 							manageNotes.addNote(note)

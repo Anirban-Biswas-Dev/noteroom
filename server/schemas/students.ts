@@ -117,6 +117,10 @@ const studentsSchema = new Schema({
     collegeID: {
         type: Schema.Types.Mixed, //* Either the college name (custom one) or the college ID (pre-defined one)
         default: null
+    },
+    onboarded: {
+        type: Boolean,
+        default: false
     }
 })
 

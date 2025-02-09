@@ -61,14 +61,29 @@ let observer = new IntersectionObserver(entries => {
     entries.forEach(async entry => {
         if (entry.isIntersecting) {
             let username = document.querySelector('#ownedNotes').getAttribute('data-username')
-            let response = await fetch(`/api/note?noteType=owned&username=${username}`)
-            let notes = await response.json()
-            if (notes.length !== 0) {
+            let selfUserName = Cookies.get('username')
+
+            if (selfUserName && selfUserName === username) {
+                let notes = await manageDb.get('ownedNotes')
                 notes.forEach(note => {
-                    manageNotes.addNoteProfile({ noteID: note._id, noteTitle: note.title, noteThumbnail: note.thumbnail }, 'owned')
+                    manageNotes.addNoteProfile(note, 'owned', true)
                 })
             } else {
-                document.querySelector('#no-notes-owned').style.display = 'flex'
+                let response = await fetch(`/api/note?noteType=owned&username=${username}`)
+                let data = await response.json()
+                if (data.notes.length !== 0) {
+                    data.notes.forEach(note => {
+                        manageNotes.addNoteProfile({ 
+                            noteID: note._id, 
+                            noteTitle: note.title, 
+                            noteThumbnail: note.thumbnail, 
+                            ownerDisplayName: note.ownerDocID.displayname,
+                            ownerUserName: note.ownerDocID.username 
+                        }, 'owned', false)
+                    })
+                } else {
+                    document.querySelector('#no-notes-owned').style.display = 'flex'
+                }
             }
             observer.unobserve(entry.target)
             document.querySelector('.owned-notes-status').remove()
