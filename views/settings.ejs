@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="/css/settings.css" />
     <link rel="stylesheet" href="/css/header-footer.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/dexie@latest/dist/dexie.min.js" defer></script>
+
     <title>Settings</title>
 
     <%- include('partials/links.ejs') %>
@@ -197,11 +200,7 @@
         </div>
       </div>
     </div>
-    <script src="/js/utils.js"></script>
-    <script>
-      function logout() {
-    window.location.href = '/logout'
-}
-    </script>
+    <script src="/js/utils.js" defer></script>
+    <script src="/js/settings.js" defer></script>
   </body>
 </html>

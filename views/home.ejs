@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="/css/main-header.css">
     <script src="https://cdn.socket.io/socket.io-3.0.1.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
-    <script src="https://cdn.socket.io/socket.io-3.0.1.min.js"></script>
+    <script src="https://cdn.socket.io/socket.io-3.0.1.min.js" defer></script>
     <link rel="stylesheet" href="/css/bar-loader.css">
 
     <link rel="apple-touch-icon" sizes="180x180" href="\assets\apple-touch-icon.png">
@@ -40,16 +40,8 @@
           </nav>
       
           <div class="auth-buttons flex-row-center">
-            <button class="header__btn login" onclick="(function() {
-              setTimeout(() => {
-                window.location.href = '/login'
-              }, 100)
-            })()">Login</button>
-            <button class="header__btn create-account" onclick="(function() {
-              setTimeout(() => {
-                window.location.href = '/sign-up'
-              }, 100)
-            })()">Create Account</button>
+            <button class="header__btn login" onclick="window.location.href = '/login'">Login</button>
+            <button class="header__btn create-account" onclick="window.location.href = '/sign-up'">Create Account</button>
             <button class="menu-toggle" id="menuToggle" aria-label="Toggle Menu" aria-expanded="false">
               ☰
             </button>
@@ -63,11 +55,7 @@
               <li><a href="/support">Support</a></li>
               <li><a href="/about-us/#join-noteroom-team">Join Team</a></li>
               <li><a href="/blog">Blog</a></li>
-            <li><button class="mobile-nav-signup-btn" onclick="(function() {
-              setTimeout(() => {
-                window.location.href = '/sign-up'
-              }, 100)
-            })()">Create Account</button></li>
+            <li><button class="mobile-nav-signup-btn" onclick="window.location.href = '/sign-up'">Create Account</button></li>
           </ul>
         </div>
       </header> 
@@ -78,11 +66,7 @@
           <img class="hero-logo" src="\assets\apple-touch-icon.png" alt="NoteRoom Logo" />
           <div class="hero-title-wrapper"><h1 class="hero-title">Think, Share, Solve All in One Place</h1></div>
           <p class="hero-desc">Join the country’s top note-sharing platform to find the best subjust-wise notes for HSC</p>
-          <button class="hero-primary" onclick="(function() {
-            setTimeout(() => {
-              window.location.href = '/sign-up'
-            }, 1000)
-          })()">Create Account</button>
+          <button class="hero-primary" onclick="window.location.href = '/sign-up'">Create Account</button>
         </div>
 
         <!-- Relative Design Elements -->
@@ -103,11 +87,7 @@
           <img class="hero-logo hero-logo--top-layer" src="\assets\apple-touch-icon.png" alt="NoteRoom Logo" />
           <div class="hero-title-wrapper"><h1 class=" hero-title--top-layer">Think, Share, Solve All in One Place</h1></div>
           <p class="hero-desc hero-desc--top-layer">Join the country’s top note-sharing platform to find the best subjust-wise notes for HSC</p>
-          <button class="hero-primary--top-layer" onclick="(function() {
-            setTimeout(() => {
-              window.location.href = '/sign-up'
-            }, 1000)
-          })()">Create Account</button>
+          <button class="hero-primary--top-layer" onclick="window.location.href = '/sign-up'">Create Account</button>
         </div>
 
         <!-- Relative Design Elements -->
@@ -154,8 +134,8 @@
     </div> -->
 
 
-    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
-    <script src="/js/header.js" ></script>
-    <script src="/js/home.js" ></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" defer></script>
+    <script src="/js/header.js" defer></script>
+    <script src="/js/home.js" defer></script>
 </body>
 </html>

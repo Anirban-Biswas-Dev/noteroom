@@ -32,7 +32,7 @@ function signupRouter(io: Server) {
     router.post('/auth/google', async (req, res) => {
         try {
             let { id_token } = req.body
-
+            
             let userData = await verifyToken(client_id, id_token)
             let identifier = generateRandomUsername(userData.name)
             let studentData: IStudentDB = {
@@ -57,7 +57,7 @@ function signupRouter(io: Server) {
                 let duplicate_field = Object.keys(error.keyValue)[0] // Sending the first duplicated field name to the client-side to show an error
                 io.emit('duplicate-value', duplicate_field)
             } else {
-                console.log(error)
+                res.json({ ok: false })
             }
         }
     })

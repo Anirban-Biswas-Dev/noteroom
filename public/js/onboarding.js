@@ -87,11 +87,21 @@ backButton.addEventListener("click", async () => {
     })
 
     if (result.isConfirmed) {
-      let response = await fetch('/api/user/delete')
-      let data = await response.json()
-      if (data.ok) {
-        window.location.href = '/'
-      } else {
+      try {
+        let response = await fetch('/api/user/delete')
+        let data = await response.json()
+        if (data.ok) {
+          window.location.href = '/'
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'An error occured!',
+            text: "Couldn't delete your account! Please try again a bit later.",
+            showConfirmButton: true,
+            confirmButtonText: 'OK',
+          })
+        }
+      } catch (error) {
         Swal.fire({
           icon: 'error',
           title: 'An error occured!',
@@ -102,6 +112,7 @@ backButton.addEventListener("click", async () => {
       }
     }  
   }
+
   updateSlides(currentSlide - 1, "prev");
 });
 
@@ -577,14 +588,28 @@ function handleSubjectAndBioSelection() {
     document.querySelector('div#onboard-loader').style.display = 'flex'
     continueButton.style.display = 'none'
 
-    let response = await fetch('/sign-up/onboard', {
-      body: onboardData,
-      method: 'post'
-    })
-    let data = await response.json()
-    if (data.url) {
-      window.location.href = data.url
-    } else {
+    try {
+      let response = await fetch('/sign-up/onboard', {
+        body: onboardData,
+        method: 'post'
+      })
+      let data = await response.json()
+      if (data.url) {
+        window.location.href = data.url
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Something went wrong!!',
+          text: "Couldn't onboard you currectly!! Please try again a bit later",
+          showConfirmButton: true,
+          confirmButtonText: 'OK',
+        }).then(result => {
+          if (result.isConfirmed) {
+            window.location.href = '/dashboard'
+          }
+        })
+      }
+    } catch (error) {
       Swal.fire({
         icon: 'error',
         title: 'Something went wrong!!',
