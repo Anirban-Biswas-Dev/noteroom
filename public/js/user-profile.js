@@ -175,6 +175,7 @@ document.querySelector(".share-user-profile").addEventListener("click", function
             position:"bottom-end",
             title: "Profile link copied!",
             showConfirmButton: false,
+            timer: 2000
         });
     }).catch(err => {
         console.error("Failed to copy: ", err);
