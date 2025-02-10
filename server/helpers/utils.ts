@@ -51,7 +51,7 @@ export function generateRandomUsername(displayname: string) {
 }
 
 
-export async function compressImage(fileObject: fileUpload.UploadedFile) {
+export async function compressImage(fileObject: any) {
     let imageBuffer = fileObject.data
     let imageType: "jpeg" | "png" = fileObject.mimetype === "image/jpeg" ? "jpeg" : "png"
     let compressedBuffer = await sharp(imageBuffer)

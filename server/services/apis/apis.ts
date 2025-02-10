@@ -11,6 +11,7 @@ import { checkLoggedIn } from "../../middlewares/checkLoggedIn.js";
 import noteRouter from "./note.js";
 import searchRouter from "./search.js";
 import { requestApi } from "./request.js";
+import userApiRouter from "./user.js";
 
 export const router = Router()
 
@@ -19,6 +20,7 @@ export default function apiRouter(io: Server) {
     router.use('/note', noteRouter(io))
     router.use('/search', searchRouter(io))
     router.use('/request', requestApi(io))
+    router.use('/user', userApiRouter(io))
 
     router.get('/notifs', async (req, res) => {
         try {

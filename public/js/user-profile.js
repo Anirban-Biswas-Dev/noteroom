@@ -194,3 +194,107 @@ document.querySelector(".share-user-profile").addEventListener("click", function
         console.error("Failed to copy: ", err);
     });
 });
+
+
+
+async function changeDetail(event) {
+    const changeDetailsWindow = (fieldName, type) => {
+        return {
+            icon: 'success',
+            title: `Change your <b>${fieldName}</b>`,
+            showConfirmButton: true,
+            showCancelButton: true,
+            confirmButtonText: 'Proceed',
+            input: type,
+        }
+    }
+
+    const tostDataChangeProfile = (icon, message) => {
+        return {
+            icon: icon,
+            toast: true,
+            position: 'bottom-end',
+            title: message,
+            timerProgressBar: true,
+            showConfirmButton: false,
+            timer: 4000,
+        }
+    }
+
+    async function changeDetails({ field, fieldName, newValue }) {
+        let userData = new FormData()
+        userData.append('fieldName', fieldName)
+        userData.append('newValue', newValue)
+
+        let response = await fetch('/api/user/profile/change', {
+            method: 'post',
+            body: userData
+        })
+        let data = await response.json()
+        if (!data.ok) {
+            Swal.fire(tostDataChangeProfile('warning', `Couldn't change your <b>${field}</b>! Try again a bit later.`))
+        }
+    }
+    let fieldName = event.getAttribute('data-field')
+    let field = event.getAttribute('data-name')
+
+    if (field === 'profile_pic') {
+        let result = await Swal.fire(changeDetailsWindow(fieldName, "file"))
+        if (result.isConfirmed) {
+            let value = result.value
+            if (value) {
+                let picUrl = URL.createObjectURL(value)
+                let picSelected = await Swal.fire({
+                    title: "Your uploaded picture",
+                    imageUrl: picUrl,
+                    imageAlt: "The uploaded picture",
+                    customClass: {
+                        image: 'user-prfl-pic'
+                    },
+                    showConfirmButton: true,
+                    showCancelButton: true,
+                    confirmButtonText: 'Change'
+                })  
+                if (picSelected.isConfirmed) {
+                    Swal.fire(tostDataChangeProfile('success', `Your <b>${fieldName}</b> will change soon! It may take some time to take effect.`))
+                    // /* @anirban the profile_pic file input */
+                    await changeDetails({ field: fieldName, fieldName: field, newValue: value })
+                }   
+                URL.revokeObjectURL(picUrl)              
+            }
+        }
+    } else if (field === 'favouritesubject' || field === 'notfavsubject') {
+        let group = document.querySelector('.user-group').textContent.toLowerCase()
+        let subjects = subjectsData[group].map(data => data.name).concat(subjectsData["general"].map(data => data.name))
+        let subjectObjects = {}
+        subjects.forEach(subject => {
+            subjectObjects[subject] = subject
+        })
+        
+        let result = await Swal.fire({
+            title: `Change your <b>${fieldName}</b>`,
+            input: "select",
+            inputOptions: {
+                Subject: subjectObjects
+            },
+            inputPlaceholder: "Select a subject",
+            showCancelButton: true,
+            confirmButtonText: 'Change'
+        })
+        if (result.isConfirmed) {
+            let value = result.value
+            if (value) {
+                Swal.fire(tostDataChangeProfile('success', `Your <b>${fieldName}</b> will change soon! It may take some time to take effect.`))
+                await changeDetails({ field: fieldName, fieldName: field, newValue: value })    
+            }
+        }
+
+    } else {
+        let result = await Swal.fire(changeDetailsWindow(fieldName, "text"))
+        if (result.isConfirmed) {
+            let value = result.value
+            Swal.fire(tostDataChangeProfile('success', `Your <b>${fieldName}</b> will change soon! It may take some time to take effect.`))
+            await changeDetails({ field: fieldName, fieldName: field, newValue: value })
+        }
+    }
+}
