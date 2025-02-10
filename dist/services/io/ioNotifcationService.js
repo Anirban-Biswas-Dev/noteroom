@@ -14,7 +14,7 @@ function notificationIOHandler(io, socket) {
 }
 function NotificationSender(io, globals) {
     return {
-        async sendNotification({ content, title = '', event }, fromUserSudentDocID) {
+        async sendNotification({ content, title = '', event }, fromUserSudentDocID, additional) {
             try {
                 let ownerStudentID = globals.ownerStudentID;
                 let redirectTo = globals.redirectTo || "";
@@ -34,7 +34,8 @@ function NotificationSender(io, globals) {
                     redirectTo: redirectTo,
                     isRead: "false",
                     createdAt: notification_document["createdAt"],
-                    fromUserSudentDocID: !fromUserSudentDocID ? null : notification_document["fromUserSudentDocID"]
+                    fromUserSudentDocID: !fromUserSudentDocID ? null : notification_document["fromUserSudentDocID"],
+                    additional: additional || null
                 };
                 io.to(server_js_1.userSocketMap.get(ownerStudentID)).emit(event, notification_io);
                 return true;

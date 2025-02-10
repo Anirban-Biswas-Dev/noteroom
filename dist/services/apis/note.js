@@ -13,9 +13,10 @@ function noteRouter(io) {
             let studentID = await userService_1.Convert.getStudentID_username(username);
             let noteType = req.query["noteType"];
             let isCount = req.query["count"] ? true : false;
+            let isOwner = req.session["stdid"] === studentID;
             if (!isCount) {
                 let notes = await noteService_2.manageProfileNotes.getNote(noteType, studentID);
-                res.json(notes);
+                res.json({ objects: notes, isOwner });
             }
             else {
                 let noteCount = await noteService_2.manageProfileNotes.getNoteCount(noteType, studentID);
@@ -23,7 +24,7 @@ function noteRouter(io) {
             }
         }
         catch (error) {
-            res.json([]);
+            res.json({ objects: [] });
         }
     });
     router.delete("/delete/:noteDocID", async (req, res) => {

@@ -60,7 +60,7 @@ function loginRouter(io) {
             let email = userData.email;
             let user = await userService_js_1.LogIn.getProfile(email);
             if (user["authProvider"] !== null) {
-                (0, utils_js_1.setSession)({ recordID: user['recordID'], studentID: user["studentID"] }, req, res);
+                (0, utils_js_1.setSession)({ recordID: user['recordID'], studentID: user["studentID"], username: user["username"] }, req, res);
                 res.send({ redirect: '/dashboard' });
             }
             else {
@@ -82,7 +82,7 @@ function loginRouter(io) {
                 let student = await userService_js_1.LogIn.getProfile(email);
                 if (student["authProvider"] === null) {
                     if (password === student['studentPass']) {
-                        (0, utils_js_1.setSession)({ recordID: student['recordID'], studentID: student["studentID"] }, req, res);
+                        (0, utils_js_1.setSession)({ recordID: student['recordID'], studentID: student["studentID"], username: student["username"] }, req, res);
                         res.json({ ok: true, url: '/dashboard' });
                     }
                     else {

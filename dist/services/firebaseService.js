@@ -34,12 +34,20 @@ async function uploadImage(fileObject, fileName) {
         stream.end(fileObject.buffer || fileObject.data);
     });
 }
-async function deleteNoteFolder({ studentDocID, noteDocID }, post = false) {
-    let noteFolder = post ? `${studentDocID}/quick-posts/${noteDocID}` : `${studentDocID}/${noteDocID}`;
-    let [files] = await bucket.getFiles({ prefix: noteFolder });
-    if (files.length !== 0) {
-        await Promise.all(files.map(file => file.delete()));
+async function deleteFolder({ studentDocID, noteDocID }, post = false, studentFolder = false) {
+    if (!studentFolder) {
+        let noteFolder = post ? `${studentDocID}/quick-posts/${noteDocID}` : `${studentDocID}/${noteDocID}`;
+        let [files] = await bucket.getFiles({ prefix: noteFolder });
+        if (files.length !== 0) {
+            await Promise.all(files.map(file => file.delete()));
+        }
+    }
+    else {
+        let [files] = await bucket.getFiles({ prefix: studentDocID });
+        if (files.length !== 0) {
+            await Promise.all(files.map(file => file.delete()));
+        }
     }
 }
 exports.upload = uploadImage;
-exports.deleteNoteImages = deleteNoteFolder;
+exports.deleteNoteImages = deleteFolder;

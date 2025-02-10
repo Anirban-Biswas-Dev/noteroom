@@ -22,14 +22,14 @@ function requestApi(io) {
                     receiverDocID: recDocID,
                     message: message
                 };
-                await (0, requestService_1.addRequest)(requestData);
-                await (0, ioNotifcationService_1.NotificationSender)(io, {
+                let request = await (0, requestService_1.addRequest)(requestData);
+                let result = await (0, ioNotifcationService_1.NotificationSender)(io, {
                     ownerStudentID: recStudentID,
                     redirectTo: ``
                 }).sendNotification({
                     event: 'notification-request',
                     content: 'sent you a request',
-                }, senderDocumentID);
+                }, senderDocumentID, request.toObject());
                 res.json({ ok: true });
             }
             else {
@@ -45,10 +45,10 @@ function requestApi(io) {
             let studentID = req.session["stdid"];
             let studentDocID = (await userService_1.Convert.getDocumentID_studentid(studentID)).toString();
             let requests = await (0, requestService_1.getRequests)(studentDocID);
-            res.json({ requests });
+            res.json({ objects: requests });
         }
         catch (error) {
-            res.json({ requests: [] });
+            res.json({ objects: [] });
         }
     });
     router.post('/done', async (req, res) => {

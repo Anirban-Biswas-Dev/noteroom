@@ -35,11 +35,12 @@ function signupRouter(io) {
                 password: null,
                 studentID: identifier["userID"],
                 username: identifier["username"],
-                authProvider: "google"
+                authProvider: "google",
+                onboarded: false
             };
             let student = await userService_js_1.SignUp.addStudent(studentData);
             let studentDocID = student._id;
-            (0, utils_js_1.setSession)({ recordID: studentDocID, studentID: student["studentID"] }, req, res);
+            (0, utils_js_1.setSession)({ recordID: studentDocID, studentID: student["studentID"], username: student["username"] }, req, res);
             res.json({ redirect: "/onboarding" });
         }
         catch (error) {
@@ -48,7 +49,7 @@ function signupRouter(io) {
                 io.emit('duplicate-value', duplicate_field);
             }
             else {
-                console.log(error);
+                res.json({ ok: false });
             }
         }
     });
@@ -61,11 +62,12 @@ function signupRouter(io) {
                 password: req.body.password,
                 studentID: identifier["userID"],
                 username: identifier["username"],
-                authProvider: null
+                authProvider: null,
+                onboarded: false
             };
             let student = await userService_js_1.SignUp.addStudent(studentData);
             let studentDocID = student._id;
-            (0, utils_js_1.setSession)({ recordID: studentDocID, studentID: student['studentID'] }, req, res);
+            (0, utils_js_1.setSession)({ recordID: studentDocID, studentID: student['studentID'], username: student["username"] }, req, res);
             res.json({ url: `/onboarding` });
         }
         catch (error) {
@@ -100,14 +102,15 @@ function signupRouter(io) {
                 favouritesubject: req.body['favSub'],
                 notfavsubject: req.body['nonFavSub'],
                 profile_pic: profilePicUrl,
-                rollnumber: req.body["collegeRoll"]
+                rollnumber: req.body["collegeRoll"],
+                onboarded: true
             };
             students_js_1.default.findByIdAndUpdate(studentDocID, { $set: onboardData }, { upsert: false }).then(() => {
                 res.send({ url: `/dashboard` });
             });
         }
         catch (error) {
-            res.json({ ok: false, message: "Something went wrong!" });
+            res.json({ ok: false });
         }
     });
     return router;

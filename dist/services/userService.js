@@ -11,6 +11,7 @@ exports.deleteSessionsByStudentID = deleteSessionsByStudentID;
 const students_js_1 = __importDefault(require("../schemas/students.js"));
 const notes_js_1 = __importDefault(require("../schemas/notes.js"));
 const mongoose_1 = __importDefault(require("mongoose"));
+const firebaseService_js_1 = require("./firebaseService.js");
 exports.Convert = {
     async getStudentID_username(username) {
         let studentID = (await students_js_1.default.findOne({ username: username }, { studentID: 1 }))["studentID"];
@@ -81,6 +82,7 @@ exports.LogIn = {
                     studentPass: student["password"],
                     recordID: student["_id"],
                     studentID: student["studentID"],
+                    username: student["username"],
                     authProvider: student["authProvider"]
                 });
             }
@@ -134,11 +136,17 @@ async function changePassword(email, password, current_password) {
         return false;
     }
 }
-async function deleteAccount(studentDocID) {
+async function deleteAccount(studentDocID, firebase = false) {
     try {
         let deleteResult = await students_js_1.default.deleteOne({ _id: studentDocID });
         if (deleteResult.deletedCount !== 0) {
-            return { ok: true };
+            if (!firebase) {
+                return { ok: true };
+            }
+            else {
+                await (0, firebaseService_js_1.deleteNoteImages)({ studentDocID, noteDocID: '' }, false, true);
+                return { ok: true };
+            }
         }
         else {
             return { ok: false };

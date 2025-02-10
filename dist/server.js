@@ -66,6 +66,7 @@ const ioNoteService_js_1 = __importDefault(require("./services/io/ioNoteService.
 const ioNotifcationService_js_1 = __importDefault(require("./services/io/ioNotifcationService.js"));
 const onBoardingChecker_js_1 = __importDefault(require("./middlewares/onBoardingChecker.js"));
 const reset_password_js_1 = __importDefault(require("./routers/reset-password.js"));
+const blogs_js_1 = __importDefault(require("./routers/blogs.js"));
 (0, dotenv_1.config)({ path: (0, path_1.join)(__dirname, '.env') });
 const app = (0, express_1.default)();
 const server = (0, http_1.createServer)(app);
@@ -106,13 +107,15 @@ app.use('/view', (0, onBoardingChecker_js_1.default)(false), (0, note_view_js_1.
 app.use('/dashboard', (0, onBoardingChecker_js_1.default)(false), (0, dashboard_js_1.default)(io));
 app.use('/search-profile', (0, onBoardingChecker_js_1.default)(false), (0, search_profile_js_1.default)(io));
 app.use('/auth', (0, reset_password_js_1.default)());
-app.use('/settings', (0, settings_js_1.default)(io));
+app.use('/settings', (0, onBoardingChecker_js_1.default)(false), (0, settings_js_1.default)(io));
 app.use('/api', (0, apis_js_1.default)(io));
+app.use('/blog', (0, blogs_js_1.default)());
 app.use(errors_js_1.default);
 app.get('/logout', (req, res) => {
     req.session.destroy(error => {
         res.clearCookie('studentID');
         res.clearCookie('recordID');
+        res.clearCookie('username');
         res.clearCookie('connect.sid');
         if (!error) {
             res.redirect('/login');

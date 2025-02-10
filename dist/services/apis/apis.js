@@ -13,13 +13,11 @@ const archiver_1 = __importDefault(require("archiver"));
 const rootInfo_js_1 = require("../../helpers/rootInfo.js");
 const noteService_js_1 = require("../noteService.js");
 const userService_js_1 = require("../userService.js");
-const checkLoggedIn_js_1 = require("../../middlewares/checkLoggedIn.js");
 const note_js_1 = __importDefault(require("./note.js"));
 const search_js_1 = __importDefault(require("./search.js"));
 const request_js_1 = require("./request.js");
 exports.router = (0, express_1.Router)();
 function apiRouter(io) {
-    exports.router.use(checkLoggedIn_js_1.checkLoggedIn);
     exports.router.use('/note', (0, note_js_1.default)(io));
     exports.router.use('/search', (0, search_js_1.default)(io));
     exports.router.use('/request', (0, request_js_1.requestApi)(io));
@@ -27,10 +25,10 @@ function apiRouter(io) {
         try {
             let studentID = req.session["stdid"];
             let notifs = await (0, rootInfo_js_1.getNotifications)(studentID);
-            res.json(notifs);
+            res.json({ objects: notifs });
         }
         catch (error) {
-            res.json([]);
+            res.json({ objects: [] });
         }
     });
     exports.router.post("/download", async (req, res) => {
@@ -98,10 +96,12 @@ function apiRouter(io) {
     });
     exports.router.get('/user/delete', async (req, res) => {
         try {
-            let studentID = req.session["stdid"];
+            let studentID = req.query["studentID"] || req.session["stdid"];
+            let studentFolder = req.query["studentFolder"];
             let studentDocID = (await userService_js_1.Convert.getDocumentID_studentid(studentID)).toString();
-            let response = await (0, userService_js_1.deleteAccount)(studentDocID);
+            let response = await (0, userService_js_1.deleteAccount)(studentDocID, studentFolder === "true");
             let sessiondeletion = await (0, userService_js_1.deleteSessionsByStudentID)(studentID);
+            console.log(`User got deleted`);
             res.json({ ok: response.ok && sessiondeletion.ok });
         }
         catch (error) {

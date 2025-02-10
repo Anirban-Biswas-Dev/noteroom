@@ -63,7 +63,7 @@ async function compressImage(fileObject) {
     let compressFileObject = Object.assign(fileObject, { buffer: compressedBuffer, size: compressedBuffer.length });
     return compressFileObject;
 }
-function setSession({ recordID, studentID }, req, res) {
+function setSession({ recordID, studentID, username }, req, res) {
     req["session"]["stdid"] = studentID;
     res["cookie"]('recordID', recordID, {
         secure: false,
@@ -72,5 +72,9 @@ function setSession({ recordID, studentID }, req, res) {
     res["cookie"]('studentID', studentID, {
         secure: false,
         maxAge: 1000 * 60 * 60 * 720
-    });
+    }),
+        res["cookie"]('username', username, {
+            secure: false,
+            maxAge: 1000 * 60 * 60 * 720
+        });
 }

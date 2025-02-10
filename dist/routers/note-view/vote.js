@@ -63,7 +63,7 @@ function voteRouter(io) {
                             ownerStudentID: feedbackOwner["studentID"],
                             redirectTo: isQuickPost ? `/view/quick-post/${noteDocID}` : `/view/${noteDocID}`
                         }).sendNotification({
-                            content: `Your comment on "${postTitle}" is getting noticed! It has received ${upvoteCount} like${upvoteCount === 1 ? '' : 's'}.`,
+                            content: `Your comment on "${postTitle}" got ${upvoteCount} like${upvoteCount === 1 ? '' : 's'}`,
                             event: 'notification-comment-upvote'
                         });
                     })() : false;
