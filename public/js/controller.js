@@ -97,9 +97,6 @@ function manageRequest(requestCard) {
         }
     })
 }
-// document.querySelectorAll(".request").forEach((requestCard) => {
-    
-// });
 
 
 function getCollegeFromID(collegeID) {
@@ -336,6 +333,8 @@ async function upvote(voteContainer, fromDashboard = false) {
     })
     let data = await response.json()
     if (data.ok) {
+        voteContainer.removeAttribute('data-disabled')
+    } else {
         voteContainer.removeAttribute('data-disabled')
     }
 }
