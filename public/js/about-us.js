@@ -16,8 +16,8 @@ founders.forEach((founder) => {
     if (founder.socialLinks.twitter) {
         socialIconsHtml += `<i onclick="window.open('${founder.socialLinks.twitter}', '_blank')" class="fa-brands fa-square-x-twitter"></i>`;
     }
-    if (founder.socialLinks.linkedin) {
-        socialIconsHtml += `<i onclick="window.open('${founder.socialLinks.linkedin}', '_blank')" class="fa-brands fa-linkedin"></i>`;
+    if (founder.socialLinks.youtube) {
+        socialIconsHtml += `<i onclick="window.open('${founder.socialLinks.youtube}', '_blank')" class="fa-brands fa-youtube"></i>`;
     }
     
 
