@@ -15,7 +15,7 @@ body {
   flex-direction: column;
 }
 .middle-section {
-  padding-top: 15vh;
+  padding-top: 120px;
   height: 100vh;
 }
 .prfl-search-container {
@@ -234,6 +234,9 @@ body {
 
 
 @media (max-width: 360px) {
+  .middle-section{
+    padding-bottom: 60px;
+  }
   .prfls-container {
     width: 100%;
   }
@@ -262,6 +265,9 @@ body {
   }
 }
 @media (min-width: 361px) and (max-width: 480px) {
+  .middle-section{
+    padding-bottom: 70px;
+  }
   .prfls-container {
     width: 100%;
   }
