@@ -54,14 +54,13 @@
     font-size: 2.2rem;
     padding: 5px;
     font-weight: 500;
-    transition: transform 0.2s ease, color 0.2s ease;
+    cursor: pointer;
+    transition: color 0.2s ease;
 }
 .modal-header span:hover {
-    transform: scale(1.1); 
     color: #ff4d4d;         
 }
 .modal-header span:active {
-    transform: scale(0.9);  
     color: #ff0000;         
 }
 .platforms-section{

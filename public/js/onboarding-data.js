@@ -299,8 +299,8 @@ const subjectsData = {
   ],
   science: [
       { name: "Math", icon: "math.png" },
-      { name: "Biology", icon: "biology.png" },
       { name: "Physics", icon: "physics.png" },
+      { name: "Chemistry", icon: "chemistry.png" },
       { name: "Botany", icon: "botany.png" },
       { name: "Zoology", icon: "zoology.png" }
   ],

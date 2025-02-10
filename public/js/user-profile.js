@@ -178,3 +178,20 @@ try {
 } catch (error) {
 }
 
+
+document.querySelector(".share-user-profile").addEventListener("click", function() {
+    // Copy current page URL
+    navigator.clipboard.writeText(window.location.href).then(() => {
+        // Show success toast
+        Swal.fire({
+            toast: true,
+            icon: "success",
+            position:"bottom-end",
+            title: "Profile link copied!",
+            showConfirmButton: false,
+            timer: 2000
+        });
+    }).catch(err => {
+        console.error("Failed to copy: ", err);
+    });
+});

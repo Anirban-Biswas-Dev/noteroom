@@ -21,6 +21,7 @@
 
 .header__logo img {
   max-height: 50px;
+  cursor: pointer;
 }
 .header__logo--subtitle {
   font-size: 1.1rem;

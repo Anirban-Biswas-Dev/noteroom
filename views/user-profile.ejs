@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= student.displayname %>'s Profile</title>
+    <title><%= student.displayname %>'s Profile - NoteRoom</title>
+    <meta name="description" content="<%= student.displayname %> is a HSC <%= student.collegeyear %> student at <%= student.collegeID %>. Connect today to explore their academic journey at Noteroom.">
     <link rel="stylesheet" href="/css/main-pages.css">
     <link rel="stylesheet" href="/css/user-profile.css">
+    <link rel="stylesheet" href="/css/nav-section.css">
 
     <meta name="robots" content="index, follow">
     
@@ -25,6 +27,9 @@
 
     
     <div class="middle-section">
+        <div class="nav-section">
+            <i class="fa-solid fa-arrow-left nav-back-btn" onclick="goPrevPage()" ></i>
+        </div>
     <div class="ms-first-row">
         <div class="user-prfl-pic-wrapper">
             <img class="user-prfl-pic" src="<%= student.profile_pic %>" alt="Profile Picture">
@@ -158,8 +163,8 @@
       } %>
         <div class="notes-container visible-container">
             <div class="no-notes-content owned-notes-status">
-                <p>Getting your notes...</p>
                 <div class="search-results-loader"></div>
+                <p>Getting your notes...</p>
             </div>
 
             <%- noNotesContent('No Notes to Show', 'owned') %>

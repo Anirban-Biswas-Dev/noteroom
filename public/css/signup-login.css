@@ -145,6 +145,15 @@ body{
     }
   }
 
+.g_id_signin{
+    width: 100%;
+    max-width: 260px;
+}
+@media (max-width:480px) {
+    .g_id_signin{
+        max-width: 220px;
+    }
+}
 .separator {
     width: 50%;
     margin: --low-spacing 0;
