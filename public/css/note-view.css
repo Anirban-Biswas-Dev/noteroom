@@ -849,6 +849,7 @@ body {
 
 .no-comments-container{
   padding: 25px;
+  padding-top: 40px;
   text-align: center;
   width: 100%;
   display: none;
@@ -865,7 +866,7 @@ body {
 @media (max-width: 400px) {
   .cmnt-btn {
     right: 10px;
-    top: 220px;
+    top: 255px;
   }
 }
 /* Carousel Responsiveness */
