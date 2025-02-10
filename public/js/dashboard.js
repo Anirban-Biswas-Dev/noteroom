@@ -69,21 +69,24 @@ window.addEventListener('load', async () => {
 		})
 		observers.lastNoteObserver().observe(feedContainer.lastElementChild) // Initial tracking of the last note
 	}
-	await initialFeedSetup()
-
+	
 	async function getResourcees(collection) {
 		let response = await fetch(collection.api)
-		let objects = (await response.json()).notes
+		let objects = (await response.json()).objects
+		
 		for (const object of objects) {
 			await manageDb.add(collection.store, object);
 		}
 	}
+	
 	try {
 		await getResourcees({api: '/api/note?noteType=saved', store: 'savedNotes'})
 		await getResourcees({api: '/api/note?noteType=owned', store: 'ownedNotes'})
 		await getResourcees({api: '/api/notifs', store: 'notifications'})
+		await getResourcees({api: '/api/request/get', store: 'requests'})
 	} finally {
 		document.querySelector('#is-script-loaded').setAttribute('data-loaded', 'true')
+		await initialFeedSetup()
 	}
 })
 

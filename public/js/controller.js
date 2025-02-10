@@ -9,6 +9,99 @@ let imageObject = {
     'English': `${baseURL}english.png`
 }
 
+
+function manageRequest(requestCard) {
+    const firstRow = requestCard.querySelector(".request__fr");
+    const secondRow = requestCard.querySelector(".request__sr");
+    const chevronIcon = requestCard.querySelector(".request-chevron-icon");
+
+    let reqID = requestCard.id.split('-')[1]
+    let senderUserName = requestCard.getAttribute("data-senderusername")
+
+    const acceptButton = requestCard.querySelector(".btn-accept-request");
+    const rejectButton = requestCard.querySelector(".btn-reject-request")
+
+    secondRow.classList.toggle("request__sr--expanded");
+    chevronIcon.classList.toggle("request__fr--chevron-rotated");
+
+    acceptButton.addEventListener("click", async function () {
+        let notes = await manageDb.get('ownedNotes')
+        let noteObjects = {}
+        notes.forEach(note => {
+            noteObjects[note.noteID] = note.noteTitle
+        })
+
+        let { value } = await Swal.fire({
+            title: "Select a post to bind the request",
+            input: "select",
+            inputOptions: {
+                Notes: noteObjects
+            },
+            inputPlaceholder: "Select a post",
+            showCancelButton: true,
+        })
+        if (value) {
+            let noteDocID = value
+
+            let requestData = new FormData()
+            requestData.append('senderUserName', senderUserName)
+            requestData.append('reqID', reqID)
+            requestData.append('noteDocID', noteDocID)
+
+            let response = await fetch('/api/request/done', {
+                method: 'post',
+                body: requestData
+            })
+            let data = await response.json()
+            if (data.ok) {
+                requestCard.remove()
+                manageDb.delete('requests', { idPath: 'recID', id: reqID })
+                Swal.fire(toastData('success', "You've the completed the request. Kudos!"))
+            } else {
+                Swal.fire(toastData('error', 'Failed to mark request as done. Please try again later.', 3000))
+            }
+        }
+    })
+
+    rejectButton.addEventListener("click", async function () {
+        let result = await Swal.fire({
+            icon: "question",
+            title: "Are you sure you want to reject the request?",
+            text: "You can send a small message to the sender for clarification (optional)",
+            input: "text",
+            inputPlaceholder: "Message",
+            showCancelButton: true,
+            showConfirmButton: true,
+            confirmButtonText: 'Reject'
+        })
+
+        if (result.isConfirmed) {
+            let message = result.value
+            let requestData = new FormData()
+            requestData.append("reqID", reqID)
+            requestData.append('message', message)
+            requestData.append('senderUserName', senderUserName)
+
+            let response = await fetch('/api/request/reject', {
+                method: 'post',
+                body: requestData
+            })
+            let data = await response.json()
+            if (data.ok) {
+                requestCard.remove()
+                manageDb.delete('requests', { idPath: 'recID', id: reqID })
+                Swal.fire(toastData("success", "Requested has been rejected"))
+            } else {
+                Swal.fire(toastData("error", "Failed to reject the request. Please try again later.", 3000))
+            }
+        }
+    })
+}
+// document.querySelectorAll(".request").forEach((requestCard) => {
+    
+// });
+
+
 function getCollegeFromID(collegeID) {
     if (!Number.isNaN(parseInt(collegeID))) {
         let collegeDistrict = Object.keys(districtCollegeData)[parseInt(collegeID / 100) - 1]
@@ -33,42 +126,55 @@ async function updateFromIndexedDB(store) {
     objects.forEach(object => {
         if (store === "savedNotes") {
             manageNotes.addSaveNote(object);
-        } else {
+        } else if (store === "notifications") {
             manageNotes.addNoti(object);
+        } else if (store === "requests") {
+            manageNotes.addRequest(object)
         }
     })
 }
 
-function readNoti(noti) {
-    noti.addEventListener('click', async () => {
-        let isread = noti.getAttribute('data-isread')
-        if (isread === "false") {
-            let notiID = noti.getAttribute('data-notiid')
+async function readNoti(noti) {
+    let isread = noti.getAttribute('data-isread')
+    let redirectTo = noti.getAttribute('data-redirectTo')
+    let notiType = noti.getAttribute('data-notitype')
 
-            noti.querySelector('p.noti-msg').classList.replace('secondary-false', 'secondary-true')
-            noti.querySelector('.noti__sc--second-row-noti-info span').classList.replace('false', 'true')
-            noti.querySelector('.noti__sc--second-row-noti-info span:last-child').classList.replace('secondary-false', 'secondary-true')
+    if (isread === "false") {
+        let notiID = noti.getAttribute('data-notiid')
 
-            let notification = await db['notifications'].where('notiID').equals(notiID).first()
-            notification["isRead"] = true
-            await db["notifications"].put(notification)
+        noti.querySelector('p.noti-msg').classList.replace('secondary-false', 'secondary-true')
+        noti.querySelector('.noti__sc--second-row-noti-info span').classList.replace('false', 'true')
+        noti.querySelector('.noti__sc--second-row-noti-info span:last-child').classList.replace('secondary-false', 'secondary-true')
 
-            conSock.emit('read-noti', notiID)
+        let notification = await db['notifications'].where('notiID').equals(notiID).first()
+        notification["isRead"] = true
+        await db["notifications"].put(notification)
+
+        conSock.emit('read-noti', notiID)
+
+        if (notiType === 'notification-request') {
+            console.log(`yah`)
+            await updateFromIndexedDB('requests')
         }
+    }
+    
 
-        let redirectTo = noti.getAttribute('data-redirectTo')
-        if (redirectTo && redirectTo !== "") {
-            window.location.href = redirectTo
-        } else if (redirectTo === "") {
-            window.location.reload()
-        }
-    })
+    if (redirectTo && redirectTo !== "") {
+        window.location.href = redirectTo
+    } 
+}
+
+
+async function rerunRequestFunction() {
+    await updateFromIndexedDB("notifications")
+    await updateFromIndexedDB("savedNotes")
+    await updateFromIndexedDB("requests")
 }
 
 const dashboardJSScriptLoader = document.querySelector('#is-script-loaded')
 let dashboardScriptLoadObserver = new MutationObserver(async entries => {
     if (entries[0]) {
-        await updateFromIndexedDB("notifications")
+        await rerunRequestFunction()
     }
     dashboardScriptLoadObserver.disconnect()
 })
@@ -78,9 +184,8 @@ if (dashboardJSScriptLoader) {
 
 window.addEventListener('load', async () => {
     if (window.location.pathname !== "/dashboard") {
-        await updateFromIndexedDB("notifications")
+        await rerunRequestFunction()
     }
-    await updateFromIndexedDB("savedNotes")
 })
 
 
@@ -109,12 +214,13 @@ function truncatedTitle(title) {
 
 
 const db = new Dexie("Notes")
-const dbVersion = 14
+const dbVersion = 15
 
 db.version(dbVersion).stores({
     savedNotes: "++id,noteID,noteTitle,noteThumbnail,ownerDisplayName,ownerUserName",
     ownedNotes: "++id,noteID,noteTitle,noteThumbnail,ownerDisplayName,ownerUserName",
-    notifications: "++id,notiID,content,fromUserSudentDocID,redirectTo,isRead,createdAt,notiType"
+    notifications: "++id,notiID,content,fromUserSudentDocID,redirectTo,isRead,createdAt,notiType",
+    requests: "++id,recID,message,createdAt,senderDisplayName,senderUserName"
 })
 db.on('versionchange', async (event) => {
     console.log(`Changed the version to ${dbVersion}`)
@@ -135,7 +241,7 @@ db.open().then(() => {
 
 const manageDb = {
     async add(store, obj) {
-        if (store !== "notifications") {
+        if (store === "savedNotes" || store === "ownedNotes") {
             let existingNote = await db[store].where("noteID").equals(obj._id).first()
             if (!existingNote) {
                 await db[store].add({
@@ -146,7 +252,18 @@ const manageDb = {
                     ownerUserName: obj.ownerDocID.username
                 })
             }
-        } else {
+        } else if (store === "requests") {
+            let existingRec = await db[store].where("recID").equals(obj._id).first()
+            if (!existingRec) {
+                await db[store].add({
+                    recID: obj._id,
+                    message: obj.message,
+                    createdAt: obj.createdAt,
+                    senderDisplayName: obj.senderDocID.displayname,
+                    senderUserName: obj.senderDocID.username
+                })
+            }
+        } else if (store === "notifications") {
             let existingNoti = await db[store].where("notiID").equals(obj._id).first()
             if (!existingNoti) {
                 await db[store].add({
@@ -170,11 +287,9 @@ const manageDb = {
         return allObjects
     },
 
-    async delete(store, id) {
-        if (store === "savedNotes" || store === "ownedNotes") {
-            let note = await db[store].where("noteID").equals(id).first()
-            await db[store].delete(note.id)
-        }
+    async delete(store, { idPath, id }) {
+        let note = await db[store].where(idPath).equals(id).first()
+        await db[store].delete(note.id)
     }
 }
 
@@ -222,8 +337,6 @@ async function upvote(voteContainer, fromDashboard = false) {
     let data = await response.json()
     if (data.ok) {
         voteContainer.removeAttribute('data-disabled')
-    } else {
-        Swal.fire(toastData('error', "Sorry, please try again", 3000))
     }
 }
 
@@ -550,7 +663,7 @@ const manageNotes = {
                     }
                     </div>
 
-                    <div class="noti__sec-col--msg-wrapper" data-redirectTo='${notiData.redirectTo}' data-notiID='${notiData.notiID}' data-isread='${notiData.isRead}'>
+                    <div class="noti__sec-col--msg-wrapper" data-redirectTo='${notiData.redirectTo}' data-notiID='${notiData.notiID}' data-isread='${notiData.isRead}' data-notitype="${notiData.notiType}">
                         <div class="noti__sc--first-row-msg">
                             <p class="noti-msg secondary-${notiData.isRead}">
                                 ${isInteraction ? `<span class="noti-source-user-name">${notiData.fromUserSudentDocID.displayname}</span>` : ''}
@@ -836,7 +949,7 @@ const manageNotes = {
 
         if (!existingRequest) {
             let recTemplate = `
-                <div class="request" id="request-${request.recID}" data-senderusername="${request.senderUserName}">
+                <div class="request" id="request-${request.recID}" data-senderusername="${request.senderUserName}" onclick="manageRequest(this)">
                     <div class="request__fr">
                         <span class="open-request-card"><i class="fa-solid fa-chevron-right request-chevron-icon"></i></span>
                         <span class="request__fr--requester-name">${request.senderDisplayName}'s Request</span>
@@ -1032,7 +1145,7 @@ async function saveNote(svButton, fromDashboard = false) {
             Swal.fire(toastData('success', 'Note saved successfully!'))
             await manageDb.add('savedNotes', body.savedNote[0])
         })() : (function () {
-            manageDb.delete('savedNotes', noteDocID)
+            manageDb.delete('savedNotes', { idPath: "noteID", id: noteDocID })
             body.count !== 0 || (document.querySelector('.no-saved-notes-message').classList.remove('hide'))
         })()
 
@@ -1139,23 +1252,6 @@ if (notificationCount <= 0) {
     document.getElementById('notification-count').style.display = 'none'
 }
 
-//* Delete notifications: all pages
-async function deleteNoti(id) {
-    /* 
-    # Process:
-    ~   when clicking the delete noti. button, the notiID is sent. an WS event occurs to delete the notification with that id. (1)
-    ~   them that notification is removed from the frontend DOM (2). last, the noti. object is removed from the LS (3)
-    */
-    conSock.emit('delete-noti', id) // 1
-    document.querySelector(`#noti-${id}`).remove() // 2
-    await manageDb.delete('notis', id)
-
-    notificationCount--;
-    updateNotificationBadge(); // 2
-}
-
-
-
 //* Adding notifications: all pages
 
 function addNoti(notiData) {
@@ -1256,110 +1352,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 window.addEventListener('load', async () => {
-    async function getRequests() {
-        let response = await fetch('/api/request/get')
-        let data = (await response.json()).requests
-        if (data.length !== 0) {
-            data.forEach(request => {
-                let requestObject = {
-                    recID: request._id,
-                    message: request.message,
-                    createdAt: request.createdAt,
-                    senderDisplayName: request.senderDocID.displayname,
-                    senderUserName: request.senderDocID.username
-                }
-                manageNotes.addRequest(requestObject)
-            })
-        }
-    }
-    await getRequests()
-
-    document.querySelectorAll(".request").forEach((requestCard) => {
-        const firstRow = requestCard.querySelector(".request__fr");
-        const secondRow = requestCard.querySelector(".request__sr");
-        const chevronIcon = requestCard.querySelector(".request-chevron-icon");
-
-        let reqID = requestCard.id.split('-')[1]
-        let senderUserName = requestCard.getAttribute("data-senderusername")
-
-        const acceptButton = requestCard.querySelector(".btn-accept-request");
-        const rejectButton = requestCard.querySelector(".btn-reject-request")
-
-        firstRow.addEventListener("click", () => {
-            secondRow.classList.toggle("request__sr--expanded");
-            chevronIcon.classList.toggle("request__fr--chevron-rotated");
-        });
-
-        acceptButton.addEventListener("click", async function () {
-            let notes = await manageDb.get('ownedNotes')
-            let noteObjects = {}
-            notes.forEach(note => {
-                noteObjects[note.noteID] = note.noteTitle
-            })
-
-            let { value } = await Swal.fire({
-                title: "Attach The Requested Post",
-                input: "select",
-                inputOptions: {
-                    Notes: noteObjects
-                },
-                inputPlaceholder: "Select a post",
-                showCancelButton: true,
-            })
-            if (value) {
-                let noteDocID = value
-
-                let requestData = new FormData()
-                requestData.append('senderUserName', senderUserName)
-                requestData.append('reqID', reqID)
-                requestData.append('noteDocID', noteDocID)
-
-                let response = await fetch('/api/request/done', {
-                    method: 'post',
-                    body: requestData
-                })
-                let data = await response.json()
-                if (data.ok) {
-                    Swal.fire(toastData('success', "You've the completed the request. Kudos!"))
-                    requestCard.remove()
-                } else {
-                    Swal.fire(toastData('error', 'Failed to mark request as done. Please try again later.', 3000))
-                }
-            }
-        })
-
-        rejectButton.addEventListener("click", async function () {
-            let result = await Swal.fire({
-                icon: "question",
-                title: "Are you sure you want to reject the request?",
-                text: "You can send a small message to the sender for clarification (optional)",
-                input: "text",
-                inputPlaceholder: "Message",
-                showCancelButton: true,
-                showConfirmButton: true
-            })
-
-            if (result.isConfirmed) {
-                let message = result.value
-                let requestData = new FormData()
-                requestData.append("reqID", reqID)
-                requestData.append('message', message)
-                requestData.append('senderUserName', senderUserName)
-
-                let response = await fetch('/api/request/reject', {
-                    method: 'post',
-                    body: requestData
-                })
-                let data = await response.json()
-                if (data.ok) {
-                    requestCard.remove()
-                    Swal.fire(toastData("success", "Requested has been rejected"))
-                } else {
-                    Swal.fire(toastData("error", "Failed to reject the request. Please try again later.", 3000))
-                }
-            }
-        })
-    });
+    
 })
 
 document.addEventListener("DOMContentLoaded", function () {

@@ -1,8 +1,6 @@
 const host = window.location.origin
 const socket = io(host)
 
-socket.emit('connection')
-
 function badgeStyling() {
     let userBadge = document.querySelector('.top-voice-badge').textContent.trim();
     const badgeElement = document.querySelector('.top-voice-badge');
@@ -71,8 +69,9 @@ let observer = new IntersectionObserver(entries => {
             } else {
                 let response = await fetch(`/api/note?noteType=owned&username=${username}`)
                 let data = await response.json()
-                if (data.notes.length !== 0) {
-                    data.notes.forEach(note => {
+                console.log(data.objects)
+                if (data.objects.length !== 0) {
+                    data.objects.forEach(note => {
                         manageNotes.addNoteProfile({ 
                             noteID: note._id, 
                             noteTitle: note.title, 
@@ -130,7 +129,7 @@ function deleteNote(container) {
                 .then(response => response.json())
                 .then(async data => {
                     if (data.deleted) {
-                        await manageDb.delete('ownedNotes', noteDocID)
+                        await manageDb.delete('ownedNotes', { idPath: 'noteID', id: noteDocID })
                         document.querySelector(`#own-note-${noteDocID}`).remove()
                     } else {
                         Swal.fire(deleteNoteToastData('error', 'Cannot delete the note right now!', 3000))
