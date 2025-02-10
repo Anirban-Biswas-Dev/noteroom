@@ -919,26 +919,63 @@ body {
   padding: 0px 2px 0px 0px;
 }
 
-@media (max-width:360px) {
-  .notification-modal-overlay{
+@media (max-width: 360px) {
+  .notification-modal-overlay {
     background-color: rgba(0, 0, 0, 0.2);
   }
   .notification-modal {
     top: 8%;
     right: 2%;
+    width: 90%;
+    padding: 20px;
+  }
+  .notifications-container {
+    height: 60vh;
+    gap: 10px;
+  }
+  .notification {
+    padding: 5px;
+    gap: 5px;
+  }
+  .noti__source-user-img {
+    width: 35px;
+    height: 35px;
+  }
+  .noti-msg {
+    font-size: 12px;
+  }
+  .noti-time {
+    font-size: 10px;
   }
 }
 
-@media (max-width:480px) {
-  .notification-modal-overlay{
+@media (max-width: 480px) {
+  .notification-modal-overlay {
     background-color: rgba(0, 0, 0, 0.2);
   }
   .notification-modal {
     top: 8%;
     right: 2%;
+    width: 90%;
+    padding: 20px;
   }
-  .notifications-container{
+  .notifications-container {
     height: 60vh;
+    gap: 10px;
+  }
+  .notification {
+    padding: 5px;
+    gap: 5px;
+  }
+  .noti__source-user-img {
+    width: 35px;
+    height: 35px;
+  }
+  .noti-msg {
+    font-size: 12px;
+  }
+  .noti-time {
+    font-size: 10px;
   }
 }
 
