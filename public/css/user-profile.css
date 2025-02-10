@@ -142,22 +142,23 @@
 }
 
 .user-profile-request-btn{
-    background: var(--squid-ink);
+    border: solid var(--squid-ink) 2px;
     border-radius: 8px;
     font-weight: 700;
     font-size: 13px;
     line-height: 14px;
     padding: 12px 20px;
-    color: #FFFFFF;
+    background-color: white;
+    color: var(--squid-ink);
     cursor: pointer;
     transition: background-color 0.1s ease;
 }
 
 .user-profile-request-btn:hover{
-    background-color: #11283f;
+    background-color: #F8F8F8;
 }
 .user-profile-request-btn:active{
-    background-color: #000000;
+    background-color: transparent;
 }
 
 .share-user-profile{
