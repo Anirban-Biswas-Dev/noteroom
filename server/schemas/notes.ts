@@ -50,6 +50,10 @@ const notesSchema = new Schema({
     completed: {
         type: Boolean,
         default: false
+    },
+    pinned: {
+        type: Boolean,
+        default: false
     }
 })
 
