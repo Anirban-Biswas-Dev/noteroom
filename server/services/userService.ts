@@ -45,7 +45,7 @@ export const SearchProfile = {
     async getRandomStudent(sampleSize: number, exclude?: string[]) {
         try {
             let students = await Students.aggregate([
-                { $match: { visibility: "public", username: { $nin: exclude } } },
+                { $match: { visibility: "public", username: { $nin: exclude }, onboarded: true } },
                 { $sample: { size: sampleSize } },
                 { $project: { profile_pic: 1, displayname: 1, bio: 1, username: 1, _id: 0, collegeID: 1 } }
             ])
