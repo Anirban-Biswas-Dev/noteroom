@@ -338,10 +338,11 @@ const manageNotes = {
                                 ${
                                     (function() {
                                         let description = (new DOMParser()).parseFromString(note.description, 'text/html').querySelector('body').textContent.trim()
-                                        return note.quickPost ? `${description}` : `
-                                            ${description.slice(0, 100)}...
-                                            <span class="note-desc-see-more-btn" onclick="window.location.href='/view/${note.noteID}'">Read More</span>
-                                        `
+                                        let charLimit = note.quickPost ? 250 : 100;
+                                        return description.length > charLimit ? `
+                                            ${description.slice(0, charLimit)}...
+                                            <span class="note-desc-see-more-btn" onclick="window.location.href='/view/${note.quickPost ? `quick-post/${note.noteID}` : note.noteID}'">Read More</span>
+                                        ` : description;
                                     })()
                                 }
                             </p>
@@ -354,7 +355,7 @@ const manageNotes = {
                         ${note.quickPost ?
                             `${note.contentCount !== 0 ?
                                 `<div class="quickpost-thumbnail-wrapper">
-                                    <img class="quickpost-thumbnail" src="" data-src="${note.content1}"/>
+                                    <img onclick="window.location.href='/view/quick-post/${note.noteID}'" class="quickpost-thumbnail" src="" data-src="${note.content1}"/>
                                 </div>`: ``} `
                             :
                             `<div class="thumbnail-grid">
@@ -499,7 +500,7 @@ const manageNotes = {
 
         if (!existingNote) {
             let savedNotesHtml = `
-                <div class="saved-note hide" id="saved-note-${noteData.noteID}">
+                <div class="saved-note hide" id="saved-note-${noteData.noteID}" onclick="window.location.href='/view/${noteData.noteID}'" >
                     <span class="sv-note-title">
                         <a class="sv-n-link" href='/view/${noteData.noteID}'>${truncatedTitle(noteData.noteTitle)}</a>
                     </span>
@@ -1297,7 +1298,7 @@ window.addEventListener('load', async () => {
             })
 
             let { value } = await Swal.fire({
-                title: "Select a post to bind the request",
+                title: "Attach The Requested Post",
                 input: "select",
                 inputOptions: {
                     Notes: noteObjects
