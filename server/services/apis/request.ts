@@ -4,6 +4,7 @@ import { Convert } from "../userService"
 import { addRequest, deleteRequest, getRequests } from "../requestService"
 import { NotificationSender } from "../io/ioNotifcationService"
 import { manageProfileNotes } from "../noteService"
+import { userSocketMap } from "../../server"
 
 const router = Router()
 
@@ -25,16 +26,16 @@ export function requestApi(io: Server) {
                     receiverDocID: recDocID,
                     message: message
                 }
-                await addRequest(requestData)
+                let request = await addRequest(requestData)
                 
-                await NotificationSender(io, { 
+                let result = await NotificationSender(io, { 
                     ownerStudentID: recStudentID,
                     redirectTo: ``
                 }).sendNotification({
                     event: 'notification-request',
                     content: 'sent you a request',
-                }, senderDocumentID)
-                
+                }, senderDocumentID, request.toObject())
+                                
                 res.json({ ok: true })
             } else {
                 res.json({ ok: false, message: "You can't request something to yourself!"})
@@ -50,9 +51,9 @@ export function requestApi(io: Server) {
             let studentID = req.session["stdid"]
             let studentDocID = (await Convert.getDocumentID_studentid(studentID)).toString()
             let requests = await getRequests(studentDocID)
-            res.json({requests})         
+            res.json({objects: requests})         
         } catch (error) {
-            res.json({requests: []})         
+            res.json({objects: []})         
         }
     })
 

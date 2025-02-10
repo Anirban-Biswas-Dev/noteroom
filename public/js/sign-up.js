@@ -1,7 +1,6 @@
 const host = window.location.origin
 const socket = io(host)
 
-socket.emit('connection')
 let loginSpinner = document.querySelector('#login-spinner')
 
 socket.on('duplicate-value', (duplicate_field) => {

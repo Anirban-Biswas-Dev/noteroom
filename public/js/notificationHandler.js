@@ -17,7 +17,7 @@ let notiEvents = [
 function handleNotifications(events) {
     events.forEach(event => {
         ioSocket.on(event, (data) => {
-            addNoti(data)
+            addNoti(Object.assign(data, { notiType: event }))
             manageDb.add('notifications', Object.assign(data, { _id: data.notiID }))
             
             const nftShake = document.querySelector('.mobile-nft-btn')
@@ -31,6 +31,12 @@ function handleNotifications(events) {
                 audio.play();
             } catch (error) {
                 console.error(error)
+            }
+
+            if (event === 'notification-request') {
+                if (data.additional) {
+                    manageDb.add('requests', data.additional)
+                }
             }
         })
     })

@@ -24,9 +24,9 @@ export default function apiRouter(io: Server) {
         try {
             let studentID = req.session["stdid"]
             let notifs = await getNotifications(studentID)
-            res.json(notifs)
+            res.json({ objects: notifs })
         } catch (error) {
-            res.json([])
+            res.json({ objects: [] })
         }
     })
 

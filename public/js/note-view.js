@@ -174,9 +174,7 @@ async function upvoteComment(voteContainer) {
 		body: voteData
 	})
 	let data = await response.json()
-	if (!data.ok) {
-		Swal.fire(toastData('error', "Yikes! Try again later.", 3000))
-	} else {
+	if (data.ok) {
 		voteContainer.removeAttribute('data-disabled')
 	}
 }

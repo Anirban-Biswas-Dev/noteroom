@@ -17,13 +17,13 @@ export default function noteRouter(io: Server) {
             
             if (!isCount) {
                 let notes = await manageProfileNotes.getNote(noteType, studentID)
-                res.json({notes, isOwner})
+                res.json({ objects: notes, isOwner})
             } else {
                 let noteCount = await manageProfileNotes.getNoteCount(noteType, studentID)
                 res.json({ noteType, count: noteCount })
             }
         } catch (error) {
-            res.json({ notes: [] })
+            res.json({ objects: [] })
         }
     })
 
