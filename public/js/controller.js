@@ -423,7 +423,7 @@ const manageNotes = {
                                             </div>
                                         ` : ``} 
 
-                                        <div class="option" onclick="setupShareModal(this)" data-noteid="${note.noteID}" data-notetitle="${note.noteTitle}">
+                                        <div class="option" onclick="setupShareModal(this, '${note.quickPost}')" data-noteid="${note.noteID}" data-notetitle="${note.noteTitle}">
                                             <svg
                                             class="share-icon"
                                             width="40"
@@ -1024,9 +1024,9 @@ function finish() {
 
 const linkElement = document.querySelector('._link_');
 let noteTitle = undefined
-function setupShareModal(container, isPost = false) {
+function setupShareModal(container, isPost = 'false') {
     let noteID = container.getAttribute('data-noteid')
-    if (!isPost) {
+    if (isPost === 'false') {
         noteTitle = container.getAttribute('data-notetitle')
     }
 
@@ -1040,7 +1040,7 @@ function setupShareModal(container, isPost = false) {
 
     // Open the modal and populate the link (immediate execution)
     shareNoteModal.style.display = 'flex';
-    linkElement.innerHTML = !isPost ? `${window.location.origin}/view/${noteID}` : `${window.location.origin}/view/quick-post/${noteID}`;
+    linkElement.innerHTML = isPost === 'false' ? `${window.location.origin}/view/${noteID}` : `${window.location.origin}/view/quick-post/${noteID}`;
     requestAnimationFrame(() => {
         shareNoteModal.classList.add('visible');
     });
