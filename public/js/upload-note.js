@@ -176,7 +176,8 @@ const uploadToastData = (message, type) => {
 }
 
 
-async function publish() {
+async function publish(self) {
+    if (self.getAttribute('data-disabled')) return
     function toogleBrowse(showBrowse) {
         document.querySelector('#note-upload-loader').style.display = (showBrowse ? 'none' : 'block')
         document.querySelector('#fileInputBox').style.display = (showBrowse ? 'flex' : 'none')
@@ -189,6 +190,7 @@ async function publish() {
             const noteDescription = editor.root.innerHTML;
             
             if(noteSubject && noteTitle && editor.root.textContent.trim() !== "") {
+                self.setAttribute('data-disabled', true)
                 toogleBrowse(false)
 
                 let formData = new FormData();
@@ -199,13 +201,16 @@ async function publish() {
                 formData.append('noteTitle', noteTitle);
                 formData.append('noteDescription', noteDescription);
     
+                Swal.fire(uploadToastData(Messages.upload_section.onUploadUserConformation, 'success'))
+
                 let response = await fetch('/upload', {
                     method: 'POST',
                     body: formData
                 })
                 let data = await response.json()
                 if (data.ok) {
-                    Swal.fire(uploadToastData(Messages.upload_section.onUploadUserConformation, 'success'))
+                    stackFiles.length = 0;
+                    updateStackStatus();
                 } else {
                     if (data.message) {
                         setupErrorPopup(data.message)
@@ -213,6 +218,8 @@ async function publish() {
                         Swal.fire(uploadToastData(Messages.upload_section.onErrorConfirmation, 'error'))   
                     }
                 }
+
+                self.removeAttribute('data-disabled')
 
                 toogleBrowse(true)
             } else {

@@ -120,8 +120,8 @@ function deleteNote(container) {
     }).then(result => {
         if (result.isConfirmed) {
             Swal.fire(deleteNoteToastData('success', 'Note will be deleted soon.'))
-
             let noteDocID = container.getAttribute('data-id')
+            document.querySelector(`#own-note-${noteDocID}`).remove()
 
             fetch(`/api/note/delete/${noteDocID}`, {
                 method: 'delete'
@@ -130,7 +130,6 @@ function deleteNote(container) {
                 .then(async data => {
                     if (data.deleted) {
                         await manageDb.delete('ownedNotes', { idPath: 'noteID', id: noteDocID })
-                        document.querySelector(`#own-note-${noteDocID}`).remove()
                     } else {
                         Swal.fire(deleteNoteToastData('error', 'Cannot delete the note right now!', 3000))
                     }
