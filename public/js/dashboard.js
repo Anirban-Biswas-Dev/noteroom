@@ -155,7 +155,6 @@ const observers = {
 
 socket.on('note-upload', (noteData) => {
 	manageNotes.addNote(noteData)
-	manageDb.add('notes', noteData)
 })
 
 
