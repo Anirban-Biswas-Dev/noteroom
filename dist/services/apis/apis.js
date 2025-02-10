@@ -16,11 +16,13 @@ const userService_js_1 = require("../userService.js");
 const note_js_1 = __importDefault(require("./note.js"));
 const search_js_1 = __importDefault(require("./search.js"));
 const request_js_1 = require("./request.js");
+const user_js_1 = __importDefault(require("./user.js"));
 exports.router = (0, express_1.Router)();
 function apiRouter(io) {
     exports.router.use('/note', (0, note_js_1.default)(io));
     exports.router.use('/search', (0, search_js_1.default)(io));
     exports.router.use('/request', (0, request_js_1.requestApi)(io));
+    exports.router.use('/user', (0, user_js_1.default)(io));
     exports.router.get('/notifs', async (req, res) => {
         try {
             let studentID = req.session["stdid"];

@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.LogIn = exports.SignUp = exports.SearchProfile = exports.Convert = void 0;
 exports.getProfile = getProfile;
 exports.changePassword = changePassword;
+exports.changeProfileDetails = changeProfileDetails;
 exports.deleteAccount = deleteAccount;
 exports.deleteSessionsByStudentID = deleteSessionsByStudentID;
 const students_js_1 = __importDefault(require("../schemas/students.js"));
@@ -46,7 +47,7 @@ exports.SearchProfile = {
     async getRandomStudent(sampleSize, exclude) {
         try {
             let students = await students_js_1.default.aggregate([
-                { $match: { visibility: "public", username: { $nin: exclude } } },
+                { $match: { visibility: "public", username: { $nin: exclude }, onboarded: true } },
                 { $sample: { size: sampleSize } },
                 { $project: { profile_pic: 1, displayname: 1, bio: 1, username: 1, _id: 0, collegeID: 1 } }
             ]);
@@ -63,7 +64,7 @@ exports.SearchProfile = {
     },
     async getStudent(searchTerm) {
         const regex = new RegExp(searchTerm.split(' ').map(word => `(${word})`).join('.*'), 'i');
-        let students = await students_js_1.default.find({ displayname: { $regex: regex }, visibility: "public" }, { profile_pic: 1, displayname: 1, bio: 1, username: 1, _id: 0 });
+        let students = await students_js_1.default.find({ displayname: { $regex: regex }, visibility: "public", onboarded: true }, { profile_pic: 1, displayname: 1, bio: 1, username: 1, _id: 0 });
         return students;
     }
 };
@@ -133,6 +134,37 @@ async function changePassword(email, password, current_password) {
         }
     }
     catch (error) {
+        return false;
+    }
+}
+async function changeProfileDetails(studentID, values) {
+    const allowedFields = ['displayname', 'bio', 'profile_pic', 'favouritesubject', 'notfavsubject', 'rollnumber'];
+    try {
+        let fieldName = values.fieldName;
+        if (allowedFields.includes(fieldName)) {
+            if (fieldName !== 'profile_pic') {
+                await students_js_1.default.updateOne({ studentID }, { $set: { [fieldName]: values.newValue } });
+            }
+            else {
+                let student = await students_js_1.default.findOne({ studentID: studentID, onboarded: true }, { profile_pic: 1 });
+                if (student) {
+                    let prvProfilePicURL = student.profile_pic;
+                    let savePath = `${student._id.toString()}/${values.newValue["name"]}`;
+                    let profilePicUrl = await (0, firebaseService_js_1.upload)(values.newValue, savePath, { replaceWith: prvProfilePicURL });
+                    await students_js_1.default.updateOne({ studentID }, { $set: { profile_pic: profilePicUrl } });
+                }
+                else {
+                    return false;
+                }
+            }
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    catch (error) {
+        console.log(error);
         return false;
     }
 }

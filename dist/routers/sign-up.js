@@ -90,7 +90,7 @@ function signupRouter(io) {
         try {
             let studentID = req.session["stdid"];
             let studentDocID = await userService_js_1.Convert.getDocumentID_studentid(studentID);
-            let profile_pic = Object.values(req.files)[0];
+            let profile_pic = await (0, utils_js_1.compressImage)(Object.values(req.files)[0]);
             let savePath = `${studentDocID.toString()}/${profile_pic["name"]}`;
             let profilePicUrl = await (0, firebaseService_js_1.upload)(profile_pic, savePath);
             let onboardData = {

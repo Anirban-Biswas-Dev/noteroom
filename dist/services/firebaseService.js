@@ -14,7 +14,14 @@ firebase_admin_1.default.initializeApp({
     storageBucket: "gs://noteroom-fb1a7.appspot.com"
 });
 let bucket = firebase_admin_1.default.storage().bucket();
-async function uploadImage(fileObject, fileName) {
+async function uploadImage(fileObject, fileName, options) {
+    if (options.replaceWith) {
+        try {
+            const filePath = options.replaceWith.replace('https://storage.googleapis.com/noteroom-fb1a7.appspot.com/', '');
+            await bucket.file(filePath).delete();
+        }
+        catch (error) { }
+    }
     const file = bucket.file(fileName);
     const stream = file.createWriteStream({
         metadata: {

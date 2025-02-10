@@ -110,7 +110,7 @@ async function getNoteForShare({ noteDocID, studentDocID }) {
 }
 async function getAllNotes(studentDocID, options) {
     let notes = await notes_js_1.default.aggregate([
-        { $match: { completed: { $eq: true }, type_: { $eq: 'public' } } },
+        { $match: { completed: { $eq: true } } },
         { $lookup: {
                 from: 'students',
                 localField: 'ownerDocID',
@@ -139,7 +139,7 @@ async function getAllNotes(studentDocID, options) {
                 title: 1, description: 1,
                 feedbackCount: 1, upvoteCount: 1,
                 postType: 1, content: 1, randomSort: 1,
-                createdAt: 1,
+                createdAt: 1, pinned: 1,
                 "ownerDocID._id": 1,
                 "ownerDocID.profile_pic": 1,
                 "ownerDocID.displayname": 1,
@@ -149,7 +149,7 @@ async function getAllNotes(studentDocID, options) {
         { $addFields: {
                 isOwner: { $eq: ["$ownerDocID._id", new mongoose_1.default.Types.ObjectId(studentDocID)] }
             } },
-        { $sort: { randomSort: 1 } },
+        { $sort: { pinned: -1, randomSort: 1 } },
         { $skip: parseInt(options.skip) },
         { $limit: parseInt(options.limit) }
     ]);

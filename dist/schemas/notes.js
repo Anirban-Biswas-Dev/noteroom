@@ -51,6 +51,10 @@ const notesSchema = new mongoose_1.Schema({
     completed: {
         type: Boolean,
         default: false
+    },
+    pinned: {
+        type: Boolean,
+        default: false
     }
 });
 const notesModel = (0, mongoose_1.model)('notes', notesSchema);
