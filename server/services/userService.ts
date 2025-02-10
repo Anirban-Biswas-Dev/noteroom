@@ -2,7 +2,7 @@ import Students from "../schemas/students.js";
 import Notes from "../schemas/notes.js";
 import { IStudentDB } from "../types/database.types.js";
 import mongoose from "mongoose";
-import { deleteNoteImages } from "./firebaseService.js";
+import { deleteNoteImages, upload } from "./firebaseService.js";
 
 export const Convert = {
     async getStudentID_username(username: string) {
@@ -45,7 +45,7 @@ export const SearchProfile = {
     async getRandomStudent(sampleSize: number, exclude?: string[]) {
         try {
             let students = await Students.aggregate([
-                { $match: { visibility: "public", username: { $nin: exclude } } },
+                { $match: { visibility: "public", username: { $nin: exclude }, onboarded: true } },
                 { $sample: { size: sampleSize } },
                 { $project: { profile_pic: 1, displayname: 1, bio: 1, username: 1, _id: 0, collegeID: 1 } }
             ])
@@ -63,7 +63,7 @@ export const SearchProfile = {
 
     async getStudent(searchTerm: string) {
         const regex = new RegExp(searchTerm.split(' ').map(word => `(${word})`).join('.*'), 'i');
-        let students = await Students.find({ displayname: { $regex: regex }, visibility: "public" }, { profile_pic: 1, displayname: 1, bio: 1, username: 1, _id: 0 })
+        let students = await Students.find({ displayname: { $regex: regex }, visibility: "public", onboarded: true }, { profile_pic: 1, displayname: 1, bio: 1, username: 1, _id: 0 })
         return students
     }
 }
@@ -139,6 +139,34 @@ export async function changePassword(email: string, password: string, current_pa
     }
 }
 
+
+export async function changeProfileDetails(studentID: any, values: { fieldName: any, newValue: any }) {
+    const allowedFields = ['displayname', 'bio', 'profile_pic', 'favouritesubject', 'notfavsubject', 'rollnumber'];
+    try {
+        let fieldName = values.fieldName;
+        if (allowedFields.includes(fieldName)) {
+            if (fieldName !== 'profile_pic') {
+                await Students.updateOne({ studentID }, { $set: { [fieldName]: values.newValue } })
+            } else {
+                let student = await Students.findOne({ studentID: studentID, onboarded: true }, { profile_pic: 1 })
+                if (student) {
+                    let prvProfilePicURL = student.profile_pic
+                    let savePath = `${student._id.toString()}/${values.newValue["name"]}`
+                    let profilePicUrl = await upload(values.newValue, savePath, { replaceWith: prvProfilePicURL })
+                    await Students.updateOne({ studentID }, { $set: { profile_pic: profilePicUrl } })
+                } else {
+                    return false
+                }
+            }
+            return true
+        } else {
+            return false
+        }
+    } catch (error) {
+        console.log(error)
+        return false
+    }
+}
 
 export async function deleteAccount(studentDocID: string, firebase=false) {
     try {

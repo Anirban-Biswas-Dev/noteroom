@@ -45,9 +45,13 @@ const notesSchema = new Schema({
     },
     type_: {
         type: String,
-        default: "private"
+        default: "public"
     },
     completed: {
+        type: Boolean,
+        default: false
+    },
+    pinned: {
         type: Boolean,
         default: false
     }

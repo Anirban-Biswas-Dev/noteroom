@@ -18,7 +18,14 @@ firebaseAdmin.initializeApp({
 
 let bucket = firebaseAdmin.storage().bucket();
 
-async function uploadImage(fileObject: any, fileName: any) {
+async function uploadImage(fileObject: any, fileName: any, options?:any) {
+    if (options.replaceWith) {
+        try {
+            const filePath = options.replaceWith.replace('https://storage.googleapis.com/noteroom-fb1a7.appspot.com/', '');
+            await bucket.file(filePath).delete()
+        } catch (error) {}
+    }
+
     const file = bucket.file(fileName);
     const stream = file.createWriteStream({
         metadata: {
@@ -57,6 +64,7 @@ async function deleteFolder({ studentDocID, noteDocID }: IManageUserNote, post: 
         }
     }
 }
+
 
 // bucket.getFiles({ prefix: 'Assets/onboarding/college-logos' }).then(([files]) => {
 //     files.map(file => {

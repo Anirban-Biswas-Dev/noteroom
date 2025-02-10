@@ -3,7 +3,7 @@ import { Router } from 'express'
 import Students from '../schemas/students.js'
 import { upload } from '../services/firebaseService.js'
 import { Convert, SignUp } from '../services/userService.js'
-import { generateRandomUsername, setSession } from '../helpers/utils.js'
+import { compressImage, generateRandomUsername, setSession } from '../helpers/utils.js'
 import { Server } from 'socket.io'
 import { verifyToken } from '../services/googleAuth.js';
 import {fileURLToPath} from "url";
@@ -102,7 +102,7 @@ function signupRouter(io: Server) {
             let studentID = req.session["stdid"]
             let studentDocID = await Convert.getDocumentID_studentid(studentID)
 
-            let profile_pic = Object.values(req.files)[0]
+            let profile_pic = await compressImage(Object.values(req.files)[0])
             let savePath = `${studentDocID.toString()}/${profile_pic["name"]}`
             let profilePicUrl = await upload(profile_pic, savePath)
 
