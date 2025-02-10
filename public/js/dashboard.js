@@ -10,7 +10,7 @@ socket.on('update-upvote-dashboard', function (noteDocID, upvoteCount) {
 
 let nextPage = 2
 const now = new Date();
-const baseSeed = Math.floor(now.getTime() / 3600000); 
+const baseSeed = Math.floor(now.getTime() / 1800000);
 const seed = (baseSeed * 7919 + now.getMinutes() * 37) % 999999937;
 
 async function get_note(count, page) {
