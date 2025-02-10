@@ -1,11 +1,16 @@
 const host = window.location.origin
 const socket = io(host)
 
-socket.emit('connection')
+let loginSpinner = document.querySelector('#login-spinner')
 
 socket.on('duplicate-value', (duplicate_field) => {
-    setupErrorPopup(`The <b>${_.capitalize(duplicate_field)}</b> you provided is already in use`)
-    document.querySelector('#login-spinner').style.display = "none";
+    loginSpinner.style.display = 'none'
+    Swal.fire({
+        icon: 'error',
+        title: 'An error occured',
+        html: `The <b>${_.capitalize(duplicate_field)}</b> you provided is already in use`,
+        showConfirmButton: true
+    })
 })
 
 // google auth handlerE
@@ -20,11 +25,29 @@ function handleCredentialResponse(response) {
     })
         .then(response => response.json())
         .then(data => {
-            data.message ? setupErrorPopup(data.message) : data.redirect ? window.location.href = data.redirect : ""
+            if (data.redirect) {
+                window.location.href = data.redirect
+            } else {
+                loginSpinner.style.display = 'none'
+                Swal.fire({
+                    icon: 'error',
+                    title: 'An error occured',
+                    html: `Cannot signup right now! Please try again a bit later.`,
+                    showConfirmButton: true
+                })
+            }
         })
-        .catch(error => setupErrorPopup(error.message))
+        .catch(error => {
+            loginSpinner.style.display = 'none'
+            Swal.fire({
+                icon: 'error',
+                title: 'An error occured',
+                html: `Cannot signup right now! Please try again a bit later.`,
+                showConfirmButton: true
+            })
+        })
 
-    document.querySelector('#login-spinner').style.display = "flex";
+    loginSpinner.style.display = "flex";
 }
 
 
@@ -40,7 +63,6 @@ document.querySelectorAll('.custom__input-field').forEach(inputField => {
 
 // noteroom-auth handler.
 document.querySelector('.primary-btn').addEventListener('click', function () {
-    let loginSpinner = document.querySelector('#login-spinner')
     let displayName = document.querySelector('input[name="displayname"]').value
     let email = document.querySelector('input[name="email"]').value
     let password = document.querySelector('input[name="password"]').value
@@ -57,23 +79,27 @@ document.querySelector('.primary-btn').addEventListener('click', function () {
         .then(response => { return response.json() })
         .then(data => {
             if (data.url) {
-                loginSpinner.style.display = 'none'
                 window.location.href = data.url
             }
 
             else if (!data.ok) {
                 loginSpinner.style.display = 'none'
-
-                data.message ? (function () {
-                    setupErrorPopup(data.message)
-                })() : data.error ? (function () {
-                    setupErrorPopup(`On <b>${data.error.fieldName}</b>: ${data.error.errorMessage}`)
-                })() : false
+                Swal.fire({
+                    icon: 'error',
+                    title: 'An error occured',
+                    html: `Cannot signup right now! Please try again a bit later.`,
+                    showConfirmButton: true
+                })
             }
         })
         .catch(error => {
             loginSpinner.style.display = 'none'
-            setupErrorPopup(error)
+            Swal.fire({
+                icon: 'error',
+                title: 'An error occured',
+                html: `Cannot signup right now! Please try again a bit later.`,
+                showConfirmButton: true
+            })
         })
 
     loginSpinner.style.display = 'flex'

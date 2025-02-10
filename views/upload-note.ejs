@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="/css/main-pages.css">
     <link rel="stylesheet" href="/css/upload-note.css">
 	<link rel="stylesheet" href="/css/error-popup.css" />
+	<link rel="stylesheet" href="/css/nav-section.css" />
     
     <script src="https://cdn.quilljs.com/1.3.7/quill.min.js" defer></script>
     <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
@@ -24,6 +25,9 @@
     <%- include('side-panel', { block: 'search-bar' }) %>
     <!-- ****** Middle Section ****** -->
     <div class="middle-section">
+        <div class="nav-section">
+            <i class="fa-solid fa-arrow-left nav-back-btn" onclick="goPrevPage()" ></i>
+        </div>
         <h2>Upload</h2>
         <div class="upload-container">
             <svg width="75" height="75" viewBox="0 0 73 73" fill="none" xmlns="http://www.w3.org/2000/svg">

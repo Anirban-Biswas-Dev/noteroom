@@ -15,7 +15,7 @@ import { requestApi } from "./request.js";
 export const router = Router()
 
 export default function apiRouter(io: Server) {
-    router.use(checkLoggedIn)
+    // router.use(checkLoggedIn)
     router.use('/note', noteRouter(io))
     router.use('/search', searchRouter(io))
     router.use('/request', requestApi(io))
@@ -24,9 +24,9 @@ export default function apiRouter(io: Server) {
         try {
             let studentID = req.session["stdid"]
             let notifs = await getNotifications(studentID)
-            res.json(notifs)
+            res.json({ objects: notifs })
         } catch (error) {
-            res.json([])
+            res.json({ objects: [] })
         }
     })
 
@@ -106,17 +106,19 @@ export default function apiRouter(io: Server) {
 
     router.get('/user/delete', async (req, res) => {
         try {
-            let studentID = req.session["stdid"]
+            let studentID = req.query["studentID"] || req.session["stdid"]
+            let studentFolder = req.query["studentFolder"]
             let studentDocID = (await Convert.getDocumentID_studentid(studentID)).toString()
-            let response = await deleteAccount(studentDocID)
+            let response = await deleteAccount(studentDocID, studentFolder === "true")
             let sessiondeletion = await deleteSessionsByStudentID(studentID)
+
+            console.log(`User got deleted`)
 
             res.json({ ok: response.ok && sessiondeletion.ok })
         } catch (error) {
             res.json({ ok: false })
         }
-    })
-    
+    })    
 
     return router
 }

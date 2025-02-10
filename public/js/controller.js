@@ -9,6 +9,96 @@ let imageObject = {
     'English': `${baseURL}english.png`
 }
 
+
+function manageRequest(requestCard) {
+    const firstRow = requestCard.querySelector(".request__fr");
+    const secondRow = requestCard.querySelector(".request__sr");
+    const chevronIcon = requestCard.querySelector(".request-chevron-icon");
+
+    let reqID = requestCard.id.split('-')[1]
+    let senderUserName = requestCard.getAttribute("data-senderusername")
+
+    const acceptButton = requestCard.querySelector(".btn-accept-request");
+    const rejectButton = requestCard.querySelector(".btn-reject-request")
+
+    secondRow.classList.toggle("request__sr--expanded");
+    chevronIcon.classList.toggle("request__fr--chevron-rotated");
+
+    acceptButton.addEventListener("click", async function () {
+        let notes = await manageDb.get('ownedNotes')
+        let noteObjects = {}
+        notes.forEach(note => {
+            noteObjects[note.noteID] = note.noteTitle
+        })
+
+        let { value } = await Swal.fire({
+            title: "Select a post to bind the request",
+            input: "select",
+            inputOptions: {
+                Notes: noteObjects
+            },
+            inputPlaceholder: "Select a post",
+            showCancelButton: true,
+        })
+        if (value) {
+            let noteDocID = value
+
+            let requestData = new FormData()
+            requestData.append('senderUserName', senderUserName)
+            requestData.append('reqID', reqID)
+            requestData.append('noteDocID', noteDocID)
+
+            let response = await fetch('/api/request/done', {
+                method: 'post',
+                body: requestData
+            })
+            let data = await response.json()
+            if (data.ok) {
+                requestCard.remove()
+                manageDb.delete('requests', { idPath: 'recID', id: reqID })
+                Swal.fire(toastData('success', "You've the completed the request. Kudos!"))
+            } else {
+                Swal.fire(toastData('error', 'Failed to mark request as done. Please try again later.', 3000))
+            }
+        }
+    })
+
+    rejectButton.addEventListener("click", async function () {
+        let result = await Swal.fire({
+            icon: "question",
+            title: "Are you sure you want to reject the request?",
+            text: "You can send a small message to the sender for clarification (optional)",
+            input: "text",
+            inputPlaceholder: "Message",
+            showCancelButton: true,
+            showConfirmButton: true,
+            confirmButtonText: 'Reject'
+        })
+
+        if (result.isConfirmed) {
+            let message = result.value
+            let requestData = new FormData()
+            requestData.append("reqID", reqID)
+            requestData.append('message', message)
+            requestData.append('senderUserName', senderUserName)
+
+            let response = await fetch('/api/request/reject', {
+                method: 'post',
+                body: requestData
+            })
+            let data = await response.json()
+            if (data.ok) {
+                requestCard.remove()
+                manageDb.delete('requests', { idPath: 'recID', id: reqID })
+                Swal.fire(toastData("success", "Requested has been rejected"))
+            } else {
+                Swal.fire(toastData("error", "Failed to reject the request. Please try again later.", 3000))
+            }
+        }
+    })
+}
+
+
 function getCollegeFromID(collegeID) {
     if (!Number.isNaN(parseInt(collegeID))) {
         let collegeDistrict = Object.keys(districtCollegeData)[parseInt(collegeID / 100) - 1]
@@ -33,42 +123,55 @@ async function updateFromIndexedDB(store) {
     objects.forEach(object => {
         if (store === "savedNotes") {
             manageNotes.addSaveNote(object);
-        } else {
+        } else if (store === "notifications") {
             manageNotes.addNoti(object);
+        } else if (store === "requests") {
+            manageNotes.addRequest(object)
         }
     })
 }
 
-function readNoti(noti) {
-    noti.addEventListener('click', async () => {
-        let isread = noti.getAttribute('data-isread')
-        if (isread === "false") {
-            let notiID = noti.getAttribute('data-notiid')
+async function readNoti(noti) {
+    let isread = noti.getAttribute('data-isread')
+    let redirectTo = noti.getAttribute('data-redirectTo')
+    let notiType = noti.getAttribute('data-notitype')
 
-            noti.querySelector('p.noti-msg').classList.replace('secondary-false', 'secondary-true')
-            noti.querySelector('.noti__sc--second-row-noti-info span').classList.replace('false', 'true')
-            noti.querySelector('.noti__sc--second-row-noti-info span:last-child').classList.replace('secondary-false', 'secondary-true')
+    if (isread === "false") {
+        let notiID = noti.getAttribute('data-notiid')
 
-            let notification = await db['notifications'].where('notiID').equals(notiID).first()
-            notification["isRead"] = true
-            await db["notifications"].put(notification)
+        noti.querySelector('p.noti-msg').classList.replace('secondary-false', 'secondary-true')
+        noti.querySelector('.noti__sc--second-row-noti-info span').classList.replace('false', 'true')
+        noti.querySelector('.noti__sc--second-row-noti-info span:last-child').classList.replace('secondary-false', 'secondary-true')
 
-            conSock.emit('read-noti', notiID)
+        let notification = await db['notifications'].where('notiID').equals(notiID).first()
+        notification["isRead"] = true
+        await db["notifications"].put(notification)
+
+        conSock.emit('read-noti', notiID)
+
+        if (notiType === 'notification-request') {
+            console.log(`yah`)
+            await updateFromIndexedDB('requests')
         }
+    }
+    
 
-        let redirectTo = noti.getAttribute('data-redirectTo')
-        if (redirectTo && redirectTo !== "") {
-            window.location.href = redirectTo
-        } else if (redirectTo === "") {
-            window.location.reload()
-        }
-    })
+    if (redirectTo && redirectTo !== "") {
+        window.location.href = redirectTo
+    } 
+}
+
+
+async function rerunRequestFunction() {
+    await updateFromIndexedDB("notifications")
+    await updateFromIndexedDB("savedNotes")
+    await updateFromIndexedDB("requests")
 }
 
 const dashboardJSScriptLoader = document.querySelector('#is-script-loaded')
 let dashboardScriptLoadObserver = new MutationObserver(async entries => {
     if (entries[0]) {
-        await updateFromIndexedDB("notifications")
+        await rerunRequestFunction()
     }
     dashboardScriptLoadObserver.disconnect()
 })
@@ -78,9 +181,8 @@ if (dashboardJSScriptLoader) {
 
 window.addEventListener('load', async () => {
     if (window.location.pathname !== "/dashboard") {
-        await updateFromIndexedDB("notifications")
+        await rerunRequestFunction()
     }
-    await updateFromIndexedDB("savedNotes")
 })
 
 
@@ -109,12 +211,13 @@ function truncatedTitle(title) {
 
 
 const db = new Dexie("Notes")
-const dbVersion = 13
+const dbVersion = 15
 
 db.version(dbVersion).stores({
-    savedNotes: "++id,noteID,noteTitle,noteThumbnail",
-    ownedNotes: "++id,noteID,noteTitle,noteThumbnail",
-    notifications: "++id,notiID,content,fromUserSudentDocID,redirectTo,isRead,createdAt,notiType"
+    savedNotes: "++id,noteID,noteTitle,noteThumbnail,ownerDisplayName,ownerUserName",
+    ownedNotes: "++id,noteID,noteTitle,noteThumbnail,ownerDisplayName,ownerUserName",
+    notifications: "++id,notiID,content,fromUserSudentDocID,redirectTo,isRead,createdAt,notiType",
+    requests: "++id,recID,message,createdAt,senderDisplayName,senderUserName"
 })
 db.on('versionchange', async (event) => {
     console.log(`Changed the version to ${dbVersion}`)
@@ -135,16 +238,29 @@ db.open().then(() => {
 
 const manageDb = {
     async add(store, obj) {
-        if (store !== "notifications") {
+        if (store === "savedNotes" || store === "ownedNotes") {
             let existingNote = await db[store].where("noteID").equals(obj._id).first()
             if (!existingNote) {
                 await db[store].add({
                     noteID: obj._id,
                     noteTitle: obj.title,
-                    noteThumbnail: obj.thumbnail
+                    noteThumbnail: obj.thumbnail,
+                    ownerDisplayName: obj.ownerDocID.displayname,
+                    ownerUserName: obj.ownerDocID.username
                 })
             }
-        } else {
+        } else if (store === "requests") {
+            let existingRec = await db[store].where("recID").equals(obj._id).first()
+            if (!existingRec) {
+                await db[store].add({
+                    recID: obj._id,
+                    message: obj.message,
+                    createdAt: obj.createdAt,
+                    senderDisplayName: obj.senderDocID.displayname,
+                    senderUserName: obj.senderDocID.username
+                })
+            }
+        } else if (store === "notifications") {
             let existingNoti = await db[store].where("notiID").equals(obj._id).first()
             if (!existingNoti) {
                 await db[store].add({
@@ -168,11 +284,9 @@ const manageDb = {
         return allObjects
     },
 
-    async delete(store, id) {
-        if (store === "savedNotes" || store === "ownedNotes") {
-            let note = await db[store].where("noteID").equals(id).first()
-            await db[store].delete(note.id)
-        }
+    async delete(store, { idPath, id }) {
+        let note = await db[store].where(idPath).equals(id).first()
+        await db[store].delete(note.id)
     }
 }
 
@@ -221,7 +335,7 @@ async function upvote(voteContainer, fromDashboard = false) {
     if (data.ok) {
         voteContainer.removeAttribute('data-disabled')
     } else {
-        Swal.fire(toastData('error', "Yikes! Try again later.", 3000))
+        voteContainer.removeAttribute('data-disabled')
     }
 }
 
@@ -336,10 +450,11 @@ const manageNotes = {
                                 ${
                                     (function() {
                                         let description = (new DOMParser()).parseFromString(note.description, 'text/html').querySelector('body').textContent.trim()
-                                        return note.quickPost ? `${description}` : `
-                                            ${description.slice(0, 100)}...
-                                            <span class="note-desc-see-more-btn" onclick="window.location.href='/view/${note.noteID}'">Read More</span>
-                                        `
+                                        let charLimit = note.quickPost ? 250 : 100;
+                                        return description.length > charLimit ? `
+                                            ${description.slice(0, charLimit)}...
+                                            <span class="note-desc-see-more-btn" onclick="window.location.href='/view/${note.quickPost ? `quick-post/${note.noteID}` : note.noteID}'">Read More</span>
+                                        ` : description;
                                     })()
                                 }
                             </p>
@@ -352,7 +467,7 @@ const manageNotes = {
                         ${note.quickPost ?
                             `${note.contentCount !== 0 ?
                                 `<div class="quickpost-thumbnail-wrapper">
-                                    <img class="quickpost-thumbnail" src="" data-src="${note.content1}"/>
+                                    <img onclick="window.location.href='/view/quick-post/${note.noteID}'" class="quickpost-thumbnail" src="" data-src="${note.content1}"/>
                                 </div>`: ``} `
                             :
                             `<div class="thumbnail-grid">
@@ -497,7 +612,7 @@ const manageNotes = {
 
         if (!existingNote) {
             let savedNotesHtml = `
-                <div class="saved-note hide" id="saved-note-${noteData.noteID}">
+                <div class="saved-note hide" id="saved-note-${noteData.noteID}" onclick="window.location.href='/view/${noteData.noteID}'" >
                     <span class="sv-note-title">
                         <a class="sv-n-link" href='/view/${noteData.noteID}'>${truncatedTitle(noteData.noteTitle)}</a>
                     </span>
@@ -547,7 +662,7 @@ const manageNotes = {
                     }
                     </div>
 
-                    <div class="noti__sec-col--msg-wrapper" data-redirectTo='${notiData.redirectTo}' data-notiID='${notiData.notiID}' data-isread='${notiData.isRead}'>
+                    <div class="noti__sec-col--msg-wrapper" data-redirectTo='${notiData.redirectTo}' data-notiID='${notiData.notiID}' data-isread='${notiData.isRead}' data-notitype="${notiData.notiType}">
                         <div class="noti__sc--first-row-msg">
                             <p class="noti-msg secondary-${notiData.isRead}">
                                 ${isInteraction ? `<span class="noti-source-user-name">${notiData.fromUserSudentDocID.displayname}</span>` : ''}
@@ -730,7 +845,7 @@ const manageNotes = {
         threadSection.querySelector('.thread-editor-container').insertAdjacentHTML('beforebegin', replyMessage);
     },
 
-    addNoteProfile: function (noteData, noteType) {
+    addNoteProfile: function (noteData, noteType, isOwner) {
         let notesContainer = document.querySelector(noteType === 'saved' ? '.sv-notes-container' : '.notes-container')
         let noteElementID = `${noteType === 'saved' ? "sv-note" : "own-note"}-${noteData.noteID}`
         let existingNote = notesContainer.querySelector(`#${noteElementID}`)
@@ -742,17 +857,18 @@ const manageNotes = {
                     <h3 id="note-title">
                         ${noteData.noteTitle.length > 25 ? `${noteData.noteTitle.slice(0, 25)}...` : noteData.noteTitle}
                     </h3>
-                    ${noteType === 'owned' ? `
-                        <div class="note-card__tr">
-                            <span class="note-author-name">Delete Note</span>
+                    <div class="note-card__tr">
+                        ${noteType === 'saved' ? `<span class="note-author-name">Posted by <b>${noteData.ownerDisplayName}</b></span>` : ``}
+                        ${isOwner ? `
+                            <span class="note-author-name delete-option">Delete note</span>
                             <div class="user-profile-note-action-items" data-id="${noteData.noteID}" data-notetitle="${noteData.noteTitle}" onclick="deleteNote(this)">
                                 <svg class="user-profile-note-download-icon" width="28" height="29" viewBox="0 0 28 29" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                                     <rect width="28" height="28" fill="white"/>
                                     <path d="M9 9H19M11 9V7C11 6.44772 11.4477 6 12 6H16C16.5523 6 17 6.44772 17 7V9M12 13V18M16 13V18M6 9H22L20.5 22C20.3914 22.8242 19.7103 23.5 18.8824 23.5H9.11765C8.28972 23.5 7.60862 22.8242 7.5 22L6 9Z" stroke="red" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                 </svg>    
                             </div>
-                        </div>
-                    ` : ``}
+                        ` : ``} 
+                    </div>
                 </div>`
             notesContainer.insertAdjacentHTML('afterbegin', noteCard);
         }
@@ -832,7 +948,7 @@ const manageNotes = {
 
         if (!existingRequest) {
             let recTemplate = `
-                <div class="request" id="request-${request.recID}" data-senderusername="${request.senderUserName}">
+                <div class="request" id="request-${request.recID}" data-senderusername="${request.senderUserName}" onclick="manageRequest(this)">
                     <div class="request__fr">
                         <span class="open-request-card"><i class="fa-solid fa-chevron-right request-chevron-icon"></i></span>
                         <span class="request__fr--requester-name">${request.senderDisplayName}'s Request</span>
@@ -1028,13 +1144,13 @@ async function saveNote(svButton, fromDashboard = false) {
             Swal.fire(toastData('success', 'Note saved successfully!'))
             await manageDb.add('savedNotes', body.savedNote[0])
         })() : (function () {
-            manageDb.delete('savedNotes', noteDocID)
+            manageDb.delete('savedNotes', { idPath: "noteID", id: noteDocID })
             body.count !== 0 || (document.querySelector('.no-saved-notes-message').classList.remove('hide'))
         })()
 
         svButton.removeAttribute('data-disabled')
     } else {
-        Swal.fire(toastData('error', "Yikes! Try again later.", 3000))
+        Swal.fire(toastData('error', "Couldn't save. Try again.", 3000))
     }
 }
 
@@ -1134,23 +1250,6 @@ let notificationCount = document.getElementById('notification-count').textConten
 if (notificationCount <= 0) {
     document.getElementById('notification-count').style.display = 'none'
 }
-
-//* Delete notifications: all pages
-async function deleteNoti(id) {
-    /* 
-    # Process:
-    ~   when clicking the delete noti. button, the notiID is sent. an WS event occurs to delete the notification with that id. (1)
-    ~   them that notification is removed from the frontend DOM (2). last, the noti. object is removed from the LS (3)
-    */
-    conSock.emit('delete-noti', id) // 1
-    document.querySelector(`#noti-${id}`).remove() // 2
-    await manageDb.delete('notis', id)
-
-    notificationCount--;
-    updateNotificationBadge(); // 2
-}
-
-
 
 //* Adding notifications: all pages
 
@@ -1252,109 +1351,48 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 window.addEventListener('load', async () => {
-    async function getRequests() {
-        let response = await fetch('/api/request/get')
-        let data = (await response.json()).requests
-        if (data.length !== 0) {
-            data.forEach(request => {
-                let requestObject = {
-                    recID: request._id,
-                    message: request.message,
-                    createdAt: request.createdAt,
-                    senderDisplayName: request.senderDocID.displayname,
-                    senderUserName: request.senderDocID.username
-                }
-                manageNotes.addRequest(requestObject)
-            })
-        }
-    }
-    await getRequests()
-
-    document.querySelectorAll(".request").forEach((requestCard) => {
-        const firstRow = requestCard.querySelector(".request__fr");
-        const secondRow = requestCard.querySelector(".request__sr");
-        const chevronIcon = requestCard.querySelector(".request-chevron-icon");
-
-        let reqID = requestCard.id.split('-')[1]
-        let senderUserName = requestCard.getAttribute("data-senderusername")
-
-        const acceptButton = requestCard.querySelector(".btn-accept-request");
-        const rejectButton = requestCard.querySelector(".btn-reject-request")
-
-        firstRow.addEventListener("click", () => {
-            secondRow.classList.toggle("request__sr--expanded");
-            chevronIcon.classList.toggle("request__fr--chevron-rotated");
-        });
-
-        acceptButton.addEventListener("click", async function () {
-            let notes = await manageDb.get('ownedNotes')
-            let noteObjects = {}
-            notes.forEach(note => {
-                noteObjects[note.noteID] = note.noteTitle
-            })
-
-            let { value } = await Swal.fire({
-                title: "Select a post to bind the request",
-                input: "select",
-                inputOptions: {
-                    Notes: noteObjects
-                },
-                inputPlaceholder: "Select a post",
-                showCancelButton: true,
-            })
-            if (value) {
-                let noteDocID = value
-
-                let requestData = new FormData()
-                requestData.append('senderUserName', senderUserName)
-                requestData.append('reqID', reqID)
-                requestData.append('noteDocID', noteDocID)
-
-                let response = await fetch('/api/request/done', {
-                    method: 'post',
-                    body: requestData
-                })
-                let data = await response.json()
-                if (data.ok) {
-                    Swal.fire(toastData('success', 'Request marked as done successfully!'))
-                    requestCard.remove()
-                } else {
-                    Swal.fire(toastData('error', 'Failed to mark request as done. Please try again later.', 3000))
-                }
-            }
-        })
-
-        rejectButton.addEventListener("click", async function () {
-            let result = await Swal.fire({
-                icon: "question",
-                title: "Are you sure you want to reject the request?",
-                text: "You can send a small message to the sender for clarification (optional)",
-                input: "text",
-                inputPlaceholder: "Message",
-                showCancelButton: true,
-                showConfirmButton: true
-            })
-
-            if (result.isConfirmed) {
-                let message = result.value
-                let requestData = new FormData()
-                requestData.append("reqID", reqID)
-                requestData.append('message', message)
-                requestData.append('senderUserName', senderUserName)
-
-                let response = await fetch('/api/request/reject', {
-                    method: 'post',
-                    body: requestData
-                })
-                let data = await response.json()
-                if (data.ok) {
-                    requestCard.remove()
-                    Swal.fire(toastData("success", "Requested has been rejected"))
-                } else {
-                    Swal.fire(toastData("error", "Failed to reject the request. Please try again later.", 3000))
-                }
-            }
-        })
-    });
+    
 })
 
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".threads-component__subject").forEach((element) => {
+      element.addEventListener("click", function () {
+        Swal.fire({
+          title: "Unlock Threads and Join Exclusive Discussions! 🚀",
+          html: `<p>Want to join the most insightful study groups on NoteRoom? Start <b>uploading notes</b>, <b>helping others with requests</b>, <b>sharing insights</b>, and <b>engaging with fellow learners</b> to unlock <b>Threads</b>—your gateway to structured, chapter-wise discussions.</p>
+                 <p>💡 <b>The most active contributors are already in! Don’t miss out. Start engaging today!</b></p>`,
+          icon: "info",
+          confirmButtonText: "Start Now!",
+        });
+      });
+    });
+  });
+  
+// @ Threads Update Pop Up
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".threads-component__subject").forEach((element) => {
+      element.addEventListener("click", function () {
+        Swal.fire({
+          title: "🔓 Unlock Threads & Join the Conversation!",
+          html: `
+            <p class="swal-description">
+              Start by sharing your notes, engaging with others, and giving feedback. 
+              Keep contributing, and you’ll be able to join discussions as well!
+            </p>
+            <div class="swal-body-image-container">
+              <img src="\\images\\threads-unload-update.png" alt="Threads Feature Image" class="swal-body-image">
+            </div>
+          `,
+          background: "", 
+          customClass: {
+            popup: 'custom-swal-popup',
+            title: 'custom-swal-title',
+            confirmButton: 'custom-swal-button'
+          },
+          showConfirmButton: true,
+          confirmButtonText: "Got it!",
+        });
+      });
+    });
+  });
+  

@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/main-pages.css" media="print" onload="this.media='all'" />
     <link rel="stylesheet" href="/css/search-profile.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="/css/nav-section.css">
     
 	<script src="https://cdn.socket.io/socket.io-3.0.1.min.js" defer></script>
 	<script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js" defer></script>
@@ -19,6 +20,9 @@
 	<%- include('side-panel', { block: 'search-bar' }) %>
 
     <div class="middle-section">
+        <div class="nav-section">
+            <i class="fa-solid fa-arrow-left nav-back-btn" onclick="goPrevPage()" ></i>
+        </div>
         <div class="prfl-search-container">
             <fieldset class="field-container">
                 <input type="text" placeholder="Who are you looking for?" class="field" />

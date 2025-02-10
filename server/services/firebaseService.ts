@@ -43,14 +43,20 @@ async function uploadImage(fileObject: any, fileName: any) {
     });
 }
 
-async function deleteNoteFolder({ studentDocID, noteDocID }: IManageUserNote, post: boolean = false) {
-    let noteFolder = post ? `${studentDocID}/quick-posts/${noteDocID}` : `${studentDocID}/${noteDocID}`
-    let [files] = await bucket.getFiles({ prefix: noteFolder })
-    if (files.length !== 0) {
-        await Promise.all(files.map(file => file.delete()))
+async function deleteFolder({ studentDocID, noteDocID }: IManageUserNote, post: boolean = false, studentFolder=false) {
+    if (!studentFolder) {
+        let noteFolder = post ? `${studentDocID}/quick-posts/${noteDocID}` : `${studentDocID}/${noteDocID}`
+        let [files] = await bucket.getFiles({ prefix: noteFolder })
+        if (files.length !== 0) {
+            await Promise.all(files.map(file => file.delete()))
+        }
+    } else {
+        let [files] = await bucket.getFiles({ prefix: studentDocID })
+        if (files.length !== 0) {
+            await Promise.all(files.map(file => file.delete()))
+        }
     }
 }
-
 
 // bucket.getFiles({ prefix: 'Assets/onboarding/college-logos' }).then(([files]) => {
 //     files.map(file => {
@@ -60,4 +66,4 @@ async function deleteNoteFolder({ studentDocID, noteDocID }: IManageUserNote, po
 
 
 export const upload = uploadImage;
-export const deleteNoteImages = deleteNoteFolder
+export const deleteNoteImages = deleteFolder

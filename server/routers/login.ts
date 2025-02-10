@@ -35,7 +35,7 @@ function loginRouter(io: Server) {
             let user = await LogIn.getProfile(email)
             
             if(user["authProvider"] !== null) {
-                setSession({recordID: user['recordID'], studentID: user["studentID"]}, req, res)
+                setSession({recordID: user['recordID'], studentID: user["studentID"], username: user["username"] }, req, res)
                 res.send({ redirect: '/dashboard' })
             } else {
                 res.json({message: 'Sorry! No student account is associated with that email account'})
@@ -56,7 +56,7 @@ function loginRouter(io: Server) {
                 let student = await LogIn.getProfile(email)
                 if(student["authProvider"] === null) {
                     if (password === student['studentPass']) {
-                        setSession({recordID: student['recordID'], studentID: student["studentID"]}, req, res)
+                        setSession({recordID: student['recordID'], studentID: student["studentID"], username: student["username"] }, req, res)
                         res.json({ ok: true, url: '/dashboard' })
                     } else {
                         io.emit('wrong-cred')

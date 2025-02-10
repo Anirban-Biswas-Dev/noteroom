@@ -212,9 +212,9 @@ export async function getAllNotes(studentDocID: string, options?: any) {
     //     { $addFields: {
     //         isOwner: { $eq: ["$ownerDocID._id", new mongoose.Types.ObjectId(studentDocID)] }
     //     } },
+    //     { $sort: { createdAt: -1 } },
     //     { $skip: parseInt(options.skip || "0") },
     //     { $limit: parseInt(options.limit || "3") },
-    //     { $sort: { createdAt: 1 } }
     // ])
     
     let extentedNotes = await Promise.all(
@@ -236,9 +236,20 @@ export const manageProfileNotes = {
             let notes_ids = student[type === "saved" ? "saved_notes" : "owned_notes"]
             let notes = await Notes.aggregate([
                 { $match: { _id: { $in: notes_ids } } },
+                { $lookup: {
+                    from: 'students',
+                    localField: 'ownerDocID',
+                    foreignField: '_id',
+                    as: 'ownerDocID'
+                } },
+                { $unwind: {
+                    path: '$ownerDocID'
+                } },
                 { $project: {
                     title: 1,
-                    thumbnail: { $first: '$content' }
+                    thumbnail: { $first: '$content' },
+                    "ownerDocID.displayname": 1,
+                    "ownerDocID.username": 1,
                 } }
             ])
             return notes

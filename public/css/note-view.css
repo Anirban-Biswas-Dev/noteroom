@@ -20,7 +20,7 @@ body {
 }
 
 .middle-section{
-  padding: 15vh 0;
+  padding: 10vh 0;
 }
 
 
@@ -849,6 +849,7 @@ body {
 
 .no-comments-container{
   padding: 25px;
+  padding-top: 40px;
   text-align: center;
   width: 100%;
   display: none;
@@ -865,7 +866,7 @@ body {
 @media (max-width: 400px) {
   .cmnt-btn {
     right: 10px;
-    top: 220px;
+    top: 255px;
   }
 }
 /* Carousel Responsiveness */
@@ -887,8 +888,8 @@ body {
 }
 @media (max-width: 360px) {
   .middle-section {
-    padding-top: 10vh;
-    padding-bottom: 12vh;
+    padding-top: 70px;
+    padding-bottom: 60px;
   }
   .first-box {
     padding: 10px 0;
@@ -952,8 +953,8 @@ body {
 }
 @media (min-width: 361px) and (max-width: 480px) {
   .middle-section {
-    padding-top: 10vh;
-    padding-bottom: 15vh;
+    padding-top: 75px;
+    padding-bottom: 65x;
   }
   .first-box {
     padding: 15px 0;
@@ -1009,8 +1010,8 @@ body {
 
 @media (min-width: 481px) and (max-width: 767px) {
   .middle-section {
-    padding-top: 15vh;
-    padding-bottom: 15vh;
+    padding-top: 100px;
+    padding-bottom: 65px;
   }
   .first-box {
     padding: 20px 0;

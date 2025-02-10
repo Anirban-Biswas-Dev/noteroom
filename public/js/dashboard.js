@@ -9,7 +9,10 @@ socket.on('update-upvote-dashboard', function (noteDocID, upvoteCount) {
 })
 
 let nextPage = 2
-let seed = Math.floor(Math.random() * 1000000000)
+const now = new Date();
+const baseSeed = Math.floor(now.getTime() / 3600000); 
+const seed = (baseSeed * 7919 + now.getMinutes() * 37) % 999999937;
+
 async function get_note(count, page) {
 	function getFeedbackNoteObject(note) {
 		let quickPost = note.postType === "quick-post"
@@ -62,26 +65,31 @@ async function get_note(count, page) {
 window.addEventListener('load', async () => {
 	async function initialFeedSetup() {
 		let feedContainer = document.querySelector('.feed-container')
-		let notes = await get_note(3, 1)
+		let notes = await get_note(10, 1)
 		notes.forEach(note => {
 			manageNotes.addNote(note)
 		})
 		observers.lastNoteObserver().observe(feedContainer.lastElementChild) // Initial tracking of the last note
 	}
-	await initialFeedSetup()
-
+	
 	async function getResourcees(collection) {
 		let response = await fetch(collection.api)
-		let objects = await response.json()
+		let objects = (await response.json()).objects
+		
 		for (const object of objects) {
 			await manageDb.add(collection.store, object);
 		}
 	}
-	await getResourcees({api: '/api/note?noteType=saved', store: 'savedNotes'})
-	await getResourcees({api: '/api/note?noteType=owned', store: 'ownedNotes'})
-	await getResourcees({api: '/api/notifs', store: 'notifications'})
-
-	document.querySelector('#is-script-loaded').setAttribute('data-loaded', 'true')
+	
+	try {
+		await getResourcees({api: '/api/note?noteType=saved', store: 'savedNotes'})
+		await getResourcees({api: '/api/note?noteType=owned', store: 'ownedNotes'})
+		await getResourcees({api: '/api/notifs', store: 'notifications'})
+		await getResourcees({api: '/api/request/get', store: 'requests'})
+	} finally {
+		document.querySelector('#is-script-loaded').setAttribute('data-loaded', 'true')
+		await initialFeedSetup()
+	}
 })
 
 
@@ -124,7 +132,7 @@ const observers = {
 		const _observer = new IntersectionObserver(async entries => {
 			entries.forEach(async entry => {
 				if (entry.isIntersecting) {
-					let notes = await get_note(3, nextPage)
+					let notes = await get_note(10, nextPage)
 					if (notes.length !== 0) {
 						notes.forEach(note => {
 							manageNotes.addNote(note)

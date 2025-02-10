@@ -14,7 +14,7 @@ export default function notificationIOHandler(io: Server, socket: any) {
 export function NotificationSender(io: Server, globals?: any) {
     return {
         //content: for interactions, only the text of the interaction (after the profile-picture and displayname)
-        async sendNotification({ content, title='', event }, fromUserSudentDocID?: any) {
+        async sendNotification({ content, title='', event }, fromUserSudentDocID?: any, additional?: any) {
             try {
                 let ownerStudentID = globals.ownerStudentID
                 let redirectTo = globals.redirectTo || ""
@@ -37,7 +37,8 @@ export function NotificationSender(io: Server, globals?: any) {
                     redirectTo: redirectTo,
                     isRead: "false",
                     createdAt: notification_document["createdAt"],
-                    fromUserSudentDocID: !fromUserSudentDocID ? null : notification_document["fromUserSudentDocID"]
+                    fromUserSudentDocID: !fromUserSudentDocID ? null : notification_document["fromUserSudentDocID"],
+                    additional: additional || null
                 }
                 io.to(userSocketMap.get(ownerStudentID)).emit(event, notification_io)
 

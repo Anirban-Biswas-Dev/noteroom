@@ -1,8 +1,6 @@
 const host = window.location.origin
 const socket = io(host)
 
-socket.emit('connection')
-
 function badgeStyling() {
     let userBadge = document.querySelector('.top-voice-badge').textContent.trim();
     const badgeElement = document.querySelector('.top-voice-badge');
@@ -61,14 +59,30 @@ let observer = new IntersectionObserver(entries => {
     entries.forEach(async entry => {
         if (entry.isIntersecting) {
             let username = document.querySelector('#ownedNotes').getAttribute('data-username')
-            let response = await fetch(`/api/note?noteType=owned&username=${username}`)
-            let notes = await response.json()
-            if (notes.length !== 0) {
+            let selfUserName = Cookies.get('username')
+
+            if (selfUserName && selfUserName === username) {
+                let notes = await manageDb.get('ownedNotes')
                 notes.forEach(note => {
-                    manageNotes.addNoteProfile({ noteID: note._id, noteTitle: note.title, noteThumbnail: note.thumbnail }, 'owned')
+                    manageNotes.addNoteProfile(note, 'owned', true)
                 })
             } else {
-                document.querySelector('#no-notes-owned').style.display = 'flex'
+                let response = await fetch(`/api/note?noteType=owned&username=${username}`)
+                let data = await response.json()
+                console.log(data.objects)
+                if (data.objects.length !== 0) {
+                    data.objects.forEach(note => {
+                        manageNotes.addNoteProfile({ 
+                            noteID: note._id, 
+                            noteTitle: note.title, 
+                            noteThumbnail: note.thumbnail, 
+                            ownerDisplayName: note.ownerDocID.displayname,
+                            ownerUserName: note.ownerDocID.username 
+                        }, 'owned', false)
+                    })
+                } else {
+                    document.querySelector('#no-notes-owned').style.display = 'flex'
+                }
             }
             observer.unobserve(entry.target)
             document.querySelector('.owned-notes-status').remove()
@@ -115,7 +129,7 @@ function deleteNote(container) {
                 .then(response => response.json())
                 .then(async data => {
                     if (data.deleted) {
-                        await manageDb.delete('ownedNotes', noteDocID)
+                        await manageDb.delete('ownedNotes', { idPath: 'noteID', id: noteDocID })
                         document.querySelector(`#own-note-${noteDocID}`).remove()
                     } else {
                         Swal.fire(deleteNoteToastData('error', 'Cannot delete the note right now!', 3000))
@@ -164,3 +178,20 @@ try {
 } catch (error) {
 }
 
+
+document.querySelector(".share-user-profile").addEventListener("click", function() {
+    // Copy current page URL
+    navigator.clipboard.writeText(window.location.href).then(() => {
+        // Show success toast
+        Swal.fire({
+            toast: true,
+            icon: "success",
+            position:"bottom-end",
+            title: "Profile link copied!",
+            showConfirmButton: false,
+            timer: 2000
+        });
+    }).catch(err => {
+        console.error("Failed to copy: ", err);
+    });
+});

@@ -196,8 +196,12 @@ body {
   line-height: 13px;
   color: #767676;
 }
+.note-info-wrapper--second-row{
+  width: 100%;
+}
 
 .fnc--note-desc{
+  width: 100%;
   font-weight: 450;
   font-size: 14px;
   line-height: 1.5;
@@ -301,6 +305,7 @@ body {
   height: 100%;
   object-fit: cover; /* Maintains Aspect Ratio, No Distortion */
   border-radius: 2px;
+  cursor: pointer;
   transition: filter 0.1s ease-in-out;
 }
 
