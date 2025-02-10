@@ -10,7 +10,7 @@ socket.on('update-upvote-dashboard', function (noteDocID, upvoteCount) {
 
 let nextPage = 2
 const now = new Date();
-const baseSeed = Math.floor(now.getTime() / 3600000); 
+const baseSeed = Math.floor(now.getTime() / 3600000);
 const seed = (baseSeed * 104729) % 999999937;
 
 async function get_note(count, page) {
@@ -65,7 +65,7 @@ async function get_note(count, page) {
 window.addEventListener('load', async () => {
 	async function initialFeedSetup() {
 		let feedContainer = document.querySelector('.feed-container')
-		let notes = await get_note(10, 1)
+		let notes = await get_note(7, 1)
 		notes.forEach(note => {
 			manageNotes.addNote(note)
 		})
@@ -132,7 +132,7 @@ const observers = {
 		const _observer = new IntersectionObserver(async entries => {
 			entries.forEach(async entry => {
 				if (entry.isIntersecting) {
-					let notes = await get_note(10, nextPage)
+					let notes = await get_note(7, nextPage)
 					if (notes.length !== 0) {
 						notes.forEach(note => {
 							manageNotes.addNote(note)
