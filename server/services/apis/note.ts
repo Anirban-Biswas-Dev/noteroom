@@ -3,6 +3,7 @@ import { Server } from "socket.io";
 import { Convert } from "../userService";
 import { addSaveNote, deleteNote, deleteSavedNote } from "../noteService";
 import { manageProfileNotes } from "../noteService";
+import notesModel from "../../schemas/notes";
 
 const router = Router()
 
@@ -50,6 +51,24 @@ export default function noteRouter(io: Server) {
             }
         } catch (error) {
             res.json({ ok: false, count: undefined })
+        }
+    })
+
+
+    /* Admin privilege */
+    router.post('/pin', async (req, res) => {
+        try {
+            let studentID = req.session["stdid"]
+            if (studentID !== "0511f9b4-5282-450c-a3e5-220129585b8b") {
+                res.json({ ok: false })
+            } else {
+                let noteDocID = req.body["noteID"]
+                let changeTo = req.body["changeTo"] === "true" ? true : false
+                let updateResult = await notesModel.updateOne({ _id: noteDocID }, { pinned: changeTo })
+                res.json({ ok: updateResult.modifiedCount !== 0 })
+            }
+        } catch (error) {
+            res.json({ ok: false })
         }
     })
 
