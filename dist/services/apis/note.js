@@ -1,10 +1,14 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = noteRouter;
 const express_1 = require("express");
 const userService_1 = require("../userService");
 const noteService_1 = require("../noteService");
 const noteService_2 = require("../noteService");
+const notes_1 = __importDefault(require("../../schemas/notes"));
 const router = (0, express_1.Router)();
 function noteRouter(io) {
     router.get('/', async (req, res) => {
@@ -49,6 +53,23 @@ function noteRouter(io) {
         }
         catch (error) {
             res.json({ ok: false, count: undefined });
+        }
+    });
+    router.post('/pin', async (req, res) => {
+        try {
+            let studentID = req.session["stdid"];
+            if (studentID !== "0511f9b4-5282-450c-a3e5-220129585b8b") {
+                res.json({ ok: false });
+            }
+            else {
+                let noteDocID = req.body["noteID"];
+                let changeTo = req.body["changeTo"] === "true" ? true : false;
+                let updateResult = await notes_1.default.updateOne({ _id: noteDocID }, { pinned: changeTo });
+                res.json({ ok: updateResult.modifiedCount !== 0 });
+            }
+        }
+        catch (error) {
+            res.json({ ok: false });
         }
     });
     return router;
