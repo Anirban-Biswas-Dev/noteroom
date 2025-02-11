@@ -40,7 +40,6 @@
             <i class="fa-solid fa-arrow-left nav-back-btn" onclick="goPrevPage()" ></i>
         </div>
     <div class="ms-first-row">
-            <%//- changeDetails('Profile Picture', 'profile_pic') %> <!-- Anirban design this -->
             <div class="user-prfl-pic-wrapper">
                 <img class="user-prfl-pic" src="<%= student.profile_pic %>" alt="Profile Picture" data-field="Profile Picture" data-name="profile_pic" <% if (!visiting) { %>onclick="changeDetail(this)" data-tippy-content="Click to change"<% } %>>
                 <%- changeDetails('Profile Picture', 'profile_pic', 'prfl-pic-edit')  %>
