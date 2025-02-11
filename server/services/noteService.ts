@@ -202,7 +202,7 @@ export async function getAllNotes(studentDocID: string, options?: any) {
     //         title: 1, description: 1,  
     //         feedbackCount: 1, upvoteCount: 1, 
     //         postType: 1, content: 1,
-    //         createdAt: 1,
+    //         createdAt: 1, pinned: 1,
     //         "ownerDocID._id": 1,
     //         "ownerDocID.profile_pic": 1,
     //         "ownerDocID.displayname": 1,
@@ -212,7 +212,7 @@ export async function getAllNotes(studentDocID: string, options?: any) {
     //     { $addFields: {
     //         isOwner: { $eq: ["$ownerDocID._id", new mongoose.Types.ObjectId(studentDocID)] }
     //     } },
-    //     { $sort: { createdAt: -1 } },
+    //     { $sort: { pinned: -1 } },
     //     { $skip: parseInt(options.skip || "0") },
     //     { $limit: parseInt(options.limit || "3") },
     // ])
