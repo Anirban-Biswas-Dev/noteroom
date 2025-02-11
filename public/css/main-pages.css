@@ -1438,11 +1438,13 @@ canvas {
 }
 
 /* Temporarily Hiding the notification panel */
-@media (max-width: 1530px) {
+@media (min-width:966px) and (max-width: 1530px) {
   .right-panel {
     width: 20%;
   }
 }
+
+
 
 /* for left-panel */
 @media (min-width: 1025px) {
@@ -1507,7 +1509,7 @@ canvas {
   }
 }
 
-@media (max-width: 767px) {
+@media (max-width: 965px) {
   .right-panel {
     position: fixed;
     overflow-x: hidden;
@@ -1550,7 +1552,7 @@ canvas {
   }
 }
 
-@media (max-width: 767px) {
+@media (max-width: 965px) {
   .mbl-ctrl-panel {
     display: flex;
   }
@@ -1575,11 +1577,6 @@ canvas {
   .users-db-msg {
     font-size: 1rem;
     font-weight: 600;
-  }
-}
-@media (min-width: 481px) and (max-width: 1025px) {
-  .right-panel {
-    display: none;
   }
 }
 @media (max-width: 768px) {
@@ -1633,5 +1630,10 @@ canvas {
   .search-bar-box button {
     width: 10%;
     padding: 0px 10px;
+  }
+}
+@media (min-width:461px) and (max-width:965px) {
+  .right-panel{
+    max-width: 450px;
   }
 }

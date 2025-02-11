@@ -40,6 +40,7 @@
 
 .user-prfl-pic-wrapper{
     width: fit-content;
+    position: relative;
     height: 100%;
     display: flex;
     align-items: center;
@@ -53,6 +54,13 @@
     border-radius: 50%;
     object-fit: cover;
     aspect-ratio: 1 / 1;
+    cursor: pointer;
+}
+
+.prfl-pic-edit{
+    position: absolute;
+    top: 12px;
+    right: 0;
 }
 
 /* Information Items */
@@ -194,6 +202,13 @@
     padding: 20px;
 
     margin-top: 15px;
+}
+
+.change-detail{
+    cursor: pointer;
+    width: 15px;
+    height: auto;
+    stroke:#e2e5e9;
 }
 
 .p-info__first-row, 

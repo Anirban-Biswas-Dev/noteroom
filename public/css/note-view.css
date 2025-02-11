@@ -523,6 +523,7 @@ body {
   width: 100%;
   height: auto;
   z-index: -1;
+  aspect-ratio: 1 / 1;
 }
 /* this property is used for general styling of the cmnt profile pictures */
 .cmnt-author-img {
@@ -530,6 +531,7 @@ body {
   border-radius: 50%;
   object-fit: cover;
   overflow: hidden;
+  aspect-ratio: 1 / 1;
 }
 .thread-line {
   position: absolute;
@@ -749,7 +751,16 @@ body {
 .reply-icon:focus {
   outline: none;
 }
-
+@media (max-width: 480px) {
+  .uv-container, .download-icon, .share-icon {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+  .fnc__tr--icon-label{
+    font-size: .8rem;
+  }
+}
 .thread-section {
   width: 100%;
   height: fit-content;
@@ -769,6 +780,12 @@ body {
 }
 .thread-mentioned-user:hover {
   text-decoration: underline;
+}
+
+@media (max-width:480px) {
+  .thread-mentioned-user{
+    font-size: 12px;
+  }
 }
 
 .thread-msg {
