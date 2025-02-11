@@ -7,5 +7,5 @@ logs.log
 /server/routers/db/
 /experiment/
 /.idea
-/dist
+/dist/.env
 /views/test.*
