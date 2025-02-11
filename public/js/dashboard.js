@@ -37,7 +37,8 @@ async function get_note(count, page) {
 			isSaved: note.isSaved,
 			isUpvoted: note.isUpvoted,
 
-			quickPost: quickPost
+			quickPost: quickPost,
+			pinned: note.pinned
 		}
 		return noteData
 	}
