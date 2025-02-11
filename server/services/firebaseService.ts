@@ -19,7 +19,7 @@ firebaseAdmin.initializeApp({
 let bucket = firebaseAdmin.storage().bucket();
 
 async function uploadImage(fileObject: any, fileName: any, options?:any) {
-    if (options.replaceWith) {
+    if (options && options.replaceWith) {
         try {
             const filePath = options.replaceWith.replace('https://storage.googleapis.com/noteroom-fb1a7.appspot.com/', '');
             await bucket.file(filePath).delete()
