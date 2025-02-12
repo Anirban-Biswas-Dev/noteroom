@@ -82,16 +82,21 @@ function apiRouter(io) {
             res.json(savedNotes);
         }
         else if (type === 'seg') {
-            let page = req.query.page;
-            let count = req.query.count;
-            let skip = (page - 1) * count;
-            let seed = req.query.seed;
-            let studentDocID = (await userService_js_1.Convert.getDocumentID_studentid(req.session["stdid"])).toString();
-            let notes = await (0, noteService_js_1.getAllNotes)(studentDocID, { skip: skip, limit: count, seed: seed });
-            if (notes.length != 0) {
-                res.json(notes);
+            try {
+                let page = req.query.page;
+                let count = req.query.count;
+                let skip = (page - 1) * count;
+                let seed = req.query.seed;
+                let studentDocID = (await userService_js_1.Convert.getDocumentID_studentid(req.session["stdid"])).toString();
+                let notes = await (0, noteService_js_1.getAllNotes)(studentDocID, { skip: skip, limit: count, seed: seed });
+                if (notes.length != 0) {
+                    res.json(notes);
+                }
+                else {
+                    res.json([]);
+                }
             }
-            else {
+            catch (error) {
                 res.json([]);
             }
         }
