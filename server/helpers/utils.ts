@@ -91,7 +91,7 @@ const logger = createLogger({
         })
     ),
     transports: [
-        new transports.File({ filename: 'noteroom_logs.log', level: 'error' }),
+        new transports.File({ filename: 'noteroom_logs.log' }),
         new transports.Console(),
     ],
 });
