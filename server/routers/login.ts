@@ -25,7 +25,7 @@ function loginRouter(io: Server) {
             } else {
                 res.status(200)
                 res.render('login')
-                log('info', `On /login StudentID=${req.session['stdid'] || "--studentid--"} redirected to login.`)
+                log('info', `On /login StudentID=${req.session['stdid'] || "--studentid--"}: redirected to login.`)
             }
         } catch (error) {
             log('error', `On /login StudentID=${req.session["stdid"] || "--studentid--"}: ${error.message}`)

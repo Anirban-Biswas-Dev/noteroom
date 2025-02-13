@@ -53,7 +53,7 @@ function loginRouter(io) {
             else {
                 res.status(200);
                 res.render('login');
-                (0, utils_js_1.log)('info', `On /login StudentID=${req.session['stdid'] || "--studentid--"} redirected to login.`);
+                (0, utils_js_1.log)('info', `On /login StudentID=${req.session['stdid'] || "--studentid--"}: redirected to login.`);
             }
         }
         catch (error) {
