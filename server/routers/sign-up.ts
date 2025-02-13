@@ -57,7 +57,7 @@ function signupRouter(io: Server) {
                 let duplicate_field = Object.keys(error.keyValue)[0] // Sending the first duplicated field name to the client-side to show an error
                 io.emit('duplicate-value', duplicate_field)
             } else {
-                log('error', `On /sign-up/auth/google StudentID=${"--studentid--"}: Couldn't sign-up`)
+                log('error', `On /sign-up/auth/google StudentID=${"--studentid--"}: Couldn't sign-up: ${error.message}`)
                 res.json({ ok: false })
             }
         }
@@ -94,7 +94,7 @@ function signupRouter(io: Server) {
                     res.json({ ok: false, error: { fieldName: error.errors[field].path, errorMessage: error.errors[field].properties.message } })
                 }
             } else {
-                log('error', `On /sign-up StudentID=${"--studentid--"}: Couldn't sign-up`)
+                log('error', `On /sign-up StudentID=${"--studentid--"}: Couldn't sign-up: ${error.message}`)
                 res.send({ ok: false, message: error.message })
             }
         }
@@ -130,7 +130,7 @@ function signupRouter(io: Server) {
             }) 
 
         } catch (error) {
-            log('error', `On /sign-up/onboard StudentID=${req.session["stdid"] || "--studentid--"}: Couldn't onboard the user`)
+            log('error', `On /sign-up/onboard StudentID=${req.session["stdid"] || "--studentid--"}: Couldn't onboard the user: ${error.message}`)
             res.json({ ok: false })
         }
     })

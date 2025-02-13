@@ -5,7 +5,7 @@ import { Server } from 'socket.io'
 import { addNote, deleteNote } from '../services/noteService.js'
 import { getNotifications, getSavedNotes, profileInfo, unreadNotiCount } from '../helpers/rootInfo.js'
 import { INoteDB } from '../types/database.types.js'
-import { compressImage } from '../helpers/utils.js'
+import { compressImage, log } from '../helpers/utils.js'
 import fileUpload from 'express-fileupload'
 import { userSocketMap } from '../server.js'
 import { NotificationSender } from '../services/io/ioNotifcationService.js'
@@ -43,6 +43,7 @@ function uploadRouter(io: Server) {
                     title: req.body['noteTitle'],
                     description: req.body['noteDescription']
                 } //* All the data except the notes posted by the client
+                log('info', `On /upload StudentID=${req.session['stdid'] || "--studentid--"}: Got note data with title=${noteData.title}.`)
 
                 res.send({ ok: true })
 
@@ -52,6 +53,7 @@ function uploadRouter(io: Server) {
                 let fileObjects = <fileUpload.UploadedFile[]>Object.values(req.files) //* Getting all the file objects from the requests
                 let compressedFileObjects = fileObjects.map(file => compressImage(file))
                 let allFiles = await Promise.all(compressedFileObjects)
+                log('info', `On /upload StudentID=${req.session['stdid'] || "--studentid--"}: Processed note images of noteDocID=${noteDocId || '--notedocid--'}.`)
 
 
                 let allFilePaths = [] //* These are the raw file paths that will be directly used in the note-view
@@ -60,9 +62,11 @@ function uploadRouter(io: Server) {
                     let publicUrl = (await upload(file, `${studentDocID}/${noteDocId.toString()}/${file["name"]}`)).toString()
                     allFilePaths.push(publicUrl)
                 }
+                log('info', `On /upload StudentID=${req.session['stdid'] || "--studentid--"}: Uploaded note images of noteDocID=${noteDocId || '--notedocid--'}.`)
 
                 await Notes.findByIdAndUpdate(noteDocId, { $set: { content: allFilePaths, completed: true } }) //* After adding everything into the note-db except content (image links), this will update the content field with the image links
                 let completedNoteData = await Notes.findById(noteDocId)
+                log('info', `On /upload StudentID=${req.session['stdid'] || "--studentid--"}: Completed note upload of noteDocID=${noteDocId || '--notedocid--'}.`)
 
                 await NotificationSender(io, {
                     ownerStudentID: studentID,
@@ -95,8 +99,10 @@ function uploadRouter(io: Server) {
 
                     quickPost: false
                 })
+                log('info', `On /upload StudentID=${req.session['stdid'] || "--studentid--"}: Sent notification for successfull upload of noteDocID=${noteDocId || '--notedocid--'}.`)
 
             } catch (error) {
+                log('error', `On /upload StudentID=${req.session['stdid'] || "--studentid--"}: Error on upload note of noteDocID=${noteDocId || '--notedocid--'}: ${error.message}.`)
                 await deleteNote({ studentDocID: studentDocID, noteDocID: noteDocId })
                 await NotificationSender(io, {
                     ownerStudentID: studentID

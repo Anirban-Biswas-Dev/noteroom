@@ -50,7 +50,7 @@ function signupRouter(io) {
                 io.emit('duplicate-value', duplicate_field);
             }
             else {
-                (0, utils_js_1.log)('error', `On /sign-up/auth/google StudentID=${"--studentid--"}: Couldn't sign-up`);
+                (0, utils_js_1.log)('error', `On /sign-up/auth/google StudentID=${"--studentid--"}: Couldn't sign-up: ${error.message}`);
                 res.json({ ok: false });
             }
         }
@@ -85,7 +85,7 @@ function signupRouter(io) {
                 }
             }
             else {
-                (0, utils_js_1.log)('error', `On /sign-up StudentID=${"--studentid--"}: Couldn't sign-up`);
+                (0, utils_js_1.log)('error', `On /sign-up StudentID=${"--studentid--"}: Couldn't sign-up: ${error.message}`);
                 res.send({ ok: false, message: error.message });
             }
         }
@@ -116,7 +116,7 @@ function signupRouter(io) {
             });
         }
         catch (error) {
-            (0, utils_js_1.log)('error', `On /sign-up/onboard StudentID=${req.session["stdid"] || "--studentid--"}: Couldn't onboard the user`);
+            (0, utils_js_1.log)('error', `On /sign-up/onboard StudentID=${req.session["stdid"] || "--studentid--"}: Couldn't onboard the user: ${error.message}`);
             res.json({ ok: false });
         }
     });

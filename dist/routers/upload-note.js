@@ -41,19 +41,23 @@ function uploadRouter(io) {
                     title: req.body['noteTitle'],
                     description: req.body['noteDescription']
                 };
+                (0, utils_js_1.log)('info', `On /upload StudentID=${req.session['stdid'] || "--studentid--"}: Got note data with title=${noteData.title}.`);
                 res.send({ ok: true });
                 let note = await (0, noteService_js_1.addNote)(noteData);
                 noteDocId = note._id;
                 let fileObjects = Object.values(req.files);
                 let compressedFileObjects = fileObjects.map(file => (0, utils_js_1.compressImage)(file));
                 let allFiles = await Promise.all(compressedFileObjects);
+                (0, utils_js_1.log)('info', `On /upload StudentID=${req.session['stdid'] || "--studentid--"}: Processed note images of noteDocID=${noteDocId || '--notedocid--'}.`);
                 let allFilePaths = [];
                 for (const file of allFiles) {
                     let publicUrl = (await (0, firebaseService_js_1.upload)(file, `${studentDocID}/${noteDocId.toString()}/${file["name"]}`)).toString();
                     allFilePaths.push(publicUrl);
                 }
+                (0, utils_js_1.log)('info', `On /upload StudentID=${req.session['stdid'] || "--studentid--"}: Uploaded note images of noteDocID=${noteDocId || '--notedocid--'}.`);
                 await notes_js_1.default.findByIdAndUpdate(noteDocId, { $set: { content: allFilePaths, completed: true } });
                 let completedNoteData = await notes_js_1.default.findById(noteDocId);
+                (0, utils_js_1.log)('info', `On /upload StudentID=${req.session['stdid'] || "--studentid--"}: Completed note upload of noteDocID=${noteDocId || '--notedocid--'}.`);
                 await (0, ioNotifcationService_js_1.NotificationSender)(io, {
                     ownerStudentID: studentID,
                     redirectTo: `/view/${noteDocId}`
@@ -80,8 +84,10 @@ function uploadRouter(io) {
                     upvoteCount: 0,
                     quickPost: false
                 });
+                (0, utils_js_1.log)('info', `On /upload StudentID=${req.session['stdid'] || "--studentid--"}: Sent notification for successfull upload of noteDocID=${noteDocId || '--notedocid--'}.`);
             }
             catch (error) {
+                (0, utils_js_1.log)('error', `On /upload StudentID=${req.session['stdid'] || "--studentid--"}: Error on upload note of noteDocID=${noteDocId || '--notedocid--'}: ${error.message}.`);
                 await (0, noteService_js_1.deleteNote)({ studentDocID: studentDocID, noteDocID: noteDocId });
                 await (0, ioNotifcationService_js_1.NotificationSender)(io, {
                     ownerStudentID: studentID
