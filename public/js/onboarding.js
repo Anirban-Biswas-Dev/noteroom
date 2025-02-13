@@ -600,7 +600,7 @@ function handleSubjectAndBioSelection() {
         Swal.fire({
           icon: 'error',
           title: 'Something went wrong!!',
-          text: "Couldn't onboard you currectly!! Please try again a bit later",
+          text: "Couldn't onboard you currectly!! Please make sure to fill-up every required fields.",
           showConfirmButton: true,
           confirmButtonText: 'OK',
         }).then(result => {
@@ -613,7 +613,7 @@ function handleSubjectAndBioSelection() {
       Swal.fire({
         icon: 'error',
         title: 'Something went wrong!!',
-        text: "Couldn't onboard you currectly!! Please try again a bit later",
+        text: "Couldn't onboard you currectly!! Please make sure to fill-up every required fields.",
         showConfirmButton: true,
         confirmButtonText: 'OK',
       }).then(result => {
