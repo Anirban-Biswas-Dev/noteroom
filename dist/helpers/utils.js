@@ -9,10 +9,12 @@ exports.replaceMentions = replaceMentions;
 exports.generateRandomUsername = generateRandomUsername;
 exports.compressImage = compressImage;
 exports.setSession = setSession;
+exports.log = log;
 const slugify_1 = __importDefault(require("slugify"));
 const sharp_1 = __importDefault(require("sharp"));
 const uuid_1 = require("uuid");
 const crypto_1 = __importDefault(require("crypto"));
+const winston_1 = require("winston");
 function getHash(input, salt = `${Math.random()}`) {
     const hash = crypto_1.default.createHash('sha256');
     hash.update(input + salt);
@@ -77,4 +79,17 @@ function setSession({ recordID, studentID, username }, req, res) {
             secure: false,
             maxAge: 1000 * 60 * 60 * 720
         });
+}
+const logger = (0, winston_1.createLogger)({
+    level: 'info',
+    format: winston_1.format.combine(winston_1.format.timestamp(), winston_1.format.printf(({ timestamp, level, message }) => {
+        return `${(new Date(String(timestamp))).toString()} [${level.toUpperCase()}]: ${message}`;
+    })),
+    transports: [
+        new winston_1.transports.File({ filename: 'noteroom_logs.log', level: 'error' }),
+        new winston_1.transports.Console(),
+    ],
+});
+async function log(level, message) {
+    logger.log(level, message);
 }

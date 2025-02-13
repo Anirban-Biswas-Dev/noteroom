@@ -4,6 +4,7 @@ const express_1 = require("express");
 const userService_js_1 = require("../services/userService.js");
 const rootInfo_js_1 = require("../helpers/rootInfo.js");
 const noteService_js_1 = require("../services/noteService.js");
+const utils_js_1 = require("../helpers/utils.js");
 const router = (0, express_1.Router)();
 function userRouter(io) {
     router.get('/:username?', async (req, res, next) => {
@@ -41,6 +42,7 @@ function userRouter(io) {
                         const error = new Error('No students found');
                         error["status"] = 404;
                         error["errorID"] = 1000;
+                        (0, utils_js_1.log)('error', `On /user Username=${req.params.username || "--username--"}: Couldn't get user data`);
                         next(error);
                     }
                 }

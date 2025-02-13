@@ -3,6 +3,7 @@ import slugify from "slugify"
 import sharp from "sharp"
 import { v4 as uuidv4 } from "uuid"
 import crypto from 'crypto'
+import { createLogger, format, transports } from "winston"
 
 
 export function getHash(input: string, salt = `${Math.random()}`) {
@@ -78,4 +79,22 @@ export function setSession({ recordID, studentID, username }, req: any, res: any
         secure: false,
         maxAge: 1000 * 60 * 60 * 720
     })
+}
+
+
+const logger = createLogger({
+    level: 'info',
+    format: format.combine(
+        format.timestamp(),
+        format.printf(({ timestamp, level, message }) => {
+          return `${(new Date(String(timestamp))).toString()} [${level.toUpperCase()}]: ${message}`;
+        })
+    ),
+    transports: [
+        new transports.File({ filename: 'noteroom_logs.log', level: 'error' }),
+        new transports.Console(),
+    ],
+});
+export async function log(level: string, message: string) {
+    logger.log(level, message)
 }

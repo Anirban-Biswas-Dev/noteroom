@@ -45,12 +45,19 @@ const router = (0, express_1.Router)();
 const client_id = process.env.GOOGLE_CLIENT_ID;
 function loginRouter(io) {
     router.get('/', (req, res) => {
-        if (req.session["stdid"]) {
-            res.redirect('dashboard');
+        try {
+            if (req.session["stdid"]) {
+                res.redirect('dashboard');
+                (0, utils_js_1.log)('info', `On /login StudentID=${req.session['stdid']} redirected to dashboard.`);
+            }
+            else {
+                res.status(200);
+                res.render('login');
+                (0, utils_js_1.log)('info', `On /login StudentID=${req.session['stdid'] || "--studentid--"} redirected to login.`);
+            }
         }
-        else {
-            res.status(200);
-            res.render('login');
+        catch (error) {
+            (0, utils_js_1.log)('error', `On /login StudentID=${req.session["stdid"] || "--studentid--"}: ${error.message}`);
         }
     });
     router.post('/auth/google', async (req, res) => {

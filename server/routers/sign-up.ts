@@ -3,7 +3,7 @@ import { Router } from 'express'
 import Students from '../schemas/students.js'
 import { upload } from '../services/firebaseService.js'
 import { Convert, SignUp } from '../services/userService.js'
-import { compressImage, generateRandomUsername, setSession } from '../helpers/utils.js'
+import { compressImage, generateRandomUsername, log, setSession } from '../helpers/utils.js'
 import { Server } from 'socket.io'
 import { verifyToken } from '../services/googleAuth.js';
 import {fileURLToPath} from "url";
@@ -50,13 +50,14 @@ function signupRouter(io: Server) {
 
             setSession({recordID: studentDocID, studentID: student["studentID"], username: student["username"] }, req, res)
             res.json({ redirect: "/onboarding" })
-            
+            log('info', `On /sign-up/auth/google StudentID=${student['studentID'] || "--studentid--"}: User is signed-up and got redirected to onboard`)
             
         } catch (error) {
             if (error.code === 11000) {
                 let duplicate_field = Object.keys(error.keyValue)[0] // Sending the first duplicated field name to the client-side to show an error
                 io.emit('duplicate-value', duplicate_field)
             } else {
+                log('error', `On /sign-up/auth/google StudentID=${"--studentid--"}: Couldn't sign-up`)
                 res.json({ ok: false })
             }
         }
@@ -81,6 +82,7 @@ function signupRouter(io: Server) {
 
             setSession({recordID: studentDocID, studentID: student['studentID'], username: student["username"]}, req, res)
             res.json({ url: `/onboarding` })
+            log('info', `On /sign-up StudentID=${student['studentID'] || "--studentid--"}: User is signed-up and got redirected to onboard`)
             
         } catch (error) {
             if (error.code === 11000) {
@@ -92,6 +94,7 @@ function signupRouter(io: Server) {
                     res.json({ ok: false, error: { fieldName: error.errors[field].path, errorMessage: error.errors[field].properties.message } })
                 }
             } else {
+                log('error', `On /sign-up StudentID=${"--studentid--"}: Couldn't sign-up`)
                 res.send({ ok: false, message: error.message })
             }
         }
@@ -118,13 +121,16 @@ function signupRouter(io: Server) {
                 rollnumber: req.body["collegeRoll"],
                 onboarded: true
             }
+            log('info', `On /sign-up/onboard StudentID=${studentID || "--studentid--"}: Successfully got data for oboard`)
             
-                        
+            
             Students.findByIdAndUpdate(studentDocID, { $set: onboardData }, { upsert: false }).then(() => {
                 res.send({ url: `/dashboard` })
+                log('info', `On /sign-up/onboard StudentID=${studentID || "--studentid--"}: Successfully onboarded and redirected to dashboard`)
             }) 
 
         } catch (error) {
+            log('error', `On /sign-up/onboard StudentID=${req.session["stdid"] || "--studentid--"}: Couldn't onboard the user`)
             res.json({ ok: false })
         }
     })

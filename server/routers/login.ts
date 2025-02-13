@@ -2,7 +2,7 @@ import {Router} from 'express'
 import {LogIn} from '../services/userService.js'
 import {Server} from 'socket.io'
 import {verifyToken} from "../services/googleAuth.js";
-import { setSession } from '../helpers/utils.js';
+import { log, setSession } from '../helpers/utils.js';
 import { config } from 'dotenv';
 import {dirname, join} from 'path';
 import {fileURLToPath} from "url";
@@ -18,11 +18,17 @@ const client_id = process.env.GOOGLE_CLIENT_ID
 
 function loginRouter(io: Server) {
     router.get('/', (req, res) => {
-        if (req.session["stdid"]) {
-            res.redirect('dashboard')
-        } else {
-            res.status(200)
-            res.render('login')
+        try {
+            if (req.session["stdid"]) {
+                res.redirect('dashboard')
+                log('info', `On /login StudentID=${req.session['stdid']} redirected to dashboard.`)
+            } else {
+                res.status(200)
+                res.render('login')
+                log('info', `On /login StudentID=${req.session['stdid'] || "--studentid--"} redirected to login.`)
+            }
+        } catch (error) {
+            log('error', `On /login StudentID=${req.session["stdid"] || "--studentid--"}: ${error.message}`)
         }
     })
 

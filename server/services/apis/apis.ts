@@ -12,6 +12,7 @@ import noteRouter from "./note.js";
 import searchRouter from "./search.js";
 import { requestApi } from "./request.js";
 import userApiRouter from "./user.js";
+import { log } from "../../helpers/utils.js";
 
 export const router = Router()
 
@@ -33,79 +34,73 @@ export default function apiRouter(io: Server) {
     })
 
     router.post("/download" ,async (req, res) => {
-        let noteID = req.body.noteID
-        let noteTitle = req.body.noteTitle
-
-        const noteLinks = (await Notes.findById(noteID, { content: 1 })).content
-
-        res.setHeader('Content-Type', 'application/zip');
-
-        const sanitizeFilename = (filename: string) => {
-            return filename.replace(/[^a-zA-Z0-9\.\-\_]/g, '_'); // Replace any invalid characters with an underscore
-        }
-        res.setHeader('Content-Disposition', `attachment; filename=${sanitizeFilename(noteTitle)}.zip`);
-
-        const archive = archiver('zip', { zlib: { level: 9 } });
-        archive.pipe(res);
-
-        for (let imageUrl of noteLinks) {
-            try {
+        try {
+            let noteID = req.body.noteID
+            let noteTitle = req.body.noteTitle
+    
+            const noteLinks = (await Notes.findById(noteID, { content: 1 })).content
+    
+            res.setHeader('Content-Type', 'application/zip');
+    
+            const sanitizeFilename = (filename: string) => {
+                return filename.replace(/[^a-zA-Z0-9\.\-\_]/g, '_'); // Replace any invalid characters with an underscore
+            }
+            res.setHeader('Content-Disposition', `attachment; filename=${sanitizeFilename(noteTitle)}.zip`);
+    
+            const archive = archiver('zip', { zlib: { level: 9 } });
+            archive.pipe(res);
+    
+            for (let imageUrl of noteLinks) {
                 const response = await fetch(imageUrl);
                 if (!response.ok) {
                     throw new Error(`Failed to fetch ${imageUrl}: ${response.statusText}`);
                 }
-
+    
                 let arrayBuffer = await response.arrayBuffer()
                 let buffer = Buffer.from(arrayBuffer)
-
+    
                 let fileName = basename(new URL(imageUrl).pathname);
                 archive.append(buffer, { name: fileName });
-            } catch (err) {
-                console.error(`Error fetching image: ${err.message}`);
-                return;
             }
+            archive.finalize();
+            log('info', `On /download StudentID=${req.session["stdid"] || "--studentid--"}: Downloaded note ${req.body.noteID || '--noteid--'}`)
+        } catch (error) {
+            log('error', `On /download StudentID=${req.session["stdid"] || "--studentid--"}: Couldn't download note ${req.body.noteID || '--noteid--'}`)
+            res.json({ ok: false })
         }
-        archive.finalize();
     })
 
 
     router.get('/getnote', async (req, res, next) => {
-        let type = req.query.type
-        async function getSavedNotes(studentDocID) {
-            let student = await Students.findById(studentDocID, { saved_notes: 1 })
-            let saved_notes_ids = student['saved_notes']
-            let notes = await Notes.aggregate([
-                { $match: { _id: { $in: saved_notes_ids } } },
-                { $project: {
-                    title: 1,
-                    thumbnail: { $first: '$content' }
-                } }
-            ])
-            return notes
-        }
+        try {
+            let page = Number(req.query.page) || 1
+            let count = Number(req.query.count) || 7
+            let seed: number = Number(req.query.seed) || 601914080
+            let skip: number = (page - 1) * count
+            
+            let _studentDocID = (await Convert.getDocumentID_studentid(req.session["stdid"]))
+            let studentDocID: any
+            if (_studentDocID) {
+                studentDocID = _studentDocID.toString()
+                log('info', `On /getnote StudentID=${req.session["stdid"] || "--studentid--"}: Converted studentID->documentID`)
 
-        if (type === 'save') {
-            let studentDocID = await Convert.getDocumentID_studentid(req.session["stdid"])
-            let savedNotes = await getSavedNotes(studentDocID)
-            res.json(savedNotes)
-        } else if (type === 'seg') {
-            try {
-                let page = req.query.page as unknown as number
-                let count = req.query.count as unknown as number
-                let skip: number = (page - 1) * count
-                let seed: number = req.query.seed as unknown as number
-                
-                let studentDocID = (await Convert.getDocumentID_studentid(req.session["stdid"])).toString()
                 let notes = await getAllNotes(studentDocID, { skip: skip, limit: count, seed: seed })
+                log('info', `On /getnote StudentID=${req.session["stdid"] || "--studentid--"}: Got notes with skip=${skip}, limit=${count}, seed=${seed}`)
                 
                 if (notes.length != 0) {
+                    log('info', `On /getnote StudentID=${req.session["stdid"] || "--studentid--"}: Sent notes with skip=${skip}, limit=${count}, seed=${seed}`)
                     res.json(notes)
                 } else {
+                    log('info', `On /getnote StudentID=${req.session["stdid"] || "--studentid--"}: No notes left`)
                     res.json([])
                 }
-            } catch (error) {
+            } else {
+                log('error', `On /getnote StudentID=${req.session["stdid"] || "--studentid--"}: Conversion studentID->documentID failed`)
                 res.json([])
             }
+        } catch (error) {
+            log('error', `On /getnote StudentID=${req.session["stdid"] || "--studentid--"}: ${error.message}`)
+            res.json([])
         }
     })
 
@@ -118,7 +113,7 @@ export default function apiRouter(io: Server) {
             let response = await deleteAccount(studentDocID, studentFolder === "true")
             let sessiondeletion = await deleteSessionsByStudentID(studentID)
 
-            console.log(`User got deleted`)
+            log('info', `On /user/delete StudentID=${studentID || "--studentid--"}: User is deleted`)
 
             res.json({ ok: response.ok && sessiondeletion.ok })
         } catch (error) {

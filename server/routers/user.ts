@@ -3,6 +3,7 @@ import { Convert, getProfile } from '../services/userService.js'
 import { getNotifications, getSavedNotes, unreadNotiCount } from '../helpers/rootInfo.js'
 import { Server } from 'socket.io'
 import { manageProfileNotes } from '../services/noteService.js'
+import { log } from '../helpers/utils.js'
 
 const router = Router()
 
@@ -40,6 +41,7 @@ function userRouter(io: Server) {
                         const error = new Error('No students found')
                         error["status"] = 404
                         error["errorID"] = 1000 // An error id of 'student not found'
+                        log('error', `On /user Username=${req.params.username || "--username--"}: Couldn't get user data`)
                         next(error)
                     }
                 }

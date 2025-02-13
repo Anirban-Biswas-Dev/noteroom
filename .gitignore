@@ -8,4 +8,5 @@ logs.log
 /experiment/
 /.idea
 /dist/.env
+*.log
 /views/test.*

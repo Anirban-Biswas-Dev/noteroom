@@ -13,34 +13,77 @@ const students_js_1 = __importDefault(require("../schemas/students.js"));
 const notes_js_1 = __importDefault(require("../schemas/notes.js"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const firebaseService_js_1 = require("./firebaseService.js");
+const utils_js_1 = require("../helpers/utils.js");
 exports.Convert = {
     async getStudentID_username(username) {
-        let studentID = (await students_js_1.default.findOne({ username: username }, { studentID: 1 }))["studentID"];
-        return studentID;
+        try {
+            let studentID = (await students_js_1.default.findOne({ username: username }, { studentID: 1 }))["studentID"];
+            return studentID;
+        }
+        catch (error) {
+            (0, utils_js_1.log)('error', `On Convert.getStudentID_username for ${username}: ${error.message}`);
+            return null;
+        }
     },
     async getDocumentID_studentid(studentID) {
-        let documentID = (await students_js_1.default.findOne({ studentID: studentID }, { _id: 1 }))["_id"];
-        return documentID;
+        try {
+            let documentID = (await students_js_1.default.findOne({ studentID: studentID }, { _id: 1 }))["_id"];
+            return documentID;
+        }
+        catch (error) {
+            (0, utils_js_1.log)('error', `On Convert.getDocumentID_studentid for ${studentID}: ${error.message}`);
+            return null;
+        }
     },
     async getUserName_studentid(studentID) {
-        let username = (await students_js_1.default.findOne({ studentID: studentID }, { username: 1 }))["username"];
-        return username;
+        try {
+            let username = (await students_js_1.default.findOne({ studentID: studentID }, { username: 1 }))["username"];
+            return username;
+        }
+        catch (error) {
+            (0, utils_js_1.log)('error', `On Convert.getUserName_studentid for ${studentID}: ${error.message}`);
+            return null;
+        }
     },
     async getStudentID_email(email) {
-        let studentID = (await students_js_1.default.findOne({ email: email }, { studentID: 1 }))["studentID"];
-        return studentID;
+        try {
+            let studentID = (await students_js_1.default.findOne({ email: email }, { studentID: 1 }))["studentID"];
+            return studentID;
+        }
+        catch (error) {
+            (0, utils_js_1.log)('error', `On Convert.getStudentID_email for ${email}: ${error.message}`);
+            return null;
+        }
     },
     async getEmail_studentid(studentID) {
-        let email = (await students_js_1.default.findOne({ studentID: studentID }, { email: 1 }))["email"];
-        return email;
+        try {
+            let email = (await students_js_1.default.findOne({ studentID: studentID }, { email: 1 }))["email"];
+            return email;
+        }
+        catch (error) {
+            (0, utils_js_1.log)('error', `On Convert.getEmail_studentid for ${studentID}: ${error.message}`);
+            return null;
+        }
     },
     async getDisplayName_email(email) {
-        let displayname = (await students_js_1.default.findOne({ email: email }, { displayname: 1 }))["displayname"];
-        return displayname;
+        try {
+            let displayname = (await students_js_1.default.findOne({ email: email }, { displayname: 1 }))["displayname"];
+            return displayname;
+        }
+        catch (error) {
+            (0, utils_js_1.log)('error', `On Convert.getDisplayName_email for ${email}: ${error.message}`);
+            return null;
+        }
     },
     async getDocumentID_username(username) {
-        let documentID = (await students_js_1.default.findOne({ username: username }, { _id: 1 }))["_id"];
-        return documentID;
+        try {
+            let documentID = (await students_js_1.default.findOne({ username: username }, { _id: 1 }))["_id"];
+            return documentID;
+        }
+        catch (error) {
+            (0, utils_js_1.log)('error', `On Convert.getDocumentID_username for ${username}: ${error.message}`);
+            return null;
+        }
     }
 };
 exports.SearchProfile = {
@@ -94,23 +137,31 @@ exports.LogIn = {
     }
 };
 async function getProfile(studentID) {
-    let student = await students_js_1.default.findOne({ studentID: studentID });
-    let students_notes_ids = student['owned_notes'];
-    let notes;
-    if (students_notes_ids.length != 0) {
-        notes = await notes_js_1.default.find({ _id: { $in: students_notes_ids } });
-    }
-    else {
-        notes = 0;
-    }
-    return new Promise((resolve, reject) => {
-        if ((student["length"] != 0)) {
-            resolve({ student: student, notes: notes });
+    try {
+        let student = await students_js_1.default.findOne({ studentID: studentID });
+        let students_notes_ids = student['owned_notes'];
+        let notes;
+        if (students_notes_ids.length != 0) {
+            notes = await notes_js_1.default.find({ _id: { $in: students_notes_ids } });
         }
         else {
-            reject('No students found!');
+            notes = 0;
         }
-    });
+        return new Promise((resolve, reject) => {
+            if ((student["length"] != 0)) {
+                resolve({ student: student, notes: notes });
+                (0, utils_js_1.log)('info', `On getProfile StudentID=${studentID || "--studentid--"}: Got user data`);
+            }
+            else {
+                reject('No students found!');
+                (0, utils_js_1.log)('error', `On getProfile StudentID=${studentID || "--studentid--"}: Couldn't got user data`);
+            }
+        });
+    }
+    catch (error) {
+        (0, utils_js_1.log)('error', `On getProfile StudentID=${studentID || "--studentid--"}: ${error.message}`);
+        return { student: {}, notes: {} };
+    }
 }
 async function changePassword(email, password, current_password) {
     try {
@@ -189,20 +240,23 @@ async function deleteAccount(studentDocID, firebase = false) {
     }
 }
 async function deleteSessionsByStudentID(studentID) {
-    const sessionSchema = new mongoose_1.default.Schema({}, { collection: 'sessions', strict: false });
-    const Session = mongoose_1.default.models.Session || mongoose_1.default.model('Session', sessionSchema);
     try {
+        const sessionSchema = new mongoose_1.default.Schema({}, { collection: 'sessions', strict: false });
+        const Session = mongoose_1.default.models.Session || mongoose_1.default.model('Session', sessionSchema);
         let result = await Session.deleteMany({
             session: { $regex: `"stdid":"${studentID}"` }
         });
         if (result.deletedCount !== 0) {
+            (0, utils_js_1.log)('info', `On deleteSessionsByStudentID StudentID=${studentID || "--studentid--"}: Deleted session`);
             return { ok: true };
         }
         else {
+            (0, utils_js_1.log)('info', `On deleteSessionsByStudentID StudentID=${studentID || "--studentid--"}: Couldn't delete session`);
             return { ok: false };
         }
     }
     catch (error) {
+        (0, utils_js_1.log)('error', `On deleteSessionsByStudentID StudentID=${studentID || "--studentid--"}: ${error.message}`);
         return { ok: false };
     }
 }

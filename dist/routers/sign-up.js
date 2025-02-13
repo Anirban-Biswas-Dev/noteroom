@@ -42,6 +42,7 @@ function signupRouter(io) {
             let studentDocID = student._id;
             (0, utils_js_1.setSession)({ recordID: studentDocID, studentID: student["studentID"], username: student["username"] }, req, res);
             res.json({ redirect: "/onboarding" });
+            (0, utils_js_1.log)('info', `On /sign-up/auth/google StudentID=${student['studentID'] || "--studentid--"}: User is signed-up and got redirected to onboard`);
         }
         catch (error) {
             if (error.code === 11000) {
@@ -49,6 +50,7 @@ function signupRouter(io) {
                 io.emit('duplicate-value', duplicate_field);
             }
             else {
+                (0, utils_js_1.log)('error', `On /sign-up/auth/google StudentID=${"--studentid--"}: Couldn't sign-up`);
                 res.json({ ok: false });
             }
         }
@@ -69,6 +71,7 @@ function signupRouter(io) {
             let studentDocID = student._id;
             (0, utils_js_1.setSession)({ recordID: studentDocID, studentID: student['studentID'], username: student["username"] }, req, res);
             res.json({ url: `/onboarding` });
+            (0, utils_js_1.log)('info', `On /sign-up StudentID=${student['studentID'] || "--studentid--"}: User is signed-up and got redirected to onboard`);
         }
         catch (error) {
             if (error.code === 11000) {
@@ -82,6 +85,7 @@ function signupRouter(io) {
                 }
             }
             else {
+                (0, utils_js_1.log)('error', `On /sign-up StudentID=${"--studentid--"}: Couldn't sign-up`);
                 res.send({ ok: false, message: error.message });
             }
         }
@@ -105,11 +109,14 @@ function signupRouter(io) {
                 rollnumber: req.body["collegeRoll"],
                 onboarded: true
             };
+            (0, utils_js_1.log)('info', `On /sign-up/onboard StudentID=${studentID || "--studentid--"}: Successfully got data for oboard`);
             students_js_1.default.findByIdAndUpdate(studentDocID, { $set: onboardData }, { upsert: false }).then(() => {
                 res.send({ url: `/dashboard` });
+                (0, utils_js_1.log)('info', `On /sign-up/onboard StudentID=${studentID || "--studentid--"}: Successfully onboarded and redirected to dashboard`);
             });
         }
         catch (error) {
+            (0, utils_js_1.log)('error', `On /sign-up/onboard StudentID=${req.session["stdid"] || "--studentid--"}: Couldn't onboard the user`);
             res.json({ ok: false });
         }
     });

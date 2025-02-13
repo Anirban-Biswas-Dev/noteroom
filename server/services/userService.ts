@@ -3,40 +3,76 @@ import Notes from "../schemas/notes.js";
 import { IStudentDB } from "../types/database.types.js";
 import mongoose from "mongoose";
 import { deleteNoteImages, upload } from "./firebaseService.js";
+import { log } from "../helpers/utils.js";
 
 export const Convert = {
     async getStudentID_username(username: string) {
-        let studentID = (await Students.findOne({ username: username }, { studentID: 1 }))["studentID"]
-        return studentID
+        try {
+            let studentID = (await Students.findOne({ username: username }, { studentID: 1 }))["studentID"]
+            return studentID
+        } catch (error) {
+            log('error', `On Convert.getStudentID_username for ${username}: ${error.message}`)
+            return null
+        }
     },
     
     async getDocumentID_studentid(studentID: string) {
-        let documentID = (await Students.findOne({ studentID: studentID }, { _id: 1 }))["_id"]
-        return documentID
+        try {
+            let documentID = (await Students.findOne({ studentID: studentID }, { _id: 1 }))["_id"]
+            return documentID
+        } catch (error) {
+            log('error', `On Convert.getDocumentID_studentid for ${studentID}: ${error.message}`)
+            return null
+        }
     },
 
     async getUserName_studentid(studentID: string) {
-        let username = (await Students.findOne({ studentID: studentID }, { username: 1 }))["username"]
-        return username
+        try {
+            let username = (await Students.findOne({ studentID: studentID }, { username: 1 }))["username"]
+            return username
+        } catch (error) {
+            log('error', `On Convert.getUserName_studentid for ${studentID}: ${error.message}`)
+            return null
+        }
     },
 
     async getStudentID_email(email: string) {
-        let studentID = (await Students.findOne({ email: email }, { studentID: 1 }))["studentID"]
-        return studentID
+        try {
+            let studentID = (await Students.findOne({ email: email }, { studentID: 1 }))["studentID"]
+            return studentID
+        } catch (error) {
+            log('error', `On Convert.getStudentID_email for ${email}: ${error.message}`)
+            return null
+        }
     },
 
     async getEmail_studentid(studentID: string) {
-        let email = (await Students.findOne({ studentID: studentID }, { email: 1 }))["email"]
-        return email
+        try {
+            let email = (await Students.findOne({ studentID: studentID }, { email: 1 }))["email"]
+            return email
+        } catch (error) {
+            log('error', `On Convert.getEmail_studentid for ${studentID}: ${error.message}`)
+            return null
+        }
     },
 
     async getDisplayName_email(email: string) {
-        let displayname = (await Students.findOne({ email: email }, { displayname: 1 }))["displayname"]
-        return displayname
+        try {
+            let displayname = (await Students.findOne({ email: email }, { displayname: 1 }))["displayname"]
+            return displayname
+        } catch (error) {
+            log('error', `On Convert.getDisplayName_email for ${email}: ${error.message}`)
+            return null
+        }
     },
     async getDocumentID_username(username: string) {
-        let documentID = (await Students.findOne({ username: username }, { _id: 1 }))["_id"]
-        return documentID
+        try {
+            let documentID = (await Students.findOne({ username: username }, { _id: 1 }))["_id"]
+            return documentID
+        } catch (error) {
+            log('error', `On Convert.getDocumentID_username for ${username}: ${error.message}`)
+            return null
+        }
     }
 }
 
@@ -96,21 +132,28 @@ export const LogIn = {
 } 
 
 export async function getProfile(studentID: string) {
-    let student = await Students.findOne({ studentID: studentID })
-    let students_notes_ids = student['owned_notes']
-    let notes: any;
-    if (students_notes_ids.length != 0) {
-        notes = await Notes.find({ _id: { $in: students_notes_ids } })
-    } else {
-        notes = 0
-    }
-    return new Promise((resolve, reject) => {
-        if ((student["length"] != 0)) {
-            resolve({ student: student, notes: notes })
+    try {
+        let student = await Students.findOne({ studentID: studentID })
+        let students_notes_ids = student['owned_notes']
+        let notes: any;
+        if (students_notes_ids.length != 0) {
+            notes = await Notes.find({ _id: { $in: students_notes_ids } })
         } else {
-            reject('No students found!')
+            notes = 0
         }
-    })
+        return new Promise((resolve, reject) => {
+            if ((student["length"] != 0)) {
+                resolve({ student: student, notes: notes })
+                log('info', `On getProfile StudentID=${studentID || "--studentid--"}: Got user data`)
+            } else {
+                reject('No students found!')
+                log('error', `On getProfile StudentID=${studentID || "--studentid--"}: Couldn't got user data`)
+            }
+        })
+    } catch (error) {
+        log('error', `On getProfile StudentID=${studentID || "--studentid--"}: ${error.message}`)
+        return {student: {}, notes: {}}
+    }
 }
 
 
@@ -188,19 +231,22 @@ export async function deleteAccount(studentDocID: string, firebase=false) {
 }
 
 export async function deleteSessionsByStudentID(studentID: string) {
-    const sessionSchema = new mongoose.Schema({}, { collection: 'sessions', strict: false });
-    const Session = mongoose.models.Session || mongoose.model('Session', sessionSchema);
-    
     try {
+        const sessionSchema = new mongoose.Schema({}, { collection: 'sessions', strict: false });
+        const Session = mongoose.models.Session || mongoose.model('Session', sessionSchema);
+    
         let result = await Session.deleteMany({
             session: { $regex: `"stdid":"${studentID}"` } // Match the serialized JSON
         });
         if (result.deletedCount !== 0) {
+            log('info', `On deleteSessionsByStudentID StudentID=${studentID || "--studentid--"}: Deleted session`)
             return { ok: true }
         } else {
+            log('info', `On deleteSessionsByStudentID StudentID=${studentID || "--studentid--"}: Couldn't delete session`)
             return { ok: false }
         }
     } catch (error) {
+        log('error', `On deleteSessionsByStudentID StudentID=${studentID || "--studentid--"}: ${error.message}`)
         return { ok: false }
     }
 }

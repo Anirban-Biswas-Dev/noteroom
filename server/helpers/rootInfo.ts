@@ -1,31 +1,42 @@
 import Students from "../schemas/students.js";
 import Notes from "../schemas/notes.js";
 import { Notifs } from "../schemas/notifications.js";
+import { log } from "./utils.js";
 
 type rootStudentID = string
 
 export async function getSavedNotes(studentID: rootStudentID) {
-    let student = await Students.findOne({ studentID: studentID }, { saved_notes: 1 })
-    let saved_notes_ids = student['saved_notes']
-    let notes = await Notes.find({ _id: { $in: saved_notes_ids } })
-    return notes
+    try {
+        let student = await Students.findOne({ studentID: studentID }, { saved_notes: 1 })
+        let saved_notes_ids = student['saved_notes']
+        let notes = await Notes.find({ _id: { $in: saved_notes_ids } })
+        return notes
+    } catch (error) {
+        log('error', `On getSavedNotes StudentID=${studentID || "--studentid--"}: Couldn't get the saved notes.`)
+        return []
+    }
 }
 
 export async function getNotifications(studentID: rootStudentID) {
-    let allNotifications = await Notifs.find({ ownerStudentID: studentID })
-    let populatedNotifications = []
-
-    await Promise.all(
-        allNotifications.map(async (notification) => {
-            if (notification["docType"] === 'interaction') {
-                let populatedNotification = await notification.populate('fromUserSudentDocID', 'displayname username profile_pic')
-                populatedNotifications.push(populatedNotification)
-            } else {
-                populatedNotifications.push(notification)
-            }
-        })
-    )
-    return populatedNotifications
+    try {
+        let allNotifications = await Notifs.find({ ownerStudentID: studentID })
+        let populatedNotifications = []
+    
+        await Promise.all(
+            allNotifications.map(async (notification) => {
+                if (notification["docType"] === 'interaction') {
+                    let populatedNotification = await notification.populate('fromUserSudentDocID', 'displayname username profile_pic')
+                    populatedNotifications.push(populatedNotification)
+                } else {
+                    populatedNotifications.push(notification)
+                }
+            })
+        )
+        return populatedNotifications
+    } catch (error) {
+        log('error', `On getNotifications StudentID=${studentID || "--studentid--"}: Couldn't get the notifications.`)
+        return []
+    }
 }
 
 
