@@ -1,13 +1,13 @@
 const userOnboarding = {
-  district: "",
-  collegeId: "",
-  collegeYear: "",
-  collegeRoll: "",
-  group: "",
-  bio: "",
-  favSub: "",
-  nonFavSub: "",
-  profilePic: ""
+  district: null, //! Required
+  collegeId: null, //! Required
+  collegeYear: null,
+  collegeRoll: null,
+  group: null, //! Required
+  bio: null,
+  favSub: null, //! Required
+  nonFavSub: null, //! Required
+  profilePic: null
 };
 
 
@@ -161,7 +161,10 @@ function initializeDistrictSelection() {
       });
 
       // Enable only the first continue button
-      continueButtons[0].classList.remove("req-field-not-selected");
+      if (userOnboarding.district) {
+        continueButtons[0].classList.remove("req-field-not-selected");
+        continueButtons[0].disabled = false
+      }
 
       // Detailed logs for debugging
       //console.log("District Selected:", userOnboarding.district);
@@ -175,12 +178,7 @@ function initializeDistrictSelection() {
       // Prevent action if the button is inactive
       if (button.classList.contains("req-field-not-selected")) {
         event.preventDefault();
-        //console.log(`Button ${index} is inactive. Cannot proceed.`);
       }
-
-      // Log for when the button is active and clicked
-      //console.log(`Button ${index} clicked. Proceeding to the next section.`);
-      //console.log("Current userOnboarding Object:", userOnboarding);
 
       const tokiClgQtn = document.getElementById("tokiClgQtn");
       tokiClgQtn.textContent = `Which college in ${userOnboarding.district} do you attend?`;
@@ -282,6 +280,7 @@ function handleCollegeSelection() {
 
       // Enable the second continue button
       continueButton.classList.remove("req-field-not-selected");
+      continueButton.disabled = false
     });
   });
 
@@ -304,10 +303,12 @@ function handleCollegeSelection() {
 
       // Enable the second continue button
       continueButton.classList.remove("req-field-not-selected");
+      continueButton.disabled = false
     } else {
       // If "Other" input is cleared, disable the continue button again
       userOnboarding.collegeName = "";
       continueButton.classList.add("req-field-not-selected");
+      continueButton.disabled = true
     }
   });
 
@@ -327,7 +328,6 @@ function storeCollegeSelection() {
         return;
       }
 
-      //console.log("User onboarding data:", userOnboarding);
       // Proceed to the next step or functionality
     });
   }
@@ -359,28 +359,16 @@ function handleGroupYearRollSelection() {
   const continueButton = document.querySelectorAll(".move-section-btn")[2]; // Third slide's continue button
 
   let groupSelected = false;
-  let yearSelected = false;
-  let rollEntered = false;
-
-  // Function to check if all fields are completed and enable the continue button
-  function checkAllFieldsCompleted() {
-    if (groupSelected && yearSelected && rollEntered) {
-      continueButton.classList.remove("req-field-not-selected");
-    } else {
-      continueButton.classList.add("req-field-not-selected");
-    }
-  }
 
   // Handle group dropdown selection
   groupDropdown.addEventListener("click", (e) => {
     if (e.target.classList.contains("dropdown-option")) {
       const groupValue = e.target.getAttribute("data-value");
       userOnboarding.group = groupValue; // Push group value to the onboarding object
-      document.querySelector("#img_category .selected").textContent =
-        groupValue; // Update selected text
+      document.querySelector("#img_category .selected").textContent = groupValue; // Update selected text
       groupSelected = true;
-      //console.log(`Group Selected: ${groupValue}`);
-      checkAllFieldsCompleted(); // Check if other fields are completed
+      continueButton.classList.remove("req-field-not-selected");
+      continueButton.disabled = false
     }
   });
 
@@ -389,36 +377,19 @@ function handleGroupYearRollSelection() {
     if (e.target.classList.contains("dropdown-option")) {
       const yearValue = e.target.getAttribute("data-value");
       userOnboarding.collegeYear = yearValue; // Push year value to the onboarding object
-      document.querySelectorAll("#img_category .selected")[1].textContent =
-        yearValue; // Update selected text for year
-      yearSelected = true;
-      //console.log(`Year Selected: ${yearValue}`);
-      checkAllFieldsCompleted(); // Check if other fields are completed
+      document.querySelectorAll("#img_category .selected")[1].textContent = yearValue; // Update selected text for year
     }
   });
 
   // Handle roll number input
   rollInputField.addEventListener("input", () => {
     const rollValue = rollInputField.value.trim();
-    if (rollValue && /^[0-9]{1,3}$/.test(rollValue)) {
-      // Ensure roll is a max of 3 digits
-      userOnboarding.collegeRoll = rollValue; // Push roll value to the onboarding object
-      rollEntered = true;
-      //console.log(`Roll Number Entered: ${rollValue}`);
-    } else {
-      userOnboarding.collegeRoll = ""; // Reset roll value if input is invalid
-      rollEntered = false;
-    }
-    checkAllFieldsCompleted(); // Check if other fields are completed
+    userOnboarding.collegeRoll = rollValue === "" ? null : rollValue; // Push roll value to the onboarding object
   });
 
   // Initialize the continue button click logic
   continueButton.addEventListener("click", () => {
-    if (!groupSelected || !yearSelected || !rollEntered) {
-      return;
-    }
-
-    //console.log("User Onboarding Data:", userOnboarding);
+    if (!groupSelected) return
     // Placeholder for next-step logic
   });
 }
@@ -498,14 +469,12 @@ function handleSubjectAndBioSelection() {
 
   // Function to update the continue button state
   function updateContinueButton() {
-    if (
-      favSubjectSelected &&
-      nonFavSubjectSelected &&
-      bioTextarea.value.trim().length > 0
-    ) {
+    if (favSubjectSelected && nonFavSubjectSelected) {
       continueButton.classList.remove("req-field-not-selected");
+      continueButton.disabled = false
     } else {
       continueButton.classList.add("req-field-not-selected");
+      continueButton.disabled = true
     }
   }
 
@@ -515,8 +484,8 @@ function handleSubjectAndBioSelection() {
       card.classList.remove("selected-fav-subj");
       card.classList.remove("selected-non-fav-subj");
     });
-    userOnboarding.favSub = "";
-    userOnboarding.nonFavSub = "";
+    userOnboarding.favSub = null;
+    userOnboarding.nonFavSub = null;
     favSubjectSelected = false;
     nonFavSubjectSelected = false;
     //console.log("All selections cleared. Start fresh.");
@@ -532,7 +501,7 @@ function handleSubjectAndBioSelection() {
         card.classList.add("selected-fav-subj");
         userOnboarding.favSub = subjectName;
         favSubjectSelected = true;
-        //console.log(`Favorite Subject Selected: ${subjectName}`);
+        console.log(`Favorite Subject Selected: ${subjectName}`);
       } else if (
         !nonFavSubjectSelected &&
         !card.classList.contains("selected-fav-subj")
@@ -541,7 +510,7 @@ function handleSubjectAndBioSelection() {
         card.classList.add("selected-non-fav-subj");
         userOnboarding.nonFavSub = subjectName;
         nonFavSubjectSelected = true;
-        //console.log(`Non-Favorite Subject Selected: ${subjectName}`);
+        console.log(`Non-Favorite Subject Selected: ${subjectName}`);
       } else {
         // If both favorite and non-favorite are selected, restart selection
         clearAllSelections();
@@ -550,9 +519,6 @@ function handleSubjectAndBioSelection() {
         card.classList.add("selected-fav-subj");
         userOnboarding.favSub = subjectName;
         favSubjectSelected = true;
-        //console.log(
-        //   `Restarted Selection. New Favorite Subject: ${subjectName}`
-        // );
       }
 
       // Update the continue button state
@@ -569,17 +535,14 @@ function handleSubjectAndBioSelection() {
 
   // Handle the continue button click
   continueButton.addEventListener("click", async () => {
-    if (
-      !favSubjectSelected ||
-      !nonFavSubjectSelected ||
-      bioTextarea.value.trim().length === 0
-    ) {
+    if (!favSubjectSelected || !nonFavSubjectSelected) {
       return;
     }
 
     // Store bio in the onboarding object
-    userOnboarding.bio = bioTextarea.value.trim();
+    userOnboarding.bio = bioTextarea.value.trim() === "" ? null : bioTextarea.value.trim()
 
+    console.log(userOnboarding)
     let onboardData = new FormData()
     Object.entries(userOnboarding).forEach(entry => {
       onboardData.append(entry[0], entry[1])
@@ -588,40 +551,40 @@ function handleSubjectAndBioSelection() {
     document.querySelector('div#onboard-loader').style.display = 'flex'
     continueButton.style.display = 'none'
 
-    try {
-      let response = await fetch('/sign-up/onboard', {
-        body: onboardData,
-        method: 'post'
-      })
-      let data = await response.json()
-      if (data.url) {
-        window.location.href = data.url
-      } else {
-        Swal.fire({
-          icon: 'error',
-          title: 'Something went wrong!!',
-          text: "Couldn't onboard you currectly!! Please try again a bit later",
-          showConfirmButton: true,
-          confirmButtonText: 'OK',
-        }).then(result => {
-          if (result.isConfirmed) {
-            window.location.href = '/dashboard'
-          }
-        })
-      }
-    } catch (error) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Something went wrong!!',
-        text: "Couldn't onboard you currectly!! Please try again a bit later",
-        showConfirmButton: true,
-        confirmButtonText: 'OK',
-      }).then(result => {
-        if (result.isConfirmed) {
-          window.location.href = '/dashboard'
-        }
-      })
-    }
+    // try {
+    //   let response = await fetch('/sign-up/onboard', {
+    //     body: onboardData,
+    //     method: 'post'
+    //   })
+    //   let data = await response.json()
+    //   if (data.url) {
+    //     window.location.href = data.url
+    //   } else {
+    //     Swal.fire({
+    //       icon: 'error',
+    //       title: 'Something went wrong!!',
+    //       text: "Couldn't onboard you currectly!! Please try again a bit later",
+    //       showConfirmButton: true,
+    //       confirmButtonText: 'OK',
+    //     }).then(result => {
+    //       if (result.isConfirmed) {
+    //         window.location.href = '/dashboard'
+    //       }
+    //     })
+    //   }
+    // } catch (error) {
+    //   Swal.fire({
+    //     icon: 'error',
+    //     title: 'Something went wrong!!',
+    //     text: "Couldn't onboard you currectly!! Please try again a bit later",
+    //     showConfirmButton: true,
+    //     confirmButtonText: 'OK',
+    //   }).then(result => {
+    //     if (result.isConfirmed) {
+    //       window.location.href = '/dashboard'
+    //     }
+    //   })
+    // }
     
     // Placeholder for next-step logic
   });

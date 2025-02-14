@@ -195,7 +195,7 @@ export async function changeProfileDetails(studentID: any, values: { fieldName: 
                 if (student) {
                     let prvProfilePicURL = student.profile_pic
                     let savePath = `${student._id.toString()}/${values.newValue["name"]}`
-                    let profilePicUrl = await upload(values.newValue, savePath, { replaceWith: prvProfilePicURL })
+                    let profilePicUrl = await upload(values.newValue, savePath)
                     await Students.updateOne({ studentID }, { $set: { profile_pic: profilePicUrl } })
                 } else {
                     return false

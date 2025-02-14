@@ -119,7 +119,7 @@ function signupRouter(io: Server) {
                 notfavsubject: req.body['nonFavSub'],
                 profile_pic: profilePicUrl,
                 rollnumber: req.body["collegeRoll"],
-                onboarded: true
+                // onboarded: true
             }
             log('info', `On /sign-up/onboard StudentID=${studentID || "--studentid--"}: Successfully got data for oboard`)
             
