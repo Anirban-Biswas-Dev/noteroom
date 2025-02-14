@@ -551,40 +551,44 @@ function handleSubjectAndBioSelection() {
     document.querySelector('div#onboard-loader').style.display = 'flex'
     continueButton.style.display = 'none'
 
-    // try {
-    //   let response = await fetch('/sign-up/onboard', {
-    //     body: onboardData,
-    //     method: 'post'
-    //   })
-    //   let data = await response.json()
-    //   if (data.url) {
-    //     window.location.href = data.url
-    //   } else {
-    //     Swal.fire({
-    //       icon: 'error',
-    //       title: 'Something went wrong!!',
-    //       text: "Couldn't onboard you currectly!! Please try again a bit later",
-    //       showConfirmButton: true,
-    //       confirmButtonText: 'OK',
-    //     }).then(result => {
-    //       if (result.isConfirmed) {
-    //         window.location.href = '/dashboard'
-    //       }
-    //     })
-    //   }
-    // } catch (error) {
-    //   Swal.fire({
-    //     icon: 'error',
-    //     title: 'Something went wrong!!',
-    //     text: "Couldn't onboard you currectly!! Please try again a bit later",
-    //     showConfirmButton: true,
-    //     confirmButtonText: 'OK',
-    //   }).then(result => {
-    //     if (result.isConfirmed) {
-    //       window.location.href = '/dashboard'
-    //     }
-    //   })
-    // }
+    try {
+      let response = await fetch('/sign-up/onboard', {
+        body: onboardData,
+        method: 'post'
+      })
+      let data = await response.json()
+      console.log(data)
+      if (data.ok) {
+        window.location = '/dashboard'
+      }
+      // if (data.url) {
+      //   window.location.href = data.url
+      // } else {
+      //   // Swal.fire({
+      //   //   icon: 'error',
+      //   //   title: 'Something went wrong!!',
+      //   //   text: "Couldn't onboard you currectly!! Please try again a bit later",
+      //   //   showConfirmButton: true,
+      //   //   confirmButtonText: 'OK',
+      //   // }).then(result => {
+      //   //   if (result.isConfirmed) {
+      //   //     window.location.href = '/dashboard'
+      //   //   }
+      //   // })
+      // }
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Something went wrong!!',
+        text: "Couldn't onboard you currectly!! Please try again a bit later",
+        showConfirmButton: true,
+        confirmButtonText: 'OK',
+      }).then(result => {
+        if (result.isConfirmed) {
+          window.location.href = '/dashboard'
+        }
+      })
+    }
     
     // Placeholder for next-step logic
   });

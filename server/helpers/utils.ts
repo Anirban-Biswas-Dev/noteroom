@@ -53,16 +53,20 @@ export function generateRandomUsername(displayname: string) {
 
 
 export async function compressImage(fileObject: any) {
-    let imageBuffer = fileObject.data
-    let imageType: "jpeg" | "png" = fileObject.mimetype === "image/jpeg" ? "jpeg" : "png"
-    let compressedBuffer = await sharp(imageBuffer)
-        [imageType](
-            imageType === "png" 
-            ? { quality: 70, compressionLevel: 9, adaptiveFiltering: true } 
-            : { quality: 70, progressive: true }
-        ).toBuffer()
-    let compressFileObject = Object.assign(fileObject, { buffer: compressedBuffer, size: compressedBuffer.length })
-    return compressFileObject
+    try {
+        let imageBuffer = fileObject.data
+        let imageType: "jpeg" | "png" = fileObject.mimetype === "image/jpeg" ? "jpeg" : "png"
+        let compressedBuffer = await sharp(imageBuffer)
+            [imageType](
+                imageType === "png" 
+                ? { quality: 70, compressionLevel: 9, adaptiveFiltering: true } 
+                : { quality: 70, progressive: true }
+            ).toBuffer()
+
+        return { ...fileObject, buffer: compressedBuffer, size: compressedBuffer.length }
+    } catch (error) {
+        return fileObject
+    }
 }
 
 export function setSession({ recordID, studentID, username }, req: any, res: any) {

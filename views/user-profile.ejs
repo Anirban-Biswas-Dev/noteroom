@@ -127,12 +127,12 @@
         <div class="p-info__third-row">
             <div class="user-clg-year-wrapper">
                 <span class="input-label">College Year</span>
-                <p class="user-info-text"><%= student.collegeyear %></p>
+                <p class="user-info-text"><%= student.collegeyear || "Not Provided" %></p>
             </div>
 
             <div class="user-clg-roll-wrapper">
                     <span class="input-label">College Roll</span>
-                    <p class="user-info-text changable" data-field="Roll Number" data-name="rollnumber"><%= student.rollnumber %>&nbsp;<%- changeDetails('Roll Number', 'rollnumber') %></p>
+                    <p class="user-info-text changable" data-field="Roll Number" data-name="rollnumber"><%= student.rollnumber || "Not Provided" %>&nbsp;<%- changeDetails('Roll Number', 'rollnumber') %></p>
             </div>
         </div>
         <div class="p-info__fourth-row">
