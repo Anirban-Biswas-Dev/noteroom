@@ -195,8 +195,12 @@ export async function changeProfileDetails(studentID: any, values: { fieldName: 
                 if (student) {
                     let prvProfilePicURL = student.profile_pic
                     let savePath = `${student._id.toString()}/${values.newValue["name"]}`
-                    let profilePicUrl = await upload(values.newValue, savePath)
-                    await Students.updateOne({ studentID }, { $set: { profile_pic: profilePicUrl } })
+                    let profilePicUrl = await upload(values.newValue, savePath, prvProfilePicURL.split('/')[1] === 'images' ? undefined : { replaceWith: prvProfilePicURL })
+                    if (profilePicUrl) {
+                        await Students.updateOne({ studentID }, { $set: { profile_pic: profilePicUrl } })
+                    } else {
+                        return prvProfilePicURL
+                    }
                 } else {
                     return false
                 }
@@ -206,7 +210,6 @@ export async function changeProfileDetails(studentID: any, values: { fieldName: 
             return false
         }
     } catch (error) {
-        console.log(error)
         return false
     }
 }
