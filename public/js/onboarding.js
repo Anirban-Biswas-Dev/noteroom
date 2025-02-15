@@ -94,8 +94,7 @@ backButton.addEventListener("click", async () => {
           window.location.href = '/'
         } else {
           Swal.fire({
-            icon: 'error',
-            title: 'An error occured!',
+            title: '<svg fill="#000000" width="70px" height="70px" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg"><path d="M19.5 10c.277 0 .5.223.5.5v3c0 .277-.223.5-.5.5s-.5-.223-.5-.5v-3c0-.277.223-.5.5-.5zm-9 0c.277 0 .5.223.5.5v3c0 .277-.223.5-.5.5s-.5-.223-.5-.5v-3c0-.277.223-.5.5-.5zM15 20c-2.104 0-4.186.756-5.798 2.104-.542.4.148 1.223.638.76C11.268 21.67 13.137 21 15 21s3.732.67 5.16 1.864c.478.45 1.176-.364.638-.76C19.186 20.756 17.104 20 15 20zm0-20C6.722 0 0 6.722 0 15c0 8.278 6.722 15 15 15 8.278 0 15-6.722 15-15 0-8.278-6.722-15-15-15zm0 1c7.738 0 14 6.262 14 14s-6.262 14-14 14S1 22.738 1 15 7.262 1 15 1z" stroke-width="3"/></svg>',
             text: "Couldn't delete your account! Please try again a bit later.",
             showConfirmButton: true,
             confirmButtonText: 'OK',
@@ -103,9 +102,8 @@ backButton.addEventListener("click", async () => {
         }
       } catch (error) {
         Swal.fire({
-          icon: 'error',
-          title: 'An error occured!',
-          text: "Couldn't delete your account! Please try again a bit later.",
+          title: `<svg width="70px" height="70px" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="m 1.53125 0.46875 l -1.0625 1.0625 l 14 14 l 1.0625 -1.0625 l -6.191406 -6.191406 c 0.546875 0.175781 1.042968 0.46875 1.421875 0.886718 l 0.5 0.542969 c 0.175781 0.199219 0.425781 0.316407 0.691406 0.328125 c 0.265625 0.015625 0.523437 -0.078125 0.722656 -0.257812 c 0.195313 -0.179688 0.3125 -0.429688 0.324219 -0.695313 c 0.011719 -0.261719 -0.082031 -0.523437 -0.261719 -0.71875 l -0.5 -0.546875 c -1.121093 -1.234375 -2.703125 -1.828125 -4.269531 -1.816406 c -0.28125 0.003906 -0.5625 0.027344 -0.839844 0.066406 l -1.671875 -1.671875 c 2.859375 -0.839843 6.183594 -0.222656 8.351563 1.851563 l 0.5 0.476562 c 0.398437 0.378906 1.03125 0.367188 1.414062 -0.03125 c 0.378906 -0.398437 0.367188 -1.03125 -0.03125 -1.410156 l -0.496094 -0.480469 c -1.957031 -1.875 -4.578124 -2.808593 -7.195312 -2.808593 c -1.410156 0 -2.820312 0.273437 -4.125 0.820312 z m -0.230469 3.894531 c -0.167969 0.140625 -0.335937 0.28125 -0.496093 0.4375 l -0.496094 0.480469 c -0.3984378 0.378906 -0.410156 1.011719 -0.03125 1.410156 c 0.382812 0.398438 1.015625 0.410156 1.414062 0.03125 l 0.5 -0.476562 c 0.171875 -0.164063 0.347656 -0.316406 0.535156 -0.460938 z m 2.96875 2.964844 c -0.179687 0.148437 -0.347656 0.3125 -0.507812 0.484375 l -0.5 0.550781 c -0.179688 0.195313 -0.277344 0.453125 -0.261719 0.71875 c 0.011719 0.265625 0.128906 0.515625 0.324219 0.695313 c 0.199219 0.179687 0.457031 0.273437 0.722656 0.257812 c 0.265625 -0.011718 0.515625 -0.128906 0.691406 -0.328125 l 0.5 -0.546875 c 0.136719 -0.148437 0.292969 -0.28125 0.460938 -0.402344 z m 2.867188 2.871094 c -0.199219 0.09375 -0.386719 0.222656 -0.550781 0.386719 c -0.78125 0.78125 -0.78125 2.046874 0 2.828124 s 2.046874 0.78125 2.828124 0 c 0.164063 -0.164062 0.292969 -0.351562 0.386719 -0.550781 z m 0 0" fill="#2e3436"/></svg>`,
+          text: "Couldn't onboard you currectly!! Maybe check your internet conection.",
           showConfirmButton: true,
           confirmButtonText: 'OK',
         })
@@ -548,8 +546,12 @@ function handleSubjectAndBioSelection() {
       onboardData.append(entry[0], entry[1])
     })
 
-    document.querySelector('div#onboard-loader').style.display = 'flex'
-    continueButton.style.display = 'none'
+    const onboardLoader = document.querySelector('div#onboard-loader')
+    function onboardLoaderToggle(state) {
+      onboardLoader.style.display = state ? 'flex' : 'none'
+      continueButton.style.display = state ? 'none' : 'flex'
+    }
+    onboardLoaderToggle(true)
 
     try {
       let response = await fetch('/sign-up/onboard', {
@@ -557,37 +559,31 @@ function handleSubjectAndBioSelection() {
         method: 'post'
       })
       let data = await response.json()
-      console.log(data)
       if (data.ok) {
-        window.location = '/dashboard'
+        window.location.href = '/dashboard'
+      } else {
+        Swal.fire({
+          title: '<svg fill="#000000" width="70px" height="70px" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg"><path d="M19.5 10c.277 0 .5.223.5.5v3c0 .277-.223.5-.5.5s-.5-.223-.5-.5v-3c0-.277.223-.5.5-.5zm-9 0c.277 0 .5.223.5.5v3c0 .277-.223.5-.5.5s-.5-.223-.5-.5v-3c0-.277.223-.5.5-.5zM15 20c-2.104 0-4.186.756-5.798 2.104-.542.4.148 1.223.638.76C11.268 21.67 13.137 21 15 21s3.732.67 5.16 1.864c.478.45 1.176-.364.638-.76C19.186 20.756 17.104 20 15 20zm0-20C6.722 0 0 6.722 0 15c0 8.278 6.722 15 15 15 8.278 0 15-6.722 15-15 0-8.278-6.722-15-15-15zm0 1c7.738 0 14 6.262 14 14s-6.262 14-14 14S1 22.738 1 15 7.262 1 15 1z" stroke-width="3"/></svg>',
+          text: "Couldn't onboard you currectly!! Please try again a bit later",
+          showConfirmButton: true,
+          confirmButtonText: 'OK',
+        }).then(result => {
+          if (result.isConfirmed) {
+            onboardLoaderToggle(false)
+          }
+        })
       }
-      // if (data.url) {
-      //   window.location.href = data.url
-      // } else {
-      //   // Swal.fire({
-      //   //   icon: 'error',
-      //   //   title: 'Something went wrong!!',
-      //   //   text: "Couldn't onboard you currectly!! Please try again a bit later",
-      //   //   showConfirmButton: true,
-      //   //   confirmButtonText: 'OK',
-      //   // }).then(result => {
-      //   //   if (result.isConfirmed) {
-      //   //     window.location.href = '/dashboard'
-      //   //   }
-      //   // })
-      // }
     } catch (error) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Something went wrong!!',
-        text: "Couldn't onboard you currectly!! Please try again a bit later",
-        showConfirmButton: true,
-        confirmButtonText: 'OK',
-      }).then(result => {
-        if (result.isConfirmed) {
-          window.location.href = '/dashboard'
-        }
-      })
+        Swal.fire({
+          title: `<svg width="70px" height="70px" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="m 1.53125 0.46875 l -1.0625 1.0625 l 14 14 l 1.0625 -1.0625 l -6.191406 -6.191406 c 0.546875 0.175781 1.042968 0.46875 1.421875 0.886718 l 0.5 0.542969 c 0.175781 0.199219 0.425781 0.316407 0.691406 0.328125 c 0.265625 0.015625 0.523437 -0.078125 0.722656 -0.257812 c 0.195313 -0.179688 0.3125 -0.429688 0.324219 -0.695313 c 0.011719 -0.261719 -0.082031 -0.523437 -0.261719 -0.71875 l -0.5 -0.546875 c -1.121093 -1.234375 -2.703125 -1.828125 -4.269531 -1.816406 c -0.28125 0.003906 -0.5625 0.027344 -0.839844 0.066406 l -1.671875 -1.671875 c 2.859375 -0.839843 6.183594 -0.222656 8.351563 1.851563 l 0.5 0.476562 c 0.398437 0.378906 1.03125 0.367188 1.414062 -0.03125 c 0.378906 -0.398437 0.367188 -1.03125 -0.03125 -1.410156 l -0.496094 -0.480469 c -1.957031 -1.875 -4.578124 -2.808593 -7.195312 -2.808593 c -1.410156 0 -2.820312 0.273437 -4.125 0.820312 z m -0.230469 3.894531 c -0.167969 0.140625 -0.335937 0.28125 -0.496093 0.4375 l -0.496094 0.480469 c -0.3984378 0.378906 -0.410156 1.011719 -0.03125 1.410156 c 0.382812 0.398438 1.015625 0.410156 1.414062 0.03125 l 0.5 -0.476562 c 0.171875 -0.164063 0.347656 -0.316406 0.535156 -0.460938 z m 2.96875 2.964844 c -0.179687 0.148437 -0.347656 0.3125 -0.507812 0.484375 l -0.5 0.550781 c -0.179688 0.195313 -0.277344 0.453125 -0.261719 0.71875 c 0.011719 0.265625 0.128906 0.515625 0.324219 0.695313 c 0.199219 0.179687 0.457031 0.273437 0.722656 0.257812 c 0.265625 -0.011718 0.515625 -0.128906 0.691406 -0.328125 l 0.5 -0.546875 c 0.136719 -0.148437 0.292969 -0.28125 0.460938 -0.402344 z m 2.867188 2.871094 c -0.199219 0.09375 -0.386719 0.222656 -0.550781 0.386719 c -0.78125 0.78125 -0.78125 2.046874 0 2.828124 s 2.046874 0.78125 2.828124 0 c 0.164063 -0.164062 0.292969 -0.351562 0.386719 -0.550781 z m 0 0" fill="#2e3436"/></svg>`,
+          text: "Couldn't onboard you currectly!! Maybe check your internet conection.",
+          showConfirmButton: true,
+          confirmButtonText: 'OK',
+        }).then(result => {
+          if (result.isConfirmed) {
+            onboardLoaderToggle(false)
+          }
+        })
     }
     
     // Placeholder for next-step logic

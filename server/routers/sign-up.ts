@@ -121,7 +121,7 @@ function signupRouter(io: Server) {
             log('info', `On /onboard StudentID=${req.session["stdid"] || "--studentid--"}: Onboard data got successfully`)
 
             await Students.findByIdAndUpdate(studentDocID, { $set: onboardData }, { upsert: false })
-            res.json({ ok: true })            
+            res.json({ ok: true }) 
             log('info', `On /onboard StudentID=${req.session["stdid"] || "--studentid--"}: Added primary onboard data in database. Redirection signal sent.`)
             
             if (req.files) {
