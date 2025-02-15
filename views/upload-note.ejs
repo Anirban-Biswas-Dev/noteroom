@@ -26,7 +26,9 @@
     <!-- ****** Middle Section ****** -->
     <div class="middle-section">
         <div class="nav-section">
-            <i class="fa-solid fa-arrow-left nav-back-btn" onclick="goPrevPage()" ></i>
+            <svg class="nav-back-btn" onclick="goPrevPage()" width="20" height="auto" viewBox="0 0 68 68" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M16.6029 29.8333H67.332V38.1666H16.6029L39.9362 61.5L33.9987 67.3333L0.665367 34L33.9987 0.666649L39.9362 6.49998L16.6029 29.8333Z" fill="#1D1B20"/>
+              </svg>
         </div>
         <h2>Upload</h2>
         <div class="upload-container">
@@ -47,7 +49,7 @@
                 <div class="search-results-loader" style="display: none;" id="note-upload-loader"></div>
                 <input type="file" id="fileInput" class="file-input" name="images" multiple/>
                 <label for="fileInput" class="browse-files-btn" id="fileInputBox">
-                    <pre><i class="fa-regular fa-file"></i> Browse</pre>
+                    <pre>Browse</pre>
                 </label>
             </div>
         </div>
@@ -55,7 +57,16 @@
         <div class="stack-status">
             <div class="stack-number-container">
                 <div class="snc-info-wrapper">
-                <i class="fa-solid fa-layer-group"></i>
+                    <svg width="22" height="22" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                        <rect width="28" height="28" fill="url(#pattern0_3785_4407)"/>
+                        <defs>
+                        <pattern id="pattern0_3785_4407" patternContentUnits="objectBoundingBox" width="1" height="1">
+                        <use xlink:href="#image0_3785_4407" transform="scale(0.01)"/>
+                        </pattern>
+                        <image id="image0_3785_4407" width="100" height="100" xlink:href="data:image/png;base64,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"/>
+                        </defs>
+                        </svg>
+                        
                 <span class="stack-info">
                     <span class="stack-number">No Images</span>
                 </span>
@@ -117,7 +128,11 @@
      <div class="thumbnail-pop-up">
         <div class="popup-heading">
             <h2>Stack</h2>
-            <button class="discard-btn"><i class="fa-solid fa-x"></i></button>
+            <button class="discard-btn"><svg width="15" height="15" viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 3L67 67" stroke="black" stroke-width="6" stroke-linejoin="round"/>
+                <path d="M67 3L3 67" stroke="black" stroke-width="6" stroke-linejoin="round"/>
+                </svg>
+                </button>
         </div>
         <p class="no-notes">You haven't added any images. Start uploading</p>
         <div class="thumbnail-container">
@@ -138,5 +153,6 @@
 	<script src="/js/notificationHandler.js" defer></script>
     <script src="/js/controller.js" defer></script>
     <script src="/js/upload-note.js" defer></script>
+    <script src="/js/utils.js" defer></script>
 </body>
 </html>

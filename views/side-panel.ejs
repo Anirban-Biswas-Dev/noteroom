@@ -51,7 +51,10 @@
       <path d="M49.4475 39.4709C49.4475 45.2615 44.7747 49.9417 39.0279 49.9417C33.2811 49.9417 28.6083 45.2615 28.6083 39.4709C28.6083 33.6802 33.2811 29 39.0279 29C44.7747 29 49.4475 33.6802 49.4475 39.4709Z" stroke="#07192D" stroke-width="4" />
       <path d="M3.32248 34.8098C9.00331 27.6792 21.1727 27.069 23.5029 28.6011C25.833 30.1332 25.833 30.9126 23.5029 37.9542C21.1727 44.9958 28.1617 47.278 23.5029 47.3074C18.844 47.3367 0.216087 47.3074 0.216087 47.3074C0.216087 47.3074 -1.22218 40.5142 3.32248 34.8098Z" fill="#07192D" />
     </svg>
-    <i class="fa-solid fa-gear settings-icon" onclick="window.location.href = '/settings'"></i>
+    <svg class="settings-icon" width="100" height="100" viewBox="0 0 100 100" onclick="window.location.href = '/settings'" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M38.5417 91.6667L36.875 78.3334C35.9722 77.9862 35.1215 77.5695 34.3229 77.0834C33.5243 76.5973 32.7431 76.0764 31.9792 75.5209L19.5833 80.7292L8.125 60.9375L18.8542 52.8125C18.7847 52.3264 18.75 51.8577 18.75 51.4063V48.5938C18.75 48.1424 18.7847 47.6737 18.8542 47.1875L8.125 39.0625L19.5833 19.2709L31.9792 24.4792C32.7431 23.9237 33.5417 23.4028 34.375 22.9167C35.2083 22.4306 36.0417 22.0139 36.875 21.6667L38.5417 8.33337H61.4583L63.125 21.6667C64.0278 22.0139 64.8785 22.4306 65.6771 22.9167C66.4757 23.4028 67.2569 23.9237 68.0208 24.4792L80.4167 19.2709L91.875 39.0625L81.1458 47.1875C81.2153 47.6737 81.25 48.1424 81.25 48.5938V51.4063C81.25 51.8577 81.1805 52.3264 81.0417 52.8125L91.7708 60.9375L80.3125 80.7292L68.0208 75.5209C67.2569 76.0764 66.4583 76.5973 65.625 77.0834C64.7917 77.5695 63.9583 77.9862 63.125 78.3334L61.4583 91.6667H38.5417ZM50.2083 64.5834C54.2361 64.5834 57.6736 63.1598 60.5208 60.3125C63.3681 57.4653 64.7917 54.0278 64.7917 50C64.7917 45.9723 63.3681 42.5348 60.5208 39.6875C57.6736 36.8403 54.2361 35.4167 50.2083 35.4167C46.1111 35.4167 42.6562 36.8403 39.8438 39.6875C37.0312 42.5348 35.625 45.9723 35.625 50C35.625 54.0278 37.0312 57.4653 39.8438 60.3125C42.6562 63.1598 46.1111 64.5834 50.2083 64.5834Z" fill="#1D1B20"/>
+      </svg>
+      
     <svg class="pc-nft-btn" width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
       <rect width="40" height="40" fill="url(#pattern0_3781_4906)"/>
       <defs>
@@ -79,27 +82,39 @@
       <!-- Physics -->
       <div class="threads-component__subject">
         <p class="threads-component__subject-title">
-          <i class="fa-solid fa-lock"></i> Physics (পদার্থবিজ্ঞান)
+          <svg id="icon-lock" width="18" height="auto" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M29.1667 46.2916V29.4583C29.1667 23.8777 31.3616 18.5257 35.2686 14.5796C39.1756 10.6335 44.4747 8.41663 50 8.41663C55.5253 8.41663 60.8244 10.6335 64.7314 14.5796C68.6384 18.5257 70.8333 23.8777 70.8333 29.4583V46.2916M20.8333 46.2916H79.1667C83.769 46.2916 87.5 50.0599 87.5 54.7083V84.1666C87.5 88.815 83.769 92.5833 79.1667 92.5833H20.8333C16.231 92.5833 12.5 88.815 12.5 84.1666V54.7083C12.5 50.0599 16.231 46.2916 20.8333 46.2916Z" stroke="#ADB5BD" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+            <rect x="15" y="48" width="70" height="43" fill="#ADB5BD"/>
+            </svg>
+             Physics (পদার্থবিজ্ঞান)
         </p>
         <ul class="threads-component__chapter-list">
           <li class="threads-component__chapter-item">
             <p class="threads-component__chapter-title">
-              <i class="fa-solid fa-lock"></i> Vector (ভেক্টর)
+              <svg width="18" height="20">
+                <use xlink:href="#icon-lock"></use>
+              </svg> Vector (ভেক্টর)
             </p>
           </li>
           <li class="threads-component__chapter-item">
             <p class="threads-component__chapter-title">
-              <i class="fa-solid fa-lock"></i> Motion (গতি)
+              <svg width="18" height="20">
+                <use xlink:href="#icon-lock"></use>
+              </svg> Motion (গতি)
             </p>
           </li>
           <li class="threads-component__chapter-item">
             <p class="threads-component__chapter-title">
-              <i class="fa-solid fa-lock"></i> Newton’s Laws of Motion (নিউটনের গতিসূত্র)
+              <svg width="18" height="20">
+                <use xlink:href="#icon-lock"></use>
+              </svg> Newton’s Laws of Motion (নিউটনের গতিসূত্র)
             </p>
           </li>
           <li class="threads-component__chapter-item">
             <p class="threads-component__chapter-title">
-              <i class="fa-solid fa-lock"></i> Gravitation (মহাকর্ষ)
+              <svg width="18" height="20">
+                <use xlink:href="#icon-lock"></use>
+              </svg> Gravitation (মহাকর্ষ)
             </p>
           </li>
         </ul>
@@ -108,17 +123,23 @@
       <!-- Bangla 1st Paper -->
       <div class="threads-component__subject">
         <p class="threads-component__subject-title">
-          <i class="fa-solid fa-lock"></i> Bangla 1st Paper (বাংলা ১ম পত্র)
+          <svg width="18" height="20">
+                <use xlink:href="#icon-lock"></use>
+              </svg> Bangla 1st Paper (বাংলা ১ম পত্র)
         </p>
         <ul class="threads-component__chapter-list">
           <li class="threads-component__chapter-item">
             <p class="threads-component__chapter-title">
-              <i class="fa-solid fa-lock"></i> অপরিচিতা
+              <svg width="18" height="20">
+                <use xlink:href="#icon-lock"></use>
+              </svg> অপরিচিতা
             </p>
           </li>
           <li class="threads-component__chapter-item">
             <p class="threads-component__chapter-title">
-              <i class="fa-solid fa-lock"></i> Suggestion of সৃজনশীল প্রশ্ন 
+              <svg width="18" height="20">
+                <use xlink:href="#icon-lock"></use>
+              </svg> Suggestion of সৃজনশীল প্রশ্ন 
             </p>
           </li>
         </ul>
@@ -126,7 +147,9 @@
 
       <div class="threads-component__subject">
         <p class="threads-component__subject-title">
-          <i class="fa-solid fa-lock"></i> More...
+          <svg width="18" height="20">
+                <use xlink:href="#icon-lock"></use>
+              </svg> More...
         </p>
       </div>
   
@@ -168,7 +191,9 @@
     <div class="search-wraper">
       <input type="text" class="search-bar" placeholder="Search Notes" />
       <button class="search-btn">
-        <i class="fa-solid fa-magnifying-glass"></i>
+        <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="25" height="25" viewBox="0 0 30 30">
+          <path d="M 13 3 C 7.4889971 3 3 7.4889971 3 13 C 3 18.511003 7.4889971 23 13 23 C 15.396508 23 17.597385 22.148986 19.322266 20.736328 L 25.292969 26.707031 A 1.0001 1.0001 0 1 0 26.707031 25.292969 L 20.736328 19.322266 C 22.148986 17.597385 23 15.396508 23 13 C 23 7.4889971 18.511003 3 13 3 z M 13 5 C 17.430123 5 21 8.5698774 21 13 C 21 17.430123 17.430123 21 13 21 C 8.5698774 21 5 17.430123 5 13 C 5 8.5698774 8.5698774 5 13 5 z"></path>
+          </svg>
       </button>
     </div>
     <div class="mbl-notification-elements">
@@ -202,7 +227,10 @@
             <div class="qpec-header">
               <h5 class="qpec-title">Post Content</h5>
               <button type="button" class="qpec-close-icon" aria-label="Close Quick Post Editor">
-                <i class="fa-solid fa-x"></i>
+                <svg width="18" height="18" viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M3 3L67 67" stroke="black" stroke-width="6" stroke-linejoin="round"/>
+                  <path d="M67 3L3 67" stroke="black" stroke-width="6" stroke-linejoin="round"/>
+                  </svg>                  
               </button>
             </div>
             <div class="qpec-body">
@@ -258,11 +286,23 @@
     </div>
     <div class="platforms-section">
       <div class="plf-box">
-        <i class="fa-brands fa-facebook" onclick="share('facebook')"></i>
+          <svg class="social-share-icons" width="50" height="50" onclick="share('facebook')" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g clip-path="url(#clip0_4711_6579)">
+            <path d="M50 0C22.386 0 0 22.386 0 50C0 73.448 16.144 93.124 37.922 98.528V65.28H27.612V50H37.922V43.416C37.922 26.398 45.624 18.51 62.332 18.51C65.5 18.51 70.966 19.132 73.202 19.752V33.602C72.022 33.478 69.972 33.416 67.426 33.416C59.228 33.416 56.06 36.522 56.06 44.596V50H72.392L69.586 65.28H56.06V99.634C80.818 96.644 100.002 75.564 100.002 50C100 22.386 77.614 0 50 0Z" fill="black"/>
+            </g>
+            <defs>
+            <clipPath id="clip0_4711_6579">
+            <rect width="100" height="100" fill="white"/>
+            </clipPath>
+            </defs>
+          </svg>
         <span class="plf-label">Facebook</span>
       </div>
       <div class="plf-box">
-        <i class="fa-brands fa-whatsapp" onclick="share('whatsapp')"></i>
+        <svg width="50" height="50" class="social-share-icons" onclick="share('whatsapp')" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0 99.9999L7.02916 74.3207C2.69166 66.8041 0.4125 58.2833 0.416666 49.5458C0.429166 22.2291 22.6583 0 49.9708 0C63.2249 0.00416666 75.6666 5.16666 85.0249 14.5333C94.3791 23.9 99.5291 36.35 99.5249 49.5916C99.5124 76.9124 77.2832 99.1416 49.9708 99.1416C41.6791 99.1374 33.5083 97.0582 26.2708 93.1082L0 99.9999ZM27.4875 84.1374C34.4708 88.2832 41.1374 90.7666 49.9541 90.7707C72.6541 90.7707 91.1457 72.2957 91.1582 49.5833C91.1666 26.825 72.7624 8.37499 49.9874 8.36666C27.2708 8.36666 8.79166 26.8416 8.78332 49.5499C8.77916 58.8208 11.4958 65.7624 16.0583 73.0249L11.8958 88.2249L27.4875 84.1374ZM74.9333 61.3708C74.6249 60.8541 73.7999 60.5458 72.5583 59.9249C71.3208 59.3041 65.2333 56.3083 64.0958 55.8958C62.9624 55.4833 62.1374 55.2749 61.3083 56.5166C60.4833 57.7541 58.1083 60.5458 57.3874 61.3708C56.6666 62.1958 55.9416 62.2999 54.7041 61.6791C53.4666 61.0583 49.4749 59.7541 44.7458 55.5333C41.0666 52.2499 38.5791 48.1958 37.8583 46.9541C37.1375 45.7166 37.7833 45.0458 38.4 44.4291C38.9583 43.875 39.6375 42.9833 40.2583 42.2583C40.8875 41.5416 41.0916 41.025 41.5083 40.1958C41.9208 39.3708 41.7166 38.6458 41.4041 38.025C41.0916 37.4083 38.6166 31.3125 37.5875 28.8333C36.5791 26.4208 35.5583 26.7458 34.8 26.7083L32.425 26.6666C31.6 26.6666 30.2583 26.975 29.125 28.2166C27.9916 29.4583 24.7916 32.45 24.7916 38.5458C24.7916 44.6416 29.2291 50.5291 29.8458 51.3541C30.4666 52.1791 38.575 64.6874 50.9958 70.0499C53.9499 71.3249 56.2583 72.0874 58.0541 72.6582C61.0208 73.5999 63.7208 73.4666 65.8541 73.1499C68.2333 72.7957 73.1791 70.1541 74.2124 67.2624C75.2458 64.3666 75.2458 61.8874 74.9333 61.3708Z" fill="black"/>
+          </svg>
+          
         <span class="plf-label">WhatsApp</span>
       </div>
     </div>
@@ -287,7 +327,9 @@
       <div class="link-box">
         <p class="_link_"></p>
         <button class="copy-link-btn" onclick="copyLink()">
-          <i class="fa-regular fa-clone"></i>
+          <svg width="20" height="20" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20.832 62.5H16.6654C14.4552 62.5 12.3356 61.622 10.7728 60.0592C9.21 58.4964 8.33203 56.3768 8.33203 54.1666V16.6666C8.33203 14.4565 9.21 12.3369 10.7728 10.7741C12.3356 9.21129 14.4552 8.33331 16.6654 8.33331H54.1654C56.3755 8.33331 58.4951 9.21129 60.0579 10.7741C61.6207 12.3369 62.4987 14.4565 62.4987 16.6666V20.8333M45.832 37.5H83.332C87.9344 37.5 91.6654 41.2309 91.6654 45.8333V83.3333C91.6654 87.9357 87.9344 91.6666 83.332 91.6666H45.832C41.2297 91.6666 37.4987 87.9357 37.4987 83.3333V45.8333C37.4987 41.2309 41.2297 37.5 45.832 37.5Z" stroke="#1E1E1E" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
         </button>
       </div>
     </div>

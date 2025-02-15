@@ -268,8 +268,7 @@ label.dropdown-field.focused .psuedo_select ul {
     justify-content: space-evenly;
 }
 
-.fa-arrow-left{
-    font-size: 1.5rem;
+.arrow-left-icon{
     cursor: pointer;
 }
 

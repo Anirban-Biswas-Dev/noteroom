@@ -24,6 +24,7 @@
 body{
     width: 100vw;
     height: 100vh;
+    min-height: 100vh;
     background: linear-gradient(108.47deg, var(--grad-neon-blue) -14.31%, var(--grad-white) 61.11%);
 }
 

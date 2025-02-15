@@ -374,21 +374,27 @@ body {
 .note-menu-btn{ 
   background: none;
   border-radius: 8px;
-  padding: 5px 15px;
+  padding: 5px;
   cursor: pointer;
   border: none;
-  font-size: 1.5rem;
-  transition: color 0.1s ease;
-  color: black;
-  box-sizing: border-box;
 }
-.note-menu-btn:hover{
-  color: #8c8c8c;
+.note-menu-btn .note-menu-eclipse-icon rect{
+  transition: fill 0.1s ease;
 }
-.note-menu-btn:active{
-  color: gray;
+.note-menu-btn .note-menu-eclipse-icon{
+  width: 20px;
+  height: 20px;
 }
-
+.note-menu-btn .note-menu-eclipse-icon:hover{
+  rect{
+  fill: #8c8c8c;
+  }
+}
+.note-menu-btn .note-menu-eclipse-icon:active{
+  rect{
+  fill: gray;
+  }
+}
 .menu-options {
   flex-direction: column; 
   position: absolute;
@@ -439,20 +445,17 @@ body {
   background: none;
   cursor: pointer;
   border: none;
-  font-size: 1.5rem;
   transition: transform 0.3s, box-shadow 0.3s;
-  box-sizing: border-box;
-  padding: 0 3px ;
 }
 
-.save-note-btn i.fa-solid {
+.save-note-btn .bookmark-fill-black {
   display: none; 
 }
 
-.save-note-btn.saved i.fa-regular {
+.save-note-btn.saved .bookmark-fill-white {
   display: none; 
 }
-.save-note-btn.saved i.fa-solid {
+.save-note-btn.saved .bookmark-fill-black{
   display: inline; 
 }
 

@@ -47,24 +47,25 @@ body {
   transition: box-shadow 0.3s ease;
 }
 
-.field:focus, .field:focus ~ .search {
+.field:focus, .field:focus ~ .search-prfl-btn {
   outline: none;
   box-shadow: 0 1px 0 0 var(--neon-blue);
 }
-.field-container i {
+.field-container .search-prfl-btn {
   height: 40px;
   border: none;
   border-bottom: 1px solid var(--neon-blue);
   font-size: 1.2rem;
   color: #8c8c8c;
   padding: 10px;
+  background-color: transparent;
   transition: box-shadow 0.3s ease;
 }
-.field-container i:hover {
+.field-container .search-prfl-btn:hover {
   color: rgba(0, 0, 0, 0.7);
   cursor: pointer;
 }
-.field-container i:active {
+.field-container .search-prfl-btn:active {
   color: black;
 }
 .prfls-container {

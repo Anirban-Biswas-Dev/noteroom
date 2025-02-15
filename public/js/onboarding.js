@@ -16,7 +16,7 @@ const userOnboarding = {
 // Select necessary elements
 const slides = document.querySelectorAll(".slide");
 const progressBar = document.querySelector(".progress-bar");
-const backButton = document.querySelector(".fa-arrow-left");
+const backButton = document.querySelector(".arrow-left-icon");
 const continueButtons = document.querySelectorAll(".move-section-btn");
 
 let currentSlide = 0; // Tracks the current slide index

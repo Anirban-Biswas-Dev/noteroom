@@ -97,23 +97,22 @@ body {
 }
 .save-note-btn {
   border: none;
-  padding: 8px 12px;
-  font-size: 1.6rem;
+  padding: 5px 10px;
   cursor: pointer;
   background: #F8F8F8;
   box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.25);
   border-radius: 10px;
 }
 
-.save-note-btn i.fa-solid {
-  display: none;
+.save-note-btn .bookmark-fill-black {
+  display: none; 
 }
 
-.save-note-btn.saved i.fa-regular {
-  display: none;
+.save-note-btn.saved .bookmark-fill-white {
+  display: none; 
 }
-.save-note-btn.saved i.fa-solid {
-  display: inline;
+.save-note-btn.saved .bookmark-fill-black{
+  display: inline; 
 }
 
 .save-note-btn.active {
@@ -164,11 +163,14 @@ body {
   box-shadow: 0px 2px 1.5px rgba(0, 0, 0, 0.25);
   border-radius: 10px;
   transform: translateY(-50%);
-  font-size: 1.5rem;
   padding: 8px 12px;
   cursor: pointer;
   transition: background-color 0.3s ease;
   z-index: 999;
+}
+.carousel-control .carousel-control-icon{
+  width: 20px;
+  height: auto;
 }
 
 .carousel-control.prev {

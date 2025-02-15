@@ -299,13 +299,12 @@ body {
     width: 50%;
     max-width: 40px;
     height: 40px;
-    border-radius: 100%; 
+    border-radius: 50%; 
     background-color: transparent;
     position: absolute;
     right: 1%;
     border: none;
     font-weight: 500;
-    font-size: 1.2rem;
     cursor: pointer;
     z-index: 1011; 
     transition: background-color 0.2s ease; 
@@ -376,8 +375,7 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%); /* Keep the button centered */
-    font-size: 1.5rem;
-    color: #757575; /* Dark contrast color for default state */
+    fill: #757575; /* Dark contrast color for default state */
     cursor: pointer;
     opacity: 0; /* Hidden by default */
     transition: color 0.1s ease, opacity 0.1s ease;
@@ -389,8 +387,9 @@ body {
         top: 12%;
         left: unset;
         right: 0;
-        font-size: 1rem;
         opacity: 1;
+        width: 20px;
+        height: 20px;
     }
 }
 
@@ -400,12 +399,12 @@ body {
 
 /* Hover effect for delete icon */
 .thumbnail-card .delete-btn:hover {
-    color: #d9534f; /* Slightly brighter red */
+    fill: #d9534f; /* Slightly brighter red */
 }
 
 /* Click effect for delete icon */
 .thumbnail-card .delete-btn:active {
-    color: #c9302c; /* Darker red for click */
+    fill: #c9302c; /* Darker red for click */
 }
 
 .thumbnail-container::-webkit-scrollbar {

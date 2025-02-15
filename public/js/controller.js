@@ -396,14 +396,22 @@ const manageNotes = {
                             <div class="niw--fr-second-col">
                                 <div class="note-menu">
                                     <button class="note-menu-btn">
-                                        <i class="fas fa-ellipsis-v"></i>
+                                        <svg width="25" height="105" class="note-menu-eclipse-icon" viewBox="0 0 25 105" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <rect width="25" height="25" rx="12.5" fill="black"/>
+                                            <rect y="40" width="25" height="25" rx="12.5" fill="black"/>
+                                            <rect y="80" width="25" height="25" rx="12.5" fill="black"/>
+                                        </svg>
                                     </button>
                                     <div class="menu-options">   
                                         ${!note.quickPost ? `
                                             <div class="option svn-btn-parent" id="save-btn-${note.noteID}" onclick="saveNote(this, true)" data-notetitle="${note.noteTitle}" data-noteid="${note.noteID}" data-issaved="${note.isSaved}">
                                                 <button class="${note.isSaved ? "saved" : ""} save-note-btn" id="save-note-btn">
-                                                    <i class="fa-regular fa-bookmark"></i>
-                                                    <i class="fa-solid fa-bookmark saved"></i>
+                                                    <svg class="bookmark-fill-white" width="28" height="40" viewBox="0 0 66 97" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <path d="M0.619048 96C0.619048 96.1528 0.710359 96.2908 0.850996 96.3506C0.991633 96.4104 1.15437 96.3803 1.26439 96.2743L32.2955 66.3606C32.7036 65.9672 33.2964 65.9672 33.7045 66.3606L64.7356 96.2743C64.8456 96.3803 65.0084 96.4104 65.149 96.3506C65.2896 96.2908 65.381 96.1528 65.381 96V4.27586C65.381 2.2943 63.924 0.619048 62.0462 0.619048H3.95385C2.07596 0.619048 0.619048 2.2943 0.619048 4.27586V96ZM3.95385 3.56486H62.0462C62.3434 3.56486 62.6498 3.84515 62.6498 4.27586V90.3117L35.5252 64.1638C34.0811 62.7717 31.9189 62.7717 30.4748 64.1638L3.35018 90.3117V4.27586C3.35018 3.84515 3.65658 3.56486 3.95385 3.56486Z" fill="black" stroke="black" stroke-width="1.5" stroke-linejoin="round"/>
+                                                    </svg>
+                                                    <svg class="bookmark-fill-black" width="28" height="40" viewBox="0 0 66 97" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <path d="M0 3C0 1.34314 1.34315 0 3 0H63C64.6569 0 66 1.34315 66 3V93.9494C66 96.5944 62.8256 97.9451 60.9198 96.111L35.0802 71.2442C33.9187 70.1264 32.0813 70.1264 30.9198 71.2442L5.08024 96.111C3.17437 97.9451 0 96.5944 0 93.9494V3Z" fill="black"/>
+                                                    </svg>
                                                 </button>
                                                 <span class="opt-label">Save Note</span>
                                             </div>
@@ -965,7 +973,11 @@ const manageNotes = {
             let recTemplate = `
                 <div class="request" id="request-${request.recID}" data-senderusername="${request.senderUserName}" onclick="manageRequest(this)">
                     <div class="request__fr">
-                        <span class="open-request-card"><i class="fa-solid fa-chevron-right request-chevron-icon"></i></span>
+                        <span class="open-request-card">
+                            <svg width="15" height="auto" class="request-chevron-icon" viewBox="0 0 60 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M5 4.5L30 29.5L55 4.5" stroke="#1E1E1E" stroke-width="8.33333" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </span>
                         <span class="request__fr--requester-name">${request.senderDisplayName}'s Request</span>
                         <span class="request__fr--requested-date">${(new Date(request.createdAt)).toLocaleDateString()}</span>
                     </div>
@@ -974,11 +986,16 @@ const manageNotes = {
                         <div class="request__sr--request-action-update">
                         <button class="btn-request btn-accept-request">
                             Accept
-                            <i class="fa-solid fa-check"></i>
+                            <svg class="req-accept-icon" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="15" height="15" viewBox="0 0 30 30">
+                                <path d="M 26.980469 5.9902344 A 1.0001 1.0001 0 0 0 26.292969 6.2929688 L 11 21.585938 L 4.7070312 15.292969 A 1.0001 1.0001 0 1 0 3.2929688 16.707031 L 10.292969 23.707031 A 1.0001 1.0001 0 0 0 11.707031 23.707031 L 27.707031 7.7070312 A 1.0001 1.0001 0 0 0 26.980469 5.9902344 z"></path>
+                            </svg>
                         </button>
                         <button class="btn-request btn-reject-request">
                             Reject
-                            <i class="fa-solid fa-x"></i>
+                            <svg class="req-reject-icon" width="12" height="12" viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M3 3L67 67" stroke="black" stroke-width="6" stroke-linejoin="round"/>
+                                <path d="M67 3L3 67" stroke="black" stroke-width="6" stroke-linejoin="round"/>
+                            </svg>
                         </div>
                     </div>
                 </div>`
@@ -1193,7 +1210,9 @@ async function searchNotes() {
                     <a href="/view/${note._id}" style="text-decoration: none;">
                         <div class="results-card" id="note-${note._id}">
                             <p class="result-note-title">${note.title}</p>
-                            <i class="fa-solid fa-arrow-up"></i>
+                            <svg style="transform: rotate(135deg)" width="15" height="auto" viewBox="0 0 68 68" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M16.6029 29.8333H67.332V38.1666H16.6029L39.9362 61.5L33.9987 67.3333L0.665367 34L33.9987 0.666649L39.9362 6.49998L16.6029 29.8333Z" fill="#1D1B20"/>
+                            </svg>
                         </div>
                     </a>
                 `) // 4
