@@ -208,6 +208,7 @@ async function publish(self) {
                     body: formData
                 })
                 let data = await response.json()
+                console.log(data)
                 if (data.ok) {
                     stackFiles.length = 0;
                     updateStackStatus();

@@ -4,6 +4,7 @@ import sharp from "sharp"
 import { v4 as uuidv4 } from "uuid"
 import crypto from 'crypto'
 import { createLogger, format, transports } from "winston"
+import { upload } from "../services/firebaseService"
 
 
 export function getHash(input: string, salt = `${Math.random()}`) {
@@ -68,6 +69,18 @@ export async function compressImage(fileObject: any) {
     } catch (error) {
         log('error', `On compressImage fileName=${fileObject.name || "--filename--"}: Picture compression failure. keeping it same: ${error.message}`)
         return fileObject
+    }
+}
+
+
+export async function processBulkCompressUpload(files: any, studentDocID: any, noteDocID: any) {
+    try {
+        let fileObjects = <fileUpload.UploadedFile[]>Object.values(files) 
+        let compressedFiles = await Promise.all(fileObjects.map(fileObject => compressImage(fileObject)))
+        let uploadedFiles = await Promise.all(compressedFiles.map(compressedFile => upload(compressedFile, `${studentDocID}/${noteDocID.toString()}/${compressedFile["name"]}`)))
+        return uploadedFiles
+    } catch (error) {
+        return []
     }
 }
 

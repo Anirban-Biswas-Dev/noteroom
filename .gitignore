@@ -10,4 +10,6 @@ logs.log
 /dist
 /public/images/badges
 *.log
+*.http
+*.rest
 /views/test.*
