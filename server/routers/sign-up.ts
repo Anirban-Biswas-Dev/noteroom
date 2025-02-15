@@ -27,6 +27,7 @@ function signupRouter(io: Server) {
         } else {
             res.status(200)
             res.render('sign-up')
+            log('info', `On /sign-up StudentID=${req.session['stdid'] || "--studentid--"}: redirected to signup.`)
         }
     })
 
@@ -58,7 +59,7 @@ function signupRouter(io: Server) {
                 let duplicate_field = Object.keys(error.keyValue)[0] // Sending the first duplicated field name to the client-side to show an error
                 io.emit('duplicate-value', duplicate_field)
             } else {
-                log('error', `On /sign-up/auth/google StudentID=${"--studentid--"}: Couldn't sign-up`)
+                log('error', `On /sign-up/auth/google StudentID=${"--studentid--"}: Couldn't sign-up: ${error.message}`)
                 res.json({ ok: false })
             }
         }
@@ -75,9 +76,8 @@ function signupRouter(io: Server) {
                 username: identifier["username"],
                 authProvider: null,
                 onboarded: false
-            } //* Getting all the data posted by the client except the onboarding data
+            } 
 
-            
             let student = await SignUp.addStudent(studentData)
             let studentDocID = student._id
 
@@ -95,7 +95,7 @@ function signupRouter(io: Server) {
                     res.json({ ok: false, error: { fieldName: error.errors[field].path, errorMessage: error.errors[field].properties.message } })
                 }
             } else {
-                log('error', `On /sign-up StudentID=${"--studentid--"}: Couldn't sign-up`)
+                log('error', `On /sign-up StudentID=${"--studentid--"}: Couldn't sign-up: ${error.message}`)
                 res.send({ ok: false, message: error.message })
             }
         }
@@ -118,24 +118,31 @@ function signupRouter(io: Server) {
                 rollnumber: req.body["collegeRoll"] === 'null' ? null : req.body["collegeRoll"],
                 onboarded: true
             }
+            log('info', `On /onboard StudentID=${req.session["stdid"] || "--studentid--"}: Onboard data got successfully`)
 
             await Students.findByIdAndUpdate(studentDocID, { $set: onboardData }, { upsert: false })
             res.json({ ok: true })            
+            log('info', `On /onboard StudentID=${req.session["stdid"] || "--studentid--"}: Added primary onboard data in database. Redirection signal sent.`)
             
             if (req.files) {
                 (async function() {
+                    log('info', `On /onboard StudentID=${req.session["stdid"] || "--studentid--"}: Profile picture is got for onboard`)
                     try {
                         let image = Object.values(req.files)[0]
                         let profile_pic = await compressImage(image) 
                         let savedPath = await upload(profile_pic, `${studentDocID.toString()}/${image["name"]}`) 
                         if (savedPath) {
                             await Students.findByIdAndUpdate(studentDocID, { $set: { profile_pic: savedPath } }, { upsert: false })
+                            log('info', `On /onboard StudentID=${req.session["stdid"] || "--studentid--"}: Updated onboard data with profile pic url.`)
                         }
-                    } catch (error) {}
+                    } catch (error) {
+                        log('error', `On /onboard StudentID=${req.session["stdid"] || "--studentid--"}: Profile picture can't be processed, keeping same (${onboardData.profile_pic}): ${error.message}`)
+                    }
                 })()
             }
 
         } catch (error) {
+            log('info', `On /onboard StudentID=${req.session["stdid"] || "--studentid--"}: Onboard failure. Sending ok=false kind=500: ${error.message}`)
             res.json({ ok: false, kind: 500 })
         }
     })

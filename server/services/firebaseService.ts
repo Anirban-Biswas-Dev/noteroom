@@ -30,8 +30,11 @@ async function uploadImage(fileObject: any, fileName: any, options?:any) {
         await file.makePublic(); //! Making the file public for now.
 
         let publicUrl = `https://storage.googleapis.com/${bucketName}/${fileName}`;
+        log('info', `On uploadImage fileName=${fileName || "--filename--"}: Picture is uploaded successfully.`)
+
         return publicUrl
     } catch (error) {
+        log('error', `On uploadImage fileName=${fileName || "--filename--"}: Picture upload failure. Sending null: ${error.message}`)
         return null
     }    
 }

@@ -63,8 +63,10 @@ export async function compressImage(fileObject: any) {
                 : { quality: 70, progressive: true }
             ).toBuffer()
 
+        log('info', `On compressImage fileName=${fileObject.name || "--filename--"}: Picture is compressed successfully.`)
         return { ...fileObject, buffer: compressedBuffer, size: compressedBuffer.length }
     } catch (error) {
+        log('error', `On compressImage fileName=${fileObject.name || "--filename--"}: Picture compression failure. keeping it same: ${error.message}`)
         return fileObject
     }
 }
@@ -95,7 +97,7 @@ const logger = createLogger({
         })
     ),
     transports: [
-        // new transports.File({ filename: 'noteroom_logs.log' }),
+        // new transports.File({ filename: 'healthy_signup-onboard_logs.log' }),
         new transports.Console(),
     ],
 });

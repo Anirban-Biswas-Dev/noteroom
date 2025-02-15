@@ -4,12 +4,8 @@ import {Server} from 'socket.io'
 import {verifyToken} from "../services/googleAuth.js";
 import { log, setSession } from '../helpers/utils.js';
 import { config } from 'dotenv';
-import {dirname, join} from 'path';
-import {fileURLToPath} from "url";
+import {join} from 'path';
 import * as process from "node:process";
-
-// const __filename = fileURLToPath(import.meta.url);
-// const __dirname = dirname(__filename);
 
 config({ path: join(__dirname, '../.env') })
 
@@ -21,14 +17,14 @@ function loginRouter(io: Server) {
         try {
             if (req.session["stdid"]) {
                 res.redirect('dashboard')
-                log('info', `On /login StudentID=${req.session['stdid']} redirected to dashboard.`)
+                log('info', `On /login StudentID=${req.session['stdid'] || "--studentid--"} redirected to dashboard.`)
             } else {
                 res.status(200)
                 res.render('login')
                 log('info', `On /login StudentID=${req.session['stdid'] || "--studentid--"}: redirected to login.`)
             }
         } catch (error) {
-            log('error', `On /login StudentID=${req.session["stdid"] || "--studentid--"}: ${error.message}`)
+            log('error', `On /login StudentID=${req.session["stdid"] || "--studentid--"}: Couldn't render login: ${error.message}`)
         }
     })
 
@@ -43,10 +39,12 @@ function loginRouter(io: Server) {
             if(user["authProvider"] !== null) {
                 setSession({recordID: user['recordID'], studentID: user["studentID"], username: user["username"] }, req, res)
                 res.send({ redirect: '/dashboard' })
+                log('info', `On /login/auth/google StudentID=${req.session['stdid'] || "--studentid--"}: login successfully.`)
             } else {
                 res.json({message: 'Sorry! No student account is associated with that email account'})
             }
         } catch (error) {
+            log('error', `On /login/auth/google StudentID=${req.session['stdid'] || "--studentid--"}: couldn't login: ${error.message}`)
             res.json({message: error})
         }
     })
@@ -63,6 +61,7 @@ function loginRouter(io: Server) {
                 if(student["authProvider"] === null) {
                     if (password === student['studentPass']) {
                         setSession({recordID: student['recordID'], studentID: student["studentID"], username: student["username"] }, req, res)
+                        log('info', `On /login StudentID=${req.session['stdid'] || "--studentid--"}: login successfully.`)
                         res.json({ ok: true, url: '/dashboard' })
                     } else {
                         io.emit('wrong-cred')
@@ -73,6 +72,7 @@ function loginRouter(io: Server) {
             }
 
         } catch (error) {
+            log('error', `On /login/auth/google StudentID=${req.session['stdid'] || "--studentid--"}: login failure.`)
             io.emit('no-email')
         }
     })
