@@ -11,6 +11,19 @@ const router = Router()
 
 
 function uploadRouter(io: Server) {
+    async function handleNoteUploadFailure(noteDocId: any, studentID: any, noteTitle: any, studentDocID: any) {
+        if (noteDocId) {
+            await deleteNote({ studentDocID: studentDocID, noteDocID: noteDocId })
+        }
+        await NotificationSender(io, {
+            ownerStudentID: studentID
+        }).sendNotification({
+            content: `Your note '${noteTitle}' couldn't be uploaded successfully!`,
+            event: 'notification-note-upload-failure'
+        })   
+    }
+
+
     router.get('/', async (req, res) => {
         if (req.session["stdid"]) {
             let student = await profileInfo(req.session["stdid"])
@@ -46,7 +59,7 @@ function uploadRouter(io: Server) {
 
                 let note = await addNote(noteData)
                 noteDocId = note._id
-
+                
                 res.send({ ok: true })
                 log('info', `On /upload StudentID=${req.session['stdid'] || "--studentid--"}: Primary notedata added and ok=true sent.`)
 
@@ -98,32 +111,15 @@ function uploadRouter(io: Server) {
                             log('error', `On /upload StudentID=${req.session['stdid'] || "--studentid--"}: note-upload event sent failure, abort: ${error.message}`)
                         }
                     } catch (error) {
-                        log('error', `On /upload StudentID=${req.session['stdid'] || "--studentid--"}: Primary notedata added and ok=true sent.`)
-                        if (noteDocId) {
-                            await deleteNote({ studentDocID: studentDocID, noteDocID: noteDocId })
-                        }
-                        await NotificationSender(io, {
-                            ownerStudentID: studentID
-                        }).sendNotification({
-                            content: `Your note '${noteTitle}' couldn't be uploaded successfully!`,
-                            event: 'notification-note-upload-failure'
-                        })        
+                        log('error', `On /upload StudentID=${req.session['stdid'] || "--studentid--"}: Error processing file upload. Primary data will be deleted: ${error.message}`)
+                        handleNoteUploadFailure(noteDocId, studentID, noteTitle, studentDocID)
+                        log('error', `On /upload StudentID=${req.session['stdid'] || "--studentid--"}: Note upload failure notification is sent`)
                     }
                 })()
     
             } catch (error) {
                 log('error', `On /upload StudentID=${req.session['stdid'] || "--studentid--"}: Error processing file upload. Primary data will be deleted: ${error.message}`)
-
-                if (noteDocId) {
-                    await deleteNote({ studentDocID: studentDocID, noteDocID: noteDocId })
-                    log('error', `On /upload StudentID=${req.session['stdid'] || "--studentid--"}: Primary data is deleted`)
-                }
-                await NotificationSender(io, {
-                    ownerStudentID: studentID
-                }).sendNotification({
-                    content: `Your note '${noteTitle}' couldn't be uploaded successfully!`,
-                    event: 'notification-note-upload-failure'
-                })
+                handleNoteUploadFailure(noteDocId, studentID, noteTitle, studentDocID)
                 log('error', `On /upload StudentID=${req.session['stdid'] || "--studentid--"}: Note upload failure notification is sent`)
             }
         } catch (error) {
