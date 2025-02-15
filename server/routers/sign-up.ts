@@ -127,8 +127,10 @@ function signupRouter(io: Server) {
                     try {
                         let image = Object.values(req.files)[0]
                         let profile_pic = await compressImage(image) 
-                        let savedPath = await upload(profile_pic, `${studentDocID.toString()}/${image["name"]}`)  
-                        await Students.findByIdAndUpdate(studentDocID, { $set: { profile_pic: savedPath } }, { upsert: false })
+                        let savedPath = await upload(profile_pic, `${studentDocID.toString()}/${image["name"]}`) 
+                        if (savedPath) {
+                            await Students.findByIdAndUpdate(studentDocID, { $set: { profile_pic: savedPath } }, { upsert: false })
+                        }
                     } catch (error) {}
                 })()
             }
