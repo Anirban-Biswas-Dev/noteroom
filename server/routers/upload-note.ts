@@ -43,7 +43,7 @@ function uploadRouter(io: Server) {
             let studentDocID = (await Convert.getDocumentID_studentid(studentID)).toString()
     
             if (!req.files) {
-                return res.send({ ok: false, message: 'No files have been selected to publish' })
+                return res.send({ ok: false, kind: 404 })
             }
 
             let noteDocId: any;
