@@ -17,7 +17,7 @@ window.addEventListener('load', async () => {
     async function getNoteImages() {
       let imageContainer = document.querySelector('#note-image-container').querySelector('.carousel-wrapper')
       let imageSliderElement = (source) => {
-        let template = `<img src="${source}" class="image-links"/>`
+        let template = `<img src="${source || "/images/placeholders/unavailable_content.png"}" class="image-links"/>`
         let slideDiv = document.createElement('div')
         slideDiv.classList.add('carousel-slide')
         slideDiv.innerHTML = template.trim()
