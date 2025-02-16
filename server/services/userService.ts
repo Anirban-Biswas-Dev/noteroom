@@ -4,6 +4,7 @@ import { IStudentDB } from "../types/database.types.js";
 import mongoose from "mongoose";
 import { deleteNoteImages, upload } from "./firebaseService.js";
 import { log } from "../helpers/utils.js";
+import Badges from "../schemas/badges.js";
 
 export const Convert = {
     async getStudentID_username(username: string) {
@@ -134,6 +135,7 @@ export const LogIn = {
 export async function getProfile(studentID: string) {
     try {
         let student = await Students.findOne({ studentID: studentID })
+        let badge = await Badges.findOne({ badgeID: student.badge[0] })
         let students_notes_ids = student['owned_notes']
         let notes: any;
         if (students_notes_ids.length != 0) {
@@ -143,7 +145,7 @@ export async function getProfile(studentID: string) {
         }
         return new Promise((resolve, reject) => {
             if ((student["length"] != 0)) {
-                resolve({ student: student, notes: notes })
+                resolve({ student: student, notes: notes, badge: badge })
                 log('info', `On getProfile StudentID=${studentID || "--studentid--"}: Got user data`)
             } else {
                 reject('No students found!')

@@ -107,8 +107,8 @@ const studentsSchema = new Schema({
         default: []
     },
     badge: {
-        type: String,
-        default: "No Badge"
+        type: [Number],
+        default: [0]
     },
     district: {
         type: String,

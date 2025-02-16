@@ -22,9 +22,9 @@ function userRouter(io: Server) {
                 if (username == req.params.username) {
                     try {
                         let data = await getProfile(req.session["stdid"])
-                        let [student, notes] = [data['student'], data['notes']]
+                        let [student, notes, badge] = [data['student'], data['notes'], data['badge']]
                         let savedNotes = await getSavedNotes(req.session["stdid"])
-                        res.render('user-profile', { noteCounts: noteCounts, student: student, notes: notes, savedNotes: savedNotes, visiting: false, notis: notis, root: student, unReadCount: unReadCount })
+                        res.render('user-profile', { noteCounts: noteCounts, student: student, notes: notes, savedNotes: savedNotes, visiting: false, notis: notis, root: student, unReadCount: unReadCount, badge: badge })
                     } catch (error) {
                         next(error)
                     }
@@ -32,10 +32,10 @@ function userRouter(io: Server) {
                     try {
                         let userStudentID = await Convert.getStudentID_username(req.params.username)
                         let data = await getProfile(userStudentID)
-                        let [student, notes] = [data['student'], data['notes']] // This is the student-data whose profile is being visited
+                        let [student, notes, badge] = [data['student'], data['notes'], data["badge"]] // This is the student-data whose profile is being visited
                         let savedNotes = await getSavedNotes(req.session["stdid"])
                         let root = (await getProfile(req.session["stdid"]))['student']
-                        res.render('user-profile', { student: student, notes: notes, savedNotes: savedNotes, visiting: true, notis: notis, root: root, unReadCount: unReadCount })
+                        res.render('user-profile', { student: student, notes: notes, savedNotes: savedNotes, visiting: true, notis: notis, root: root, unReadCount: unReadCount, badge: badge })
                     } catch (err) {
                         req["studentID"] = req.params.username
                         const error = new Error('No students found')

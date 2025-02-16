@@ -7,7 +7,8 @@ import { log } from '../helpers/utils.js';
 config({ path: join(__dirname, '../.env') });
 
 const serviceAccount = JSON.parse(process.env.FIREBASE_CLOUD_CRED!);
-const bucketName = process.env.NOTEROOM_PRODUCTION_FIREBASE_BUCKET
+// const bucketName = process.env.NOTEROOM_PRODUCTION_FIREBASE_BUCKET
+const bucketName = process.env.NOTEROOM_DEVELOPMENT_FIREBASE_BUCKET
 
 firebaseAdmin.initializeApp({
     credential: firebaseAdmin.credential.cert(serviceAccount), // Correct call to `cert`
