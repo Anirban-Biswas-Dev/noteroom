@@ -3,29 +3,25 @@ function togglePasswordVisibility(button, passwordInput) {
   const isPasswordHidden = passwordInput.getAttribute("type") === "password";
   passwordInput.setAttribute("type", isPasswordHidden ? "text" : "password");
 
-  const icon = button.querySelector("i");
-  if (icon) {
-    icon.classList.toggle("fa-eye", !isPasswordHidden);
-    icon.classList.toggle("fa-eye-slash", isPasswordHidden);
+  const visibleIcon = button.querySelector(".visible-password-icon");
+  const hiddenIcon = button.querySelector(".hidden-password-icon");
+
+  if (visibleIcon && hiddenIcon) {
+    visibleIcon.style.display = isPasswordHidden ? "block" : "none";
+    hiddenIcon.style.display = isPasswordHidden ? "none" : "block";
   }
 }
 
 // Function to initialize password visibility toggles
 function initializePasswordToggles() {
-  // Select all password input containers
-  const passwordContainers = document.querySelectorAll(
-    ".password-input-container"
-  );
+  const passwordContainers = document.querySelectorAll(".password-input-container");
 
   passwordContainers.forEach((container) => {
-    // Find the input and toggle button within the container
-    const passwordInput = container.querySelector(
-      ".input-container--input-password"
-    );
+    const passwordInput = container.querySelector(".input-container--input-password");
     const toggleButton = container.querySelector(".toggle-password");
 
     if (passwordInput && toggleButton) {
-      toggleButton.addEventListener("click", () =>
+      toggleButton.addEventListener("click", () => 
         togglePasswordVisibility(toggleButton, passwordInput)
       );
     }

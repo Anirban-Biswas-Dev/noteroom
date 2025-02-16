@@ -211,35 +211,24 @@ button.toggle-password {
     border-radius: 30px;
     border: none;
     box-shadow: none;
-    color: var(--squid-ink);
     cursor: pointer;
-    font-weight: normal;
-    letter-spacing:1px;
-    line-height: 27px;
-    margin-bottom: 5px;
-    margin: 0;
-    padding: 0;
     position: absolute;
-    right: 10px;
-    top: 0px;
+    top: 10px;
+    right: 5%;
     transform: none;
     transition: none; 
     width: fit-content;
 }
-.toggle-password i{
-    color: #06192db1;
-    font-size: 1rem;
-    padding: 10px;
-    transition: color 0.2s ease;
-}
-button.toggle-password:hover, .toggle-password i:hover{
-    background-color: transparent;
-    transform: none; 
-}
-.toggle-password i:hover{
-    color: #06192d82;
-}
 
+.toggle-password:focus{
+    outline: none;
+}
+.hidden-password-icon{
+    display: block;
+}
+.visible-password-icon{
+    display: none;
+}
 .primary-btn {
     min-width: 200px;
     padding: var(--low-spacing);

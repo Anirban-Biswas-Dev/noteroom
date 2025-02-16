@@ -213,12 +213,12 @@ body {
   gap: 6px;
 }
 
-.load-more-btn .fa-chevron-down {
+.load-more-btn .chevron-down-icon {
   line-height: 1;
   transition: transform 0.2s ease;
 }
 
-.load-more-btn:hover .fa-chevron-down {
+.load-more-btn:hover .chevron-down-icon {
   transform: translateY(2px);
 }
 

@@ -73,24 +73,22 @@ function handleCredentialResponse(response) {
 
 
 
-document.addEventListener('DOMContentLoaded', function () {
-    const togglePassword = document.querySelector('#togglePassword');
-    const password = document.querySelector('input[name="password"]');
+const togglePassword = document.querySelector('#togglePassword');
+const password = document.querySelector('#password');
 
+togglePassword.addEventListener('click', function () {
+    const isPasswordHidden = password.getAttribute('type') === 'password';
+    password.setAttribute('type', isPasswordHidden ? 'text' : 'password');
 
-    if (togglePassword && password) {
-        togglePassword.addEventListener('click', function () {
-            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+    const visibleIcon = this.querySelector('.visible-password-icon');
+    const hiddenIcon = this.querySelector('.hidden-password-icon');
 
-            password.setAttribute('type', type);
-
-            const icon = this.querySelector('i');
-            icon.classList.toggle('fa-eye');
-            icon.classList.toggle('fa-eye-slash');
-        });
-
+    if (visibleIcon && hiddenIcon) {
+        visibleIcon.style.display = isPasswordHidden ? "none" : "block";
+        hiddenIcon.style.display = isPasswordHidden ? "block" : "none";
     }
 });
+
 
 // noteroom-auth handler
 document.querySelector('.primary-btn').addEventListener('click', function () {
