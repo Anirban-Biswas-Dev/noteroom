@@ -100,7 +100,7 @@ export const SearchProfile = {
 
     async getStudent(searchTerm: string) {
         const regex = new RegExp(searchTerm.split(' ').map(word => `(${word})`).join('.*'), 'i');
-        let students = await Students.find({ displayname: { $regex: regex }, visibility: "public", onboarded: true }, { profile_pic: 1, displayname: 1, bio: 1, username: 1, _id: 0 })
+        let students = await Students.find({ username: { $regex: regex }, visibility: "public", onboarded: true }, { profile_pic: 1, displayname: 1, bio: 1, username: 1, _id: 0 })
         return students
     }
 }
