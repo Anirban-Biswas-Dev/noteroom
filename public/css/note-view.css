@@ -148,6 +148,32 @@ body {
   align-items: center;
 }
 
+.carousel-content{
+  position: relative;
+}
+.note-page-number{
+  position: absolute;
+  width: fit-content;
+  height: auto;
+  top: 95%;
+  right: 50%;
+  background-color: #f2f4f7a8;
+  font-weight: bold;
+  color: var(--squid-ink);
+  padding: 2px 5px;
+  border-radius: 5px;
+  font-size: 14px;
+  line-height: 1;
+  text-align: center;
+}
+@media (max-width:768px) {
+  .note-page-number{
+    background: rgba(255, 255, 255, 0.8);
+    top: 8%;
+    right: 10px;
+  }
+  
+}
 .carousel-slide img {
   width: 350px;
   height: 450px;
