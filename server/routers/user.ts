@@ -8,45 +8,54 @@ const router = Router()
 
 function userRouter(io: Server) {
     router.get('/:username?', async (req, res, next) => {
-        if (req.params.username) {
-            if (req.session["stdid"]) {
-                let username = await Convert.getUserName_studentid(req.session["stdid"])
-                let notis = await getNotifications(req.session["stdid"]) // Notifications of the root-user
-                let unReadCount = await unreadNotiCount(req.session["stdid"])
-                let data = await getProfile(req.session["stdid"])
-                let savedNotes = await getSavedNotes(req.session["stdid"])                    
+        try {
+            let studentID = req.session["stdid"]
+            if (!studentID) return res.redirect('/login')
+            
+            let rootUsername = await Convert.getUserName_studentid(req.session["stdid"])
 
-                if (username == req.params.username) {
-                    try {
-                        let { badges: badge, owned_notes: notes, ...student } = data["_student"]
-                        res.render('user-profile', { student: student, notes: notes, savedNotes: savedNotes, visiting: false, notis: notis, root: student, unReadCount: unReadCount, badge: badge[0] })
-                    } catch (error) {
-                        next(error)
-                    }
+            if (req.params.username) {
+                let [notis, unReadCount, rootProfile, savedNotes] = await Promise.all([
+                    getNotifications(req.session["stdid"]),
+                    unreadNotiCount(req.session["stdid"]),
+                    getProfile(req.session["stdid"]),
+                    getSavedNotes(req.session["stdid"])
+                ])
+                log('info', `On /user StudentID=${req.session['stdid'] || "--studentid--"}: Got root-user information`)
+
+                let profileData = null
+                let isOwnProfile = rootUsername === req.params.username
+
+                if (isOwnProfile) {
+                    profileData = rootProfile["_student"]
+                    log('info', `On /user StudentID=${req.session['stdid'] || "--studentid--"}: Visiting own profile`)
                 } else {
-                    try {
-                        let userStudentID = await Convert.getStudentID_username(req.params.username)
-                        let visitedStudent = await getProfile(userStudentID)
-                        let { badges: badge, owned_notes: notes, ...student } = visitedStudent["_student"]
-
-                        res.render('user-profile', { student: student, notes: notes, savedNotes: savedNotes, visiting: true, notis: notis, root: data["_student"], unReadCount: unReadCount, badge: badge[0] })
-                    } catch (err) {
+                    let visitedStudentID = await Convert.getStudentID_username(req.params.username)
+                    if (!visitedStudentID) {
                         const error = new Error(`No students found for username: ${req.params.username}`)
                         error["status"] = 404
-                        log('error', `On /user Username=${req.params.username || "--username--"}: Couldn't get user data`)
-                        next(error)
+                        log('error', `On /user Username=${req.params.username || "--username--"}: Couldn't get user data: ${error.message}`)
+                        return next(error)
                     }
+                    profileData = (await getProfile(visitedStudentID))["_student"]
+                    log('info', `On /user StudentID=${req.session['stdid'] || "--studentid--"}: Visiting ${visitedStudentID} profile`)
                 }
+                let { badges: badge, owned_notes: notes, ...student } = profileData
+                log('info', `On /user StudentID=${req.session['stdid'] || "--studentid--"}: Prepared the profile information`)
+
+                res.render('user-profile', { 
+                    student: student, notes: notes, badge: badge[0],
+                    savedNotes: savedNotes, notis: notis, root: rootProfile["_student"], unReadCount: unReadCount, 
+                    visiting: !isOwnProfile
+                })
+                log('info', `On /user StudentID=${req.session['stdid'] || "--studentid--"}: Rendered the profile successfully`)
+
             } else {
-                res.redirect('/login')
+                res.redirect(`/user/${rootUsername}`)
             }
-        } else {
-            if (req.session["stdid"]) {
-                let username = await Convert.getUserName_studentid(req.session["stdid"])
-                res.redirect(`/user/${username}`)
-            } else {
-                res.redirect('/login')
-            }
+        } catch (err) {
+            log('error', `On /user StudentID=${req.session['stdid'] || "--studentid--"}: Error on user profile request processing: ${err.message}`)
+            next(new Error("Sorry! Cannot get the user profile. Try again a bit later"))
         }
     })
 
