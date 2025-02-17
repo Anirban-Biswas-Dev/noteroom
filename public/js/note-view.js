@@ -342,9 +342,8 @@ tribute.attach(document.querySelector('#editor'))
 
 const toolbarOptions = [
   ['bold', 'italic', 'underline'], // Essential text styling
-  ['code-block'],
+  ['code-block'], ['link'],
   [{ 'script': 'sub' }, { 'script': 'super' }], // Subscript, Superscript
-  ['formula'], // Math formulas
 ];
 
 const editor = new Quill('#editor', {
