@@ -134,18 +134,25 @@ export const LogIn = {
 
 export async function getProfile(studentID: string) {
     try {
-        let student = await Students.findOne({ studentID: studentID })
-        let badge = await Badges.findOne({ badgeID: student.badge[0] })
-        let students_notes_ids = student['owned_notes']
-        let notes: any;
-        if (students_notes_ids.length != 0) {
-            notes = await Notes.find({ _id: { $in: students_notes_ids } })
-        } else {
-            notes = 0
-        }
+        let _student = await Students.aggregate([
+            { $match: { studentID: studentID } },
+            { $lookup: {
+                from: 'badges',
+                localField: 'badges',
+                foreignField: 'badgeID',
+                as: 'badges'
+            } },
+            { $lookup: {
+                from: 'notes',
+                localField: 'owned_notes',
+                foreignField: '_id',
+                as: 'owned_notes'
+            } }
+        ])
+
         return new Promise((resolve, reject) => {
-            if ((student["length"] != 0)) {
-                resolve({ student: student, notes: notes, badge: badge })
+            if (_student && _student["length"] !== 0) {
+                resolve({ _student: _student[0] })
                 log('info', `On getProfile StudentID=${studentID || "--studentid--"}: Got user data`)
             } else {
                 reject('No students found!')
@@ -154,7 +161,7 @@ export async function getProfile(studentID: string) {
         })
     } catch (error) {
         log('error', `On getProfile StudentID=${studentID || "--studentid--"}: ${error.message}`)
-        return {student: {}, notes: {}}
+        return {_student: {}}
     }
 }
 
