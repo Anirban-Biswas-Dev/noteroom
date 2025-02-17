@@ -15,29 +15,39 @@ window.addEventListener('load', async () => {
     let postType = document.querySelector('#postType').getAttribute('data-posttype')
     
     async function getNoteImages() {
-      let imageContainer = document.querySelector('#note-image-container').querySelector('.carousel-wrapper')
-      let imageSliderElement = (source) => {
-        let template = `<img src="${source}" class="image-links"/>`
-        let slideDiv = document.createElement('div')
-        slideDiv.classList.add('carousel-slide')
-        slideDiv.innerHTML = template.trim()
-        return slideDiv
-      }
-  
-      let response = await fetch(`/view/${noteDocID}/images`)
-      let images = await response.json()
-      document.querySelector('#note-image-loader').remove()
+      let imageContainer = document.querySelector('#note-image-container').querySelector('.carousel-wrapper');
+    
+      let imageSliderElement = (source, index) => {
+        let template = `
+          <div class="carousel-content">
+            <span class="note-page-number">${index + 1}</span>
+            <img src="${source || "/images/placeholders/unavailable_content.png"}" class="image-links"/>
+          </div>
+        `;
+    
+        let slideDiv = document.createElement('div');
+        slideDiv.classList.add('carousel-slide');
+        slideDiv.innerHTML = template.trim();
+        return slideDiv;
+      };
+    
+      let response = await fetch(`/view/${noteDocID}/images`);
+      let images = await response.json();
+      document.querySelector('#note-image-loader').remove();
+    
       if (images.length !== 0) {
-        images.forEach(source => {
-          imageContainer.appendChild(imageSliderElement(source))
-        })
-        if(postType === "quick-post") {
-          document.querySelectorAll('.carousel-control').forEach(doc => doc.remove())
+        images.forEach((source, index) => {
+          imageContainer.appendChild(imageSliderElement(source, index));
+        });
+    
+        if (postType === "quick-post") {
+          document.querySelectorAll('.carousel-control').forEach(doc => doc.remove());
         }
       } else {
-        document.querySelector('#note-image-container').remove()
+        document.querySelector('#note-image-container').remove();
       }
     }
+    
   
     async function getNoteComments() {
       let response = await fetch(`/view/${noteDocID}/comments`)
@@ -332,9 +342,8 @@ tribute.attach(document.querySelector('#editor'))
 
 const toolbarOptions = [
   ['bold', 'italic', 'underline'], // Essential text styling
-  ['code-block'],
+  ['code-block'], ['link'],
   [{ 'script': 'sub' }, { 'script': 'super' }], // Subscript, Superscript
-  ['formula'], // Math formulas
 ];
 
 const editor = new Quill('#editor', {

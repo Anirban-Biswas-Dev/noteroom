@@ -11,16 +11,13 @@ header {
   box-sizing: border-box;
 }
 
-header i {
+header .header-back-btn {
   position: absolute;
   left: 30px;
-  font-size: 1.8rem;
-  padding: 10px;
-  color: var(--squid-ink);
   transition: transform 0.2s ease-in-out;
 }
 
-header i:hover {
+header .header-back-btn:hover {
   cursor: pointer;
   transform: translateX(-5px);
 }
@@ -291,7 +288,7 @@ footer ul li a:hover {
     width: 75%;
   }
 
-  header i {
+  header .header-back-btn {
     left: 5px;
     font-size: 1.6rem;
   }
@@ -301,7 +298,7 @@ footer ul li a:hover {
     font-size: 1.5rem;
   }
 
-  header i {
+  header .header-back-btn {
     left: 20px;
     font-size: 1.7rem;
   }

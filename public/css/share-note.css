@@ -80,18 +80,17 @@
     align-items: center;
     cursor: pointer;
 }
-.plf-box i {
-    font-size: 2.5rem;
-    padding: 10px 5px;
+.social-share-icons {
+    padding: 5px;
     transition: opacity 0.2s ease, transform 0.2s ease;
 }
 .plf-label {
     font-size: .8rem;
 }
-.plf-box i:hover {
-    opacity: 0.6; 
+.social-share-icons:hover {
+    opacity: 0.8; 
 }
-.plf-box i:active{
+.social-share-icons{
     transform: scale(0.9);
 }
 .copy-link-title{

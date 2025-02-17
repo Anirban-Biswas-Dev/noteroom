@@ -4,6 +4,7 @@ import { IStudentDB } from "../types/database.types.js";
 import mongoose from "mongoose";
 import { deleteNoteImages, upload } from "./firebaseService.js";
 import { log } from "../helpers/utils.js";
+import Badges from "../schemas/badges.js";
 
 export const Convert = {
     async getStudentID_username(username: string) {
@@ -99,7 +100,7 @@ export const SearchProfile = {
 
     async getStudent(searchTerm: string) {
         const regex = new RegExp(searchTerm.split(' ').map(word => `(${word})`).join('.*'), 'i');
-        let students = await Students.find({ displayname: { $regex: regex }, visibility: "public", onboarded: true }, { profile_pic: 1, displayname: 1, bio: 1, username: 1, _id: 0 })
+        let students = await Students.find({ username: { $regex: regex }, visibility: "public", onboarded: true }, { profile_pic: 1, displayname: 1, bio: 1, username: 1, _id: 0 })
         return students
     }
 }
@@ -133,17 +134,25 @@ export const LogIn = {
 
 export async function getProfile(studentID: string) {
     try {
-        let student = await Students.findOne({ studentID: studentID })
-        let students_notes_ids = student['owned_notes']
-        let notes: any;
-        if (students_notes_ids.length != 0) {
-            notes = await Notes.find({ _id: { $in: students_notes_ids } })
-        } else {
-            notes = 0
-        }
+        let _student = await Students.aggregate([
+            { $match: { studentID: studentID } },
+            { $lookup: {
+                from: 'badges',
+                localField: 'badges',
+                foreignField: 'badgeID',
+                as: 'badges'
+            } },
+            { $lookup: {
+                from: 'notes',
+                localField: 'owned_notes',
+                foreignField: '_id',
+                as: 'owned_notes'
+            } }
+        ])
+
         return new Promise((resolve, reject) => {
-            if ((student["length"] != 0)) {
-                resolve({ student: student, notes: notes })
+            if (_student && _student["length"] !== 0) {
+                resolve({ _student: _student[0] })
                 log('info', `On getProfile StudentID=${studentID || "--studentid--"}: Got user data`)
             } else {
                 reject('No students found!')
@@ -152,7 +161,7 @@ export async function getProfile(studentID: string) {
         })
     } catch (error) {
         log('error', `On getProfile StudentID=${studentID || "--studentid--"}: ${error.message}`)
-        return {student: {}, notes: {}}
+        return {_student: {}}
     }
 }
 
@@ -195,8 +204,12 @@ export async function changeProfileDetails(studentID: any, values: { fieldName: 
                 if (student) {
                     let prvProfilePicURL = student.profile_pic
                     let savePath = `${student._id.toString()}/${values.newValue["name"]}`
-                    let profilePicUrl = await upload(values.newValue, savePath, { replaceWith: prvProfilePicURL })
-                    await Students.updateOne({ studentID }, { $set: { profile_pic: profilePicUrl } })
+                    let profilePicUrl = await upload(values.newValue, savePath, prvProfilePicURL.split('/')[1] === 'images' ? undefined : { replaceWith: prvProfilePicURL })
+                    if (profilePicUrl) {
+                        await Students.updateOne({ studentID }, { $set: { profile_pic: profilePicUrl } })
+                    } else {
+                        return prvProfilePicURL
+                    }
                 } else {
                     return false
                 }
@@ -206,7 +219,6 @@ export async function changeProfileDetails(studentID: any, values: { fieldName: 
             return false
         }
     } catch (error) {
-        console.log(error)
         return false
     }
 }

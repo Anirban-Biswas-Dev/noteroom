@@ -18,6 +18,7 @@ const router = Router()
 config({ path: join(__dirname, '../.env') })
 
 const client_id = process.env.GOOGLE_CLIENT_ID
+const avatars = [1, 2, 3, 4, 5].map(n => `/images/avatars/image-${n}.png`)
 
 function signupRouter(io: Server) {
     router.get('/', async (req, res) => {
@@ -26,6 +27,7 @@ function signupRouter(io: Server) {
         } else {
             res.status(200)
             res.render('sign-up')
+            log('info', `On /sign-up StudentID=${req.session['stdid'] || "--studentid--"}: redirected to signup.`)
         }
     })
 
@@ -74,9 +76,8 @@ function signupRouter(io: Server) {
                 username: identifier["username"],
                 authProvider: null,
                 onboarded: false
-            } //* Getting all the data posted by the client except the onboarding data
+            } 
 
-            
             let student = await SignUp.addStudent(studentData)
             let studentDocID = student._id
 
@@ -105,33 +106,44 @@ function signupRouter(io: Server) {
             let studentID = req.session["stdid"]
             let studentDocID = await Convert.getDocumentID_studentid(studentID)
 
-            let profile_pic = await compressImage(Object.values(req.files)[0])
-            let savePath = `${studentDocID.toString()}/${profile_pic["name"]}`
-            let profilePicUrl = await upload(profile_pic, savePath)
-
-            let onboardData = { //* Onboarding data
-                district: req.body['district'],
-                collegeID: req.body['collegeId'] === 'null' ? req.body["collegeName"] : parseInt(req.body["collegeId"]),
-                collegeyear: req.body['collegeYear'],
-                group: req.body['group'],
-                bio: req.body['bio'],
-                favouritesubject: req.body['favSub'],
-                notfavsubject: req.body['nonFavSub'],
-                profile_pic: profilePicUrl,
-                rollnumber: req.body["collegeRoll"],
+            let onboardData = {
+                district: req.body['district'], //! Required
+                collegeID: isNaN(Number(req.body['collegeId'])) ? req.body["collegeName"] : Number(req.body["collegeId"]), //! Required
+                collegeyear: req.body['collegeYear'] === 'null' ? null : req.body['collegeYear'],
+                group: req.body['group'], //! Required
+                bio: req.body['bio'] === 'null' ? 'Just a student trying to make it through college!' : req.body['bio'],
+                favouritesubject: req.body['favSub'], //! Required
+                notfavsubject: req.body['nonFavSub'], //! Required
+                profile_pic: avatars[Math.floor(Math.random() * 5)],
+                rollnumber: req.body["collegeRoll"] === 'null' ? null : req.body["collegeRoll"],
                 onboarded: true
             }
-            log('info', `On /sign-up/onboard StudentID=${studentID || "--studentid--"}: Successfully got data for oboard`)
+            log('info', `On /onboard StudentID=${req.session["stdid"] || "--studentid--"}: Onboard data got successfully`)
+
+            await Students.findByIdAndUpdate(studentDocID, { $set: onboardData }, { upsert: false })
+            res.json({ ok: true }) 
+            log('info', `On /onboard StudentID=${req.session["stdid"] || "--studentid--"}: Added primary onboard data in database. Redirection signal sent.`)
             
-            
-            Students.findByIdAndUpdate(studentDocID, { $set: onboardData }, { upsert: false }).then(() => {
-                res.send({ url: `/dashboard` })
-                log('info', `On /sign-up/onboard StudentID=${studentID || "--studentid--"}: Successfully onboarded and redirected to dashboard`)
-            }) 
+            if (req.files) {
+                (async function() {
+                    log('info', `On /onboard StudentID=${req.session["stdid"] || "--studentid--"}: Profile picture is got for onboard`)
+                    try {
+                        let image = Object.values(req.files)[0]
+                        let profile_pic = await compressImage(image) 
+                        let savedPath = await upload(profile_pic, `${studentDocID.toString()}/${image["name"]}`) 
+                        if (savedPath) {
+                            await Students.findByIdAndUpdate(studentDocID, { $set: { profile_pic: savedPath } }, { upsert: false })
+                            log('info', `On /onboard StudentID=${req.session["stdid"] || "--studentid--"}: Updated onboard data with profile pic url.`)
+                        }
+                    } catch (error) {
+                        log('error', `On /onboard StudentID=${req.session["stdid"] || "--studentid--"}: Profile picture can't be processed, keeping same (${onboardData.profile_pic}): ${error.message}`)
+                    }
+                })()
+            }
 
         } catch (error) {
-            log('error', `On /sign-up/onboard StudentID=${req.session["stdid"] || "--studentid--"}: Couldn't onboard the user: ${error.message}`)
-            res.json({ ok: false })
+            log('info', `On /onboard StudentID=${req.session["stdid"] || "--studentid--"}: Onboard failure. Sending ok=false kind=500: ${error.message}`)
+            res.json({ ok: false, kind: 500 })
         }
     })
 

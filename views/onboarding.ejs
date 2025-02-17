@@ -23,7 +23,9 @@
     <div class="main-container flex-col-center">
         <!-- This contains the progress bar and back button of slides -->
         <div class="main-container__row-1 flex-row-center">
-            <i class="fa-solid fa-arrow-left"></i>
+             <svg class="arrow-left-icon" width="25" height="auto" viewBox="0 0 68 68" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M16.6029 29.8333H67.332V38.1666H16.6029L39.9362 61.5L33.9987 67.3333L0.665367 34L33.9987 0.666649L39.9362 6.49998L16.6029 29.8333Z" fill="#1D1B20"/>
+              </svg>
             <div class="progress-container">
                 <div class="progress-bar"></div>
             </div>
@@ -102,7 +104,7 @@
                             </div>
                         </div>
                         <div class="move-section-ctrl-container flex-row-center">
-                        <button class="move-section-btn">Continue</button>
+                        <button class="move-section-btn" disabled>Continue</button>
                     </div>
                     </div>
                 </div>
@@ -135,7 +137,7 @@
                         </div>
                         
                     <div class="move-section-ctrl-container flex-row-center">
-                        <button class="move-section-btn">Continue</button>
+                        <button class="move-section-btn" disabled>Continue</button>
                     </div>
                     </div>
                 </div>
@@ -154,8 +156,10 @@
                     <div class="interactive-container flex-col-center interactive-container--gap-low">
                         <div class="prfl-pic-wrapper flex-col-center" id="profile-pic-selector">
                             <div class="upload-prfl-pic-box flex-col-center">
-                                <i class="fa-regular fa-image"></i>
-                                <p class="upload-prfl-pic-msg">Choose your profile picture</p>
+                                <svg class="prfl-pic-upload-icon" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="40" height="40" viewBox="0 0 50 50">
+                                    <path d="M 14 4 C 8.486 4 4 8.486 4 14 L 4 36 C 4 41.514 8.486 46 14 46 L 36 46 C 41.514 46 46 41.514 46 36 L 46 14 C 46 8.486 41.514 4 36 4 L 14 4 z M 21.132812 13 L 28.867188 13 C 29.740188 13 30.560719 13.464891 31.011719 14.212891 L 32.845703 17.273438 C 33.114703 17.721438 33.608812 18 34.132812 18 L 39.5 18 C 40.327 18 41 18.673 41 19.5 L 41 35.5 C 41 36.327 40.327 37 39.5 37 L 10.5 37 C 9.673 37 9 36.327 9 35.5 L 9 19.5 C 9 18.673 9.673 18 10.5 18 L 15.867188 18 C 16.390187 18 16.885297 17.721484 17.154297 17.271484 L 18.988281 14.212891 C 19.438281 13.464891 20.259812 13 21.132812 13 z M 12 14 L 14 14 C 14.552 14 15 14.448 15 15 L 15 16 L 11 16 L 11 15 C 11 14.448 11.448 14 12 14 z M 34 19.5 A 1 1 0 0 0 34 21.5 A 1 1 0 0 0 34 19.5 z M 25 20 C 20.864 20 17.5 23.364 17.5 27.5 C 17.5 31.636 20.864 35 25 35 C 29.136 35 32.5 31.636 32.5 27.5 C 32.5 23.364 29.136 20 25 20 z M 25 22 C 28.032 22 30.5 24.468 30.5 27.5 C 30.5 30.532 28.032 33 25 33 C 21.968 33 19.5 30.532 19.5 27.5 C 19.5 24.468 21.968 22 25 22 z"></path>
+                                    </svg>
+                                <p class="upload-prfl-pic-msg">Feel free to choose a profile picture</p>
                                 <input type="file" id="profile-picture" name="profile-picture" class="profile-picture-input" accept="image/*" required style="display: none;">
                             </div>
 
@@ -167,7 +171,7 @@
 
                         <div class="slide-4-input-options-roll-grp flex-row-center">
                             <label id="img_category_label"class="dropdown-field"for="img_category"data-value="">
-                                <span>Which group you're in?</span>
+                                <span>Which group you're in? * </span>
                                 <div id="img_category"class="psuedo_select"name="img_category">
                                     <span class="selected"></span>
                                     <ul id="img_category_options"class="dropdown-options">
@@ -178,7 +182,7 @@
                                 </div>
                             </label>
                             <label id="img_category_label"class="dropdown-field"for="img_category"data-value="">
-                                <span>Which year are you in?</span>
+                                <span>Which year are you in? (optional)</span>
                                 <div id="img_category"class="psuedo_select"name="img_category">
                                     <span class="selected"></span>
                                     <ul id="img_category_options"class="dropdown-options">
@@ -196,14 +200,14 @@
                             class="floating-input-field"
                             placeholder=" "
                             />
-                            <label for="college-roll" class="input-floating-label">What's your roll number? (Max 3 Digit)</label>
+                            <label for="college-roll" class="input-floating-label">What's your roll number? (optional)</label>
                           </div>
 
                     </div>
 
 
                         <div class="move-section-ctrl-container flex-row-center">
-                        <button class="move-section-btn">Continue</button>
+                        <button class="move-section-btn" disabled>Continue</button>
                     </div>
                 </div>
 
@@ -216,7 +220,7 @@
                                 <path d="M24.2919 11C24.2919 5.75329 28.5452 1.5 33.7919 1.5H603C608.247 1.5 612.5 5.75328 612.5 11V39C612.5 44.2467 608.247 48.5 603 48.5H30.1721C26.9246 48.5 24.2919 45.8673 24.2919 42.6197C24.2919 37.7929 20.7144 33.7136 15.9288 33.0837L5.01904 31.6477L17.4228 25.3892C21.6352 23.2638 24.2919 18.9475 24.2919 14.2293V11Z" stroke="black" stroke-width="3"/>
                             </svg>
                                     
-                                <p class="toki-text-msg slide-2--toki-text-msg">What's your fav (and not-so-fav) subject?😁</p>
+                            <p class="toki-text-msg slide-2--toki-text-msg">What's your fav (and not-so-fav) subject?😁</p>
                         </div>
                     </div>
                     <div class="interactive-container flex-col-center">
@@ -224,7 +228,7 @@
                             <div class="user-bio-container">
                                 <textarea
                                   class="user-bio-textarea"
-                                  placeholder="Tell us about yourself slightly"
+                                  placeholder="Feel free to share a bit about yourself!"
                                   name="userBio"
                                   id="userBio"
                                   maxlength="200"
@@ -233,7 +237,7 @@
                                 <div class="char-count-user-bio" id="charCount">200/200</div>
                               </div>
                               <div class="subj-selection-wrapper">
-                                <p class="subj-selection-inst-msg">First choose your favorite subject and then your non-favorite</p> 
+                                <p class="subj-selection-inst-msg">First choose your favorite subject and then your non-favorite. This will help us build your feed.</p>
                                 <div class="subj-selection-grid">
                                     <div class="subj-selection__card flex-col-center" >
                                         <img class="subj-selection__card--logo" src="\images\onboarding-assets\subjects\physics.png" alt="Physics">
@@ -247,7 +251,7 @@
                             <div style="display: none;" id="onboard-loader">
                                 <div class="search-results-loader"></div> Getting you onboarded
                             </div>
-                            <button class="move-section-btn req-">Submit</button>
+                            <button class="move-section-btn req-" disabled>Submit</button>
                         </div>
                     </div>
                 </div>

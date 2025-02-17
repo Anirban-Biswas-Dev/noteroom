@@ -81,19 +81,17 @@ body {
   height: 50px;
   justify-content: center;
   min-width: 30px;
-  padding: 0 20px;
   transition: transform 0.2s ease;
   width: 60px;
 }
-.fa-magnifying-glass {
-  transition: color 0.2s ease;
+.search-bar-box button svg {
+  transition: fill 0.2s ease;
 }
-.fa-magnifying-glass:hover {
-  color: rgba(0, 0, 0, 0.7);
+.search-bar-box button svg:hover {
+  fill: rgba(0, 0, 0, 0.7);
 }
-.fa-magnifying-glass:active,
-.search-bar-box button:active {
-  color: black;
+.search-bar-box button svg:active {
+  fill: black;
 }
 .mbl-notification-elements {
   position: relative;
@@ -416,15 +414,7 @@ body {
 .profile-pic:active {
   filter: brightness(0.8);
 }
-.settings-icon {
-  background-color: #e2e5e9;
-  padding: 10px;
-  font-size: 2rem;
-  border-radius: 15px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-.pc-nft-btn {
+.pc-nft-btn, .settings-icon {
   cursor: pointer;
   width: 50px;
   height: auto;
@@ -527,8 +517,11 @@ body {
   cursor: pointer;
   transition: background-color 0.1s ease, transform 0.3s ease;
 }
+.request-chevron-icon{
+  transform: rotate(-90deg);
+}
 .request__fr--chevron-rotated {
-  transform: rotate(90deg);
+  transform: rotate(0deg);
   transition: transform 0.1s ease;
 }
 
@@ -613,8 +606,8 @@ body {
   transition: background-color 0.1s ease, color 0.1s ease, border-color 0.1s ease;
 }
 
-.btn-accept-request .fa-check {
-  color: var(--neon-blue);
+.btn-accept-request .req-accept-icon {
+  fill: var(--neon-blue);
   transition: color 0.1s ease;
 }
 
@@ -625,12 +618,12 @@ body {
   color: white;
 }
 
-.btn-accept-request:hover .fa-check,
-.btn-accept-request:active .fa-check {
-  color: white;
+.btn-accept-request:hover .req-accept-icon,
+.btn-accept-request:active .req-accept-icon {
+  fill: white;
 }
 
-.btn-reject-request .fa-x {
+.btn-reject-request .req-reject-icon {
   color: #FA5252;
   transition: color 0.1s ease;
 }
@@ -639,12 +632,12 @@ body {
 .btn-reject-request:active {
   background-color: #B7B7B7;
   border-color: #B7B7B7;
-  color: white;
+  fill: white;
 }
 
-.btn-reject-request:hover .fa-x,
-.btn-reject-request:active .fa-x {
-  color: white;
+.btn-reject-request:hover .req-reject-icon,
+.btn-reject-request:active .req-reject-icon {
+  fill: white;
 }
 
 @media (max-width: 480px) {
@@ -656,9 +649,9 @@ body {
     padding: 4px;
   }
 
-  .btn-accept-request .fa-check,
-  .btn-reject-request .fa-x {
-    font-size: 0.75rem;
+  .btn-accept-request .req-accept-icon {
+    width: 12px;
+    height: auto;
   }
 }
 
@@ -728,12 +721,6 @@ body {
   align-items: center;
   gap: 6px;
 }
-
-.fa-lock {
-  color: #adb5bd;
-  font-size: 12px;
-}
-
 
 
 .notification-modal-overlay{
@@ -1607,14 +1594,11 @@ canvas {
     width: 45px;
     height: 45px;
   }
-  .search-prfl-pc, .profile-pic, .pc-nft-btn {
+  .search-prfl-pc, .profile-pic, .pc-nft-btn, .settings-icon {
     width: 45px;
     height: 45px;
   }
-  .settings-icon {
-    font-size: 1.5rem;
-  }
-}
+} 
 
 /* Ensure general styling for smaller screens */
 @media (max-width: 560px) {
@@ -1629,7 +1613,7 @@ canvas {
   }
   .search-bar-box button {
     width: 10%;
-    padding: 0px 10px;
+    padding:5px;
   }
 }
 @media (min-width:461px) and (max-width:965px) {

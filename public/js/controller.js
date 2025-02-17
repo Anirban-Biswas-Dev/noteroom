@@ -396,14 +396,22 @@ const manageNotes = {
                             <div class="niw--fr-second-col">
                                 <div class="note-menu">
                                     <button class="note-menu-btn">
-                                        <i class="fas fa-ellipsis-v"></i>
+                                        <svg width="25" height="105" class="note-menu-eclipse-icon" viewBox="0 0 25 105" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <rect width="25" height="25" rx="12.5" fill="black"/>
+                                            <rect y="40" width="25" height="25" rx="12.5" fill="black"/>
+                                            <rect y="80" width="25" height="25" rx="12.5" fill="black"/>
+                                        </svg>
                                     </button>
                                     <div class="menu-options">   
                                         ${!note.quickPost ? `
                                             <div class="option svn-btn-parent" id="save-btn-${note.noteID}" onclick="saveNote(this, true)" data-notetitle="${note.noteTitle}" data-noteid="${note.noteID}" data-issaved="${note.isSaved}">
                                                 <button class="${note.isSaved ? "saved" : ""} save-note-btn" id="save-note-btn">
-                                                    <i class="fa-regular fa-bookmark"></i>
-                                                    <i class="fa-solid fa-bookmark saved"></i>
+                                                    <svg class="bookmark-fill-white" width="28" height="40" viewBox="0 0 66 97" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <path d="M0.619048 96C0.619048 96.1528 0.710359 96.2908 0.850996 96.3506C0.991633 96.4104 1.15437 96.3803 1.26439 96.2743L32.2955 66.3606C32.7036 65.9672 33.2964 65.9672 33.7045 66.3606L64.7356 96.2743C64.8456 96.3803 65.0084 96.4104 65.149 96.3506C65.2896 96.2908 65.381 96.1528 65.381 96V4.27586C65.381 2.2943 63.924 0.619048 62.0462 0.619048H3.95385C2.07596 0.619048 0.619048 2.2943 0.619048 4.27586V96ZM3.95385 3.56486H62.0462C62.3434 3.56486 62.6498 3.84515 62.6498 4.27586V90.3117L35.5252 64.1638C34.0811 62.7717 31.9189 62.7717 30.4748 64.1638L3.35018 90.3117V4.27586C3.35018 3.84515 3.65658 3.56486 3.95385 3.56486Z" fill="black" stroke="black" stroke-width="1.5" stroke-linejoin="round"/>
+                                                    </svg>
+                                                    <svg class="bookmark-fill-black" width="28" height="40" viewBox="0 0 66 97" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <path d="M0 3C0 1.34314 1.34315 0 3 0H63C64.6569 0 66 1.34315 66 3V93.9494C66 96.5944 62.8256 97.9451 60.9198 96.111L35.0802 71.2442C33.9187 70.1264 32.0813 70.1264 30.9198 71.2442L5.08024 96.111C3.17437 97.9451 0 96.5944 0 93.9494V3Z" fill="black"/>
+                                                    </svg>
                                                 </button>
                                                 <span class="opt-label">Save Note</span>
                                             </div>
@@ -890,72 +898,72 @@ const manageNotes = {
     },
 
     addAllFeedback: function (feedback) {
-        let commentsContainer = document.querySelector('.cmnts-list')
+    let commentsContainer = document.querySelector('.cmnts-list')
 
-        let template = `
-			<div class="main__author-threadline-wrapper" onclick="window.location.href='/user/${feedback[0].commenterDocID.username}'" >
-				<img src="${feedback[0].commenterDocID.profile_pic}" 
-                onclick="window.location.href='/user/${feedback[0].commenterDocID.username}'"
-                alt="User Avatar" class="main__cmnt-author-img cmnt-author-img" />
-				<div class="thread-line"></div>
-			</div>
+    let template = `
+        <div class="main__author-threadline-wrapper" onclick="window.location.href='/user/${feedback[0].commenterDocID.username}'" >
+            <img src="${feedback[0].commenterDocID.profile_pic}" 
+            onclick="window.location.href='/user/${feedback[0].commenterDocID.username}'"
+            alt="User Avatar" class="main__cmnt-author-img cmnt-author-img" />
+            <div class="thread-line"></div>
+        </div>
 
-			<div class='main__cmnts-replies-wrapper'>
-				<div class="main__body cmnt-body-3rows">
-					<div class="main__reply-info reply-info"> 
-            			<span id="parentFeedbackDocID" style="display: none;">${feedback[0]._id}</span>
-        				<span id="commenterUsername" style="display: none;">${feedback[0].commenterDocID.username}</span> 
-						<span class="main__author-name" onclick="window.location.href='/user/${feedback[0].commenterDocID.username}'">${feedback[0].commenterDocID.displayname}</span>
-						<span class="reply-date">${this.formatDate(feedback[0].createdAt)}</span>
-					</div>
-					<div class='reply-msg'>${feedback[0].feedbackContents}</div>
-					<div class="main__engagement-opts engagement-opts">
-						<div class="like-wrapper" data-noteid='${feedback[0].noteDocID}' data-feedbackid="${feedback[0]._id}" data-isupvoted="${feedback[0].isUpVoted}" onclick="upvoteComment(this)">
-							<svg class="like-icon" data-tippy-content="Like" width="20" height="22" viewBox="0 0 115 117" fill="none" xmlns="http://www.w3.org/2000/svg">
-								${feedback[0].isUpVoted ?
-                `<path class='like-icon-fill' d="M28.4938 47.5373C28.4938 47.5373 28.4863 108.91 28.493 110.455C28.4996 112 84.4861 110.998 88.993 110.998C93.5 110.998 108.994 88.5431 109.494 70.581C109.994 52.6188 107.998 49.9985 107.498 49.9985L66 49.9982C78.4744 33.916 62.958 -7.56607 57.9956 8.99958C53.0332 25.5652 49.9956 32.4996 49.9956 32.4996L28.4938 47.5373Z" fill="black"/>` :
-                `<path d="M107.498 49.9985C107.998 49.9985 109.994 52.6188 109.494 70.581C108.994 88.5431 93.5 110.998 88.993 110.998C84.4861 110.998 28.4996 112 28.493 110.455C28.4863 108.91 28.4938 47.5373 28.4938 47.5373L49.9956 32.4996C49.9956 32.4996 53.0332 25.5652 57.9956 8.99958C62.958 -7.56607 78.4744 33.916 66 49.9982M107.498 49.9985C106.998 49.9985 66 49.9982 66 49.9982M107.498 49.9985L66 49.9982" stroke="#606770" stroke-width="10" stroke-linecap="round"/>`
-            }
-							</svg>
-							<span class="like-count">${feedback[0].upvoteCount}</span>
-						</div>
-						<svg class="reply-icon thread-opener" data-tippy-content="Reply" width="25" height="24" viewBox="0 0 22 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-							<path d="M18.7186 12.9452C18.7186 13.401 18.5375 13.8382 18.2152 14.1605C17.8929 14.4829 17.4557 14.6639 16.9999 14.6639H6.68747L3.25 18.1014V4.35155C3.25 3.89571 3.43108 3.45854 3.75341 3.13622C4.07573 2.81389 4.5129 2.63281 4.96873 2.63281H16.9999C17.4557 2.63281 17.8929 2.81389 18.2152 3.13622C18.5375 3.45854 18.7186 3.89571 18.7186 4.35155V12.9452Z" stroke="#1E1E1E" stroke-width="1.14582" stroke-linecap="round" stroke-linejoin="round" />
-						</svg>
-					</div>
-				</div>
+        <div class='main__cmnts-replies-wrapper'>
+            <div class="main__body cmnt-body-3rows">
+                <div class="main__reply-info reply-info"> 
+                    <span id="parentFeedbackDocID" style="display: none;">${feedback[0]._id}</span>
+                    <span id="commenterUsername" style="display: none;">${feedback[0].commenterDocID.username}</span> 
+                    <span class="main__author-name" onclick="window.location.href='/user/${feedback[0].commenterDocID.username}'">${feedback[0].commenterDocID.displayname}</span>
+                    <span class="reply-date">${this.formatDate(feedback[0].createdAt)}</span>
+                </div>
+                <div class='reply-msg'>${feedback[0].feedbackContents}</div>
+                <div class="main__engagement-opts engagement-opts">
+                    <div class="like-wrapper" data-noteid='${feedback[0].noteDocID}' data-feedbackid="${feedback[0]._id}" data-isupvoted="${feedback[0].isUpVoted}" onclick="upvoteComment(this)">
+                        <svg class="like-icon" data-tippy-content="Like" width="20" height="22" viewBox="0 0 115 117" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            ${feedback[0].isUpVoted ?
+                                `<path class='like-icon-fill' d="M28.4938 47.5373C28.4938 47.5373 28.4863 108.91 28.493 110.455C28.4996 112 84.4861 110.998 88.993 110.998C93.5 110.998 108.994 88.5431 109.494 70.581C109.994 52.6188 107.998 49.9985 107.498 49.9985L66 49.9982C78.4744 33.916 62.958 -7.56607 57.9956 8.99958C53.0332 25.5652 49.9956 32.4996 49.9956 32.4996L28.4938 47.5373Z" fill="black"/>` :
+                                `<path d="M107.498 49.9985C107.998 49.9985 109.994 52.6188 109.494 70.581C108.994 88.5431 93.5 110.998 88.993 110.998C84.4861 110.998 28.4996 112 28.493 110.455C28.4863 108.91 28.4938 47.5373 28.4938 47.5373L49.9956 32.4996C49.9956 32.4996 53.0332 25.5652 57.9956 8.99958C62.958 -7.56607 78.4744 33.916 66 49.9982M107.498 49.9985C106.998 49.9985 66 49.9982 66 49.9982M107.498 49.9985L66 49.9982" stroke="#606770" stroke-width="10" stroke-linecap="round"/>`
+                            }
+                        </svg>
+                        <span class="like-count">${feedback[0].upvoteCount}</span>
+                    </div>
+                    <svg class="reply-icon thread-opener" data-tippy-content="Reply" width="25" height="24" viewBox="0 0 22 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M18.7186 12.9452C18.7186 13.401 18.5375 13.8382 18.2152 14.1605C17.8929 14.4829 17.4557 14.6639 16.9999 14.6639H6.68747L3.25 18.1014V4.35155C3.25 3.89571 3.43108 3.45854 3.75341 3.13622C4.07573 2.81389 4.5129 2.63281 4.96873 2.63281H16.9999C17.4557 2.63281 17.8929 2.81389 18.2152 3.13622C18.5375 3.45854 18.7186 3.89571 18.7186 4.35155V12.9452Z" stroke="#1E1E1E" stroke-width="1.14582" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </div>
+            </div>
 
-				<div class='thread-section' id='thread-${feedback[0]._id}'>
-					${feedback[1].map(reply => {
-                return `
-						<div class='thread-msg'>
-							<img src="${reply.commenterDocID.profile_pic}" alt="User Avatar" class="cmnt-author-img thread-avatar">
-							<div class="cmnt-body-3rows">
-								<div class="reply-info">
-        							<span id="commenterUsername" style="display: none;">${reply.commenterDocID.username}</span> 
-									<span class="main__author-name" onclick="window.location.href='/user/${reply.commenterDocID.username}'">${reply.commenterDocID.displayname}</span>
-									<span class="reply-date">${this.formatDate(reply.createdAt)}</span>
-								</div>
-								<div class="reply-msg">${reply.feedbackContents}</div>
+            <div class='thread-section' id='thread-${feedback[0]._id}'>
+                ${feedback[1].map(reply => {
+                    return `
+                    <div class='thread-msg'>
+                        <img src="${reply.commenterDocID.profile_pic}" alt="User Avatar" class="cmnt-author-img thread-avatar">
+                        <div class="cmnt-body-3rows">
+                            <div class="reply-info">
+                                <span id="commenterUsername" style="display: none;">${reply.commenterDocID.username}</span> 
+                                <span class="main__author-name" onclick="window.location.href='/user/${reply.commenterDocID.username}'">${reply.commenterDocID.displayname}</span>
+                                <span class="reply-date">${this.formatDate(reply.createdAt)}</span>
+                            </div>
+                            <div class="reply-msg">${reply.feedbackContents}</div>
 
-								<div class="main__engagement-opts engagement-opts">
-									<svg class="reply-icon thread-opener" data-tippy-content="Reply" width="25" height="24" viewBox="0 0 22 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-										<path d="M18.7186 12.9452C18.7186 13.401 18.5375 13.8382 18.2152 14.1605C17.8929 14.4829 17.4557 14.6639 16.9999 14.6639H6.68747L3.25 18.1014V4.35155C3.25 3.89571 3.43108 3.45854 3.75341 3.13622C4.07573 2.81389 4.5129 2.63281 4.96873 2.63281H16.9999C17.4557 2.63281 17.8929 2.81389 18.2152 3.13622C18.5375 3.45854 18.7186 3.89571 18.7186 4.35155V12.9452Z" stroke="#1E1E1E" stroke-width="1.14582" stroke-linecap="round" stroke-linejoin="round" />
-									</svg>
-								</div>
-							</div>
-						</div>
-						`
-            })}
-				</div>
-			</div>
-		`
+                            <div class="main__engagement-opts engagement-opts">
+                                <svg class="reply-icon thread-opener" data-tippy-content="Reply" width="25" height="24" viewBox="0 0 22 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M18.7186 12.9452C18.7186 13.401 18.5375 13.8382 18.2152 14.1605C17.8929 14.4829 17.4557 14.6639 16.9999 14.6639H6.68747L3.25 18.1014V4.35155C3.25 3.89571 3.43108 3.45854 3.75341 3.13622C4.07573 2.81389 4.5129 2.63281 4.96873 2.63281H16.9999C17.4557 2.63281 17.8929 2.81389 18.2152 3.13622C18.5375 3.45854 18.7186 3.89571 18.7186 4.35155V12.9452Z" stroke="#1E1E1E" stroke-width="1.14582" stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    `
+                }).join('')}
+            </div>
+        </div>
+    `
 
-        let mainCommentContainer = document.createElement('div')
-        mainCommentContainer.classList.add('main-cmnt-container')
-        mainCommentContainer.innerHTML = template
-        commentsContainer.appendChild(mainCommentContainer)
-    },
+    let mainCommentContainer = document.createElement('div')
+    mainCommentContainer.classList.add('main-cmnt-container')
+    mainCommentContainer.innerHTML = template
+    commentsContainer.appendChild(mainCommentContainer)
+},
 
     addRequest: function (request) {
         let requestContainer = document.querySelector('.requests-container')
@@ -965,7 +973,11 @@ const manageNotes = {
             let recTemplate = `
                 <div class="request" id="request-${request.recID}" data-senderusername="${request.senderUserName}" onclick="manageRequest(this)">
                     <div class="request__fr">
-                        <span class="open-request-card"><i class="fa-solid fa-chevron-right request-chevron-icon"></i></span>
+                        <span class="open-request-card">
+                            <svg width="15" height="auto" class="request-chevron-icon" viewBox="0 0 60 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M5 4.5L30 29.5L55 4.5" stroke="#1E1E1E" stroke-width="8.33333" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </span>
                         <span class="request__fr--requester-name">${request.senderDisplayName}'s Request</span>
                         <span class="request__fr--requested-date">${(new Date(request.createdAt)).toLocaleDateString()}</span>
                     </div>
@@ -974,11 +986,16 @@ const manageNotes = {
                         <div class="request__sr--request-action-update">
                         <button class="btn-request btn-accept-request">
                             Accept
-                            <i class="fa-solid fa-check"></i>
+                            <svg class="req-accept-icon" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="15" height="15" viewBox="0 0 30 30">
+                                <path d="M 26.980469 5.9902344 A 1.0001 1.0001 0 0 0 26.292969 6.2929688 L 11 21.585938 L 4.7070312 15.292969 A 1.0001 1.0001 0 1 0 3.2929688 16.707031 L 10.292969 23.707031 A 1.0001 1.0001 0 0 0 11.707031 23.707031 L 27.707031 7.7070312 A 1.0001 1.0001 0 0 0 26.980469 5.9902344 z"></path>
+                            </svg>
                         </button>
                         <button class="btn-request btn-reject-request">
                             Reject
-                            <i class="fa-solid fa-x"></i>
+                            <svg class="req-reject-icon" width="12" height="12" viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M3 3L67 67" stroke="black" stroke-width="6" stroke-linejoin="round"/>
+                                <path d="M67 3L3 67" stroke="black" stroke-width="6" stroke-linejoin="round"/>
+                            </svg>
                         </div>
                     </div>
                 </div>`
@@ -1193,7 +1210,9 @@ async function searchNotes() {
                     <a href="/view/${note._id}" style="text-decoration: none;">
                         <div class="results-card" id="note-${note._id}">
                             <p class="result-note-title">${note.title}</p>
-                            <i class="fa-solid fa-arrow-up"></i>
+                            <svg style="transform: rotate(135deg)" width="15" height="auto" viewBox="0 0 68 68" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M16.6029 29.8333H67.332V38.1666H16.6029L39.9362 61.5L33.9987 67.3333L0.665367 34L33.9987 0.666649L39.9362 6.49998L16.6029 29.8333Z" fill="#1D1B20"/>
+                            </svg>
                         </div>
                     </a>
                 `) // 4

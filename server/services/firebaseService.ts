@@ -1,54 +1,45 @@
-import { join, dirname } from 'path';
+import { join } from 'path';
 import { config } from 'dotenv';
-import { fileURLToPath } from 'url';
 import firebaseAdmin from 'firebase-admin'; // Default import for firebase-admin
 import { IManageUserNote } from '../types/noteService.types.js';
-
-// const __filename = fileURLToPath(import.meta.url);
-// const __dirname = dirname(__filename);
+import { log } from '../helpers/utils.js';
 
 config({ path: join(__dirname, '../.env') });
 
 const serviceAccount = JSON.parse(process.env.FIREBASE_CLOUD_CRED!);
+const bucketName = process.env.NOTEROOM_PRODUCTION_FIREBASE_BUCKET
+// const bucketName = process.env.NOTEROOM_DEVELOPMENT_FIREBASE_BUCKET
 
 firebaseAdmin.initializeApp({
     credential: firebaseAdmin.credential.cert(serviceAccount), // Correct call to `cert`
-    storageBucket: "gs://noteroom-fb1a7.appspot.com"
+    storageBucket: `gs://${bucketName}`
 });
 
 let bucket = firebaseAdmin.storage().bucket();
 
 async function uploadImage(fileObject: any, fileName: any, options?:any) {
-    if (options && options.replaceWith) {
-        try {
-            const filePath = options.replaceWith.replace('https://storage.googleapis.com/noteroom-fb1a7.appspot.com/', '');
+    try {
+        if (options && options.replaceWith) {
+            const filePath = options.replaceWith.replace(`https://storage.googleapis.com/${bucketName}/`, '');
             await bucket.file(filePath).delete()
-        } catch (error) {}
-    }
-
-    const file = bucket.file(fileName);
-    const stream = file.createWriteStream({
-        metadata: {
-            contentType: fileObject.mimetype,
         }
-    });
+        const file = bucket.file(fileName);
+        await file.save(fileObject.buffer || fileObject.data, {
+            metadata: { contentType: fileObject.mimetype }
+        })
+    
+        await file.makePublic(); //! Making the file public for now.
 
-    return new Promise((resolve, reject) => {
-        stream.on('error', (err) => {
-            console.error('Error uploading file:', err);
-            reject(err);
-        });
+        let publicUrl = `https://storage.googleapis.com/${bucketName}/${fileName}`;
+        log('info', `On uploadImage fileName=${fileName || "--filename--"}: Picture is uploaded successfully.`)
 
-        stream.on('finish', async () => {
-            await file.makePublic(); //! Making the file public for now.
-
-            let publicUrl = `https://storage.googleapis.com/noteroom-fb1a7.appspot.com/${fileName}`;
-            resolve(publicUrl);
-        });
-
-        stream.end(fileObject.buffer || fileObject.data); // Storing the actual file buffer to Firebase
-    });
+        return publicUrl
+    } catch (error) {
+        log('error', `On uploadImage fileName=${fileName || "--filename--"}: Picture upload failure. Sending null: ${error.message}`)
+        return null
+    }    
 }
+
 
 async function deleteFolder({ studentDocID, noteDocID }: IManageUserNote, post: boolean = false, studentFolder=false) {
     if (!studentFolder) {

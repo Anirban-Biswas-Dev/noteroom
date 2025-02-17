@@ -14,6 +14,7 @@ const dotenv_1 = require("dotenv");
 const router = (0, express_1.Router)();
 (0, dotenv_1.config)({ path: (0, path_1.join)(__dirname, '../.env') });
 const client_id = process.env.GOOGLE_CLIENT_ID;
+const avatars = [1, 2, 3, 4, 5].map(n => `/images/avatars/image-${n}.png`);
 function signupRouter(io) {
     router.get('/', async (req, res) => {
         if (req.session["stdid"]) {
@@ -22,6 +23,7 @@ function signupRouter(io) {
         else {
             res.status(200);
             res.render('sign-up');
+            (0, utils_js_1.log)('info', `On /sign-up StudentID=${req.session['stdid'] || "--studentid--"}: redirected to signup.`);
         }
     });
     router.post('/auth/google', async (req, res) => {
@@ -94,30 +96,43 @@ function signupRouter(io) {
         try {
             let studentID = req.session["stdid"];
             let studentDocID = await userService_js_1.Convert.getDocumentID_studentid(studentID);
-            let profile_pic = await (0, utils_js_1.compressImage)(Object.values(req.files)[0]);
-            let savePath = `${studentDocID.toString()}/${profile_pic["name"]}`;
-            let profilePicUrl = await (0, firebaseService_js_1.upload)(profile_pic, savePath);
             let onboardData = {
                 district: req.body['district'],
-                collegeID: req.body['collegeId'] === 'null' ? req.body["collegeName"] : parseInt(req.body["collegeId"]),
-                collegeyear: req.body['collegeYear'],
+                collegeID: isNaN(Number(req.body['collegeId'])) ? req.body["collegeName"] : Number(req.body["collegeId"]),
+                collegeyear: req.body['collegeYear'] === 'null' ? null : req.body['collegeYear'],
                 group: req.body['group'],
-                bio: req.body['bio'],
+                bio: req.body['bio'] === 'null' ? 'Just a student trying to make it through college!' : req.body['bio'],
                 favouritesubject: req.body['favSub'],
                 notfavsubject: req.body['nonFavSub'],
-                profile_pic: profilePicUrl,
-                rollnumber: req.body["collegeRoll"],
+                profile_pic: avatars[Math.floor(Math.random() * 5)],
+                rollnumber: req.body["collegeRoll"] === 'null' ? null : req.body["collegeRoll"],
                 onboarded: true
             };
-            (0, utils_js_1.log)('info', `On /sign-up/onboard StudentID=${studentID || "--studentid--"}: Successfully got data for oboard`);
-            students_js_1.default.findByIdAndUpdate(studentDocID, { $set: onboardData }, { upsert: false }).then(() => {
-                res.send({ url: `/dashboard` });
-                (0, utils_js_1.log)('info', `On /sign-up/onboard StudentID=${studentID || "--studentid--"}: Successfully onboarded and redirected to dashboard`);
-            });
+            (0, utils_js_1.log)('info', `On /onboard StudentID=${req.session["stdid"] || "--studentid--"}: Onboard data got successfully`);
+            await students_js_1.default.findByIdAndUpdate(studentDocID, { $set: onboardData }, { upsert: false });
+            res.json({ ok: true });
+            (0, utils_js_1.log)('info', `On /onboard StudentID=${req.session["stdid"] || "--studentid--"}: Added primary onboard data in database. Redirection signal sent.`);
+            if (req.files) {
+                (async function () {
+                    (0, utils_js_1.log)('info', `On /onboard StudentID=${req.session["stdid"] || "--studentid--"}: Profile picture is got for onboard`);
+                    try {
+                        let image = Object.values(req.files)[0];
+                        let profile_pic = await (0, utils_js_1.compressImage)(image);
+                        let savedPath = await (0, firebaseService_js_1.upload)(profile_pic, `${studentDocID.toString()}/${image["name"]}`);
+                        if (savedPath) {
+                            await students_js_1.default.findByIdAndUpdate(studentDocID, { $set: { profile_pic: savedPath } }, { upsert: false });
+                            (0, utils_js_1.log)('info', `On /onboard StudentID=${req.session["stdid"] || "--studentid--"}: Updated onboard data with profile pic url.`);
+                        }
+                    }
+                    catch (error) {
+                        (0, utils_js_1.log)('error', `On /onboard StudentID=${req.session["stdid"] || "--studentid--"}: Profile picture can't be processed, keeping same (${onboardData.profile_pic}): ${error.message}`);
+                    }
+                })();
+            }
         }
         catch (error) {
-            (0, utils_js_1.log)('error', `On /sign-up/onboard StudentID=${req.session["stdid"] || "--studentid--"}: Couldn't onboard the user: ${error.message}`);
-            res.json({ ok: false });
+            (0, utils_js_1.log)('info', `On /onboard StudentID=${req.session["stdid"] || "--studentid--"}: Onboard failure. Sending ok=false kind=500: ${error.message}`);
+            res.json({ ok: false, kind: 500 });
         }
     });
     return router;

@@ -8,7 +8,7 @@ const studentsSchema = new Schema({
     displayname: {
         type: String,
         validate: {
-            validator: (displayname) => displayname != "",
+            validator: (displayname) => displayname !== "",
             message: "Displayname is not provided" 
         }
     },
@@ -29,7 +29,7 @@ const studentsSchema = new Schema({
     password: {
         type: Schema.Types.Mixed,
         validate: {
-            validator: (password) => password != "",
+            validator: (password) => password !== "",
             message: "Password is not provided"
         }
     },
@@ -106,9 +106,10 @@ const studentsSchema = new Schema({
         ref: 'notes',
         default: []
     },
-    badge: {
-        type: String,
-        default: "No Badge"
+    badges: {
+        type: [Number],
+        default: [0],
+        unique: false
     },
     district: {
         type: String,

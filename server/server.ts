@@ -44,6 +44,7 @@ const app = express()
 const server = createServer(app);
 const io = new SocketIOServer(server, { cors: { origin: '*' } });
 const url = process.env.MONGO_URI
+// const url = 'mongodb://localhost:27017/information'
 connect(url).then(() => {
     console.log(`Connected to database information`);
 })

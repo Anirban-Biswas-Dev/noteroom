@@ -268,8 +268,7 @@ label.dropdown-field.focused .psuedo_select ul {
     justify-content: space-evenly;
 }
 
-.fa-arrow-left{
-    font-size: 1.5rem;
+.arrow-left-icon{
     cursor: pointer;
 }
 
@@ -722,10 +721,6 @@ label.dropdown-field.focused .psuedo_select ul {
 }
 
 /* Upload section icon */
-.fa-image{
-    font-size: 1.5rem;
-    color: #666; 
-}
 
 .upload-prfl-pic-msg{
     font-size: .8rem;
@@ -770,8 +765,9 @@ label.dropdown-field.focused .psuedo_select ul {
     .upload-prfl-pic-box{
         padding: 20px 10px;
     }
-    .fa-image{
-        font-size: 1rem;
+    .prfl-pic-upload-icon{
+        width: 30px;
+        height: auto;
     }
     .uploaded-img-preview{
         width: 90px;
@@ -782,8 +778,9 @@ label.dropdown-field.focused .psuedo_select ul {
     .upload-prfl-pic-box{
         padding: 20px 10px;
     }
-    .fa-image{
-        font-size: 1rem;
+    .prfl-pic-upload-icon{
+        width: 35px;
+        height: auto;
     }
 }
 

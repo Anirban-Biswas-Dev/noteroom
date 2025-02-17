@@ -89,6 +89,6 @@ async function search() {
 
 searchInput.addEventListener('keydown', (event) => {
     if(event.key === 'Enter') {
-        document.querySelector('i.search').click()
+        document.querySelector('.search-prfl-btn').click()
     }
 })
