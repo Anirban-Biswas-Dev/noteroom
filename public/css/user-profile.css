@@ -407,6 +407,19 @@
     font-size: 1.2rem;
     color: rgba(0, 0, 0, 0.8); 
 }
+
+/* Swal Preview */
+
+.swal-profile-pic-preview {
+    max-width: 400px !important;
+    max-width: 400px !important;
+    border-radius: 50%;
+    aspect-ratio: 1/1; 
+    object-fit: cover; 
+    display: block;
+    margin: auto;
+}
+
 /* ****** Responsiveness ***** */
 /* Responsive adjustments only for my notes section */
 @media (min-width: 1201px) and (max-width:1785px) {
@@ -601,5 +614,8 @@
         font-weight: 650;
 
     }
-    
+    .swal-profile-pic-preview {
+        max-width: 280px !important;
+        max-width: 280px !important;
+    }
 }
