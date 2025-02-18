@@ -94,7 +94,33 @@ body {
   align-items: center;
   justify-content: flex-end;
   padding: 10px 15px;
+  gap: 8px;
 }
+.note-view-request-btn{
+  border: none;
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 1;
+  padding: 12px 20px;
+  background: white;
+  border-radius: 25px;
+  outline: none;
+  color: var(--squid-ink);
+  cursor: pointer;
+  transition: background-color 0.1s ease, outline 0.2s ease;
+}
+
+.note-view-request-btn:hover{
+  background-color: #f8f8f8;
+  outline:none;
+  outline: var(--neon-blue) 1px solid;
+}
+.note-view-request-btn:active{
+  background-color: transparent;
+  outline-offset: -2px;
+}
+
+
 .save-note-btn {
   border: none;
   padding: 5px 10px;
@@ -961,6 +987,13 @@ body {
     flex: none;
     padding: 5px 8px;
   }
+  .note-view-request-btn{
+    padding: 8px 12px;
+    font-size: .7rem;
+    border-radius: 25px;
+    font-weight: 650;
+  }
+
   .save-note-btn {
     font-size: 1.2rem;
     padding: 5px 8px;
@@ -1024,6 +1057,12 @@ body {
   .fb__col-2 {
     flex: none;
     padding: 8px 12px;
+  }
+  .note-view-request-btn{
+    padding: 8px 12px;
+    font-size: .8rem;
+    border-radius: 25px;
+    font-weight: 650;
   }
   .save-note-btn {
     font-size: 1.3rem;
