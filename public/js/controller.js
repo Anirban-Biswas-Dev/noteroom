@@ -193,6 +193,21 @@ async function readNoti(noti) {
     } 
 }
 
+document.querySelector(".delete-all-noti-icon").addEventListener('click', async (event) => {
+    try {
+        let container = document.querySelector('.notifications-container')
+        if(container.childElementCount !== 0) {
+            Swal.fire(toastData('success', 'All notifications will be deleted', 3000))
+            container.querySelectorAll('.notification').forEach(noti => noti.remove())
+
+            let response = await fetch('/api/notifications/delete', { method: 'delete' })
+            let data = await response.json()
+            if (data.ok) {
+                await db["notifications"].clear()
+            }
+        }    
+    } catch (error) {}
+})
 
 async function rerunRequestFunction() {
     await updateFromIndexedDB("notifications")

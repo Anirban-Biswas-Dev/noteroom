@@ -13,6 +13,7 @@ import searchRouter from "./search.js";
 import { requestApi } from "./request.js";
 import userApiRouter from "./user.js";
 import { log } from "../../helpers/utils.js";
+import { deleteAllNoti } from "../notificationService.js";
 
 export const router = Router()
 
@@ -120,6 +121,17 @@ export default function apiRouter(io: Server) {
             res.json({ ok: false })
         }
     })    
+
+
+    router.delete('/notifications/delete', async (req, res) => {
+        try {
+            let studentID = req.session["stdid"]
+            let deletedResult = await deleteAllNoti(studentID)
+            res.json({ ok: deletedResult })
+        } catch (error) {
+            res.json({ ok: false })
+        }
+    })
 
     return router
 }
