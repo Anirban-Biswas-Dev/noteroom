@@ -52,11 +52,12 @@
           </div>
         </div>
         <div class="fb__col-2">
-          <button 
-          class="note-view-request-btn db-note-card-request-option"
-      >
-          Request
-      </button>
+          <button class="note-view-request-btn db-note-card-request-option" 
+            data-req-pfp="<%= owner.profile_pic %>" 
+            data-req-dn="<%= owner.displayname %>" 
+            data-req-un="<%= owner.username%>"
+          >Request</button>
+
         <% if (postType !== "quick-post") { %>
           
             <button class="<%= note.isSaved ? "save-note-btn saved" : "save-note-btn" %>" onclick="saveNote(this)"
@@ -111,6 +112,7 @@
     <%- include('../side-panel', { block: 'mbl-ctrl-panel' }) %>
     <%- include('../side-panel', { block: 'right-panel' }) %>
   	<%- include('../side-panel', { block: 'notification-modal' }) %>
+	  <%- include('../side-panel', { block: 'request-modal' }) %>
 
 	  <audio id="notificationAudio" src="/sounds/notification-ping-sound.mp3" preload="auto"></audio>
 
@@ -121,5 +123,6 @@
     <script src="/js/controller.js" defer></script>
     <script src="/js/note-view.js" defer></script>
     <script src="/js/utils.js" defer></script>
+    <script src="/js/request.js" defer></script>
   </body>
 </html>
