@@ -8,41 +8,28 @@ socket.on('update-upvote-dashboard', function (noteDocID, upvoteCount) {
 	}
 })
 
+
+const navigate = performance.getEntriesByType("navigation")[0]
+
 let nextPage = 2
-const now = new Date();
-const baseSeed = Math.floor(now.getTime() / 3600000);
-const seed = (baseSeed * 104729) % 999999937;
+let seed = null
+
+if (navigate?.type === "reload") {
+	const now = new Date();
+	const baseSeed = Math.floor(now.getTime() / 3600000);
+	seed = (baseSeed * 104729) % 999999937;
+
+	const previousSeed = Number(localStorage.getItem('feedNoteLastFetchSeed'))
+	if (!previousSeed || seed !== previousSeed) {
+		db.feedNotes.clear()
+	}
+} else {
+	console.log(`using previous seed`)
+	seed = parseInt(localStorage.getItem('feedNoteLastFetchSeed'))
+}
+
 
 async function get_note(count, page) {
-	function getFeedbackNoteObject(note) {
-		let quickPost = note.postType === "quick-post"
-		let noteData = {
-			noteID: note._id,
-			noteTitle: !quickPost ? note.title : null,
-			description: note.description,
-			createdAt: note.createdAt,
-
-			content1: quickPost || note.content.length > 1 ? note.content[0] : null ,
-			content2: !quickPost ? note.content[1] : null,
-			contentCount: note.content.length,
-
-			ownerID: note.ownerDocID.studentID,
-			profile_pic: note.ownerDocID.profile_pic,
-			ownerDisplayName: note.ownerDocID.displayname,
-			ownerUserName: note.ownerDocID.username,
-			isOwner: note.isOwner,
-
-			feedbackCount: note.feedbackCount,
-			upvoteCount: note.upvoteCount,
-			isSaved: note.isSaved,
-			isUpvoted: note.isUpvoted,
-
-			quickPost: quickPost,
-			pinned: note.pinned
-		}
-		return noteData
-	}
-	
 	let notesList = [];
 
 	try {
@@ -51,8 +38,14 @@ async function get_note(count, page) {
 		
 		if (notes.length !== 0) {
 			notes.forEach(note => {
-				notesList.push(getFeedbackNoteObject(note, true));
+				let feedNote = new FeedNote(note)
+				notesList.push(feedNote);
+
+				let { noteData, contentData, ownerData, interactionData, extras } = feedNote
+				manageDb.add('feedNotes', { noteID: noteData.noteID, noteData, contentData, ownerData, interactionData, extras })
 			});
+
+			localStorage.setItem('feedNoteLastFetchSeed', seed)
 		} else {
 			document.querySelector('#feed-note-loader').style.display = 'none'
 			document.querySelector('#finish-message').style.display = 'flex'
@@ -63,16 +56,22 @@ async function get_note(count, page) {
 	return notesList; 
 }
 
-window.addEventListener('load', async () => {
-	async function initialFeedSetup() {
-		let feedContainer = document.querySelector('.feed-container')
-		let notes = await get_note(7, 1)
-		notes.forEach(note => {
-			manageNotes.addNote(note)
-		})
-		observers.lastNoteObserver().observe(feedContainer.lastElementChild) // Initial tracking of the last note
-	}
+async function initialFeedSetup() {
+	let feedNotes = await manageDb.get('feedNotes')
+	let feedContainer = document.querySelector('.feed-container')
+	let previousSeed = localStorage.getItem('feedNoteLastFetchSeed')
 	
+	if (feedNotes && feedNotes.length !== 0 && parseInt(previousSeed) === seed) {
+		feedNotes.forEach(note => manageNotes.addNote(note) )
+	} else {
+		let notes = await get_note(7, 1)
+		notes.forEach(note => manageNotes.addNote(note) )
+	}
+	observers.lastNoteObserver().observe(feedContainer.lastElementChild)
+}
+initialFeedSetup()
+
+window.addEventListener('load', async () => {	
 	async function getResourcees(collection) {
 		let response = await fetch(collection.api)
 		let objects = (await response.json()).objects
@@ -89,7 +88,6 @@ window.addEventListener('load', async () => {
 		await getResourcees({api: '/api/request/get', store: 'requests'})
 	} finally {
 		document.querySelector('#is-script-loaded').setAttribute('data-loaded', 'true')
-		await initialFeedSetup()
 	}
 })
 
@@ -154,8 +152,11 @@ const observers = {
 }
 
 
-socket.on('note-upload', (noteData) => {
-	manageNotes.addNote(noteData)
+socket.on('note-upload', (feedNote) => {
+	manageNotes.addNote(feedNote)
+
+	let { noteData, contentData, ownerData, interactionData, extras } = feedNote
+	manageDb.add('feedNotes', { noteID: noteData.noteID, noteData, contentData, ownerData, interactionData, extras })
 })
 
 
