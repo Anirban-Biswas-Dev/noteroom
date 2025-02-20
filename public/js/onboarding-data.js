@@ -6,7 +6,11 @@ const districtCollegeData = {
       name: "Notre Dame College",
       logo: "notre-dame-college-logo.png",
     },
-    { id: 103, name: "Dhaka City College", logo: "dhaka-city-college-logo.png" },
+    {
+      id: 103,
+      name: "Dhaka City College",
+      logo: "dhaka-city-college-logo.png",
+    },
     {
       id: 104,
       name: "Viqarunnisa College",
@@ -40,50 +44,105 @@ const districtCollegeData = {
   ],
   Chittagong: [
     {
-      id: 201, 
-      name: "Chittagong College", 
-      logo: "chittagong-college-logo.png" 
+      id: 201,
+      name: "Chittagong College",
+      logo: "chittagong-college-logo.png",
     },
     {
-      id: 205, 
-      name: "Govt. Mohosin College", 
-      logo: "mohosin-college-logo.png" 
-    },
-    { 
-      id: 206, 
-      name: "City College", 
-      logo: "city-college-logo.png" 
-    },
-    { 
-      id: 209, 
-      name: "Women's College", 
-      logo: "women's-college-log.png" 
+      id: 205,
+      name: "Govt. Mohosin College",
+      logo: "mohosin-college-logo.png",
     },
     {
-      id: 203, 
-      name: "Chittagong Govt Model College", 
-      logo: "chittagong-govt-model-college-logo.png" 
-    },
-    { 
-      id: 204, 
-      name: "Bakalia College", 
-      logo: "bakalia-college-logo.png" 
-    },
-    { 
-      id: 207, 
-      name: "Commerce College", 
-      logo: "commerce-college-logo.png" 
-    },
-    { 
-      id: 208, 
-      name: "Cantonment Public College", 
-      logo: "cantonment-public-college-logo.png" 
+      id: 206,
+      name: "City College",
+      logo: "city-college-logo.png",
     },
     {
-      id: 202, 
-      name: "BN College", 
-      logo: "chittagong-bn-college-logo.png" 
-    }
+      id: 209,
+      name: "Women's College",
+      logo: "women's-college-log.png",
+    },
+    {
+      id: 203,
+      name: "Chittagong Govt Model College",
+      logo: "chittagong-govt-model-college-logo.png",
+    },
+    {
+      id: 204,
+      name: "Bakalia College",
+      logo: "bakalia-college-logo.png",
+    },
+    {
+      id: 207,
+      name: "Commerce College",
+      logo: "commerce-college-logo.png",
+    },
+    {
+      id: 208,
+      name: "Cantonment Public College",
+      logo: "cantonment-public-college-logo.png",
+    },
+    {
+      id: 202,
+      name: "BN College",
+      logo: "chittagong-bn-college-logo.png",
+    },
+    {
+      id: 210,
+      name: "Omargani M.E.S College",
+      logo: "omargani-m.e.s-college-logo.jpeg",
+    },
+    {
+      id: 211,
+      name: "Patiya College",
+      logo: "patiya-college-logo.jpeg",
+    },
+    {
+      id: 212,
+      name: "Mohilla Somiti Balika College",
+      logo: "Mohilla-somiti-balika-college.jpg",
+    },
+    {
+      id: 213,
+      name: "Mohila College Chattogram",
+      logo: "mohila-college-chattogram-logo.png",
+    },
+    {
+      id: 214,
+      name: "Kapasgola City Corporation College",
+      logo: "kapasgola-city-corporation-college-logo.jpg",
+    },
+    {
+      id: 215,
+      name: "Kajem Ali College",
+      logo: "kajem-ali-college-logo.jpeg",
+    },
+    {
+      id: 216,
+      name: "Ispahani Public School & College",
+      logo: "ispahani-public-school-&-college-logo.jpg",
+    },
+    {
+      id: 217,
+      name: "Islamia Degree College",
+      logo: "islamia-degree-college-logo.jpg",
+    },
+    {
+      id: 218,
+      name: "Hajera Taju Degree College",
+      logo: "hajera-taju-degree-college-logo.png",
+    },
+    {
+      id: 219,
+      name: "CMP School & College",
+      logo: "cmp-school-&-college-logo.jpg",
+    },
+    {
+      id: 220,
+      name: "CDA Public School & College",
+      logo: "cda-public-school-&-college-logo.png",
+    },
   ],
   Khulna: [
     { id: 301, name: "Khulna BN College", logo: "khulna-bn-college-logo.png" },
@@ -149,7 +208,7 @@ const districtCollegeData = {
       id: 407,
       name: "Govt. Bhola College",
       logo: "bhola-college-logo.png",
-    }
+    },
   ],
   Rajshahi: [
     { id: 501, name: "Rajshahi College", logo: "rajshahi-college-logo.png" },
@@ -215,7 +274,7 @@ const districtCollegeData = {
       id: 607,
       name: "Carmichael College",
       logo: "carmichael-college-logo.png",
-    }
+    },
   ],
   Sylhet: [
     { id: 701, name: "Sylhet College", logo: "syhlet-college-logo.png" },
@@ -229,31 +288,31 @@ const districtCollegeData = {
       name: "Sylhet Cadet College",
       logo: "syhlet-cadet-college-logo.png",
     },
-    { 
+    {
       id: 704,
-      name: "MC College", 
-      logo: "MC-college-logo.png" 
+      name: "MC College",
+      logo: "MC-college-logo.png",
     },
-    { 
+    {
       id: 705,
-      name: "Jalalabad Cantonment College", 
-      logo: "jalalabad-cantonment-college-logo.png" 
+      name: "Jalalabad Cantonment College",
+      logo: "jalalabad-cantonment-college-logo.png",
     },
-    { 
+    {
       id: 706,
-      name: "Sgreemangal College", 
-      logo: "sreemangal-college-logo.png" 
+      name: "Sgreemangal College",
+      logo: "sreemangal-college-logo.png",
     },
-    { 
+    {
       id: 707,
-      name: "Buds Model College", 
-      logo: "buds-model-college-logo.png" 
+      name: "Buds Model College",
+      logo: "buds-model-college-logo.png",
     },
-    { 
+    {
       id: 708,
-      name: "Brindaban College", 
-      logo: "brindaban-college-logo.png" 
-    }
+      name: "Brindaban College",
+      logo: "brindaban-college-logo.png",
+    },
   ],
   Mymensingh: [
     {
@@ -289,32 +348,31 @@ const districtCollegeData = {
   ],
 };
 
-
 const subjectsData = {
   general: [
-      { name: "Bangla", icon: "bangla.png" },
-      { name: "English", icon: "english.png" },
-      { name: "ICT", icon: "ict.png" },
-      { name: "Statistics", icon: "statistics.png" }
+    { name: "Bangla", icon: "bangla.png" },
+    { name: "English", icon: "english.png" },
+    { name: "ICT", icon: "ict.png" },
+    { name: "Statistics", icon: "statistics.png" },
   ],
   science: [
-      { name: "Math", icon: "math.png" },
-      { name: "Physics", icon: "physics.png" },
-      { name: "Chemistry", icon: "chemistry.png" },
-      { name: "Botany", icon: "botany.png" },
-      { name: "Zoology", icon: "zoology.png" }
+    { name: "Math", icon: "math.png" },
+    { name: "Physics", icon: "physics.png" },
+    { name: "Chemistry", icon: "chemistry.png" },
+    { name: "Botany", icon: "botany.png" },
+    { name: "Zoology", icon: "zoology.png" },
   ],
   commerce: [
-      { name: "Management", icon: "management.png" },
-      { name: "Finance", icon: "finance.png" },
-      { name: "Accounting", icon: "accounting.png" },
-      { name: "Economics", icon: "economics.png" } // Shared with arts
+    { name: "Management", icon: "management.png" },
+    { name: "Finance", icon: "finance.png" },
+    { name: "Accounting", icon: "accounting.png" },
+    { name: "Economics", icon: "economics.png" }, // Shared with arts
   ],
   arts: [
-      { name: "Logic", icon: "logic.png" },
-      { name: "Islam History", icon: "islam-history.png" },
-      { name: "History", icon: "history.png" },
-      { name: "Civics", icon: "civics.png" },
-      { name: "Economics", icon: "economics.png" } // Shared with commerce
-  ]
+    { name: "Logic", icon: "logic.png" },
+    { name: "Islam History", icon: "islam-history.png" },
+    { name: "History", icon: "history.png" },
+    { name: "Civics", icon: "civics.png" },
+    { name: "Economics", icon: "economics.png" }, // Shared with commerce
+  ],
 };
