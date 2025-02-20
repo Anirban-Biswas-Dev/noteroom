@@ -14,7 +14,7 @@ const navigate = performance.getEntriesByType("navigation")[0]
 let nextPage = 2
 let seed = null
 
-if (navigate?.type === "reload") {
+if (navigate?.type === "reload" || navigate?.type === "navigate") {
 	const now = new Date();
 	const baseSeed = Math.floor(now.getTime() / 3600000);
 	seed = (baseSeed * 104729) % 999999937;
@@ -24,10 +24,8 @@ if (navigate?.type === "reload") {
 		db.feedNotes.clear()
 	}
 } else {
-	console.log(`using previous seed`)
 	seed = parseInt(localStorage.getItem('feedNoteLastFetchSeed'))
 }
-
 
 async function get_note(count, page) {
 	let notesList = [];
