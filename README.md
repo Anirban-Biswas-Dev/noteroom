@@ -1,16 +1,16 @@
-# 📚 NoteRoom
+# NoteRoom
 
 **NoteRoom** is a collaborative note-sharing platform designed to help students share, organize, and access study materials effortlessly.
 
-## 🚀 Features
+## Features
 
-- 📝 **Note Sharing**: Upload and share notes with classmates.
-- 🔍 **Search & Discover**: Find notes by subjects, tags, or keywords.
-- 👥 **Collaboration**: Work together on shared notes.
-- 🌟 **User Profiles**: Create personalized profiles showcasing your contributions.
-- 🔒 **Secure & Reliable**: Built with secure authentication and data management.
+- **Note Sharing**: Upload and share notes with classmates.
+- **Search & Discover**: Find notes by subjects, tags, or keywords.
+- **Collaboration**: Work together on shared notes.
+- **User Profiles**: Create personalized profiles showcasing your contributions.
+- **Secure & Reliable**: Built with secure authentication and data management.
 
-## 🏗️ Tech Stack
+## Tech Stack
 
 - **Frontend**: HTML, CSS
 - **Backend**: Node.js with Express.js
@@ -82,14 +82,14 @@ Once the server is running, open your web browser and go to:
 ```
 You should now see the NoteRoom homepage!
 
-## 📄 Usage
+## Usage
 
 - **Sign Up/Login** to start sharing notes.
 - **Upload Notes** by navigating to the "Add Note" page.
 - **Explore Notes** via the search bar or browse categories.
 - **Edit or Delete** your own notes anytime.
 
-## 🌿 Contributing
+## Contributing
 
 Contributions are welcome! To get started:
 1. Fork the repository.
@@ -106,10 +106,6 @@ Contributions are welcome! To get started:
    git push origin feature/your-feature-name
    ```
 5. Create a Pull Request.
-
-## 📧 Contact
-
-For any inquiries or support, feel free to reach out to [Jalal Uddin](https://github.com/ju4700).
 
 ---
 
