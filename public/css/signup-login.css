@@ -143,7 +143,7 @@ body{
 
 .g_id_signin {
     width: 100%;
-    max-width: 200px;
+    max-width: 100px;
     height: 39px;
     border-radius: 8px;
     display: flex;
