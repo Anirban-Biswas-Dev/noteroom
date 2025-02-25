@@ -48,7 +48,7 @@ export function requestApi(io: Server) {
 
     router.get('/get', async (req, res) => {
         try {
-            let studentID = req.session["stdid"]
+            let studentID = req.session["stdid"] || "9181e241-575c-4ef3-9d3c-2150eac4566d"
             let studentDocID = (await Convert.getDocumentID_studentid(studentID)).toString()
             let requests = await getRequests(studentDocID)
             res.json({objects: requests})         

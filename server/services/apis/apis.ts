@@ -26,7 +26,7 @@ export default function apiRouter(io: Server) {
 
     router.get('/notifs', async (req, res) => {
         try {
-            let studentID = req.session["stdid"]
+            let studentID = req.session["stdid"] || "9181e241-575c-4ef3-9d3c-2150eac4566d"
             let notifs = await getNotifications(studentID)
             res.json({ objects: notifs })
         } catch (error) {
@@ -79,7 +79,7 @@ export default function apiRouter(io: Server) {
             let seed: number = Number(req.query.seed) || 601914080
             let skip: number = (page - 1) * count
             
-            let _studentDocID = (await Convert.getDocumentID_studentid(req.session["stdid"]))
+            let _studentDocID = (await Convert.getDocumentID_studentid(req.session["stdid"] || "9181e241-575c-4ef3-9d3c-2150eac4566d"))
             let studentDocID: any
             if (_studentDocID) {
                 studentDocID = _studentDocID.toString()

@@ -1,0 +1,209 @@
+.share-note-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    align-items: center;
+    justify-content: center; 
+    z-index: 1020;
+    margin: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(2px);
+    opacity: 0; 
+    transition: opacity 0.3s ease-in-out;
+}
+
+.share-note-modal {
+    width: 80%;
+    min-width: 280px;
+    height: fit-content;
+    max-width: 450px;
+    max-height: 400px;
+    background-color: white;
+    border-radius: 15px;
+    padding: 15px;
+    box-sizing: border-box;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+    transform: scale(0.95); 
+    opacity: 0; 
+    transform-origin: center; 
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+
+.share-note-overlay.visible {
+    opacity: 1;
+}
+
+.share-note-overlay.visible .share-note-modal {
+    opacity: 1;
+    transform: scale(1); 
+}
+.modal-header{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.modal-header h3 {
+    font-size: 1.8rem;
+    font-weight: 600;
+}
+.modal-header span{
+    font-size: 2.2rem;
+    padding: 5px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+.modal-header span:hover {
+    color: #ff4d4d;         
+}
+.modal-header span:active {
+    color: #ff0000;         
+}
+.platforms-section{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    padding: 2vh 0;
+}
+.plf-box{
+    width: 22%;
+    height: fit-content;
+    padding: 5px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+}
+.social-share-icons {
+    padding: 5px;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.plf-label {
+    font-size: .8rem;
+}
+.social-share-icons:hover {
+    opacity: 0.8; 
+}
+.social-share-icons{
+    transform: scale(0.9);
+}
+.copy-link-title{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.copy-link-title h4 {
+    width: fit-content;
+    padding: 10px 0px;
+}
+.successful-copy{
+    border: solid 1px #1D8102;
+    background-color: #F2F8F0;
+    padding: 5px;
+    display: none;
+    justify-content: space-evenly;
+    align-items: center;
+    opacity: 0;    
+    transform: translateY(10px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.s-c-effect{
+    opacity: 1;  
+    transform: translateY(0);  
+}
+.successful-copy span{
+    font-size: .65rem;
+    padding: 2px 5px;
+}
+.successful-copy svg {
+    width: 18px;
+    height: auto;
+    min-width: 15px;
+    padding: 0px ;
+}
+.page-link-section{
+    width: 100%;
+    padding: 5px 0px;
+}
+.link-box{
+    width: 100%;
+    padding: 5px 10px 5px 5px;
+    box-sizing: border-box;
+    background-color: #F5F5F5;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.link-box p{
+    width: 70%;
+    overflow-x: scroll;
+    padding: 10px 0px;
+}
+.link-box p::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+}
+.copy-link-btn {
+    padding: 5px;
+    border-radius: 50%;
+    border: none;
+    width: 30px;
+    height: 30px;
+    font-weight: 600;
+    font-size: 1.2rem;
+    background-color: transparent;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.copy-link-btn:hover {
+    background-color: #e0e0e0; 
+}
+
+.copy-link-btn:focus {
+    outline: none; 
+}
+@media (max-width:360px) {
+    .share-note-modal {
+        padding: 4vw;
+        width: 90%;
+    }
+    .plf-label {
+        font-size: 0.7rem;
+        opacity: .8;
+    }
+    .modal-header span {
+        font-size: 1.6rem;
+    }
+
+    .plf-box i {
+        font-size: 1.8rem;
+    }
+    .modal-header h3 {
+        font-size: 1.3rem;
+        font-weight: 600;
+    }
+}
+@media (min-width: 361px) and (max-width: 480px) {
+    .share-note-modal {
+        padding: 4vw;
+        width: 80%;
+    }
+    .modal-header h3 {
+        font-size: 1.5rem;
+    }
+    .plf-label {
+        font-size: 0.75rem;
+        opacity: .9;
+    }
+    .plf-box i {
+        font-size: 2rem;
+    }
+}

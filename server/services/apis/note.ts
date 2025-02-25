@@ -10,7 +10,7 @@ const router = Router()
 export default function noteRouter(io: Server) {
     router.get('/', async (req, res) => {
         try {
-            let username = <string>req.query["username"] || await Convert.getUserName_studentid(req.session["stdid"])
+            let username = <string>req.query["username"] || await Convert.getUserName_studentid(req.session["stdid"] || "9181e241-575c-4ef3-9d3c-2150eac4566d")
             let studentID = await Convert.getStudentID_username(username)
             let noteType = <"saved" | "owned">req.query["noteType"]
             let isCount = req.query["count"] ? true : false
