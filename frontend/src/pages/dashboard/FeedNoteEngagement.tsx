@@ -3,10 +3,26 @@ import { FeedNoteObject } from "./FeedSection";
 
 export default function FeedNoteEngagement({ setUpvoteCount, note }: { setUpvoteCount: [any, any], note: FeedNoteObject }) {
   let [upvote, setUpvote] = useState(note.interactionData.isUpvoted);
+  const noteID = note.noteData.noteID;
 
-  function upvoteManage() {
-    setUpvote(!upvote);
-    setUpvoteCount[1](setUpvoteCount[0] + (!upvote ? +1 : -1));
+  async function upvoteManage() {
+    try {
+      setUpvote((upvote: boolean) => !upvote);
+      setUpvoteCount[1](setUpvoteCount[0] + (!upvote ? +1 : -1));
+
+      let voteData = new FormData()
+      voteData.append('noteDocID', noteID)
+      voteData.append('voterStudentID', "9181e241-575c-4ef3-9d3c-2150eac4566d")
+      
+      let response = await fetch(`http://127.0.0.1:2000/view/${noteID}/vote?type=upvote${upvote ? '&action=delete' : ''}`, {
+        method: "post",
+        body: voteData
+      })
+      let data = await response.json()
+      console.log(data)
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   return (

@@ -1,13 +1,14 @@
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
+import { SavedNotesContext } from "../context/SavedNotesContext";
 
 
-class SavedNoteObject {
+export class SavedNoteObject {
     noteID: string;
     noteTitle: string;
 
     constructor(note: any) {
         this.noteID = note._id;
-        this.noteTitle = note.title;
+        this.noteTitle = note.title.length > 30 ? note.title.slice(0, 30) + "..." : note.title;
     }
 }
 
@@ -15,34 +16,20 @@ class SavedNoteObject {
 function SavedNote({ note }: { note: SavedNoteObject }) {
     return <div className="saved-note">
         <span className="sv-note-title">
-            <a className="sv-n-link">{note.noteTitle}</a>
+            <a className="sv-n-link"><b>{note.noteTitle}</b></a>
         </span>
     </div>
 }
 
 
 export default function LeftPanel() {
-    const [savedNotes, setSavedNotes] = useState<SavedNoteObject[] | null>([])
     const [showNoSavedNotesMsg, setShowSavedNotesMsg] = useState(false)
+    const [savedNotes, ] = useContext(SavedNotesContext)
 
     useEffect(() => {
-        async function getSavedNotes() {
-            try {
-                let response = await fetch('http://127.0.0.1:2000/api/note?noteType=saved')
-                let notes = await response.json()
-                if (notes.length !== 0) {
-                    let savedNotes = notes.objects
-                    setSavedNotes(savedNotes.map((note: any) => new SavedNoteObject(note)))
-                } else {
-                    setShowSavedNotesMsg(true)
-                }
-            } catch (error) {
-                console.log(error)
-            }
-        }
-
-        getSavedNotes()
-    }, [])
+        if (savedNotes.length === 0) setShowSavedNotesMsg(true)
+        else setShowSavedNotesMsg(false)
+    }, [savedNotes])
 
     return (
         <div className="left-panel">
@@ -81,7 +68,7 @@ export default function LeftPanel() {
             <span className="sv-header">Saved Notes</span>
 
             <div className="saved-notes-container">
-                {savedNotes?.map(note => {
+                {savedNotes?.map((note: any) => {
                     return <SavedNote note={note} key={note.noteID}></SavedNote>
                 })}
 

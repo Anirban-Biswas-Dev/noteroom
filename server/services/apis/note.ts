@@ -40,13 +40,16 @@ export default function noteRouter(io: Server) {
         try {
             let action = req.query["action"]
             let noteDocID = req.body["noteDocID"]
-            let studentDocID = (await Convert.getDocumentID_studentid(req.session["stdid"])).toString()
+            let studentDocID = (await Convert.getDocumentID_studentid(req.session["stdid"] || "9181e241-575c-4ef3-9d3c-2150eac4566d")).toString()
+            console.log([noteDocID, studentDocID, action])
     
             if (action === 'save') {
                 let result = await addSaveNote({ studentDocID, noteDocID })
+                console.log(`saved`)
                 res.json({ ok: result.ok, count: result.count, savedNote: result.savedNote })
             } else {
                 let result = await deleteSavedNote({ studentDocID, noteDocID })
+                console.log(`deleted`)
                 res.json({ ok: result.ok, count: result.count })
             }
         } catch (error) {

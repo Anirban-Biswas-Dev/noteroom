@@ -1,16 +1,16 @@
-import { createContext } from "react";
 import { FeedSection, QuickPost, DashBoard } from "./pages/dashboard/index";
 import { LeftPanel, NoteSearchBar, RightPanel } from "./partials/index";
-import useProfile from "./customHooks/useProfile";
+import { SavedNotesProvider } from "./context/SavedNotesContext";
+import { UserProfileProvider } from "./context/UserProfileContext";
 
-export const ProfileContext = createContext<any>({})
 
-function App() {
-  const profile = useProfile()
-	
+function App() {	
   return (
-    <ProfileContext.Provider value={profile}>
-		<LeftPanel />
+    <UserProfileProvider>
+
+		<SavedNotesProvider>
+			<LeftPanel />
+
 			<NoteSearchBar />
 
 			<DashBoard>
@@ -18,9 +18,10 @@ function App() {
 				<FeedSection />
 			</DashBoard>
 
-		<RightPanel />
+			<RightPanel />
+		</SavedNotesProvider>
 
-    </ProfileContext.Provider>
+    </UserProfileProvider>
   )
 }
 

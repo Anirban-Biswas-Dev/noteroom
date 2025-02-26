@@ -1,10 +1,10 @@
 import { useContext, useState } from "react";
 import { NotificationModal, Requests } from ".";
-import { ProfileContext } from "../App";
+import { UserProfileContext } from "../context/UserProfileContext";
 
 export default function RightPanel() {
     const [showNotiModal, setShowNotiModal] = useState(false)
-    const { profile } = useContext(ProfileContext)
+    const [profile, ] = useContext(UserProfileContext)
 
     
     return (

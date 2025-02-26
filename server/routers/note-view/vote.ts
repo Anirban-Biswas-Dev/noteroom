@@ -88,6 +88,7 @@ export function voteRouter(io: Server) {
                 res.json({ok: true})
                     
             } else {
+                console.log(`I got called`)
                 let upvoteCount = await deleteVote({ noteDocID, voterStudentDocID })
                 io.emit('update-upvote-dashboard', noteDocID, upvoteCount)
                 io.to(noteDocID).emit('update-upvote', upvoteCount)

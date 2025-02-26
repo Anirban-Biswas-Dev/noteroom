@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react"
 
-export default function ShareModal({ showState }: { showState: [any, any] }) {
+export default function ShareModal({ showState, noteLink }: { showState: [any, any], noteLink: string }) {
     const [showCopyMsg, setShowCopyMsg] = useState(false)
-    const pageLink = window.location.href
 
     async function copyLink() {
-        await navigator.clipboard.writeText(pageLink)
-        setShowCopyMsg(true)
+        try {
+            await navigator.clipboard.writeText(noteLink)
+            setShowCopyMsg(true)
+        } catch (error) {}
     }
 
     useEffect(() => {
@@ -68,7 +69,7 @@ export default function ShareModal({ showState }: { showState: [any, any] }) {
 
                 <div className="page-link-section">
                     <div className="link-box">
-                        <p className="_link_">{pageLink}</p>
+                        <p className="_link_">{noteLink}</p>
                         <button className="copy-link-btn" onClick={() => copyLink()}>
                         <svg width="20" height="20" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M20.832 62.5H16.6654C14.4552 62.5 12.3356 61.622 10.7728 60.0592C9.21 58.4964 8.33203 56.3768 8.33203 54.1666V16.6666C8.33203 14.4565 9.21 12.3369 10.7728 10.7741C12.3356 9.21129 14.4552 8.33331 16.6654 8.33331H54.1654C56.3755 8.33331 58.4951 9.21129 60.0579 10.7741C61.6207 12.3369 62.4987 14.4565 62.4987 16.6666V20.8333M45.832 37.5H83.332C87.9344 37.5 91.6654 41.2309 91.6654 45.8333V83.3333C91.6654 87.9357 87.9344 91.6666 83.332 91.6666H45.832C41.2297 91.6666 37.4987 87.9357 37.4987 83.3333V45.8333C37.4987 41.2309 41.2297 37.5 45.832 37.5Z" stroke="#1E1E1E" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>

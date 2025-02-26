@@ -21,5 +21,5 @@ export default function useProfile() {
         getProfile()
     }, [])
 
-    return { profile }
+    return [profile, setProfile]
 }
