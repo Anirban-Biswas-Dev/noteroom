@@ -120,6 +120,7 @@ body {
   outline-offset: -2px;
 }
 
+
 .save-note-btn {
   border: none;
   padding: 5px 10px;
@@ -180,7 +181,7 @@ body {
   position: absolute;
   width: fit-content;
   height: auto;
-  top: 90%;
+  top: 95%;
   right: 50%;
   background-color: #f2f4f7a8;
   font-weight: bold;
