@@ -4,7 +4,7 @@ import firebaseAdmin from 'firebase-admin'; // Default import for firebase-admin
 import { IManageUserNote } from '../types/noteService.types.js';
 import { log } from '../helpers/utils.js';
 
-config({ path: join(__dirname, '../.env') });
+config({ path: join(__dirname, '../../server/.env') }); //Updated
 
 const serviceAccount = JSON.parse(process.env.FIREBASE_CLOUD_CRED!);
 const bucketName = process.env.NOTEROOM_PRODUCTION_FIREBASE_BUCKET
