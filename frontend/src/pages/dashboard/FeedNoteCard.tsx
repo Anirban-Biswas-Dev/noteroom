@@ -168,9 +168,9 @@ function FeedNoteThirdRow({ note }: { note: FeedNoteObject }) {
   );
 }
 
-export default function FeedNote({ note }: { note: FeedNoteObject }) {
+export default function FeedNote({ note, ref }: { note: FeedNoteObject, ref? :any }) {
   return (
-    <div className="feed-note-card">
+    <div className="feed-note-card" ref={ref} id={note.noteData.noteID}>
       <FeedNoteFirstRow note={note}></FeedNoteFirstRow>
       <FeedNoteSecondRow note={note}></FeedNoteSecondRow>
       <FeedNoteThirdRow note={note}></FeedNoteThirdRow>
