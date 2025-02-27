@@ -500,7 +500,6 @@ function enlargeImage(imageSrc, noteId, initialIndex) {
 
   document.body.appendChild(modal);
 
-  // Highlight the logo
   const logo = document.querySelector('.logo'); // Adjust selector if needed
   if (logo) logo.classList.add('highlight-logo');
 
