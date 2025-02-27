@@ -1276,37 +1276,103 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.8);
+  z-index: 2000; /* Above all content */
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+}
+
+.image-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(5px);
+  z-index: 1; /* Below modal content */
+  transition: opacity 0.3s ease;
 }
 
 .image-modal-content {
   position: relative;
-  max-width: 100%;
-  max-height: 90vh;
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 2; /* Above backdrop */
+  padding: 20px; /* Space around the image */
 }
 
+/* Default: Larger screens (height-driven) */
 .enlarged-image {
-  max-width: 100%;
-  max-height: 90vh;
+  max-height: calc(100vh - 80px); /* Full height minus padding and buttons */
+  max-width: calc(100vw - 80px); /* Limit width to avoid overflow */
   object-fit: contain;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
+/* Modal Carousel Controls - Default (larger screens) */
+.modal-carousel-control {
+  position: absolute;
+  top: 50%;
+  border: none;
+  background: #F8F8F8;
+  box-shadow: 0px 2px 1.5px rgba(0, 0, 0, 0.25);
+  border-radius: 10px;
+  transform: translateY(-50%);
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  z-index: 3;
+}
+
+.modal-carousel-control .carousel-control-icon {
+  width: 20px;
+  height: auto;
+}
+
+.modal-carousel-control.prev {
+  left: -60px;
+}
+
+.modal-carousel-control.next {
+  right: -60px;
+}
+
 .image-modal-buttons {
   position: absolute;
-  bottom: -10px;
+  bottom: -0px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   gap: 10px;
+  z-index: 3;
+}
+
+/* Smaller screens (width-driven) */
+@media (max-width: 768px) {
+  .image-modal-content {
+    padding: 15px; /* Slightly less padding on small screens */
+  }
+
+  .enlarged-image {
+    max-width: calc(100vw - 30px); /* Full width minus padding */
+    max-height: calc(100vh - 60px); /* Limit height to avoid overflow */
+    object-fit: contain;
+  }
+
+  .modal-carousel-control {
+    position: static; /* Move into flex flow */
+    transform: none; /* Remove vertical centering */
+  }
+
+  .image-modal-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
 }
 
 .image-modal-download {
@@ -1345,6 +1411,7 @@ body {
   align-items: center;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   transition: background-color 0.2s ease;
+  z-index: 3;
 }
 
 .image-modal-close:hover {
@@ -1355,40 +1422,23 @@ body {
   background-color: #e0e0e0;
 }
 
-/* Modal Carousel Controls */
-.modal-carousel-control {
-  position: absolute;
-  top: 50%;
-  border: none;
-  background: #F8F8F8;
-  box-shadow: 0px 2px 1.5px rgba(0, 0, 0, 0.25);
-  border-radius: 10px;
-  transform: translateY(-50%);
-  padding: 8px 12px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  z-index: 1001;
-}
-
-.modal-carousel-control .carousel-control-icon {
-  width: 20px;
-  height: auto;
-}
-
-.modal-carousel-control.prev {
-  left: 20px;
-}
-
-.modal-carousel-control.next {
-  right: 20px;
-}
-
 .modal-carousel-control:hover {
   background-color: #f2f2f2;
 }
 
 .modal-carousel-control:active {
   background-color: #e0e0e0;
+}
+
+/* Logo Styles (adjust selector as needed) */
+.logo {
+  position: relative;
+  z-index: 3000; /* Above modal backdrop */
+  transition: box-shadow 0.3s ease;
+}
+
+.logo.highlight-logo {
+  box-shadow: 0 0 10px 5px rgba(255, 255, 255, 0.8); /* Glow effect */
 }
 
 /* Make carousel images clickable */

@@ -477,6 +477,11 @@ function enlargeImage(imageSrc, noteId, initialIndex) {
     <div class="image-modal-content">
       <img src="${imageSrc}" class="enlarged-image" alt="Enlarged Note Image" />
       <div class="image-modal-buttons">
+        <button class="modal-carousel-control prev">
+          <svg class="carousel-control-icon" width="68" height="68" viewBox="0 0 68 68" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M16.6029 29.8333H67.332V38.1666H16.6029L39.9362 61.5L33.9987 67.3333L0.665367 34L33.9987 0.666649L39.9362 6.49998L16.6029 29.8333Z" fill="#1D1B20"/>
+          </svg>
+        </button>
         <button class="image-modal-download">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M12 16V4M12 16L8 12M12 16L16 12M20 20H4" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -484,17 +489,12 @@ function enlargeImage(imageSrc, noteId, initialIndex) {
           Download
         </button>
         <button class="image-modal-close">×</button>
+        <button class="modal-carousel-control next">
+          <svg class="carousel-control-icon" width="68" height="68" viewBox="0 0 68 68" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M51.3971 38.1667H0.667969V29.8334H51.3971L28.0638 6.50002L34.0013 0.666687L67.3346 34L34.0013 67.3334L28.0638 61.5L51.3971 38.1667Z" fill="#1D1B20"/>
+          </svg>
+        </button>
       </div>
-      <button class="modal-carousel-control prev">
-        <svg class="carousel-control-icon" width="68" height="68" viewBox="0 0 68 68" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M16.6029 29.8333H67.332V38.1666H16.6029L39.9362 61.5L33.9987 67.3333L0.665367 34L33.9987 0.666649L39.9362 6.49998L16.6029 29.8333Z" fill="#1D1B20"/>
-        </svg>
-      </button>
-      <button class="modal-carousel-control next">
-        <svg class="carousel-control-icon" width="68" height="68" viewBox="0 0 68 68" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M51.3971 38.1667H0.667969V29.8334H51.3971L28.0638 6.50002L34.0013 0.666687L67.3346 34L34.0013 67.3334L28.0638 61.5L51.3971 38.1667Z" fill="#1D1B20"/>
-        </svg>
-      </button>
     </div>
   `;
 
