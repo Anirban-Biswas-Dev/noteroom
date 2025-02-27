@@ -1,14 +1,12 @@
-import { useContext, useState } from "react";
-import { NotificationModal, Requests } from ".";
+import { useContext } from "react";
+import { Requests } from ".";
 import { UserProfileContext } from "../context/UserProfileContext";
 
-export default function RightPanel() {
-    const [showNotiModal, setShowNotiModal] = useState(false)
+export default function RightPanel({ notiModalState, rightPanelState }: { notiModalState: [any, any ], rightPanelState: boolean }) {
     const [profile, ] = useContext(UserProfileContext)
 
-    
     return (
-        <div className="right-panel">
+        <div className={"right-panel " + (rightPanelState ? "show" : "")}>
             <div className="right-panel-header">
                 <svg className="search-prfl-pc" width="45" height="46" viewBox="0 0 54 55" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M46.0139 46.4844L53 53.4992" stroke="#07192D" strokeWidth="2.48493" />
@@ -21,7 +19,7 @@ export default function RightPanel() {
                     <path d="M38.5417 91.6667L36.875 78.3334C35.9722 77.9862 35.1215 77.5695 34.3229 77.0834C33.5243 76.5973 32.7431 76.0764 31.9792 75.5209L19.5833 80.7292L8.125 60.9375L18.8542 52.8125C18.7847 52.3264 18.75 51.8577 18.75 51.4063V48.5938C18.75 48.1424 18.7847 47.6737 18.8542 47.1875L8.125 39.0625L19.5833 19.2709L31.9792 24.4792C32.7431 23.9237 33.5417 23.4028 34.375 22.9167C35.2083 22.4306 36.0417 22.0139 36.875 21.6667L38.5417 8.33337H61.4583L63.125 21.6667C64.0278 22.0139 64.8785 22.4306 65.6771 22.9167C66.4757 23.4028 67.2569 23.9237 68.0208 24.4792L80.4167 19.2709L91.875 39.0625L81.1458 47.1875C81.2153 47.6737 81.25 48.1424 81.25 48.5938V51.4063C81.25 51.8577 81.1805 52.3264 81.0417 52.8125L91.7708 60.9375L80.3125 80.7292L68.0208 75.5209C67.2569 76.0764 66.4583 76.5973 65.625 77.0834C64.7917 77.5695 63.9583 77.9862 63.125 78.3334L61.4583 91.6667H38.5417ZM50.2083 64.5834C54.2361 64.5834 57.6736 63.1598 60.5208 60.3125C63.3681 57.4653 64.7917 54.0278 64.7917 50C64.7917 45.9723 63.3681 42.5348 60.5208 39.6875C57.6736 36.8403 54.2361 35.4167 50.2083 35.4167C46.1111 35.4167 42.6562 36.8403 39.8438 39.6875C37.0312 42.5348 35.625 45.9723 35.625 50C35.625 54.0278 37.0312 57.4653 39.8438 60.3125C42.6562 63.1598 46.1111 64.5834 50.2083 64.5834Z" fill="#1D1B20"/>
                 </svg>
                     
-                <svg className="pc-nft-btn" width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" onClick={() => setShowNotiModal(!showNotiModal)}>
+                <svg className="pc-nft-btn"  onClick={() => notiModalState[1](!notiModalState[0])} width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
                     <rect width="40" height="40" fill="url(#pattern0_3781_4906)"/>
                     <defs>
                     <pattern id="pattern0_3781_4906" patternContentUnits="objectBoundingBox" width="1" height="1">
@@ -114,8 +112,6 @@ export default function RightPanel() {
             
                 </div>
             </div>
-
-            <NotificationModal notiState={[showNotiModal, setShowNotiModal]}></NotificationModal>
         </div>
     )
 }

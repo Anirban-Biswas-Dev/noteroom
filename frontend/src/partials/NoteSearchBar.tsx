@@ -1,4 +1,4 @@
-export default function NoteSearchBar() {
+export default function NoteSearchBar({ notiModalState }: { notiModalState: [any, any ] }) {
     return (
         <div className="search-container">
             <div className="search-bar-box">
@@ -11,7 +11,7 @@ export default function NoteSearchBar() {
                     </button>
                 </div>
                 <div className="mbl-notification-elements">
-                    <svg className="mobile-nft-btn" width="40" height="40" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
+                    <svg className="mobile-nft-btn" onClick={() => notiModalState[1](!notiModalState[0])} width="40" height="40" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
                         <rect width="30" height="30" fill="url(#pattern0_1165_1252)" />
                         <defs>
                         <pattern id="pattern0_1165_1252" patternContentUnits="objectBoundingBox" width="1" height="1">
