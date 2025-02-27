@@ -9,9 +9,11 @@ feedbackAddedObserver.observe(document.querySelector('.cmnts-list'), { childList
 let splitted = window.location.pathname.split('/').filter(c => c !== '')
 const noteDocID = splitted[splitted.length - 1]
 
+let noteImages = [];
+
 window.addEventListener('load', async () => {
   try {
-    document.querySelector('#editor').setAttribute('data-disabled', 'true') // No feedbacks can be given until the comments are fetched
+    document.querySelector('#editor').setAttribute('data-disabled', 'true')
     let postType = document.querySelector('#postType').getAttribute('data-posttype')
     
     async function getNoteImages() {
@@ -21,7 +23,7 @@ window.addEventListener('load', async () => {
         let template = `
           <div class="carousel-content">
             <span class="note-page-number">${index + 1}</span>
-            <img src="${source || "/images/placeholders/unavailable_content.png"}" class="image-links"/>
+            <img src="${source || "/images/placeholders/unavailable_content.png"}" class="image-links" onclick="enlargeImage('${source}', '${noteDocID}', ${index})"/>
           </div>
         `;
     
@@ -32,11 +34,11 @@ window.addEventListener('load', async () => {
       };
     
       let response = await fetch(`/view/${noteDocID}/images`);
-      let images = await response.json();
+      noteImages = await response.json();
       document.querySelector('#note-image-loader').remove();
     
-      if (images.length !== 0) {
-        images.forEach((source, index) => {
+      if (noteImages.length !== 0) {
+        noteImages.forEach((source, index) => {
           imageContainer.appendChild(imageSliderElement(source, index));
         });
     
@@ -48,7 +50,6 @@ window.addEventListener('load', async () => {
       }
     }
     
-  
     async function getNoteComments() {
       let response = await fetch(`/view/${noteDocID}/comments`)
       let comments = await response.json()
@@ -65,22 +66,18 @@ window.addEventListener('load', async () => {
       document.querySelector('#editor').removeAttribute('data-disabled')
     }
     
-    
     await getNoteImages()
     
     let commentFetchObserver = new IntersectionObserver(entries => {
       entries.forEach(async entry => {
         if (entry.isIntersecting) {
           await getNoteComments()
-          adjustThreadLineHeights(); // Adjust thread height again
+          adjustThreadLineHeights();
           commentFetchObserver.unobserve(document.querySelector('.cmnts-list'))
         }
       })
-    }, {
-      rootMargin: '100px'
-    })
+    }, { rootMargin: '100px' })
     commentFetchObserver.observe(document.querySelector('.cmnts-list'))
-  
   
     const slides = document.querySelectorAll(".carousel-slide");
     const nextButton = document.querySelector(".next");
@@ -102,7 +99,6 @@ window.addEventListener('load', async () => {
       showSlide(currentIndex);
     });
     
-    // Add keyboard event listener
     document.addEventListener("keydown", (event) => {
       if (event.key === "ArrowRight") {
         nextButton.click();
@@ -111,84 +107,73 @@ window.addEventListener('load', async () => {
       }
     });
     
-  
-    // Initially show the first slide
     showSlide(currentIndex);
   } catch (error) {}
 })
 
-
 socket.emit("join-room", noteDocID);
 
-try {
-} catch (error) {}
-
-//* Broadcasted feedback handler. The extented-feedback is broadcasted
 socket.on('add-feedback', (feedbackData) => {
   console.log(`Got that`)
-	try {
+  try {
     console.log(feedbackData)
-		document.querySelector('div.main-cmnt-container[data-temporary=true]')?.remove()  
-		manageNotes.addFeedback(feedbackData)
-	} catch (error) {
+    document.querySelector('div.main-cmnt-container[data-temporary=true]')?.remove()  
+    manageNotes.addFeedback(feedbackData)
+  } catch (error) {
     console.log(`Error`)
     console.log(error)
   }
 })
 
-
 socket.on('add-reply', (replyData) => {
-	try {
-		document.querySelector('div.thread-msg[data-temporary=true]')?.remove()
-		manageNotes.addReply(document.querySelector(`#thread-${replyData.parentFeedbackDocID._id}`), replyData)
-	} catch (error) {}
+  try {
+    document.querySelector('div.thread-msg[data-temporary=true]')?.remove()
+    manageNotes.addReply(document.querySelector(`#thread-${replyData.parentFeedbackDocID._id}`), replyData)
+  } catch (error) {}
 })
 
 socket.on('update-upvote', function (upvoteCount) {
-	document.querySelector('.uv-count').innerHTML = parseInt(upvoteCount)
+  document.querySelector('.uv-count').innerHTML = parseInt(upvoteCount)
 })
-
-
 
 const voterStudentID = Cookies.get("studentID")
 
 async function upvoteComment(voteContainer) {
-	if (voteContainer.getAttribute('data-disabled')) return
+  if (voteContainer.getAttribute('data-disabled')) return
 
-	voteContainer.setAttribute('data-disabled', 'true')
+  voteContainer.setAttribute('data-disabled', 'true')
 
-	const noteDocID = voteContainer.getAttribute('data-noteid')
-	const isUpvoted = voteContainer.getAttribute('data-isupvoted') === "true" ? true : false
-	const feedbackDocID = voteContainer.getAttribute('data-feedbackid')
+  const noteDocID = voteContainer.getAttribute('data-noteid')
+  const isUpvoted = voteContainer.getAttribute('data-isupvoted') === "true" ? true : false
+  const feedbackDocID = voteContainer.getAttribute('data-feedbackid')
 
-	let likeCount = voteContainer.querySelector('.like-count')
-	const LIKE_SVG = `<path class='like-icon-fill' d='M28.4938 47.5373C28.4938 47.5373 28.4863 108.91 28.493 110.455C28.4996 112 84.4861 110.998 88.993 110.998C93.5 110.998 108.994 88.5431 109.494 70.581C109.994 52.6188 107.998 49.9985 107.498 49.9985L66 49.9982C78.4744 33.916 62.958 -7.56607 57.9956 8.99958C53.0332 25.5652 49.9956 32.4996 49.9956 32.4996L28.4938 47.5373Z' fill='black'/>`
-	const DISLIKE_SVG = `<path d="M107.498 49.9985C107.998 49.9985 109.994 52.6188 109.494 70.581C108.994 88.5431 93.5 110.998 88.993 110.998C84.4861 110.998 28.4996 112 28.493 110.455C28.4863 108.91 28.4938 47.5373 28.4938 47.5373L49.9956 32.4996C49.9956 32.4996 53.0332 25.5652 57.9956 8.99958C62.958 -7.56607 78.4744 33.916 66 49.9982M107.498 49.9985C106.998 49.9985 66 49.9982 66 49.9982M107.498 49.9985L66 49.9982" stroke="#606770" stroke-width="10" stroke-linecap="round"/>`
+  let likeCount = voteContainer.querySelector('.like-count')
+  const LIKE_SVG = `<path class='like-icon-fill' d='M28.4938 47.5373C28.4938 47.5373 28.4863 108.91 28.493 110.455C28.4996 112 84.4861 110.998 88.993 110.998C93.5 110.998 108.994 88.5431 109.494 70.581C109.994 52.6188 107.998 49.9985 107.498 49.9985L66 49.9982C78.4744 33.916 62.958 -7.56607 57.9956 8.99958C53.0332 25.5652 49.9956 32.4996 49.9956 32.4996L28.4938 47.5373Z' fill='black'/>`
+  const DISLIKE_SVG = `<path d="M107.498 49.9985C107.998 49.9985 109.994 52.6188 109.494 70.581C108.994 88.5431 93.5 110.998 88.993 110.998C84.4861 110.998 28.4996 112 28.493 110.455C28.4863 108.91 28.4938 47.5373 28.4938 47.5373L49.9956 32.4996C49.9956 32.4996 53.0332 25.5652 57.9956 8.99958C62.958 -7.56607 78.4744 33.916 66 49.9982M107.498 49.9985C106.998 49.9985 66 49.9982 66 49.9982M107.498 49.9985L66 49.9982" stroke="#606770" stroke-width="10" stroke-linecap="round"/>`
 
-	function replaceLikeSvg(svg, increment) {
-		voteContainer.querySelector('.like-icon').innerHTML = svg
-		voteContainer.setAttribute('data-isupvoted', !isUpvoted)
-		voteContainer.querySelector('.like-count').innerHTML = parseInt(likeCount.innerHTML) + (increment ? 1 : -1)
-	}
+  function replaceLikeSvg(svg, increment) {
+    voteContainer.querySelector('.like-icon').innerHTML = svg
+    voteContainer.setAttribute('data-isupvoted', !isUpvoted)
+    voteContainer.querySelector('.like-count').innerHTML = parseInt(likeCount.innerHTML) + (increment ? 1 : -1)
+  }
 
-	let url = `/view/${noteDocID}/vote/feedback?type=upvote${isUpvoted ? '&action=delete' : ''}`
-	replaceLikeSvg(isUpvoted ? DISLIKE_SVG : LIKE_SVG, !isUpvoted)
+  let url = `/view/${noteDocID}/vote/feedback?type=upvote${isUpvoted ? '&action=delete' : ''}`
+  replaceLikeSvg(isUpvoted ? DISLIKE_SVG : LIKE_SVG, !isUpvoted)
 
-	let voteData = new FormData()
-	voteData.append('noteDocID', noteDocID)
-	voteData.append('voterStudentID', voterStudentID)
-	voteData.append('feedbackDocID', feedbackDocID)
+  let voteData = new FormData()
+  voteData.append('noteDocID', noteDocID)
+  voteData.append('voterStudentID', voterStudentID)
+  voteData.append('feedbackDocID', feedbackDocID)
 
-	let response = await fetch(url, {
-		method: 'post',
-		body: voteData
-	})
-	let data = await response.json()
-	if (data.ok) {
-		voteContainer.removeAttribute('data-disabled')
-	}
+  let response = await fetch(url, {
+    method: 'post',
+    body: voteData
+  })
+  let data = await response.json()
+  if (data.ok) {
+    voteContainer.removeAttribute('data-disabled')
+  }
 }
-
 
 function formatDate(date) {
   const formatter = new Intl.DateTimeFormat('en-US', {
@@ -212,54 +197,23 @@ if (kickUser) {
   }, 3000)
 }
 
-// Custom smooth scrolling function
-/*
-PROCESS EXPLANATION:
-
-1. When the DOM is fully loaded, the script waits for the hash part of the URL (anything after `#`).
-2. If a hash is found, the script extracts the part after `#` and checks if there's an element on the page with the same ID.
-3. If the ID corresponds to an element (either a generic section like "#feedbacks" or a dynamic ID), it triggers a smooth scroll animation.
-4. The smooth scroll smoothly moves the page to the target element over a specified duration.
-5. After the scroll is complete, a highlight effect is applied to the element.
-6. For "#feedbacks", the element is highlighted with a grayish shade (`#F0F0F0`).
-7. For other dynamically generated IDs, the element is highlighted with a yellow shade (`#FFD700`).
-8. The highlight is done through a subtle blinking effect, where the element changes its background color a few times before returning to the original color.
-
-*/
-
 document.addEventListener("DOMContentLoaded", function () {
-  // 1
-  const hash = window.location.hash; // 2
-
+  const hash = window.location.hash;
   if (hash) {
-    const rawHash = hash.substring(1); // 2
-
-    const section = document.getElementById(rawHash); // 3
-
+    const rawHash = hash.substring(1);
+    const section = document.getElementById(rawHash);
     if (section) {
       if (rawHash === "feedbacks") {
-        // 6
-        smoothScrollTo(section, 1000, 100, () =>
-          highlightSection(section, "#F0F0F0")
-        );
+        smoothScrollTo(section, 1000, 100, () => highlightSection(section, "#F0F0F0"));
       } else {
-        // 7
-        smoothScrollTo(section, 1000, 100, () =>
-          highlightSection(section, "#fffdaf")
-        );
+        smoothScrollTo(section, 1000, 100, () => highlightSection(section, "#fffdaf"));
       }
     }
   }
 });
 
-// Function for smooth scrolling animation
-function smoothScrollTo(
-  element,
-  duration = 1000,
-  offset = 100,
-  callback = null
-) {
-  const targetPosition = element.getBoundingClientRect().top - offset; // 4
+function smoothScrollTo(element, duration = 1000, offset = 100, callback = null) {
+  const targetPosition = element.getBoundingClientRect().top - offset;
   const startPosition = window.pageYOffset;
   const distance = targetPosition;
   let startTime = null;
@@ -269,11 +223,10 @@ function smoothScrollTo(
     const timeElapsed = currentTime - startTime;
     const run = easeInOutQuad(timeElapsed, startPosition, distance, duration);
     window.scrollTo(0, run);
-
     if (timeElapsed < duration) {
       requestAnimationFrame(animationScroll);
     } else {
-      if (callback) callback(); // Step 5:
+      if (callback) callback();
     }
   }
 
@@ -287,25 +240,16 @@ function smoothScrollTo(
   requestAnimationFrame(animationScroll);
 }
 
-// Function to highlight the section with a blink effect
 function highlightSection(element, highlightColor = "#F0F0F0") {
-  const originalColor = getComputedStyle(element).backgroundColor; // 5
-
+  const originalColor = getComputedStyle(element).backgroundColor;
   element.style.transition = 'background-color 0.3s ease';
-
-  // First blink (highlight color)
   element.style.backgroundColor = highlightColor;
 
   setTimeout(() => {
-    // Second blink (back to original)
     element.style.backgroundColor = originalColor;
-
     setTimeout(() => {
-      // Final highlight (highlight color)
       element.style.backgroundColor = highlightColor;
-
       setTimeout(() => {
-        // Return to the original color
         element.style.backgroundColor = originalColor;
       }, 300);
     }, 300);
@@ -324,8 +268,7 @@ const tribute = new Tribute({
     <img src="${item.original.profile_pic}" class="mention__user-pic">
     <p class="mention__user-dname" >${item.original.displayname}</p>          
     </div>
-        `;
-
+    `;
   },
   values: async (text, callback) => {
     try {
@@ -341,9 +284,9 @@ const tribute = new Tribute({
 tribute.attach(document.querySelector('#editor'))
 
 const toolbarOptions = [
-  ['bold', 'italic', 'underline'], // Essential text styling
+  ['bold', 'italic', 'underline'],
   ['code-block'], ['link'],
-  [{ 'script': 'sub' }, { 'script': 'super' }], // Subscript, Superscript
+  [{ 'script': 'sub' }, { 'script': 'super' }],
 ];
 
 const editor = new Quill('#editor', {
@@ -356,69 +299,43 @@ const editor = new Quill('#editor', {
 
 document.getElementById('editor').style.height = '200px';
 
-
-// *****   Complete Frontend Thread Related  *******
-
-
 function autoResize() {
   this.style.height = "auto";
   this.style.height = this.scrollHeight + "px";
 }
 
-// I'm adjusting the height of the threadline through this.
-
 function adjustThreadLineHeights() {
   const containers = document.querySelectorAll(".main-cmnt-container");
-
   containers.forEach((container) => {
     const threadLine = container.querySelector(".thread-line");
-    const contentWrapper = container.querySelector(
-      ".main__cmnts-replies-wrapper"
-    );
-
-    // Function to adjust the height of the thread line
+    const contentWrapper = container.querySelector(".main__cmnts-replies-wrapper");
     const adjustHeight = () => {
-      const height = contentWrapper.offsetHeight; // Measure the content height
-      threadLine.style.height = `${height}px`; // Apply it to the thread line
+      const height = contentWrapper.offsetHeight;
+      threadLine.style.height = `${height}px`;
     };
-
-    // Perform initial adjustment
     adjustHeight();
-
-    // Use ResizeObserver to watch for content changes
     const resizeObserver = new ResizeObserver(() => adjustHeight());
     resizeObserver.observe(contentWrapper);
-
-    // Store the observer on the element for cleanup if needed
     container._resizeObserver = resizeObserver;
   });
 }
-// Auto adjust textarea height for thread editor 
+
 replyTextArea = document.querySelectorAll(".thread-editor");
 replyTextArea.forEach(function (textarea) {
   textarea.addEventListener("input", autoResize);
 });
 
-// Make these dynamic with backend plz :)
-
 document.addEventListener('DOMContentLoaded', () => {
   const commentList = document.querySelector(".cmnts-list");
   const cmntBtn = document.querySelector("#cmnt-btn");
-
-  // Function to post a main comment
-  const pathname = window.location.pathname
-  const commenterStudentID = Cookies.get("studentID"); // Commenter's document ID
+  const commenterStudentID = Cookies.get("studentID");
 
   const postMainComment = async (event) => {
     event.preventDefault()
-
-    const commentHTML = editor.root.innerHTML; // feedback text
-    
-    if (editor.root.textContent.trim() === "" || document.querySelector('#editor').getAttribute('data-disabled')) return; // Preventing any empty comments
-
+    const commentHTML = editor.root.innerHTML;
+    if (editor.root.textContent.trim() === "" || document.querySelector('#editor').getAttribute('data-disabled')) return;
     document.querySelector('#editor').setAttribute('data-disabled', 'true')
-
-    // a temporary feedback placeholder that will be shown until the main feedback is sent successfully
+    
     manageNotes.addFeedback({
       _id: '__id__',
       createdAt: new Date(),
@@ -428,9 +345,7 @@ document.addEventListener('DOMContentLoaded', () => {
         username: '__username__',
         displayname: 'User'
       },
-      noteDocID: {
-        _id: '__id__'
-      },
+      noteDocID: { _id: '__id__' },
       upvoteCount: 0,
       temporary: true
     })
@@ -448,108 +363,82 @@ document.addEventListener('DOMContentLoaded', () => {
     if(data.sent) {
       document.querySelector('#editor').removeAttribute('data-disabled') 
       Swal.fire(toastData('success', "Feedback sent", 2000))
-      editor.root.innerHTML = ''; // reseting toast ui editor content
+      editor.root.innerHTML = '';
       adjustThreadLineHeights();
     } else {
       Swal.fire(toastData('error', "Sorry, couldn't send message", 3000))
     }
-
   };
 
   cmntBtn.addEventListener("click", postMainComment);
 
   document.addEventListener("keydown", function (event) {
-      if (event.ctrlKey && event.key === "Enter") {
-          event.preventDefault(); // Prevents unintended behavior
-          postMainComment(event); // Pass event object
-      }
+    if (event.ctrlKey && event.key === "Enter") {
+      event.preventDefault();
+      postMainComment(event);
+    }
   });
-  
-
-
-  // Function to setup thread reply listeners
 
   const setupThreadReplyListeners = () => {
-    // Use event delegation to handle clicks on the comment list
     async function sendReply(threadContainer) {
-      if (!threadContainer) return; // Ensure it's inside a valid container
-        const textarea = threadContainer.querySelector('.thread-editor');
-        const replyContent = document.querySelector('#mentioneduser').innerHTML + " " + textarea.value.trim();
+      if (!threadContainer) return;
+      const textarea = threadContainer.querySelector('.thread-editor');
+      const replyContent = document.querySelector('#mentioneduser').innerHTML + " " + textarea.value.trim();
+      if (!textarea.value.trim() || textarea.getAttribute('data-disabled')) return;
 
-        if (!textarea.value.trim() || textarea.getAttribute('data-disabled')) return; // Prevent empty replies
+      textarea.setAttribute('data-disabled', 'true');
+      const threadSection = threadContainer.closest('.thread-section');
 
-        textarea.setAttribute('data-disabled', 'true');
-        const threadSection = threadContainer.closest('.thread-section');
+      manageNotes.addReply(threadSection, {
+        createdAt: new Date(),
+        feedbackContents: '',
+        commenterDocID: { profile_pic: '__profile_pic__', username: '__username__', displayname: 'User' },
+        temporary: true
+      });
 
-        manageNotes.addReply(threadSection, {
-            createdAt: new Date(),
-            feedbackContents: '',
-            commenterDocID: {
-                profile_pic: '__profile_pic__',
-                username: '__username__',
-                displayname: 'User'
-            },
-            temporary: true
-        });
+      const parentFeedbackDocID = threadSection.previousElementSibling.querySelector('.reply-info #parentFeedbackDocID').innerHTML;
+      const replyData = new FormData();
+      replyData.append('noteDocID', noteDocID);
+      replyData.append('commenterStudentID', commenterStudentID);
+      replyData.append('replyContent', replyContent);
+      replyData.append('parentFeedbackDocID', parentFeedbackDocID);
+      replyData.append('reply', true);
 
-        const parentFeedbackDocID = threadSection.previousElementSibling.querySelector('.reply-info #parentFeedbackDocID').innerHTML;
-        const replyData = new FormData();
-        replyData.append('noteDocID', noteDocID);
-        replyData.append('commenterStudentID', commenterStudentID);
-        replyData.append('replyContent', replyContent);
-        replyData.append('parentFeedbackDocID', parentFeedbackDocID);
-        replyData.append('reply', true);
-
-        let response = await fetch(`/view/${noteDocID}/postFeedback`, {
-            body: replyData,
-            method: 'post'
-        });
-
-        let data = await response.json();
-        if (data.sent) {
-            textarea.removeAttribute('data-disabled');
-            adjustThreadLineHeights(); // Adjust thread height again
-            textarea.value = '';
-        } else {
-            Swal.fire(toastData('error', "Sorry, couldn't send the message", 3000));
-        }
+      let response = await fetch(`/view/${noteDocID}/postFeedback`, { body: replyData, method: 'post' });
+      let data = await response.json();
+      if (data.sent) {
+        textarea.removeAttribute('data-disabled');
+        adjustThreadLineHeights();
+        textarea.value = '';
+      } else {
+        Swal.fire(toastData('error', "Sorry, couldn't send the message", 3000));
+      }
     }
 
     commentList.addEventListener('click', async (event) => {
-      // Handle opening the thread editor
       if (event.target.classList.contains('thread-opener')) {
         let parentCommenterUsername = event.target.parentElement.parentElement?.querySelector(".reply-info #commenterUsername").textContent
         const threadSection = event.target.closest('.main__cmnts-replies-wrapper').querySelector('.thread-section');
+        document.querySelectorAll('.thread-editor-container').forEach(editor => editor.remove());
 
-        // Remove any existing thread editors in other sections before adding a new one
-        document.querySelectorAll('.thread-editor-container').forEach(editor => {
-          editor.remove();
-        });
-
-        // Check if thread editor already exists
         let threadEditor = threadSection.querySelector('.thread-editor-container');
         if (!threadEditor) {
           threadEditor = document.createElement('div');
           threadEditor.classList.add('thread-editor-container');
-
-          // Add the HTML for the thread editor
           threadEditor.innerHTML = `
-                  <div class="thread-editor-wrapper">
-                    <span id='mentioneduser' class="thread-mentioned-user">@${parentCommenterUsername}</span>
-                    <textarea placeholder="Write a comment..." class="thread-editor"></textarea>
-                    <div class="thread-editor__action-opts">
-                      <svg id="threadCmntBtn" class="thread__cmnt-btn" width="18px" height="18px" viewBox="0 0 256 256" id="Flat" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M231.626,128a16.015,16.015,0,0,1-8.18262,13.96094L54.53027,236.55273a15.87654,15.87654,0,0,1-18.14648-1.74023,15.87132,15.87132,0,0,1-4.74024-17.60156L60.64746,136H136a8,8,0,0,0,0-16H60.64746L31.64355,38.78906A16.00042,16.00042,0,0,1,54.5293,19.44727l168.915,94.59179A16.01613,16.01613,0,0,1,231.626,128Z"/>
-                      </svg>
-                    </div>
-                  </div>
-              `;
-
-          // Append the editor to the thread section
+            <div class="thread-editor-wrapper">
+              <span id='mentioneduser' class="thread-mentioned-user">@${parentCommenterUsername}</span>
+              <textarea placeholder="Write a comment..." class="thread-editor"></textarea>
+              <div class="thread-editor__action-opts">
+                <svg id="threadCmntBtn" class="thread__cmnt-btn" width="18px" height="18px" viewBox="0 0 256 256" id="Flat" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M231.626,128a16.015,16.015,0,0,1-8.18262,13.96094L54.53027,236.55273a15.87654,15.87654,0,0,1-18.14648-1.74023,15.87132,15.87132,0,0,1-4.74024-17.60156L60.64746,136H136a8,8,0,0,0,0-16H60.64746L31.64355,38.78906A16.00042,16.00042,0,0,1,54.5293,19.44727l168.915,94.59179A16.01613,16.01613,0,0,1,231.626,128Z"/>
+                </svg>
+              </div>
+            </div>
+          `;
           threadSection.appendChild(threadEditor);
         }
 
-        // Focus on the textarea of the newly created or existing editor
         const textarea = threadEditor.querySelector('.thread-editor');
         textarea.selectionStart = textarea.selectionEnd = textarea.value.length;
         textarea.focus();
@@ -558,35 +447,126 @@ document.addEventListener('DOMContentLoaded', () => {
         sendReply(threadContainer)
       }
 
-      // Handle posting replies
       document.addEventListener("keydown", async function (event) {
         const activeElement = document.activeElement;
-    
-        // Check if the focused element is inside a thread editor container
         if (activeElement && activeElement.classList.contains("thread-editor")) {
-            if (event.ctrlKey && event.key === "Enter") {
-                event.preventDefault(); // Prevent unintended behavior
-    
-                const threadContainer = activeElement.closest('.thread-editor-container');
-                sendReply(threadContainer)
-    
-                // === Clear the Main Quill Editor ===
-                const mainEditor = document.querySelector('.ql-editor'); // Find the main Quill editor
-                if (mainEditor) {
-                    mainEditor.innerHTML = ''; // Clear the content
-                }
-            }
+          if (event.ctrlKey && event.key === "Enter") {
+            event.preventDefault();
+            const threadContainer = activeElement.closest('.thread-editor-container');
+            sendReply(threadContainer)
+            const mainEditor = document.querySelector('.ql-editor');
+            if (mainEditor) mainEditor.innerHTML = '';
+          }
         }
-    });
-    
+      });
     });
   };
 
-  // Initialize setup when DOM is loaded
-  document.addEventListener("DOMContentLoaded", () => {
-    setupThreadReplyListeners();
+  document.addEventListener("DOMContentLoaded", () => setupThreadReplyListeners());
+  setupThreadReplyListeners();
+});
+
+function enlargeImage(imageSrc, noteId, initialIndex) {
+  const modal = document.createElement('div');
+  modal.classList.add('image-modal');
+
+  let currentIndex = initialIndex;
+
+  modal.innerHTML = `
+    <div class="image-modal-backdrop"></div>
+    <div class="image-modal-content">
+      <img src="${imageSrc}" class="enlarged-image" alt="Enlarged Note Image" />
+      <div class="image-modal-buttons">
+        <button class="image-modal-download">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 16V4M12 16L8 12M12 16L16 12M20 20H4" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Download
+        </button>
+        <button class="image-modal-close">×</button>
+      </div>
+      <button class="modal-carousel-control prev">
+        <svg class="carousel-control-icon" width="68" height="68" viewBox="0 0 68 68" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M16.6029 29.8333H67.332V38.1666H16.6029L39.9362 61.5L33.9987 67.3333L0.665367 34L33.9987 0.666649L39.9362 6.49998L16.6029 29.8333Z" fill="#1D1B20"/>
+        </svg>
+      </button>
+      <button class="modal-carousel-control next">
+        <svg class="carousel-control-icon" width="68" height="68" viewBox="0 0 68 68" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M51.3971 38.1667H0.667969V29.8334H51.3971L28.0638 6.50002L34.0013 0.666687L67.3346 34L34.0013 67.3334L28.0638 61.5L51.3971 38.1667Z" fill="#1D1B20"/>
+        </svg>
+      </button>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+
+  // Highlight the logo
+  const logo = document.querySelector('.logo'); // Adjust selector if needed
+  if (logo) logo.classList.add('highlight-logo');
+
+  const imageElement = modal.querySelector('.enlarged-image');
+  const downloadButton = modal.querySelector('.image-modal-download');
+
+  function updateImage(index) {
+    imageElement.src = noteImages[index] || "/images/placeholders/unavailable_content.png";
+  }
+
+  downloadButton.addEventListener('click', () => {
+    downloadImage(noteImages[currentIndex], noteId, currentIndex);
   });
 
+  modal.querySelector('.modal-carousel-control.prev').addEventListener('click', () => {
+    currentIndex = (currentIndex - 1 + noteImages.length) % noteImages.length;
+    updateImage(currentIndex);
+  });
 
-  setupThreadReplyListeners(); // Initialize reply listeners on page load
-});
+  modal.querySelector('.modal-carousel-control.next').addEventListener('click', () => {
+    currentIndex = (currentIndex + 1) % noteImages.length;
+    updateImage(currentIndex);
+  });
+
+  modal.querySelector('.image-modal-close').addEventListener('click', () => {
+    document.body.removeChild(modal);
+    if (logo) logo.classList.remove('highlight-logo');
+  });
+
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal || e.target === modal.querySelector('.image-modal-backdrop')) {
+      document.body.removeChild(modal);
+      if (logo) logo.classList.remove('highlight-logo');
+    }
+  });
+
+  document.addEventListener('keydown', function handler(e) {
+    if (e.key === "ArrowLeft") {
+      currentIndex = (currentIndex - 1 + noteImages.length) % noteImages.length;
+      updateImage(currentIndex);
+    } else if (e.key === "ArrowRight") {
+      currentIndex = (currentIndex + 1) % noteImages.length;
+      updateImage(currentIndex);
+    } else if (e.key === "Escape") {
+      document.body.removeChild(modal);
+      if (logo) logo.classList.remove('highlight-logo');
+      document.removeEventListener('keydown', handler);
+    }
+  });
+}
+
+// Updated downloadImage to force immediate download
+async function downloadImage(imageSrc, noteId, imageIndex) {
+  try {
+    const response = await fetch(imageSrc);
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `note_${noteId}_image_${imageIndex + 1}.jpg`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url); // Clean up
+  } catch (error) {
+    console.error('Download failed:', error);
+    alert('Failed to download the image. Please try again.');
+  }
+}
