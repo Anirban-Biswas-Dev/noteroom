@@ -11,7 +11,7 @@ socket.on('update-upvote-dashboard', function (noteDocID, upvoteCount) {
 
 const navigate = performance.getEntriesByType("navigation")[0]
 
-let nextPage = 2
+let nextPage = Number(localStorage.getItem('feedLastPageFetched')) + 1
 let seed = null
 
 if (navigate?.type === "reload" || navigate?.type === "navigate") {
@@ -27,23 +27,28 @@ if (navigate?.type === "reload" || navigate?.type === "navigate") {
 	seed = parseInt(localStorage.getItem('feedNoteLastFetchSeed'))
 }
 
-async function get_note(count, page) {
+let seqCount = 0
+async function get_note(page) {
 	let notesList = [];
+	let cacheNoteList = []
 
 	try {
-		let response = await fetch(`/api/getnote?type=seg&seed=${seed}&page=${page}&count=${count}`); 
+		let response = await fetch(`/api/getnote?seed=${seed}&page=${page}`); 
 		let notes = await response.json(); 
 		
 		if (notes.length !== 0) {
-			notes.forEach(note => {
-				let feedNote = new FeedNote(note)
+			for (let note of notes) {
+				seqCount += 1
+				let feedNote = {...new FeedNote(note), count: seqCount}
 				notesList.push(feedNote);
-
-				let { noteData, contentData, ownerData, interactionData, extras } = feedNote
-				manageDb.add('feedNotes', { noteID: noteData.noteID, noteData, contentData, ownerData, interactionData, extras })
-			});
+	
+				let { noteData, contentData, ownerData, interactionData, extras, count } = feedNote
+				cacheNoteList.push({ noteID: noteData.noteID, noteData, contentData, ownerData, interactionData, extras, count })
+			}
 
 			localStorage.setItem('feedNoteLastFetchSeed', seed)
+			localStorage.setItem('feedLastPageFetched', page)
+			await (new ManageFeedCache()).addFeedNotes(cacheNoteList)
 		} else {
 			document.querySelector('#feed-note-loader').style.display = 'none'
 			document.querySelector('#finish-message').style.display = 'flex'
@@ -55,14 +60,14 @@ async function get_note(count, page) {
 }
 
 async function initialFeedSetup() {
-	let feedNotes = await manageDb.get('feedNotes')
+	let feedNotes = await (new ManageFeedCache()).getCachedFeedNotes()
 	let feedContainer = document.querySelector('.feed-container')
 	let previousSeed = localStorage.getItem('feedNoteLastFetchSeed')
 	
 	if (feedNotes && feedNotes.length !== 0 && parseInt(previousSeed) === seed) {
 		feedNotes.forEach(note => manageNotes.addNote(note) )
 	} else {
-		let notes = await get_note(7, 1)
+		let notes = await get_note(1)
 		notes.forEach(note => manageNotes.addNote(note) )
 	}
 	observers.lastNoteObserver().observe(feedContainer.lastElementChild)
@@ -129,7 +134,7 @@ const observers = {
 		const _observer = new IntersectionObserver(async entries => {
 			entries.forEach(async entry => {
 				if (entry.isIntersecting) {
-					let notes = await get_note(7, nextPage)
+					let notes = await get_note(nextPage)
 					if (notes.length !== 0) {
 						notes.forEach(note => {
 							manageNotes.addNote(note)

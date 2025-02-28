@@ -1,158 +1,264 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Upload Note</title>
-    <link rel="stylesheet" href="/css/main-pages.css">
-    <link rel="stylesheet" href="/css/upload-note.css">
-	<link rel="stylesheet" href="/css/error-popup.css" />
-	<link rel="stylesheet" href="/css/nav-section.css" />
-    
-    <script src="https://cdn.quilljs.com/1.3.7/quill.min.js" defer></script>
-    <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.18/katex.min.css" integrity="sha384-t5CR+4QyxuXWt1/1RDR8xF4A3DuhpT25fD9Mx0sCP72i3XBqUeFwF6Bgp39WesL7" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/main-pages.css" />
+    <link rel="stylesheet" href="/css/upload-note.css" />
+    <link rel="stylesheet" href="/css/error-popup.css" />
+    <link rel="stylesheet" href="/css/nav-section.css" />
 
+    <script src="https://cdn.quilljs.com/1.3.7/quill.min.js" defer></script>
+    <link
+      href="https://cdn.quilljs.com/1.3.7/quill.snow.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.18/katex.min.css"
+      integrity="sha384-t5CR+4QyxuXWt1/1RDR8xF4A3DuhpT25fD9Mx0sCP72i3XBqUeFwF6Bgp39WesL7"
+      crossorigin="anonymous"
+    />
 
     <script src="https://cdn.socket.io/socket.io-3.0.1.min.js" defer></script>
-	<script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/dexie@latest/dist/dexie.min.js" defer></script>
-	<%- include('partials/links.ejs') %>
-</head>
-<body>
-    
-    <%- include('side-panel', { block: 'left-panel' }) %>
-    <%- include('side-panel', { block: 'search-bar' }) %>
+    <script
+      src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"
+      defer
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/dexie@latest/dist/dexie.min.js"
+      defer
+    ></script>
+    <%- include('partials/links.ejs') %>
+  </head>
+  <body>
+    <%- include('side-panel', { block: 'left-panel' }) %> <%-
+    include('side-panel', { block: 'search-bar' }) %>
     <!-- ****** Middle Section ****** -->
     <div class="middle-section">
-        <div class="nav-section">
-            <svg class="nav-back-btn" onclick="goPrevPage()" width="20" height="auto" viewBox="0 0 68 68" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M16.6029 29.8333H67.332V38.1666H16.6029L39.9362 61.5L33.9987 67.3333L0.665367 34L33.9987 0.666649L39.9362 6.49998L16.6029 29.8333Z" fill="#1D1B20"/>
-              </svg>
+      <div class="nav-section">
+        <svg
+          class="nav-back-btn"
+          onclick="goPrevPage()"
+          width="20"
+          viewBox="0 0 68 68"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M16.6029 29.8333H67.332V38.1666H16.6029L39.9362 61.5L33.9987 67.3333L0.665367 34L33.9987 0.666649L39.9362 6.49998L16.6029 29.8333Z"
+            fill="#1D1B20"
+          />
+        </svg>
+      </div>
+      <h2>Upload</h2>
+      <div class="upload-container">
+        <svg
+          width="75"
+          height="75"
+          viewBox="0 0 73 73"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <g clip-path="url(#clip0_606_961)">
+            <path
+              d="M48.3085 48.3057L36.2314 36.2286M36.2314 36.2286L24.1542 48.3057M36.2314 36.2286V63.4021M61.5631 55.5218C64.5079 53.9164 66.8343 51.376 68.175 48.3016C69.5156 45.2272 69.7943 41.7938 68.967 38.5435C68.1397 35.2931 66.2535 32.4108 63.6062 30.3514C60.9588 28.2921 57.7011 27.173 54.347 27.1708H50.5427C49.6289 23.6359 47.9255 20.3542 45.5608 17.5724C43.196 14.7907 40.2314 12.5811 36.8899 11.11C33.5483 9.6389 29.9167 8.94445 26.2681 9.07888C22.6195 9.21331 19.0488 10.1731 15.8246 11.8862C12.6003 13.5992 9.80635 16.0209 7.65273 18.9691C5.49911 21.9174 4.04188 25.3155 3.39059 28.908C2.7393 32.5006 2.9109 36.194 3.89249 39.7106C4.87409 43.2273 6.64013 46.4756 9.05784 49.2115"
+              stroke="#1E1E1E"
+              stroke-width="6.03856"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </g>
+          <defs>
+            <clipPath id="clip0_606_961">
+              <rect width="72.4627" height="72.4627" fill="white" />
+            </clipPath>
+          </defs>
+        </svg>
+        <p class="upload-msg">Upload pictures from your device</p>
+        <p class="suggested-formats-msg">Suggested Formats : PNG, JPG</p>
+
+        <div class="browse-file-container">
+          <div
+            class="search-results-loader"
+            style="display: none"
+            id="note-upload-loader"
+          ></div>
+          <input
+            type="file"
+            id="fileInput"
+            class="file-input"
+            name="images"
+            multiple
+          />
+          <label for="fileInput" class="browse-files-btn" id="fileInputBox">
+            <pre>Browse</pre>
+          </label>
         </div>
-        <h2>Upload</h2>
-        <div class="upload-container">
-            <svg width="75" height="75" viewBox="0 0 73 73" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <g clip-path="url(#clip0_606_961)">
-                <path d="M48.3085 48.3057L36.2314 36.2286M36.2314 36.2286L24.1542 48.3057M36.2314 36.2286V63.4021M61.5631 55.5218C64.5079 53.9164 66.8343 51.376 68.175 48.3016C69.5156 45.2272 69.7943 41.7938 68.967 38.5435C68.1397 35.2931 66.2535 32.4108 63.6062 30.3514C60.9588 28.2921 57.7011 27.173 54.347 27.1708H50.5427C49.6289 23.6359 47.9255 20.3542 45.5608 17.5724C43.196 14.7907 40.2314 12.5811 36.8899 11.11C33.5483 9.6389 29.9167 8.94445 26.2681 9.07888C22.6195 9.21331 19.0488 10.1731 15.8246 11.8862C12.6003 13.5992 9.80635 16.0209 7.65273 18.9691C5.49911 21.9174 4.04188 25.3155 3.39059 28.908C2.7393 32.5006 2.9109 36.194 3.89249 39.7106C4.87409 43.2273 6.64013 46.4756 9.05784 49.2115" stroke="#1E1E1E" stroke-width="6.03856" stroke-linecap="round" stroke-linejoin="round"/>
-                </g>
-                <defs>
-                <clipPath id="clip0_606_961">
-                <rect width="72.4627" height="72.4627" fill="white"/>
-                </clipPath>
-                </defs>
-                </svg>
-                <p class="upload-msg">Upload pictures from your device</p>
-            <p class="suggested-formats-msg">Suggested Formats : PNG, JPG</p>
-            
-            <div class="browse-file-container"> 
-                <div class="search-results-loader" style="display: none;" id="note-upload-loader"></div>
-                <input type="file" id="fileInput" class="file-input" name="images" multiple/>
-                <label for="fileInput" class="browse-files-btn" id="fileInputBox">
-                    <pre>Browse</pre>
-                </label>
-            </div>
+      </div>
+
+      <div class="stack-status">
+        <div class="stack-number-container">
+          <div class="snc-info-wrapper">
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 28 28"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              xmlns:xlink="http://www.w3.org/1999/xlink"
+            >
+              <rect width="28" height="28" fill="url(#pattern0_3785_4407)" />
+              <defs>
+                <pattern
+                  id="pattern0_3785_4407"
+                  patternContentUnits="objectBoundingBox"
+                  width="1"
+                  height="1"
+                >
+                  <use xlink:href="#image0_3785_4407" transform="scale(0.01)" />
+                </pattern>
+                <image
+                  id="image0_3785_4407"
+                  width="100"
+                  height="100"
+                  xlink:href="data:image/png;base64,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"
+                />
+              </defs>
+            </svg>
+
+            <span class="stack-info">
+              <span class="stack-number">No Images</span>
+            </span>
+          </div>
+          <span class="stack-prompt">Click to view</span>
         </div>
 
-        <div class="stack-status">
-            <div class="stack-number-container">
-                <div class="snc-info-wrapper">
-                    <svg width="22" height="22" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                        <rect width="28" height="28" fill="url(#pattern0_3785_4407)"/>
-                        <defs>
-                        <pattern id="pattern0_3785_4407" patternContentUnits="objectBoundingBox" width="1" height="1">
-                        <use xlink:href="#image0_3785_4407" transform="scale(0.01)"/>
-                        </pattern>
-                        <image id="image0_3785_4407" width="100" height="100" xlink:href="data:image/png;base64,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"/>
-                        </defs>
-                        </svg>
-                        
-                <span class="stack-info">
-                    <span class="stack-number">No Images</span>
-                </span>
-                </div>
-                <span class="stack-prompt">Click to view</span>
-            </div>
-            
-            <div class="success-upload-msg">
-                <svg width="20" height="20" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <g clip-path="url(#clip0_1844_2149)">
-                    <path d="M14.0001 0C6.28041 0 0 6.28031 0 13.9999C0 21.7195 6.28041 27.9998 14.0001 27.9998C21.7197 27.9998 28 21.7195 28 13.9999C28 6.28031 21.7197 0 14.0001 0ZM14.0001 25.7047C7.5459 25.7047 2.29507 20.4541 2.29507 13.9999C2.29507 7.54581 7.5459 2.29507 14.0001 2.29507C20.4542 2.29507 25.7049 7.54581 25.7049 13.9999C25.7049 20.4541 20.4542 25.7047 14.0001 25.7047Z" fill="#1D8102"/>
-                    <path d="M20.0564 8.62512L11.744 16.9376L7.94357 13.1371C7.49539 12.689 6.76887 12.689 6.32069 13.1371C5.8726 13.5853 5.8726 14.3118 6.32069 14.76L10.9326 19.3719C11.1567 19.5959 11.4503 19.708 11.744 19.708C12.0377 19.708 12.3314 19.5959 12.5555 19.3719L21.6793 10.2481C22.1274 9.79992 22.1274 9.07339 21.6793 8.62521C21.2311 8.17703 20.5045 8.17703 20.0564 8.62512Z" fill="#1D8102"/>
-                    </g>
-                    <defs>
-                    <clipPath id="clip0_1844_2149">
-                    <rect width="28" height="28" fill="white"/>
-                    </clipPath>
-                    </defs>
-                    </svg> 
-                <span>Image Successfully Added!</span>
-            </div>
+        <div class="success-upload-msg">
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 28 28"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <g clip-path="url(#clip0_1844_2149)">
+              <path
+                d="M14.0001 0C6.28041 0 0 6.28031 0 13.9999C0 21.7195 6.28041 27.9998 14.0001 27.9998C21.7197 27.9998 28 21.7195 28 13.9999C28 6.28031 21.7197 0 14.0001 0ZM14.0001 25.7047C7.5459 25.7047 2.29507 20.4541 2.29507 13.9999C2.29507 7.54581 7.5459 2.29507 14.0001 2.29507C20.4542 2.29507 25.7049 7.54581 25.7049 13.9999C25.7049 20.4541 20.4542 25.7047 14.0001 25.7047Z"
+                fill="#1D8102"
+              />
+              <path
+                d="M20.0564 8.62512L11.744 16.9376L7.94357 13.1371C7.49539 12.689 6.76887 12.689 6.32069 13.1371C5.8726 13.5853 5.8726 14.3118 6.32069 14.76L10.9326 19.3719C11.1567 19.5959 11.4503 19.708 11.744 19.708C12.0377 19.708 12.3314 19.5959 12.5555 19.3719L21.6793 10.2481C22.1274 9.79992 22.1274 9.07339 21.6793 8.62521C21.2311 8.17703 20.5045 8.17703 20.0564 8.62512Z"
+                fill="#1D8102"
+              />
+            </g>
+            <defs>
+              <clipPath id="clip0_1844_2149">
+                <rect width="28" height="28" fill="white" />
+              </clipPath>
+            </defs>
+          </svg>
+          <span>Image Successfully Added!</span>
         </div>
-        <div class="text-form">
-            <select name="noteSubject" class="note-subject" required>
-                <option value="" disabled selected >Choose Subject</option>
-                <option value="Bangla">Bangla</option>
-                <option value="English">English</option>
-                <option value="ICT">ICT</option>
-                <option value="Physics 1st Paper">Physics 1st Paper</option>
-                <option value="Physics 2nd Paper">Physics 2nd Paper</option>
-                <option value="Chemistry 1st Paper">Chemistry 1st Paper</option>
-                <option value="Chemistry 2nd Papeer">Chemistry 2nd Paper</option>
-                <option value="Biology 1st Paper">Biology 1st Paper</option>
-                <option value="Biology 2nd Paper">Biology 2nd Paper</option>
-                <option value="Higher Mathematics 1st Paper">Higher Mathematics 1st Paper</option>
-                <option value="Higher Mathematics 2nd Paper">Higher Mathematics 2nd Paper</option>
-                <option value="Statistics">Statistics</option>
-                <option value="History">History</option>
-                <option value="Geography">Geography</option>
-                <option value="Logic">Logic</option>
-                <option value="Philosophy">Philosophy</option>
-                <option value="Political Science">Political Science</option>
-                <option value="Sociology">Sociology</option>
-                <option value="Economics">Economics</option>
-                <option value="Islamic History & Culture">Islamic History & Culture</option>
-                <option value="Social Work">Social Work</option>
-                <option value="Psychology">Psychology</option>
-                <option value="Islamic Studies">Islamic Studies</option>
-            </select>
-            <input type="text" class="note-title" placeholder="Note's Title (less than 200 characters)" name="noteTitle">
-            <div class="text-editor-wrapper">
-                <div id="editor"></div>
-            </div>
+      </div>
+      <div class="text-form">
+        <select name="noteSubject" class="note-subject" required>
+          <option value="" disabled selected>Choose Subject</option>
+          <option value="Bangla">Bangla</option>
+          <option value="English">English</option>
+          <option value="ICT">ICT</option>
+          <option value="Physics 1st Paper">Physics 1st Paper</option>
+          <option value="Physics 2nd Paper">Physics 2nd Paper</option>
+          <option value="Chemistry 1st Paper">Chemistry 1st Paper</option>
+          <option value="Chemistry 2nd Papeer">Chemistry 2nd Paper</option>
+          <option value="Biology 1st Paper">Biology 1st Paper</option>
+          <option value="Biology 2nd Paper">Biology 2nd Paper</option>
+          <option value="Higher Mathematics 1st Paper">
+            Higher Mathematics 1st Paper
+          </option>
+          <option value="Higher Mathematics 2nd Paper">
+            Higher Mathematics 2nd Paper
+          </option>
+          <option value="Statistics">Statistics</option>
+          <option value="History">History</option>
+          <option value="Geography">Geography</option>
+          <option value="Logic">Logic</option>
+          <option value="Philosophy">Philosophy</option>
+          <option value="Political Science">Political Science</option>
+          <option value="Sociology">Sociology</option>
+          <option value="Economics">Economics</option>
+          <option value="Islamic History & Culture">
+            Islamic History & Culture
+          </option>
+          <option value="Social Work">Social Work</option>
+          <option value="Psychology">Psychology</option>
+          <option value="Islamic Studies">Islamic Studies</option>
+        </select>
+        <input
+          type="text"
+          class="note-title"
+          placeholder="Note's Title (less than 200 characters)"
+          name="noteTitle"
+        />
+        <div class="text-editor-wrapper">
+          <div id="editor"></div>
+        </div>
 
-            <button class="publish-note-btn" onclick="publish(this)">Publish</button>
-        </div>
+        <button class="publish-note-btn" onclick="publish(this)">
+          Publish
+        </button>
+      </div>
     </div>
     <div class="overlay"></div>
-     <div class="thumbnail-pop-up">
-        <div class="popup-heading">
-            <h2>Stack</h2>
-            <button class="discard-btn"><svg width="15" height="15" viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M3 3L67 67" stroke="black" stroke-width="6" stroke-linejoin="round"/>
-                <path d="M67 3L3 67" stroke="black" stroke-width="6" stroke-linejoin="round"/>
-                </svg>
-                </button>
-        </div>
-        <p class="no-notes">You haven't added any images. Start uploading</p>
-        <div class="thumbnail-container">
-        </div>
+    <div class="thumbnail-pop-up">
+      <div class="popup-heading">
+        <h2>Stack</h2>
+        <button class="discard-btn">
+          <svg
+            width="15"
+            height="15"
+            viewBox="0 0 70 70"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M3 3L67 67"
+              stroke="black"
+              stroke-width="6"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M67 3L3 67"
+              stroke="black"
+              stroke-width="6"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </button>
+      </div>
+      <p class="no-notes">You haven't added any images. Start uploading</p>
+      <div class="thumbnail-container"></div>
     </div>
-    
-    <%- include('side-panel', { block: 'right-panel' }) %>
-	<%- include('side-panel', { block: 'notification-modal' }) %>
-    <%- include('side-panel', { block: 'mbl-ctrl-panel' }) %>
-	<%- include('side-panel', { block: 'error-popup' }) %>
 
-    <audio id="notificationAudio" src="/sounds/notification-ping-sound.mp3" preload="auto"></audio>
+    <%- include('side-panel', { block: 'right-panel' }) %> <%-
+    include('side-panel', { block: 'notification-modal' }) %> <%-
+    include('side-panel', { block: 'mbl-ctrl-panel' }) %> <%-
+    include('side-panel', { block: 'error-popup' }) %>
+
+    <audio
+      id="notificationAudio"
+      src="/sounds/notification-ping-sound.mp3"
+      preload="auto"
+    ></audio>
 
     <div class="loader-overlay">
-        <span class="loader"></span>
+      <span class="loader"></span>
     </div>
-       
-	<script src="/js/notificationHandler.js" defer></script>
+
+    <script src="/js/notificationHandler.js" defer></script>
     <script src="/js/controller.js" defer></script>
     <script src="/js/upload-note.js" defer></script>
     <script src="/js/utils.js" defer></script>
-</body>
+  </body>
 </html>

@@ -185,37 +185,6 @@ export async function getAllNotes(studentDocID: string, options?: any) {
         { $skip: parseInt(options.skip) },
         { $limit: parseInt(options.limit) }
     ])
-
-
-    // let notes = await Notes.aggregate([
-    //     { $match: { completed: { $eq: true } } },
-    //     { $lookup: {
-    //         from: 'students',
-    //         localField: 'ownerDocID',
-    //         foreignField: '_id',
-    //         as: 'ownerDocID'
-    //     } },
-    //     { $unwind: {
-    //         path: '$ownerDocID',
-    //     } },
-    //     { $project: {
-    //         title: 1, description: 1,  
-    //         feedbackCount: 1, upvoteCount: 1, 
-    //         postType: 1, content: 1,
-    //         createdAt: 1, pinned: 1,
-    //         "ownerDocID._id": 1,
-    //         "ownerDocID.profile_pic": 1,
-    //         "ownerDocID.displayname": 1,
-    //         "ownerDocID.studentID": 1,
-    //         "ownerDocID.username": 1
-    //     } },
-    //     { $addFields: {
-    //         isOwner: { $eq: ["$ownerDocID._id", new mongoose.Types.ObjectId(studentDocID)] }
-    //     } },
-    //     { $sort: { pinned: -1 } },
-    //     { $skip: parseInt(options.skip || "0") },
-    //     { $limit: parseInt(options.limit || "3") },
-    // ])
     
     let extentedNotes = await Promise.all(
         notes.map(async (note: any) => {
