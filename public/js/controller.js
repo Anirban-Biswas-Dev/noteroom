@@ -352,7 +352,13 @@ const manageDb = {
 
     async delete(store, { idPath, id }) {
         let note = await db[store].where(idPath).equals(id).first()
-        await db[store].delete(note.id)
+        await db[store].delete(note.noteID)
+    },
+
+    async update(store, { idPath, id }, updatedObject, keyToUpdate) {
+        let note = await db[store].where(idPath).equals(id).first()
+        let updatedNote = merge(note, updatedObject, keyToUpdate)
+        await db[store].put(updatedNote)
     }
 }
 
@@ -399,10 +405,9 @@ async function upvote(voteContainer, fromDashboard = false) {
     })
     let data = await response.json()
     if (data.ok) {
-        voteContainer.removeAttribute('data-disabled')
-    } else {
-        voteContainer.removeAttribute('data-disabled')
+        await manageDb.update("feedNotes", { idPath: "noteID", id: noteDocID }, { interactionData: { isUpvoted: !isUpvoted, upvoteCount: parseInt(uvCount.innerHTML) } }, "interactionData" )
     }
+    voteContainer.removeAttribute('data-disabled')
 }
 
 function redirectToNote(noteID, isQuickPost) {
@@ -1201,6 +1206,9 @@ function share(platform) {
 }
 
 
+function merge(previous, update, key) {
+    return { ...previous, [key]: { ...previous[key], ...update[key] } }
+}
 
 async function saveNote(svButton, fromDashboard = false) {
     if (svButton.getAttribute('data-disabled')) return
@@ -1237,10 +1245,11 @@ async function saveNote(svButton, fromDashboard = false) {
         isSaved === "false" ? (async function () {
             Swal.fire(toastData('success', 'Note saved successfully!'))
             await manageDb.add('savedNotes', body.savedNote[0])
-        })() : (function () {
-            manageDb.delete('savedNotes', { idPath: "noteID", id: noteDocID })
+        })() : (async function () {
+            await manageDb.delete('savedNotes', { idPath: "noteID", id: noteDocID })
             body.count !== 0 || (document.querySelector('.no-saved-notes-message').classList.remove('hide'))
         })()
+        await manageDb.update('feedNotes', { idPath: "noteID", id: noteDocID }, { interactionData: { isSaved: isSaved === "true" ? false : true } }, "interactionData")
 
         svButton.removeAttribute('data-disabled')
     } else {
