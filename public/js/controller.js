@@ -1,15 +1,6 @@
 const conHost = window.location.origin
 const conSock = io(conHost)
 
-//* Badge images: user-profile + search-profile
-let baseURL = 'https://storage.googleapis.com/noteroom-fb1a7.appspot.com/badges/'
-let imageObject = {
-    'No Badge': `${baseURL}no-badge.png`,
-    'Biology': `${baseURL}biology.png`,
-    'English': `${baseURL}english.png`
-}
-
-
 function FeedNote(note) {
     this.isQuickPost = note.postType === "quick-post",
         this.noteData = {
@@ -43,7 +34,6 @@ function FeedNote(note) {
 }
 
 function manageRequest(requestCard) {
-    const firstRow = requestCard.querySelector(".request__fr");
     const secondRow = requestCard.querySelector(".request__sr");
     const chevronIcon = requestCard.querySelector(".request-chevron-icon");
 
@@ -193,7 +183,7 @@ async function readNoti(noti) {
     }
 }
 
-document.querySelector(".delete-all-noti-icon").addEventListener('click', async (event) => {
+document.querySelector(".delete-all-noti-icon").addEventListener('click', async () => {
     try {
         let container = document.querySelector('.notifications-container')
         if (container.childElementCount !== 0) {
@@ -299,6 +289,11 @@ function ManageFeedCache() {
     this.getCachedFeedNotes = async function () {
         let notes = await db.feedNotes.orderBy("count").toArray()
         return notes
+    },
+
+    this.getLastCount = async function() {
+        let lastNote = await db.feedNotes.orderBy("count").reverse().first()
+        return lastNote["count"] || 0
     }
 }
 
@@ -410,6 +405,11 @@ async function upvote(voteContainer, fromDashboard = false) {
     }
 }
 
+function redirectToNote(noteID, isQuickPost) {
+    localStorage.setItem('lastVisitedNote', noteID)
+    window.location.href = `/view/${isQuickPost === 'true' ? 'quick-post/' : ''}${noteID}?from=dashboard`
+}
+
 const isAdmin = document.querySelector('span#admin') ? true : false
 //* The main dynamic content loading manager object
 const manageNotes = {
@@ -431,10 +431,9 @@ const manageNotes = {
         let existingUNote = document.querySelector(`#note-${noteData.noteID}`)
         let feedContainer = document.querySelector('.feed-container')
 
-        //FIXME: there should be a skeleton loader for the note card or for the note image
         if (!existingUNote) {
             let noteCardHtml = `
-                <div class="feed-note-card" id="note-${noteData.noteID}" data-posttype="${extras.quickPost ? 'quick-post' : 'note'}">
+                <div class="feed-note-card" id="note-${noteData.noteID}" data-posttype="${extras.quickPost ? 'quick-post' : 'note'}" data-noteid="${noteData.noteID}">
                     <div class="fnc__first-row">
                         <div class="fnc__fr-author-img-wrapper">
                             <img src="${ownerData.profile_pic}" class="fnc__fr-author-img" onclick="window.location.href='/user/${ownerData.ownerUserName}'"/>
@@ -542,14 +541,11 @@ const manageNotes = {
                         <div class="note-info-wrapper--second-row">
                             <p class="fnc--note-desc">
                                 ${(function () {
-                    let description = (new DOMParser()).parseFromString(noteData.description, 'text/html').querySelector('body').textContent.trim()
-                    let charLimit = extras.quickPost ? 250 : 100;
-                    return description.length > charLimit ? `
-                                            ${description.slice(0, charLimit)}...
-                                            <span class="note-desc-see-more-btn" onclick="window.location.href='/view/${extras.quickPost ? `quick-post/${noteData.noteID}` : noteData.noteID}'">Read More</span>
-                                        ` : description;
-                })()
-                }
+                                        let description = (new DOMParser()).parseFromString(noteData.description, 'text/html').querySelector('body').textContent.trim()
+                                        let charLimit = extras.quickPost ? 250 : 100;
+                                        return description.length > charLimit ? `${description.slice(0, charLimit)}...<span class="note-desc-see-more-btn" onclick="redirectToNote('${noteData.noteID}', '${extras.quickPost}')">Read More</span>` : description;
+                                    })()
+                                }
                             </p>
                         </div>
                         </div>
@@ -558,21 +554,19 @@ const manageNotes = {
 
                     <div class="fnc__second-row">
                         ${extras.quickPost ?
-                    `${contentData.contentCount !== 0 ?
-                        `<div class="quickpost-thumbnail-wrapper">
-                                    <img onclick="window.location.href='/view/quick-post/${noteData.noteID}'" class="quickpost-thumbnail" src="" data-src="${contentData.content1}"/>
+                            `${contentData.contentCount !== 0 ?
+                                `<div class="quickpost-thumbnail-wrapper">
+                                    <img onclick="redirectToNote('${noteData.noteID}', '${extras.quickPost}')" class="quickpost-thumbnail" src="" data-src="${contentData.content1 || '/images/placeholders/unavailable_content.png' }"/>
                                 </div>`: ``} `
-                    :
-                    `<div class="thumbnail-grid">
-                                <img class="thumbnail primary-img" src="" onclick="window.location.href='/view/${noteData.noteID}'" data-src='${contentData.content1}'/>
+                            :
+                            `<div class="thumbnail-grid">
+                                <img class="thumbnail primary-img" src="" onclick="redirectToNote('${noteData.noteID}', '${extras.quickPost}')" data-src='${contentData.content1 || '/images/placeholders/unavailable_content.png'}'/>
                                 <div class="thumbnail-secondary-wrapper">
-                                    <img class="thumbnail secondary-img" src="" onclick="window.location.href='/view/${noteData.noteID}'" data-src='${contentData.content2}'/>
-                                    ${contentData.contentCount > 2 ?
-                        `<div class="thumbnail-overlay" onclick="window.location.href='/view/${noteData.noteID}'">+${parseInt(contentData.contentCount) - 2}</div>` : ''
-                    }
+                                    <img class="thumbnail secondary-img" src="" onclick="redirectToNote('${noteData.noteID}', '${extras.quickPost}')" data-src='${contentData.content2 || '/images/placeholders/unavailable_content.png'}'/>
+                                    ${contentData.contentCount > 2 ? `<div class="thumbnail-overlay" onclick="redirectToNote('${noteData.noteID}', '${extras.quickPost}')">+${parseInt(contentData.contentCount) - 2}</div>` : ''}
                                 </div>
                             </div>`
-                }
+                        }
                     </div>
 
                     <div class="fnc__third-row">
@@ -610,7 +604,7 @@ const manageNotes = {
                                 <div class="review-metric-wrapper">
                                     <span
                                         class="review-count metric-count-font cmnt-count"
-                                        onclick="window.location.href='/view/${extras.quickPost ? `quick-post/${noteData.noteID}` : `${noteData.noteID}`}/#feedbacks'"
+                                        onclick="redirectToNote('${noteData.noteID}', '${extras.quickPost}')"
                                     >
                                         ${interactionData.feedbackCount === 0 ? `No reviews yet` : `${interactionData.feedbackCount} Review${interactionData.feedbackCount === 1 ? "" : "s"}`}
                                     </span>
@@ -667,7 +661,7 @@ const manageNotes = {
 
                                 <div
                                     class="cmnt-engagement"
-                                    onclick="window.location.href='/view/${extras.quickPost ? `quick-post/${noteData.noteID}` : noteData.noteID}/#feedbacks'"
+                                    onclick="redirectToNote('${noteData.noteID}', '${extras.quickPost}')"
                                 >
                                     <svg
                                     width="24"
@@ -675,7 +669,7 @@ const manageNotes = {
                                     viewBox="0 0 24 24"
                                     fill="none"
                                     xmlns="http://www.w3.org/2000/svg"
-                                    onclick="window.location.href='/view/${extras.quickPost ? `quick-post/${noteData.noteID}` : noteData.noteID}/#feedbacks'"
+                                    onclick="redirectToNote('${noteData.noteID}', '${extras.quickPost}')"
                                     class="comment-icon"
                                     >
                                     <path

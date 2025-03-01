@@ -13,3 +13,4 @@ logs.log
 *.rest
 /views/test.*
 frontend/
+*.drawio

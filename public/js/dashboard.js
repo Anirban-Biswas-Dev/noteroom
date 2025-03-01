@@ -11,7 +11,7 @@ socket.on('update-upvote-dashboard', function (noteDocID, upvoteCount) {
 
 const navigate = performance.getEntriesByType("navigation")[0]
 
-let nextPage = Number(localStorage.getItem('feedLastPageFetched')) + 1
+let nextPage = Number(localStorage.getItem('feedLastPageFetched') || "0") + 1
 let seed = null
 
 if (navigate?.type === "reload" || navigate?.type === "navigate") {
@@ -22,6 +22,7 @@ if (navigate?.type === "reload" || navigate?.type === "navigate") {
 	const previousSeed = Number(localStorage.getItem('feedNoteLastFetchSeed'))
 	if (!previousSeed || seed !== previousSeed) {
 		db.feedNotes.clear()
+		localStorage.setItem('feedLastPageFetched', 1)
 	}
 } else {
 	seed = parseInt(localStorage.getItem('feedNoteLastFetchSeed'))
@@ -41,11 +42,11 @@ async function get_note(page) {
 				seqCount += 1
 				let feedNote = {...new FeedNote(note), count: seqCount}
 				notesList.push(feedNote);
-	
+				
 				let { noteData, contentData, ownerData, interactionData, extras, count } = feedNote
 				cacheNoteList.push({ noteID: noteData.noteID, noteData, contentData, ownerData, interactionData, extras, count })
 			}
-
+			
 			localStorage.setItem('feedNoteLastFetchSeed', seed)
 			localStorage.setItem('feedLastPageFetched', page)
 			await (new ManageFeedCache()).addFeedNotes(cacheNoteList)
@@ -72,7 +73,20 @@ async function initialFeedSetup() {
 	}
 	observers.lastNoteObserver().observe(feedContainer.lastElementChild)
 }
-initialFeedSetup()
+initialFeedSetup().then(() => {
+	let scrollToID = new URL(window.location.href).searchParams.get('scroll')
+	let noteToScroll = document.querySelector(`#note-${scrollToID}`)
+
+	if (scrollToID && noteToScroll) {
+		noteToScroll.scrollIntoView({ behavior: "instant", block: "start" })
+	}
+
+	let feedContainer = document.querySelector('.feed-container')
+	feedContainer.querySelectorAll('.feed-note-card').forEach(note => {
+		observers.noteObserver().observe(note)
+	})
+})
+
 
 window.addEventListener('load', async () => {	
 	async function getResourcees(collection) {
@@ -132,6 +146,7 @@ const observers = {
 		let feedContainer = document.querySelector('.feed-container')
 
 		const _observer = new IntersectionObserver(async entries => {
+			seqCount = await (new ManageFeedCache()).getLastCount()
 			entries.forEach(async entry => {
 				if (entry.isIntersecting) {
 					let notes = await get_note(nextPage)
@@ -151,7 +166,20 @@ const observers = {
 			threshold: 1
 		})
 		return _observer
-	}
+	},
+
+	noteObserver: function() {
+		let _observer = new IntersectionObserver(entries => {
+			entries.forEach(entry => {
+				if (entry.isIntersecting && entry.intersectionRatio === 1) {
+					const newUrl = window.location.origin + window.location.pathname + `?scroll=${entry.target.getAttribute('data-noteid')}`;
+					window.history.replaceState({}, document.title, newUrl);
+				}
+			})
+		}, { threshold: 1.0 })
+
+		return _observer
+	} 
 }
 
 
