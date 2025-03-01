@@ -14,6 +14,11 @@ const navigate = performance.getEntriesByType("navigation")[0]
 let nextPage = Number(localStorage.getItem('feedLastPageFetched') || "0") + 1
 let seed = null
 
+if (navigate?.type === "reload") {
+	const newUrl = window.location.origin + window.location.pathname
+	window.history.replaceState({}, document.title, newUrl);
+}
+
 if (navigate?.type === "reload" || navigate?.type === "navigate") {
 	const now = new Date();
 	const baseSeed = Math.floor(now.getTime() / 3600000);
