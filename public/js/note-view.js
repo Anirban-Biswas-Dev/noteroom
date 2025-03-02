@@ -102,6 +102,31 @@ window.addEventListener('load', async () => {
         prevButton.click();
       }
     });
+
+    // Add touch support for swiping
+    const carouselWrapper = document.querySelector(".carousel-wrapper");
+    let touchStartX = 0;
+    let touchEndX = 0;
+    const swipeThreshold = 50; // Minimum distance for a swipe to register
+
+    carouselWrapper.addEventListener("touchstart", (event) => {
+      touchStartX = event.changedTouches[0].screenX;
+    });
+
+    carouselWrapper.addEventListener("touchend", (event) => {
+      touchEndX = event.changedTouches[0].screenX;
+      const swipeDistance = touchEndX - touchStartX;
+
+      if (Math.abs(swipeDistance) > swipeThreshold) {
+        if (swipeDistance > 0) {
+          // Swipe right: previous slide
+          prevButton.click();
+        } else {
+          // Swipe left: next slide
+          nextButton.click();
+        }
+      }
+    });
     
     showSlide(currentIndex);
   } catch (error) {
