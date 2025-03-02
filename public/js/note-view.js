@@ -2,19 +2,19 @@ const host = window.location.origin;
 const socket = io(host);
 
 let feedbackAddedObserver = new MutationObserver(entries => {
-  document.querySelector('.no-comments-container').style.display = 'none'
-})
-feedbackAddedObserver.observe(document.querySelector('.cmnts-list'), { childList: true })
+  document.querySelector('.no-comments-container').style.display = 'none';
+});
+feedbackAddedObserver.observe(document.querySelector('.cmnts-list'), { childList: true });
 
-let splitted = window.location.pathname.split('/').filter(c => c !== '')
-const noteDocID = splitted[splitted.length - 1]
+let splitted = window.location.pathname.split('/').filter(c => c !== '');
+const noteDocID = splitted[splitted.length - 1];
 
 let noteImages = [];
 
 window.addEventListener('load', async () => {
   try {
-    document.querySelector('#editor').setAttribute('data-disabled', 'true')
-    let postType = document.querySelector('#postType').getAttribute('data-posttype')
+    document.querySelector('#editor').setAttribute('data-disabled', 'true');
+    let postType = document.querySelector('#postType').getAttribute('data-posttype');
     
     async function getNoteImages() {
       let imageContainer = document.querySelector('#note-image-container').querySelector('.carousel-wrapper');
@@ -41,43 +41,39 @@ window.addEventListener('load', async () => {
         noteImages.forEach((source, index) => {
           imageContainer.appendChild(imageSliderElement(source, index));
         });
-    
-        if (postType === "quick-post") {
-          document.querySelectorAll('.carousel-control').forEach(doc => doc.remove());
-        }
       } else {
         document.querySelector('#note-image-container').remove();
       }
     }
     
     async function getNoteComments() {
-      let response = await fetch(`/view/${noteDocID}/comments`)
-      let comments = await response.json()
+      let response = await fetch(`/view/${noteDocID}/comments`);
+      let comments = await response.json();
   
-      document.querySelector('.comments-loader').remove()
+      document.querySelector('.comments-loader').remove();
   
       if (comments.length !== 0) {
         comments.forEach(feedback => {
-          manageNotes.addAllFeedback(feedback)
-        })
+          manageNotes.addAllFeedback(feedback);
+        });
       } else {
-        document.querySelector('.no-comments-container').style.display = 'flex'
+        document.querySelector('.no-comments-container').style.display = 'flex';
       }
-      document.querySelector('#editor').removeAttribute('data-disabled')
+      document.querySelector('#editor').removeAttribute('data-disabled');
     }
     
-    await getNoteImages()
+    await getNoteImages();
     
     let commentFetchObserver = new IntersectionObserver(entries => {
       entries.forEach(async entry => {
         if (entry.isIntersecting) {
-          await getNoteComments()
+          await getNoteComments();
           adjustThreadLineHeights();
-          commentFetchObserver.unobserve(document.querySelector('.cmnts-list'))
+          commentFetchObserver.unobserve(document.querySelector('.cmnts-list'));
         }
-      })
-    }, { rootMargin: '100px' })
-    commentFetchObserver.observe(document.querySelector('.cmnts-list'))
+      });
+    }, { rootMargin: '100px' });
+    commentFetchObserver.observe(document.querySelector('.cmnts-list'));
   
     const slides = document.querySelectorAll(".carousel-slide");
     const nextButton = document.querySelector(".next");
@@ -108,73 +104,83 @@ window.addEventListener('load', async () => {
     });
     
     showSlide(currentIndex);
-  } catch (error) {}
-})
+  } catch (error) {
+    console.error('Error in window load:', error);
+  }
+});
 
 socket.emit("join-room", noteDocID);
 
 socket.on('add-feedback', (feedbackData) => {
-  console.log(`Got that`)
+  console.log(`Got that`);
   try {
-    console.log(feedbackData)
-    document.querySelector('div.main-cmnt-container[data-temporary=true]')?.remove()  
-    manageNotes.addFeedback(feedbackData)
+    console.log(feedbackData);
+    document.querySelector('div.main-cmnt-container[data-temporary=true]')?.remove();  
+    manageNotes.addFeedback(feedbackData);
   } catch (error) {
-    console.log(`Error`)
-    console.log(error)
+    console.log(`Error`);
+    console.log(error);
   }
-})
+});
 
 socket.on('add-reply', (replyData) => {
   try {
-    document.querySelector('div.thread-msg[data-temporary=true]')?.remove()
-    manageNotes.addReply(document.querySelector(`#thread-${replyData.parentFeedbackDocID._id}`), replyData)
-  } catch (error) {}
-})
+    document.querySelector('div.thread-msg[data-temporary=true]')?.remove();
+    manageNotes.addReply(document.querySelector(`#thread-${replyData.parentFeedbackDocID._id}`), replyData);
+  } catch (error) {
+    console.error('Error in add-reply:', error);
+  }
+});
 
 socket.on('update-upvote', function (upvoteCount) {
-  document.querySelector('.uv-count').innerHTML = parseInt(upvoteCount)
-})
+  // Update the like count in the engagement bar
+  const countElement = document.querySelector('.engagement-count');
+  if (countElement) {
+    countElement.textContent = `${upvoteCount} Likes`;
+  }
+});
 
-const voterStudentID = Cookies.get("studentID")
+// Added missing upvoteComment function
+const voterStudentID = Cookies.get("studentID");
 
 async function upvoteComment(voteContainer) {
-  if (voteContainer.getAttribute('data-disabled')) return
+  if (voteContainer.getAttribute('data-disabled')) return;
 
-  voteContainer.setAttribute('data-disabled', 'true')
+  voteContainer.setAttribute('data-disabled', 'true');
 
-  const noteDocID = voteContainer.getAttribute('data-noteid')
-  const isUpvoted = voteContainer.getAttribute('data-isupvoted') === "true" ? true : false
-  const feedbackDocID = voteContainer.getAttribute('data-feedbackid')
+  const noteDocID = voteContainer.getAttribute('data-noteid');
+  const isUpvoted = voteContainer.getAttribute('data-isupvoted') === "true" ? true : false;
+  const feedbackDocID = voteContainer.getAttribute('data-feedbackid');
 
-  let likeCount = voteContainer.querySelector('.like-count')
-  const LIKE_SVG = `<path class='like-icon-fill' d='M28.4938 47.5373C28.4938 47.5373 28.4863 108.91 28.493 110.455C28.4996 112 84.4861 110.998 88.993 110.998C93.5 110.998 108.994 88.5431 109.494 70.581C109.994 52.6188 107.998 49.9985 107.498 49.9985L66 49.9982C78.4744 33.916 62.958 -7.56607 57.9956 8.99958C53.0332 25.5652 49.9956 32.4996 49.9956 32.4996L28.4938 47.5373Z' fill='black'/>`
-  const DISLIKE_SVG = `<path d="M107.498 49.9985C107.998 49.9985 109.994 52.6188 109.494 70.581C108.994 88.5431 93.5 110.998 88.993 110.998C84.4861 110.998 28.4996 112 28.493 110.455C28.4863 108.91 28.4938 47.5373 28.4938 47.5373L49.9956 32.4996C49.9956 32.4996 53.0332 25.5652 57.9956 8.99958C62.958 -7.56607 78.4744 33.916 66 49.9982M107.498 49.9985C106.998 49.9985 66 49.9982 66 49.9982M107.498 49.9985L66 49.9982" stroke="#606770" stroke-width="10" stroke-linecap="round"/>`
+  let likeCount = voteContainer.querySelector('.like-count');
+  const LIKE_SVG = `<path class='like-icon-fill' d='M28.4938 47.5373C28.4938 47.5373 28.4863 108.91 28.493 110.455C28.4996 112 84.4861 110.998 88.993 110.998C93.5 110.998 108.994 88.5431 109.494 70.581C109.994 52.6188 107.998 49.9985 107.498 49.9985L66 49.9982C78.4744 33.916 62.958 -7.56607 57.9956 8.99958C53.0332 25.5652 49.9956 32.4996 49.9956 32.4996L28.4938 47.5373Z' fill='black'/>`;
+  const DISLIKE_SVG = `<path d="M107.498 49.9985C107.998 49.9985 109.994 52.6188 109.494 70.581C108.994 88.5431 93.5 110.998 88.993 110.998C84.4861 110.998 28.4996 112 28.493 110.455C28.4863 108.91 28.4938 47.5373 28.4938 47.5373L49.9956 32.4996C49.9956 32.4996 53.0332 25.5652 57.9956 8.99958C62.958 -7.56607 78.4744 33.916 66 49.9982M107.498 49.9985C106.998 49.9985 66 49.9982 66 49.9982M107.498 49.9985L66 49.9982" stroke="#606770" stroke-width="10" stroke-linecap="round"/>`;
 
   function replaceLikeSvg(svg, increment) {
-    voteContainer.querySelector('.like-icon').innerHTML = svg
-    voteContainer.setAttribute('data-isupvoted', !isUpvoted)
-    voteContainer.querySelector('.like-count').innerHTML = parseInt(likeCount.innerHTML) + (increment ? 1 : -1)
+    voteContainer.querySelector('.like-icon').innerHTML = svg;
+    voteContainer.setAttribute('data-isupvoted', !isUpvoted);
+    voteContainer.querySelector('.like-count').innerHTML = parseInt(likeCount.innerHTML) + (increment ? 1 : -1);
   }
 
-  let url = `/view/${noteDocID}/vote/feedback?type=upvote${isUpvoted ? '&action=delete' : ''}`
-  replaceLikeSvg(isUpvoted ? DISLIKE_SVG : LIKE_SVG, !isUpvoted)
+  let url = `/view/${noteDocID}/vote/feedback?type=upvote${isUpvoted ? '&action=delete' : ''}`;
+  replaceLikeSvg(isUpvoted ? DISLIKE_SVG : LIKE_SVG, !isUpvoted);
 
-  let voteData = new FormData()
-  voteData.append('noteDocID', noteDocID)
-  voteData.append('voterStudentID', voterStudentID)
-  voteData.append('feedbackDocID', feedbackDocID)
+  let voteData = new FormData();
+  voteData.append('noteDocID', noteDocID);
+  voteData.append('voterStudentID', voterStudentID);
+  voteData.append('feedbackDocID', feedbackDocID);
 
   let response = await fetch(url, {
     method: 'post',
     body: voteData
-  })
-  let data = await response.json()
+  });
+  let data = await response.json();
   if (data.ok) {
-    voteContainer.removeAttribute('data-disabled')
+    voteContainer.removeAttribute('data-disabled');
   }
 }
 
+// Added missing formatDate function
 function formatDate(date) {
   const formatter = new Intl.DateTimeFormat('en-US', {
     year: 'numeric',
@@ -186,15 +192,99 @@ function formatDate(date) {
     hour12: true
   });
   const formattedDate = formatter.format(date);
-  return formattedDate
+  return formattedDate;
 }
 
-let kickUser = document.querySelector('.kick')
+// Added missing kickUser functionality
+let kickUser = document.querySelector('.kick');
 if (kickUser) {
   setTimeout(() => {
-    alert('Please login to continue!')
-    kickUser.click()
-  }, 3000)
+    alert('Please login to continue!');
+    kickUser.click();
+  }, 3000);
+}
+
+// Added upvote function for the note (since it's referenced in the HTML)
+async function upvote(element) {
+  if (element.getAttribute('data-disabled')) return;
+
+  element.setAttribute('data-disabled', 'true');
+
+  const noteId = element.getAttribute('data-noteid');
+  let isUpvoted = element.getAttribute('data-isupvoted') === 'true';
+
+  // Toggle the upvote state
+  isUpvoted = !isUpvoted;
+  element.setAttribute('data-isupvoted', isUpvoted.toString());
+
+  // Update the UI
+  const icon = element.querySelector('.uv-icon');
+  if (isUpvoted) {
+    icon.innerHTML = `
+      <path
+        d="M26.0497 5.76283C25.4112 5.12408 24.6532 4.61739 23.8189 4.27168C22.9845 3.92598 22.0903 3.74805 21.1872 3.74805C20.2841 3.74805 19.3898 3.92598 18.5555 4.27168C17.7211 4.61739 16.9631 5.12408 16.3247 5.76283L14.9997 7.08783L13.6747 5.76283C12.385 4.47321 10.636 3.74872 8.81216 3.74872C6.98837 3.74872 5.23928 4.47321 3.94966 5.76283C2.66005 7.05244 1.93555 8.80154 1.93555 10.6253C1.93555 12.4491 2.66005 14.1982 3.94966 15.4878L14.9997 26.5378L26.0497 15.4878C26.6884 14.8494 27.1951 14.0913 27.5408 13.257C27.8865 12.4227 28.0644 11.5284 28.0644 10.6253C28.0644 9.72222 27.8865 8.82796 27.5408 7.99363C27.1951 7.15931 26.6884 6.40127 26.0497 5.76283Z"
+        fill="url(#paint0_linear_4170_1047)"
+      />
+      <defs>
+        <linearGradient
+          id="paint0_linear_4170_1047"
+          x1="-53.407"
+          y1="-16.9324"
+          x2="14.9989"
+          y2="40.0465"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop stop-color="#04DBF7" />
+          <stop offset="1" stop-color="#FF0000" />
+        </linearGradient>
+      </defs>`;
+  } else {
+    icon.innerHTML = `
+      <path
+        d="M26.0497 5.76283C25.4112 5.12408 24.6532 4.61739 23.8189 4.27168C22.9845 3.92598 22.0903 3.74805 21.1872 3.74805C20.2841 3.74805 19.3898 3.92598 18.5555 4.27168C17.7211 4.61739 16.9631 5.12408 16.3247 5.76283L14.9997 7.08783L13.6747 5.76283C12.385 4.47321 10.636 3.74872 8.81216 3.74872C6.98837 3.74872 5.23928 4.47321 3.94966 5.76283C2.66005 7.05244 1.93555 8.80154 1.93555 10.6253C1.93555 12.4491 2.66005 14.1982 3.94966 15.4878L14.9997 26.5378L26.0497 15.4878C26.6884 14.8494 27.1951 14.0913 27.5408 13.257C27.8865 12.4227 28.0644 11.5284 28.0644 10.6253C28.0644 9.72222 27.8865 8.82796 27.5408 7.99363C27.1951 7.15931 26.6884 6.40127 26.0497 5.76283Z"
+        stroke="#1E1E1E"
+        stroke-width="0.909091"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />`;
+  }
+
+  // Update the like count locally
+  const countElement = element.closest('.engagement-bar').querySelector('.engagement-count');
+  let count = parseInt(countElement.textContent);
+  count = isUpvoted ? count + 1 : count - 1;
+  countElement.textContent = `${count} Likes`;
+
+  // Send the upvote request to the server
+  let url = `/view/${noteId}/vote?type=upvote${isUpvoted ? '' : '&action=delete'}`;
+  let voteData = new FormData();
+  voteData.append('noteDocID', noteId);
+  voteData.append('voterStudentID', voterStudentID);
+
+  try {
+    let response = await fetch(url, {
+      method: 'post',
+      body: voteData
+    });
+    let data = await response.json();
+    if (data.ok) {
+      element.removeAttribute('data-disabled');
+      // Socket.IO will update the count via the 'update-upvote' event
+    } else {
+      // Revert the UI if the server request fails
+      isUpvoted = !isUpvoted;
+      element.setAttribute('data-isupvoted', isUpvoted.toString());
+      countElement.textContent = `${parseInt(countElement.textContent) + (isUpvoted ? -1 : 1)} Likes`;
+      Swal.fire(toastData('error', "Failed to update upvote", 3000));
+    }
+  } catch (error) {
+    console.error('Error in upvote:', error);
+    // Revert the UI on error
+    isUpvoted = !isUpvoted;
+    element.setAttribute('data-isupvoted', isUpvoted.toString());
+    countElement.textContent = `${parseInt(countElement.textContent) + (isUpvoted ? -1 : 1)} Likes`;
+    Swal.fire(toastData('error', "Network error, please try again", 3000));
+  }
 }
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -260,28 +350,28 @@ const tribute = new Tribute({
   lookup: "displayname",
   trigger: "@",
   selectTemplate: function (item) {
-    return `@${item.original.username}`
+    return `@${item.original.username}`;
   },
   menuItemTemplate: function (item) {
     return `
     <div class="mention-modal">
-    <img src="${item.original.profile_pic}" class="mention__user-pic">
-    <p class="mention__user-dname" >${item.original.displayname}</p>          
+      <img src="${item.original.profile_pic}" class="mention__user-pic">
+      <p class="mention__user-dname">${item.original.displayname}</p>          
     </div>
     `;
   },
   values: async (text, callback) => {
     try {
-      let response = await fetch(`/api/search/user?term=${text}`)
-      if (!response.ok) console.log(`No network connection!`)
-      let data = await response.json()
-      callback(data)
+      let response = await fetch(`/api/search/user?term=${text}`);
+      if (!response.ok) console.log(`No network connection!`);
+      let data = await response.json();
+      callback(data);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
-})
-tribute.attach(document.querySelector('#editor'))
+});
+tribute.attach(document.querySelector('#editor'));
 
 const toolbarOptions = [
   ['bold', 'italic', 'underline'],
@@ -331,10 +421,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const commenterStudentID = Cookies.get("studentID");
 
   const postMainComment = async (event) => {
-    event.preventDefault()
+    event.preventDefault();
     const commentHTML = editor.root.innerHTML;
     if (editor.root.textContent.trim() === "" || document.querySelector('#editor').getAttribute('data-disabled')) return;
-    document.querySelector('#editor').setAttribute('data-disabled', 'true')
+    document.querySelector('#editor').setAttribute('data-disabled', 'true');
     
     manageNotes.addFeedback({
       _id: '__id__',
@@ -348,25 +438,25 @@ document.addEventListener('DOMContentLoaded', () => {
       noteDocID: { _id: '__id__' },
       upvoteCount: 0,
       temporary: true
-    })
+    });
 
-    const feedbackData = new FormData()
-    feedbackData.append('noteDocID', noteDocID)
-    feedbackData.append('commenterStudentID', commenterStudentID)
-    feedbackData.append('feedbackContents', commentHTML)
+    const feedbackData = new FormData();
+    feedbackData.append('noteDocID', noteDocID);
+    feedbackData.append('commenterStudentID', commenterStudentID);
+    feedbackData.append('feedbackContents', commentHTML);
 
     let response = await fetch(`/view/${noteDocID}/postFeedback`, {
       body: feedbackData,
       method: 'post'
-    })
-    let data = await response.json()
-    if(data.sent) {
-      document.querySelector('#editor').removeAttribute('data-disabled') 
-      Swal.fire(toastData('success', "Feedback sent", 2000))
+    });
+    let data = await response.json();
+    if (data.sent) {
+      document.querySelector('#editor').removeAttribute('data-disabled');
+      Swal.fire(toastData('success', "Feedback sent", 2000));
       editor.root.innerHTML = '';
       adjustThreadLineHeights();
     } else {
-      Swal.fire(toastData('error', "Sorry, couldn't send message", 3000))
+      Swal.fire(toastData('error', "Sorry, couldn't send message", 3000));
     }
   };
 
@@ -417,7 +507,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     commentList.addEventListener('click', async (event) => {
       if (event.target.classList.contains('thread-opener')) {
-        let parentCommenterUsername = event.target.parentElement.parentElement?.querySelector(".reply-info #commenterUsername").textContent
+        let parentCommenterUsername = event.target.parentElement.parentElement?.querySelector(".reply-info #commenterUsername").textContent;
         const threadSection = event.target.closest('.main__cmnts-replies-wrapper').querySelector('.thread-section');
         document.querySelectorAll('.thread-editor-container').forEach(editor => editor.remove());
 
@@ -443,8 +533,8 @@ document.addEventListener('DOMContentLoaded', () => {
         textarea.selectionStart = textarea.selectionEnd = textarea.value.length;
         textarea.focus();
       } else if (event.target.closest('.thread__cmnt-btn')) {
-        const threadContainer = event.target.closest('.thread-editor-container')
-        sendReply(threadContainer)
+        const threadContainer = event.target.closest('.thread-editor-container');
+        sendReply(threadContainer);
       }
 
       document.addEventListener("keydown", async function (event) {
@@ -453,7 +543,7 @@ document.addEventListener('DOMContentLoaded', () => {
           if (event.ctrlKey && event.key === "Enter") {
             event.preventDefault();
             const threadContainer = activeElement.closest('.thread-editor-container');
-            sendReply(threadContainer)
+            sendReply(threadContainer);
             const mainEditor = document.querySelector('.ql-editor');
             if (mainEditor) mainEditor.innerHTML = '';
           }
@@ -551,7 +641,6 @@ function enlargeImage(imageSrc, noteId, initialIndex) {
   });
 }
 
-// Updated downloadImage to force immediate download
 async function downloadImage(imageSrc, noteId, imageIndex) {
   try {
     const response = await fetch(imageSrc);

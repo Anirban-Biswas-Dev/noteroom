@@ -22,104 +22,86 @@
     <script src="https://cdn.quilljs.com/1.3.7/quill.min.js" defer></script>
     <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
 
-
-	  <%- include('../partials/links.ejs') %>
+    <%- include('../partials/links.ejs') %>
     <!-- Meta Details -->
     <title><%= note.title %></title>
   </head>
   <body>
-
     <%- include('../side-panel', { block: 'left-panel' }) %>
     <%- include('../side-panel', { block: 'search-bar' }) %>
 
     <span data-posttype="<%= postType %>" style="display: none;" id="postType"></span>
 
     <div class="middle-section">
-      <div class="nav-section" style="padding-top: 10px;">
-        <svg class="nav-back-btn" onclick="goPrevPage()" width="20" height="auto" viewBox="0 0 68 68" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M16.6029 29.8333H67.332V38.1666H16.6029L39.9362 61.5L33.9987 67.3333L0.665367 34L33.9987 0.666649L39.9362 6.49998L16.6029 29.8333Z" fill="#1D1B20"/>
-        </svg>
-      </div>
-
-      <div class="first-box">
-        <div class="fb__col-1">
-          <img class="note-author-img" src="<%= owner.profile_pic %>" alt="Author Picture" onclick="location.href='/user/<%= owner.username %>'" />
-          <div class="fb__col-1-wrapper-1">
-            <span class="author-name"><a href="/user/<%= owner.username %>"><%= owner.displayname %></a></span>
+      <!-- Post Container -->
+      <div class="post-container">
+        <!-- Post Header -->
+        <div class="post-header">
+          <div class="post-header__info">
+            <svg class="nav-back-btn" onclick="goPrevPage()" width="20" height="auto" viewBox="0 0 68 68" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M16.6029 29.8333H67.332V38.1666H16.6029L39.9362 61.5L33.9987 67.3333L0.665367 34L33.9987 0.666649L39.9362 6.49998L16.6029 29.8333Z" fill="#1D1B20"/>
+            </svg>
+            <img class="post-author-pic" src="<%= owner.profile_pic %>" alt="Author Picture" onclick="location.href='/user/<%= owner.username %>'" />
+            <span class="post-author-name"><a href="/user/<%= owner.username %>"><%= owner.displayname %></a></span>
+          </div>
+          <div class="post-header__actions">
+            <button class="request-btn db-note-card-request-option" 
+              data-req-pfp="<%= owner.profile_pic %>" 
+              data-req-dn="<%= owner.displayname %>" 
+              data-req-un="<%= owner.username %>"
+            >Request</button>
             <% if (postType !== "quick-post") { %>
-              <h1 class="section-title"><%= note.title %></h1>
+              <button class="save-btn <%= note.isSaved ? 'saved' : '' %>" onclick="saveNote(this)"
+                id="save-note-btn" data-issaved="<%= note.isSaved %>" data-notetitle="<%= note.title %>" data-noteid="<%= note._id %>">
+                <svg class="bookmark-outline" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M17 3H7C5.89543 3 5 3.89543 5 5V21L12 18L19 21V5C19 3.89543 18.1046 3 17 3Z" stroke="#1D1B20" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <svg class="bookmark-filled" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M17 3H7C5.89543 3 5 3.89543 5 5V21L12 18L19 21V5C19 3.89543 18.1046 3 17 3Z" fill="#1D1B20"/>
+                </svg>
+              </button>
             <% } %>
           </div>
         </div>
-        <div class="fb__col-2">
-          <button class="note-view-request-btn db-note-card-request-option" 
-            data-req-pfp="<%= owner.profile_pic %>" 
-            data-req-dn="<%= owner.displayname %>" 
-            data-req-un="<%= owner.username%>"
-          >Request</button>
 
-        <% if (postType !== "quick-post") { %>
-          
-            <button class="<%= note.isSaved ? "save-note-btn saved" : "save-note-btn" %>" onclick="saveNote(this)"
-                id="save-note-btn" data-issaved="<%= note.isSaved %>" data-notetitle='<%= note.title %>' data-noteid='<%= note._id %>'>
-                <svg class="bookmark-fill-white" width="18" height="30" viewBox="0 0 66 97" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M0.619048 96C0.619048 96.1528 0.710359 96.2908 0.850996 96.3506C0.991633 96.4104 1.15437 96.3803 1.26439 96.2743L32.2955 66.3606C32.7036 65.9672 33.2964 65.9672 33.7045 66.3606L64.7356 96.2743C64.8456 96.3803 65.0084 96.4104 65.149 96.3506C65.2896 96.2908 65.381 96.1528 65.381 96V4.27586C65.381 2.2943 63.924 0.619048 62.0462 0.619048H3.95385C2.07596 0.619048 0.619048 2.2943 0.619048 4.27586V96ZM3.95385 3.56486H62.0462C62.3434 3.56486 62.6498 3.84515 62.6498 4.27586V90.3117L35.5252 64.1638C34.0811 62.7717 31.9189 62.7717 30.4748 64.1638L3.35018 90.3117V4.27586C3.35018 3.84515 3.65658 3.56486 3.95385 3.56486Z" fill="black" stroke="black" stroke-width="1.5" stroke-linejoin="round"/>
-              </svg>
-              <svg class="bookmark-fill-black" width="18" height="30" viewBox="0 0 66 97" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M0 3C0 1.34314 1.34315 0 3 0H63C64.6569 0 66 1.34315 66 3V93.9494C66 96.5944 62.8256 97.9451 60.9198 96.111L35.0802 71.2442C33.9187 70.1264 32.0813 70.1264 30.9198 71.2442L5.08024 96.111C3.17437 97.9451 0 96.5944 0 93.9494V3Z" fill="black"/>
-              </svg>
-            </button>
-        <% } %>
-      </div>
-      </div>
+        <!-- Post Content -->
+        <div class="post-content">
+          <% if (postType !== "quick-post") { %>
+            <h1 class="post-title"><%= note.title %></h1>
+          <% } %>
+          <div class="post-description"><%- note.description %></div>
+          <%- include('components/note-images', { note: note }) %>
+        </div>
 
-      <!-- COMPONENT: note image carousel -->
-      <!-- FIXME: quick-posts which don't have any image still have this image container. so they take empty spaces. have to remove them -->
-      <%- include('components/note-images', { note: note }) %>
-      
-      <% if (postType !== "quick-post") { %>
-        <div class="third-box">
-          <div class="third-box__row-1">
-            <!-- COMPONENT: note engagements -->
-            <%- include('components/note-engagements', { note: note, postType }) %>
-            <h3 class="desc-label">Description</h3>
+        <!-- Engagement Bar -->
+        <div class="engagement-bar">
+          <%- include('components/note-engagements', { note: note, postType }) %>
+          <span class="engagement-count"><%= note.upvoteCount %> Likes</span>
+        </div>
+
+        <!-- Comments Section -->
+        <div class="comments-section">
+          <%- include('components/comment-box', { type: 'main'}) %>
+          <div class="no-comments-container">No Feedbacks yet. Be the first to provide</div>
+          <div class="comments-loader" style="display: flex; justify-content: center; align-items: center;">
+            <div class="search-results-loader" style="display: block;"></div>
           </div>
-          <div class="desc-content" ><%- note.description %></div>
+          <div class="cmnts-list"></div>
         </div>
-
-      <% } else { %>
-        <div class="third-box">
-          <div class="desc-content" ><%- note.description %></div>
-          <div class="third-box__row-1">
-            <h3 class="desc-label"></h3>
-            <%- include('components/note-engagements', { note: note, postType }) %>
-          </div>  
-        </div>
-      <% }%>
-
-      <div class="cmnts-section">
-        <!-- COMPONENT: main comment box -->
-        <%- include('components/comment-box', { type: 'main'}) %>
-        
-        <div class="no-comments-container">No Feedbacks yet. Be the first to provide</div>
-        <div class="comments-loader" style="display: flex; justify-content: center; align-items: center;"><div class="search-results-loader" style="display: block;"></div></div>
-        
-        <div class="cmnts-list"></div>
-    
       </div>
     </div>
 
     <%- include('../side-panel', { block: 'mbl-ctrl-panel' }) %>
     <%- include('../side-panel', { block: 'right-panel' }) %>
-  	<%- include('../side-panel', { block: 'notification-modal' }) %>
-	  <%- include('../side-panel', { block: 'request-modal' }) %>
+    <%- include('../side-panel', { block: 'notification-modal' }) %>
+    <%- include('../side-panel', { block: 'request-modal' }) %>
 
-	  <audio id="notificationAudio" src="/sounds/notification-ping-sound.mp3" preload="auto"></audio>
+    <audio id="notificationAudio" src="/sounds/notification-ping-sound.mp3" preload="auto"></audio>
 
     <%- include('../side-panel', { block: 'share-note' }) %>
     <%- include('../side-panel', { block: 'downloading-loader' }) %>
     
-	  <script src="/js/notificationHandler.js" defer></script>
+    <script src="/js/notificationHandler.js" defer></script>
     <script src="/js/controller.js" defer></script>
     <script src="/js/note-view.js" defer></script>
     <script src="/js/utils.js" defer></script>
