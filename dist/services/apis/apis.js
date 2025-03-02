@@ -17,6 +17,7 @@ const search_js_1 = __importDefault(require("./search.js"));
 const request_js_1 = require("./request.js");
 const user_js_1 = __importDefault(require("./user.js"));
 const utils_js_1 = require("../../helpers/utils.js");
+const notificationService_js_1 = require("../notificationService.js");
 exports.router = (0, express_1.Router)();
 function apiRouter(io) {
     exports.router.use('/note', (0, note_js_1.default)(io));

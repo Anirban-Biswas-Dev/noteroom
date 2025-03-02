@@ -8,7 +8,7 @@ const path_1 = require("path");
 const dotenv_1 = require("dotenv");
 const firebase_admin_1 = __importDefault(require("firebase-admin"));
 const utils_js_1 = require("../helpers/utils.js");
-(0, dotenv_1.config)({ path: (0, path_1.join)(__dirname, '../.env') });
+(0, dotenv_1.config)({ path: (0, path_1.join)(__dirname, '../../server/.env') });
 const serviceAccount = JSON.parse(process.env.FIREBASE_CLOUD_CRED);
 const bucketName = process.env.NOTEROOM_PRODUCTION_FIREBASE_BUCKET;
 firebase_admin_1.default.initializeApp({
