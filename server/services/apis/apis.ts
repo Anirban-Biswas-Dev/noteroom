@@ -13,6 +13,7 @@ import searchRouter from "./search.js";
 import { requestApi } from "./request.js";
 import userApiRouter from "./user.js";
 import { log } from "../../helpers/utils.js";
+import { deleteAllNoti } from "../notificationService.js";
 
 export const router = Router()
 
@@ -73,10 +74,11 @@ export default function apiRouter(io: Server) {
 
     router.get('/getnote', async (req, res, next) => {
         try {
+            const count = 7
             let page = Number(req.query.page) || 1
-            let count = Number(req.query.count) || 7
             let seed: number = Number(req.query.seed) || 601914080
             let skip: number = (page - 1) * count
+            let after: string | undefined = req.query.after ? String(req.query.after) : undefined
             
             let _studentDocID = (await Convert.getDocumentID_studentid(req.session["stdid"]))
             let studentDocID: any
@@ -84,7 +86,7 @@ export default function apiRouter(io: Server) {
                 studentDocID = _studentDocID.toString()
                 log('info', `On /getnote StudentID=${req.session["stdid"] || "--studentid--"}: Converted studentID->documentID`)
 
-                let notes = await getAllNotes(studentDocID, { skip: skip, limit: count, seed: seed })
+                let notes = await getAllNotes(studentDocID, { skip: skip, limit: count, seed: seed, after: after })
                 log('info', `On /getnote StudentID=${req.session["stdid"] || "--studentid--"}: Got notes with skip=${skip}, limit=${count}, seed=${seed}`)
                 
                 if (notes.length != 0) {
@@ -120,6 +122,17 @@ export default function apiRouter(io: Server) {
             res.json({ ok: false })
         }
     })    
+
+
+    router.delete('/notifications/delete', async (req, res) => {
+        try {
+            let studentID = req.session["stdid"]
+            let deletedResult = await deleteAllNoti(studentID)
+            res.json({ ok: deletedResult })
+        } catch (error) {
+            res.json({ ok: false })
+        }
+    })
 
     return router
 }

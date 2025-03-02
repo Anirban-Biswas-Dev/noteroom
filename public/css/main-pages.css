@@ -778,14 +778,42 @@ body {
 .notifications-container::-webkit-scrollbar-thumb {
   display: none;
 }
-.notification-header-label{
+
+.notification-header{
   width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 5px;
+}
+.notification-header-label{
+  width: 85%;
   font-weight: 600;
   font-size: 18px;
   line-height: 22px;
   color: var(--squid-ink);
 }
 
+.delete-all-noti-icon{
+  width: 30px;
+  height: auto;
+  padding: 5px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
+  background-color: transparent;
+  transition: background-color 0.1s ease;
+}
+.delete-all-noti-icon:hover{
+  background-color:#e2e5e9;
+}
+.delete-all-noti-icon:active{
+  background-color:#d7d8d9;
+  outline:none;
+}
+.delete-all-noti-icon:focus{
+  outline: none;
+}
 .notification {
   width: 100%;
   background: transparent;

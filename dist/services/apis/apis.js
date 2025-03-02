@@ -65,16 +65,17 @@ function apiRouter(io) {
     });
     exports.router.get('/getnote', async (req, res, next) => {
         try {
+            const count = 7;
             let page = Number(req.query.page) || 1;
-            let count = Number(req.query.count) || 7;
             let seed = Number(req.query.seed) || 601914080;
             let skip = (page - 1) * count;
+            let after = req.query.after ? String(req.query.after) : undefined;
             let _studentDocID = (await userService_js_1.Convert.getDocumentID_studentid(req.session["stdid"]));
             let studentDocID;
             if (_studentDocID) {
                 studentDocID = _studentDocID.toString();
                 (0, utils_js_1.log)('info', `On /getnote StudentID=${req.session["stdid"] || "--studentid--"}: Converted studentID->documentID`);
-                let notes = await (0, noteService_js_1.getAllNotes)(studentDocID, { skip: skip, limit: count, seed: seed });
+                let notes = await (0, noteService_js_1.getAllNotes)(studentDocID, { skip: skip, limit: count, seed: seed, after: after });
                 (0, utils_js_1.log)('info', `On /getnote StudentID=${req.session["stdid"] || "--studentid--"}: Got notes with skip=${skip}, limit=${count}, seed=${seed}`);
                 if (notes.length != 0) {
                     (0, utils_js_1.log)('info', `On /getnote StudentID=${req.session["stdid"] || "--studentid--"}: Sent notes with skip=${skip}, limit=${count}, seed=${seed}`);
@@ -104,6 +105,16 @@ function apiRouter(io) {
             let sessiondeletion = await (0, userService_js_1.deleteSessionsByStudentID)(studentID);
             (0, utils_js_1.log)('info', `On /user/delete StudentID=${studentID || "--studentid--"}: User is deleted`);
             res.json({ ok: response.ok && sessiondeletion.ok });
+        }
+        catch (error) {
+            res.json({ ok: false });
+        }
+    });
+    exports.router.delete('/notifications/delete', async (req, res) => {
+        try {
+            let studentID = req.session["stdid"];
+            let deletedResult = await (0, notificationService_js_1.deleteAllNoti)(studentID);
+            res.json({ ok: deletedResult });
         }
         catch (error) {
             res.json({ ok: false });

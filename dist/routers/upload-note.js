@@ -74,22 +74,33 @@ function uploadRouter(io) {
                         try {
                             let owner = await (0, rootInfo_js_1.profileInfo)(req.session["stdid"]);
                             io.emit('note-upload', {
-                                noteID: noteDocId,
-                                noteTitle: noteData.title,
-                                description: noteData.description,
-                                createdAt: note.createdAt,
-                                content1: allFilePaths[0],
-                                content2: allFilePaths[1],
-                                contentCount: allFilePaths.length,
-                                ownerID: owner.studentID,
-                                profile_pic: owner.profile_pic,
-                                ownerDisplayName: owner.displayname,
-                                ownerUserName: owner.username,
-                                isSaved: false,
-                                isUpvoted: false,
-                                feedbackCount: 0,
-                                upvoteCount: 0,
-                                quickPost: false
+                                noteData: {
+                                    noteID: noteDocId,
+                                    noteTitle: noteData.title,
+                                    description: noteData.description,
+                                    createdAt: note.createdAt,
+                                },
+                                contentData: {
+                                    content1: allFilePaths[0],
+                                    content2: allFilePaths[1],
+                                    contentCount: allFilePaths.length,
+                                },
+                                ownerData: {
+                                    ownerID: owner.studentID,
+                                    profile_pic: owner.profile_pic,
+                                    ownerDisplayName: owner.displayname,
+                                    ownerUserName: owner.username,
+                                },
+                                interactionData: {
+                                    isSaved: false,
+                                    isUpvoted: false,
+                                    feedbackCount: 0,
+                                    upvoteCount: 0,
+                                },
+                                extras: {
+                                    quickPost: false,
+                                    pinned: false
+                                }
                             });
                             (0, utils_js_1.log)('info', `On /upload StudentID=${req.session['stdid'] || "--studentid--"}: note-upload event is sent`);
                         }

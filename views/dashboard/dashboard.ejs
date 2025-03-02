@@ -73,7 +73,7 @@
             src="<%= root.profile_pic %>"
             class="profile-pic quick-post__fr--prfl-pic"
             id="root-profile-pic"
-            onclick=""
+            onclick="location.href='/user/<%= root.username %>'"
           />
           <div class="quick-post__fr--msg-btn">
             Ask or share anything
@@ -179,5 +179,6 @@
     <script src="/js/dashboard.js" defer></script>
     <script src="/js/quick-post.js" defer></script>
     <script src="/js/request.js" defer></script>
+    <script src="/js/utils.js" defer></script>
   </body>
 </html>

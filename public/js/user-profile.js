@@ -254,3 +254,16 @@ async function changeDetail(event) {
         }
     }
 }
+
+function showProfilePreview(imageUrl) {
+    Swal.fire({
+        html: `<img src="${imageUrl}" class="swal-profile-pic-preview" alt="Profile Picture" style="width: 100%; border-radius: 50%;">`,
+        showCloseButton: true,
+        showConfirmButton: false,
+        background: 'transparent',
+        customClass: {
+            popup: 'profile-preview-popup'
+        }
+    });
+}
+f

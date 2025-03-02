@@ -74,22 +74,33 @@ function quickPostRouter(io) {
             });
             let owner = await (0, rootInfo_1.profileInfo)(req.session["stdid"]);
             io.emit('note-upload', {
-                noteID: postID,
-                noteTitle: null,
-                description: postData.description,
-                createdAt: finalPost.createdAt,
-                content1: content,
-                content2: null,
-                contentCount: contentCount,
-                ownerID: owner.studentID,
-                profile_pic: owner.profile_pic,
-                ownerDisplayName: owner.displayname,
-                ownerUserName: owner.username,
-                isSaved: false,
-                isUpvoted: false,
-                feedbackCount: 0,
-                upvoteCount: 0,
-                quickPost: true
+                noteData: {
+                    noteID: postID,
+                    noteTitle: null,
+                    description: postData.description,
+                    createdAt: finalPost.createdAt,
+                },
+                contentData: {
+                    content1: content,
+                    content2: null,
+                    contentCount: contentCount,
+                },
+                ownerData: {
+                    ownerID: owner.studentID,
+                    profile_pic: owner.profile_pic,
+                    ownerDisplayName: owner.displayname,
+                    ownerUserName: owner.username,
+                },
+                interactionData: {
+                    isSaved: false,
+                    isUpvoted: false,
+                    feedbackCount: 0,
+                    upvoteCount: 0,
+                },
+                extras: {
+                    quickPost: true,
+                    pinned: false
+                }
             });
         }
         catch (error) {

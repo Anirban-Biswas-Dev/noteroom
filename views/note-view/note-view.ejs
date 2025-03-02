@@ -35,8 +35,8 @@
     <span data-posttype="<%= postType %>" style="display: none;" id="postType"></span>
 
     <div class="middle-section">
-      <div class="nav-section">
-        <svg class="nav-back-btn" onclick="goPrevPage()" width="20" height="auto" viewBox="0 0 68 68" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <div class="nav-section" style="padding-top: 10px;">
+        <svg class="nav-back-btn" onclick="goPrevPage()" width="20"  viewBox="0 0 68 68" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M16.6029 29.8333H67.332V38.1666H16.6029L39.9362 61.5L33.9987 67.3333L0.665367 34L33.9987 0.666649L39.9362 6.49998L16.6029 29.8333Z" fill="#1D1B20"/>
         </svg>
       </div>
@@ -51,9 +51,15 @@
             <% } %>
           </div>
         </div>
+        <div class="fb__col-2">
+          <button class="note-view-request-btn db-note-card-request-option" 
+            data-req-pfp="<%= owner.profile_pic %>" 
+            data-req-dn="<%= owner.displayname %>" 
+            data-req-un="<%= owner.username%>"
+          >Request</button>
 
         <% if (postType !== "quick-post") { %>
-          <div class="fb__col-2">
+          
             <button class="<%= note.isSaved ? "save-note-btn saved" : "save-note-btn" %>" onclick="saveNote(this)"
                 id="save-note-btn" data-issaved="<%= note.isSaved %>" data-notetitle='<%= note.title %>' data-noteid='<%= note._id %>'>
                 <svg class="bookmark-fill-white" width="18" height="30" viewBox="0 0 66 97" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -63,13 +69,11 @@
                   <path d="M0 3C0 1.34314 1.34315 0 3 0H63C64.6569 0 66 1.34315 66 3V93.9494C66 96.5944 62.8256 97.9451 60.9198 96.111L35.0802 71.2442C33.9187 70.1264 32.0813 70.1264 30.9198 71.2442L5.08024 96.111C3.17437 97.9451 0 96.5944 0 93.9494V3Z" fill="black"/>
               </svg>
             </button>
-          </div>
         <% } %>
-
+      </div>
       </div>
 
       <!-- COMPONENT: note image carousel -->
-      <!-- FIXME: quick-posts which don't have any image still have this image container. so they take empty spaces. have to remove them -->
       <%- include('components/note-images', { note: note }) %>
       
       <% if (postType !== "quick-post") { %>
@@ -107,6 +111,7 @@
     <%- include('../side-panel', { block: 'mbl-ctrl-panel' }) %>
     <%- include('../side-panel', { block: 'right-panel' }) %>
   	<%- include('../side-panel', { block: 'notification-modal' }) %>
+	  <%- include('../side-panel', { block: 'request-modal' }) %>
 
 	  <audio id="notificationAudio" src="/sounds/notification-ping-sound.mp3" preload="auto"></audio>
 
@@ -117,5 +122,6 @@
     <script src="/js/controller.js" defer></script>
     <script src="/js/note-view.js" defer></script>
     <script src="/js/utils.js" defer></script>
+    <script src="/js/request.js" defer></script>
   </body>
 </html>

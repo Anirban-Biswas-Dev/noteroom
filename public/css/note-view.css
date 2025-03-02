@@ -94,7 +94,33 @@ body {
   align-items: center;
   justify-content: flex-end;
   padding: 10px 15px;
+  gap: 8px;
 }
+.note-view-request-btn{
+  border: none;
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 1;
+  padding: 12px 20px;
+  background: white;
+  border-radius: 25px;
+  outline: none;
+  color: var(--squid-ink);
+  cursor: pointer;
+  transition: background-color 0.1s ease, outline 0.2s ease;
+}
+
+.note-view-request-btn:hover{
+  background-color: #f8f8f8;
+  outline:none;
+  outline: var(--neon-blue) 1px solid;
+}
+.note-view-request-btn:active{
+  background-color: transparent;
+  outline-offset: -2px;
+}
+
+
 .save-note-btn {
   border: none;
   padding: 5px 10px;
@@ -961,6 +987,13 @@ body {
     flex: none;
     padding: 5px 8px;
   }
+  .note-view-request-btn{
+    padding: 8px 12px;
+    font-size: .7rem;
+    border-radius: 25px;
+    font-weight: 650;
+  }
+
   .save-note-btn {
     font-size: 1.2rem;
     padding: 5px 8px;
@@ -1024,6 +1057,12 @@ body {
   .fb__col-2 {
     flex: none;
     padding: 8px 12px;
+  }
+  .note-view-request-btn{
+    padding: 8px 12px;
+    font-size: .8rem;
+    border-radius: 25px;
+    font-weight: 650;
   }
   .save-note-btn {
     font-size: 1.3rem;
@@ -1226,4 +1265,201 @@ body {
   .thread-editor {
     font-size: 14px;
   }
+}
+
+/* ... (rest of your existing CSS remains unchanged) ... */
+
+/* Image Modal Styles */
+.image-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2000; /* Above all content */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.image-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(5px);
+  z-index: 1; /* Below modal content */
+  transition: opacity 0.3s ease;
+}
+
+.image-modal-content {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2; /* Above backdrop */
+  padding: 20px; /* Space around the image */
+  width: 100%;
+  height: 100%;
+}
+
+/* Default: Larger screens (height-driven) */
+.enlarged-image {
+  max-height: calc(100vh - 80px); /* Full height minus padding and buttons */
+  max-width: calc(100vw - 80px); /* Limit width to avoid overflow */
+  object-fit: contain;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Modal Buttons Container */
+.image-modal-buttons {
+  position: absolute;
+  bottom: 30px; /* Fixed distance from bottom */
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+  z-index: 3;
+  padding: 0; /* No internal padding to avoid shifting */
+}
+
+/* Carousel Controls - Default (larger screens) */
+.modal-carousel-control {
+  position: absolute;
+  top: 50%;
+  border: none;
+  background: #F8F8F8;
+  box-shadow: 0px 2px 1.5px rgba(0, 0, 0, 0.25);
+  border-radius: 10px;
+  transform: translateY(-50%);
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  z-index: 3;
+}
+
+.modal-carousel-control .carousel-control-icon {
+  width: 20px;
+  height: auto;
+}
+
+.modal-carousel-control.prev {
+  left: -60px;
+}
+
+.modal-carousel-control.next {
+  right: -60px;
+}
+
+/* Smaller screens (width-driven) */
+@media (max-width: 768px) {
+  .image-modal-content {
+    padding: 15px; /* Slightly less padding on small screens */
+  }
+
+  .enlarged-image {
+    max-width: calc(100vw - 30px); /* Full width minus padding */
+    max-height: calc(100vh - 60px); /* Limit height to avoid overflow */
+    object-fit: contain;
+  }
+
+  .modal-carousel-control {
+    position: static; /* Integrate into button row */
+    transform: none; /* Remove vertical centering */
+  }
+
+  .image-modal-buttons {
+    position: absolute;
+    bottom: 30px; /* Fixed distance from bottom */
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: auto; /* Prevent stretching */
+  }
+}
+
+.image-modal-download {
+  background: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease;
+}
+
+.image-modal-download:hover {
+  background-color: #f8f8f8;
+}
+
+.image-modal-download:active {
+  background-color: #e0e0e0;
+}
+
+.image-modal-close {
+  background: #fff;
+  border: none;
+  font-size: 24px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease;
+  z-index: 3;
+}
+
+.image-modal-close:hover {
+  background-color: #f0f0f0;
+}
+
+.image-modal-close:active {
+  background-color: #e0e0e0;
+}
+
+.modal-carousel-control:hover {
+  background-color: #f2f2f2;
+}
+
+.modal-carousel-control:active {
+  background-color: #e0e0e0;
+}
+
+/* Logo Styles (adjust selector as needed) */
+.logo {
+  position: relative;
+  z-index: 3000; /* Above modal backdrop */
+  transition: box-shadow 0.3s ease;
+}
+
+.logo.highlight-logo {
+  box-shadow: 0 0 10px 5px rgba(255, 255, 255, 0.8); /* Glow effect */
+}
+
+/* Make carousel images clickable */
+.carousel-slide img {
+  width: 350px;
+  height: 450px;
+  object-fit: contain;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.carousel-slide img:hover {
+  transform: scale(1.02);
 }

@@ -85,26 +85,33 @@ function uploadRouter(io: Server) {
                         try {
                             let owner = await profileInfo(req.session["stdid"]) 
                             io.emit('note-upload', { 
-                                noteID /* Document ID of the note */: noteDocId,
-                                noteTitle /* Title of the note */: noteData.title,
-                                description: noteData.description,
-                                createdAt: note.createdAt,
-            
-                                content1: allFilePaths[0],
-                                content2: allFilePaths[1],
-                                contentCount /* The first image of the notes content as a thumbnail */: allFilePaths.length,
-                                
-                                ownerID /* Student ID of the owner of the note */: owner.studentID,
-                                profile_pic /* Profile pic path of the owner of the note */: owner.profile_pic,
-                                ownerDisplayName /* Displayname of the owener of the note*/: owner.displayname,
-                                ownerUserName /* Username of the owner of the note */: owner.username,
-            
-                                isSaved: false,
-                                isUpvoted: false,
-                                feedbackCount: 0, 
-                                upvoteCount: 0,
-            
-                                quickPost: false
+                                noteData: {
+                                    noteID /* Document ID of the note */: noteDocId,
+                                    noteTitle /* Title of the note */: noteData.title,
+                                    description: noteData.description,
+                                    createdAt: note.createdAt,
+                                },
+                                contentData: {
+                                    content1: allFilePaths[0],
+                                    content2: allFilePaths[1],
+                                    contentCount /* The first image of the notes content as a thumbnail */: allFilePaths.length,
+                                },
+                                ownerData: {
+                                    ownerID /* Student ID of the owner of the note */: owner.studentID,
+                                    profile_pic /* Profile pic path of the owner of the note */: owner.profile_pic,
+                                    ownerDisplayName /* Displayname of the owener of the note*/: owner.displayname,
+                                    ownerUserName /* Username of the owner of the note */: owner.username,
+                                },
+                                interactionData: {
+                                    isSaved: false,
+                                    isUpvoted: false,
+                                    feedbackCount: 0, 
+                                    upvoteCount: 0,
+                                },
+                                extras: {
+                                    quickPost: false,
+                                    pinned: false
+                                }
                             })
                             log('info', `On /upload StudentID=${req.session['stdid'] || "--studentid--"}: note-upload event is sent`)
                         } catch (error) {

@@ -43,9 +43,15 @@
     </div>
     <div class="ms-first-row">
         <div class="user-prfl-pic-wrapper">
-            <img class="user-prfl-pic" src="<%= student.profile_pic %>" alt="Profile Picture" data-field="Profile Picture" data-name="profile_pic" <% if (!visiting) { %>onclick="changeDetail(this)" data-tippy-content="Click to change"<% } %>>
+            <img class="user-prfl-pic" src="<%= student.profile_pic %>" alt="Profile Picture" data-field="Profile Picture" data-name="profile_pic" 
+                <% if (!visiting) { %>
+                    onclick="changeDetail(this)" data-tippy-content="Click to change picture"
+                <% } else { %>
+                    onclick="showProfilePreview('<%= student.profile_pic %>')"
+                <% } %>>
             <%- changeDetails('Profile Picture', 'profile_pic', 'prfl-pic-edit')  %>
         </div>
+        
         <div class="info-items">
             <!-- We'll update the frontend js codes for these element soon -->
             <span class="display-name"><%= student.displayname %>&nbsp;<%- changeDetails('Display Name', 'displayname') %></span>

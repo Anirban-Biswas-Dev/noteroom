@@ -53,9 +53,19 @@ async function addSaveNote({ studentDocID, noteDocID }) {
         let saved_notes_count = (await students_js_1.default.findOne({ _id: studentDocID }, { saved_notes: 1 })).saved_notes.length;
         let savedNote = await notes_js_1.default.aggregate([
             { $match: { _id: new mongoose_1.default.Types.ObjectId(noteDocID) } },
+            { $lookup: {
+                    localField: "ownerDocID",
+                    foreignField: "_id",
+                    from: "students",
+                    as: "ownerDocID"
+                } },
+            { $unwind: {
+                    path: "$ownerDocID"
+                } },
             { $project: {
                     title: 1,
-                    thumbnail: { $first: '$content' }
+                    thumbnail: { $first: '$content' },
+                    "ownerDocID": 1
                 } }
         ]);
         return { ok: true, count: saved_notes_count, savedNote: savedNote };
