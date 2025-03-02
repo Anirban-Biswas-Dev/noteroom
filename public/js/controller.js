@@ -248,14 +248,14 @@ function truncatedTitle(title) {
 
 
 const db = new Dexie("Notes")
-const dbVersion = 26
+const dbVersion = 27
 
 db.version(dbVersion).stores({
     savedNotes: "noteID,noteTitle,noteThumbnail,ownerDisplayName,ownerUserName",
     ownedNotes: "noteID,noteTitle,noteThumbnail,ownerDisplayName,ownerUserName",
     notifications: "notiID,content,fromUserSudentDocID,redirectTo,isRead,createdAt,notiType",
     requests: "recID,message,createdAt,senderDisplayName,senderUserName",
-    feedNotes: "noteID,noteData,contentData,ownerData,interactionData,extras,count"
+    feedNote: "noteID,noteData,contentData,ownerData,interactionData,extras,count"
 })
 db.on('versionchange', async (event) => {
     console.log(`Changed the version to ${dbVersion}`)
@@ -277,9 +277,9 @@ db.open().then(() => {
 
 function ManageFeedCache() {
     this.addFeedNotes = async function (feedNoteObjects) {
-        await db.transaction('rw', db.feedNotes, async () => {
+        await db.transaction('rw', db.feedNote, async () => {
             try {
-                await db.feedNotes.bulkAdd(feedNoteObjects)
+                await db.feedNote.bulkAdd(feedNoteObjects)
             } catch (error) {
                 console.error(error)
             }
@@ -287,12 +287,12 @@ function ManageFeedCache() {
     },
 
     this.getCachedFeedNotes = async function () {
-        let notes = await db.feedNotes.orderBy("count").toArray()
+        let notes = await db.feedNote.orderBy("count").toArray()
         return notes
     },
 
     this.getLastCount = async function() {
-        let lastNote = await db.feedNotes.orderBy("count").reverse().first()
+        let lastNote = await db.feedNote.orderBy("count").reverse().first()
         return lastNote["count"] || 0
     }
 }
@@ -337,7 +337,7 @@ const manageDb = {
                 existingNoti = Object.assign(existingNoti, obj)
                 await db[store].put(existingNoti)
             }
-        } else if (store === "feedNotes") {
+        } else if (store === "feedNote") {
             let existingNote = await db[store].where("noteID").equals(obj.noteData.noteID).first()
             if (!existingNote) {
                 await db[store].add(obj)
@@ -405,7 +405,7 @@ async function upvote(voteContainer, fromDashboard = false) {
     })
     let data = await response.json()
     if (data.ok) {
-        await manageDb.update("feedNotes", { idPath: "noteID", id: noteDocID }, { interactionData: { isUpvoted: !isUpvoted, upvoteCount: parseInt(uvCount.innerHTML) } }, "interactionData" )
+        await manageDb.update("feedNote", { idPath: "noteID", id: noteDocID }, { interactionData: { isUpvoted: !isUpvoted, upvoteCount: parseInt(uvCount.innerHTML) } }, "interactionData" )
     }
     voteContainer.removeAttribute('data-disabled')
 }
@@ -1249,7 +1249,7 @@ async function saveNote(svButton, fromDashboard = false) {
             await manageDb.delete('savedNotes', { idPath: "noteID", id: noteDocID })
             body.count !== 0 || (document.querySelector('.no-saved-notes-message').classList.remove('hide'))
         })()
-        await manageDb.update('feedNotes', { idPath: "noteID", id: noteDocID }, { interactionData: { isSaved: isSaved === "true" ? false : true } }, "interactionData")
+        await manageDb.update('feedNote', { idPath: "noteID", id: noteDocID }, { interactionData: { isSaved: isSaved === "true" ? false : true } }, "interactionData")
 
         svButton.removeAttribute('data-disabled')
     } else {
