@@ -11,8 +11,13 @@ socket.on('update-upvote-dashboard', function (noteDocID, upvoteCount) {
 
 const navigate = performance.getEntriesByType("navigation")[0]
 
-let nextPage = 2
+let nextPage = Number(localStorage.getItem('feedLastPageFetched') || "0") + 1
 let seed = null
+
+if (navigate?.type === "reload") {
+	const newUrl = window.location.origin + window.location.pathname
+	window.history.replaceState({}, document.title, newUrl);
+}
 
 if (navigate?.type === "reload" || navigate?.type === "navigate") {
 	const now = new Date();
@@ -21,29 +26,35 @@ if (navigate?.type === "reload" || navigate?.type === "navigate") {
 
 	const previousSeed = Number(localStorage.getItem('feedNoteLastFetchSeed'))
 	if (!previousSeed || seed !== previousSeed) {
-		db.feedNotes.clear()
+		db.feedNote.clear()
+		localStorage.setItem('feedLastPageFetched', 1)
 	}
 } else {
 	seed = parseInt(localStorage.getItem('feedNoteLastFetchSeed'))
 }
 
-async function get_note(count, page) {
+let seqCount = 0
+async function get_note(page) {
 	let notesList = [];
+	let cacheNoteList = []
 
 	try {
-		let response = await fetch(`/api/getnote?type=seg&seed=${seed}&page=${page}&count=${count}`); 
+		let response = await fetch(`/api/getnote?seed=${seed}&page=${page}`); 
 		let notes = await response.json(); 
 		
 		if (notes.length !== 0) {
-			notes.forEach(note => {
-				let feedNote = new FeedNote(note)
+			for (let note of notes) {
+				seqCount += 1
+				let feedNote = {...new FeedNote(note), count: seqCount}
 				notesList.push(feedNote);
-
-				let { noteData, contentData, ownerData, interactionData, extras } = feedNote
-				manageDb.add('feedNotes', { noteID: noteData.noteID, noteData, contentData, ownerData, interactionData, extras })
-			});
-
+				
+				let { noteData, contentData, ownerData, interactionData, extras, count } = feedNote
+				cacheNoteList.push({ noteID: noteData.noteID, noteData, contentData, ownerData, interactionData, extras, count })
+			}
+			
 			localStorage.setItem('feedNoteLastFetchSeed', seed)
+			localStorage.setItem('feedLastPageFetched', page)
+			await (new ManageFeedCache()).addFeedNotes(cacheNoteList)
 		} else {
 			document.querySelector('#feed-note-loader').style.display = 'none'
 			document.querySelector('#finish-message').style.display = 'flex'
@@ -55,19 +66,32 @@ async function get_note(count, page) {
 }
 
 async function initialFeedSetup() {
-	let feedNotes = await manageDb.get('feedNotes')
+	let feedNotes = await (new ManageFeedCache()).getCachedFeedNotes()
 	let feedContainer = document.querySelector('.feed-container')
 	let previousSeed = localStorage.getItem('feedNoteLastFetchSeed')
 	
 	if (feedNotes && feedNotes.length !== 0 && parseInt(previousSeed) === seed) {
 		feedNotes.forEach(note => manageNotes.addNote(note) )
 	} else {
-		let notes = await get_note(7, 1)
+		let notes = await get_note(1)
 		notes.forEach(note => manageNotes.addNote(note) )
 	}
 	observers.lastNoteObserver().observe(feedContainer.lastElementChild)
 }
-initialFeedSetup()
+initialFeedSetup().then(() => {
+	let scrollToID = new URL(window.location.href).searchParams.get('scroll')
+	let noteToScroll = document.querySelector(`#note-${scrollToID}`)
+
+	if (scrollToID && noteToScroll) {
+		noteToScroll.scrollIntoView({ behavior: "instant", block: "start" })
+	}
+
+	let feedContainer = document.querySelector('.feed-container')
+	feedContainer.querySelectorAll('.feed-note-card').forEach(note => {
+		observers.noteObserver().observe(note)
+	})
+})
+
 
 window.addEventListener('load', async () => {	
 	async function getResourcees(collection) {
@@ -127,9 +151,10 @@ const observers = {
 		let feedContainer = document.querySelector('.feed-container')
 
 		const _observer = new IntersectionObserver(async entries => {
+			seqCount = await (new ManageFeedCache()).getLastCount()
 			entries.forEach(async entry => {
 				if (entry.isIntersecting) {
-					let notes = await get_note(7, nextPage)
+					let notes = await get_note(nextPage)
 					if (notes.length !== 0) {
 						notes.forEach(note => {
 							manageNotes.addNote(note)
@@ -146,7 +171,20 @@ const observers = {
 			threshold: 1
 		})
 		return _observer
-	}
+	},
+
+	noteObserver: function() {
+		let _observer = new IntersectionObserver(entries => {
+			entries.forEach(entry => {
+				if (entry.isIntersecting && entry.intersectionRatio === 1) {
+					const newUrl = window.location.origin + window.location.pathname + `?scroll=${entry.target.getAttribute('data-noteid')}`;
+					window.history.replaceState({}, document.title, newUrl);
+				}
+			})
+		}, { threshold: 1.0 })
+
+		return _observer
+	} 
 }
 
 
@@ -154,7 +192,7 @@ socket.on('note-upload', (feedNote) => {
 	manageNotes.addNote(feedNote)
 
 	let { noteData, contentData, ownerData, interactionData, extras } = feedNote
-	manageDb.add('feedNotes', { noteID: noteData.noteID, noteData, contentData, ownerData, interactionData, extras })
+	manageDb.add('feedNote', { noteID: noteData.noteID, noteData, contentData, ownerData, interactionData, extras })
 })
 
 

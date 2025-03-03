@@ -1,6 +1,12 @@
 // Reverse page button function for Headers back button
 function goPrevPage() {
-      history.back();
+  let from = new URL(window.location.href).searchParams.get('from')
+  if (from && from === 'dashboard') {
+    let lastVisitedNote = localStorage.getItem('lastVisitedNote')
+    window.location.href = `/dashboard?scroll=${lastVisitedNote}`
+  } else {
+    history.back();
+  }
 };
 
 const isMobile = window.innerWidth <= 768;

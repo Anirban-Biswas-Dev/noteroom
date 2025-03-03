@@ -1,85 +1,138 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="/css/main-pages.css" />
-    <link rel="stylesheet" href="/css/search-profile.css">
-    <link rel="stylesheet" href="/css/nav-section.css">
-    
-	<script src="https://cdn.socket.io/socket.io-3.0.1.min.js" defer></script>
-	<script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/dexie@latest/dist/dexie.min.js" defer></script>
+    <link rel="stylesheet" href="/css/search-profile.css" />
+    <link rel="stylesheet" href="/css/nav-section.css" />
+
+    <script src="https://cdn.socket.io/socket.io-3.0.1.min.js" defer></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"
+      defer
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/dexie@latest/dist/dexie.min.js"
+      defer
+    ></script>
     <title>Find Other People in NoteRoom</title>
 
     <%- include('partials/links.ejs') %>
-</head>
-<body>
-    <%- include('side-panel', { block: 'left-panel' }) %> 
-	<%- include('side-panel', { block: 'search-bar' }) %>
+  </head>
+  <body>
+    <%- include('side-panel', { block: 'left-panel' }) %> <%-
+    include('side-panel', { block: 'search-bar' }) %>
 
     <div class="middle-section">
-        <div class="nav-section">
-            <svg class="nav-back-btn" onclick="goPrevPage()" width="20" height="auto" viewBox="0 0 68 68" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M16.6029 29.8333H67.332V38.1666H16.6029L39.9362 61.5L33.9987 67.3333L0.665367 34L33.9987 0.666649L39.9362 6.49998L16.6029 29.8333Z" fill="#1D1B20"/>
-              </svg>
+      <div class="nav-section">
+        <svg
+          class="nav-back-btn"
+          onclick="goPrevPage()"
+          width="20"
+          viewBox="0 0 68 68"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M16.6029 29.8333H67.332V38.1666H16.6029L39.9362 61.5L33.9987 67.3333L0.665367 34L33.9987 0.666649L39.9362 6.49998L16.6029 29.8333Z"
+            fill="#1D1B20"
+          />
+        </svg>
+      </div>
+      <div class="prfl-search-container">
+        <fieldset class="field-container">
+          <input
+            type="text"
+            placeholder="Who are you looking for?"
+            class="field"
+          />
+          <button
+            class="search-prfl-btn"
+            data-tippy-content="Enter"
+            onclick="search()"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              x="0px"
+              y="0px"
+              width="20"
+              height="20"
+              viewBox="0 0 30 30"
+            >
+              <path
+                d="M 13 3 C 7.4889971 3 3 7.4889971 3 13 C 3 18.511003 7.4889971 23 13 23 C 15.396508 23 17.597385 22.148986 19.322266 20.736328 L 25.292969 26.707031 A 1.0001 1.0001 0 1 0 26.707031 25.292969 L 20.736328 19.322266 C 22.148986 17.597385 23 15.396508 23 13 C 23 7.4889971 18.511003 3 13 3 z M 13 5 C 17.430123 5 21 8.5698774 21 13 C 21 17.430123 17.430123 21 13 21 C 8.5698774 21 5 17.430123 5 13 C 5 8.5698774 8.5698774 5 13 5 z"
+              ></path>
+            </svg>
+          </button>
+        </fieldset>
+      </div>
+
+      <div class="prfls-container">
+        <div class="random-prfls-container">
+          <h3 class="section-label">People You Might Know</h3>
+          <div class="random-prfls">
+            <div class="search-results-loader profile-loader-random"></div>
+          </div>
+          <button class="load-more-btn" id="load-more-random-profiles-btn">
+            See More
+            <svg
+              class="chevron-down-icon"
+              width="20"
+              height="10"
+              viewBox="0 0 60 34"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M5 4.5L30 29.5L55 4.5"
+                stroke="#1E1E1E"
+                stroke-width="8.33333"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </button>
         </div>
-        <div class="prfl-search-container">
-            <fieldset class="field-container">
-                <input type="text" placeholder="Who are you looking for?" class="field" />
-                <button class="search-prfl-btn" data-tippy-content="Enter" onclick="search()">
-                    <svg 
-                        xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0 0 30 30">
-                        <path d="M 13 3 C 7.4889971 3 3 7.4889971 3 13 C 3 18.511003 7.4889971 23 13 23 C 15.396508 23 17.597385 22.148986 19.322266 20.736328 L 25.292969 26.707031 A 1.0001 1.0001 0 1 0 26.707031 25.292969 L 20.736328 19.322266 C 22.148986 17.597385 23 15.396508 23 13 C 23 7.4889971 18.511003 3 13 3 z M 13 5 C 17.430123 5 21 8.5698774 21 13 C 21 17.430123 17.430123 21 13 21 C 8.5698774 21 5 17.430123 5 13 C 5 8.5698774 8.5698774 5 13 5 z"></path>
-                    </svg>
-                </button>                
 
-            </fieldset>
+        <div class="random-prfls-container mtc-prfls-container">
+          <h3 class="section-label">Mutual College</h3>
+          <div class="random-prfls mtc-prfls">
+            <div class="search-results-loader profile-loader-mtc"></div>
+          </div>
         </div>
 
-        <div class="prfls-container">
-            <div class="random-prfls-container">
-                <h3 class="section-label">People You Might Know</h3>
-                <div class="random-prfls">
-                    <div class="search-results-loader profile-loader-random"></div>
-                </div>
-                <button class="load-more-btn" id="load-more-random-profiles-btn">See More <svg class="chevron-down-icon" width="20" height="10" viewBox="0 0 60 34" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M5 4.5L30 29.5L55 4.5" stroke="#1E1E1E" stroke-width="8.33333" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                    </button>
-            </div>
-
-            <div class="random-prfls-container mtc-prfls-container">
-                <h3 class="section-label">Mutual College</h3>
-                <div class="random-prfls mtc-prfls">
-                    <div class="search-results-loader profile-loader-mtc"></div>
-                </div>
-            </div>
-
-            <div class="search-result-prfls-container" style="display: none;">
-                <h3 class="section-label">Search Results</h3>
-                <div class="results-prfls">
-                    <p class="profile-status" style="display: none;">No students found!</p>
-                    <div class="search-results-loader" id="searched-profile-loader"></div>
-                </div>
-            </div>
-         </div>
+        <div class="search-result-prfls-container" style="display: none">
+          <h3 class="section-label">Search Results</h3>
+          <div class="results-prfls">
+            <p class="profile-status" style="display: none">
+              No students found!
+            </p>
+            <div
+              class="search-results-loader"
+              id="searched-profile-loader"
+            ></div>
+          </div>
+        </div>
+      </div>
     </div>
-    
-    <%- include('side-panel', { block: 'right-panel' }) %>
-	<%- include('side-panel', { block: 'notification-modal' }) %>
-	<%- include('side-panel', { block: 'mbl-ctrl-panel' }) %>
-	<%- include('side-panel', { block: 'request-modal' }) %>
-    
-	<div id="overlay" class="overlay"></div>
-	<audio id="notificationAudio" src="/sounds/notification-ping-sound.mp3" preload="auto"></audio>
 
-	<script src="/js/notificationHandler.js" defer></script>
+    <%- include('side-panel', { block: 'right-panel' }) %> <%-
+    include('side-panel', { block: 'notification-modal' }) %> <%-
+    include('side-panel', { block: 'mbl-ctrl-panel' }) %> <%-
+    include('side-panel', { block: 'request-modal' }) %>
+
+    <div id="overlay" class="overlay"></div>
+    <audio
+      id="notificationAudio"
+      src="/sounds/notification-ping-sound.mp3"
+      preload="auto"
+    ></audio>
+
+    <script src="/js/notificationHandler.js" defer></script>
     <script src="/js/onboarding-data.js"></script>
-	<script src="/js/controller.js" defer></script>
+    <script src="/js/controller.js" defer></script>
     <script src="/js/search-profile.js" defer></script>
     <script src="/js/utils.js" defer></script>
-</body>
-
+  </body>
 </html>
