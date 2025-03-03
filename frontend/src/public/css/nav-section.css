@@ -1,0 +1,37 @@
+.nav-section{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0 12px;
+}
+.nav-back-btn{
+    font-size: 1.8rem;
+    padding: 15px 0;
+    color: var(--squid-ink);
+    transition: transform 0.2s ease-in-out;
+  }
+  
+.nav-back-btn:hover {
+    cursor: pointer;
+    transform: translateX(-5px);
+  }
+
+  
+@media (min-width: 481px) and (max-width: 768px) {
+    .nav-back-btn {
+      font-size: 1.7rem;
+    }
+  }
+@media screen and (max-width: 480px) {
+    .nav-back-btn {
+      font-size: 1.5rem;
+      padding: 10px 0;
+    }
+  }
+  @media (max-width: 360px) {
+    .nav-back-btn {
+      font-size: 1.3rem;
+      padding: 8px 0;
+    }
+  }

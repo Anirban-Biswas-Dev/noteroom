@@ -1,28 +1,14 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { FeedNoteObject } from "./FeedSection";
+import { VoteContext } from "../../context/VoteContext";
 
 export default function FeedNoteEngagement({ setUpvoteCount, note }: { setUpvoteCount: [any, any], note: FeedNoteObject }) {
-  let [upvote, setUpvote] = useState(note.interactionData.isUpvoted);
+  const [upvote, setUpvote] = useState(note.interactionData.isUpvoted);
+  const [upvoteFunction] = useContext(VoteContext)
   const noteID = note.noteData.noteID;
 
   async function upvoteManage() {
-    try {
-      setUpvote((upvote: boolean) => !upvote);
-      setUpvoteCount[1](setUpvoteCount[0] + (!upvote ? +1 : -1));
-
-      let voteData = new FormData()
-      voteData.append('noteDocID', noteID)
-      voteData.append('voterStudentID', "9181e241-575c-4ef3-9d3c-2150eac4566d")
-      
-      let response = await fetch(`http://127.0.0.1:2000/view/${noteID}/vote?type=upvote${upvote ? '&action=delete' : ''}`, {
-        method: "post",
-        body: voteData
-      })
-      let data = await response.json()
-      console.log(data)
-    } catch (error) {
-      console.error(error)
-    }
+    upvoteFunction({noteID: noteID, studentID: "9181e241-575c-4ef3-9d3c-2150eac4566d"}, [upvote, setUpvote], setUpvoteCount)
   }
 
   return (

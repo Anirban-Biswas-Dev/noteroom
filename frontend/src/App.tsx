@@ -3,33 +3,44 @@ import { LeftPanel, NoteSearchBar, NotificationModal, RightPanel } from "./parti
 import { SavedNotesProvider } from "./context/SavedNotesContext";
 import { UserProfileProvider } from "./context/UserProfileContext";
 import MobileControlPanel from "./partials/MobileControlPanel";
-import { useState } from "react";
+import { ReactNode, useState } from "react";
+import PostView from "./pages/post-view/PostView";
+import { VoteProvider } from "./context/VoteContext";
 
+
+function Providers({ children }: { children: ReactNode[] }) {
+	return (
+		<UserProfileProvider>
+			<SavedNotesProvider>
+				<VoteProvider>
+					{ children }
+				</VoteProvider>
+			</SavedNotesProvider>
+		</UserProfileProvider>
+	)
+}
 
 function App() {	
 	const [showNotiModal, setShowNotiModal] = useState(false)
 	const [showRightPanel, setShowRightPanel] = useState(false)
 
 	return (
-		<UserProfileProvider>
+		<Providers>
+			<LeftPanel />
 
-			<SavedNotesProvider>
-				<LeftPanel />
+			<NoteSearchBar notiModalState={[showNotiModal, setShowNotiModal]} />
+			<NotificationModal notiState={[showNotiModal, setShowNotiModal]} />
 
-				<NoteSearchBar notiModalState={[showNotiModal, setShowNotiModal]}/>
-				<NotificationModal notiState={[showNotiModal, setShowNotiModal]}></NotificationModal>
+			{/* <DashBoard>
+				<QuickPost />
+				<FeedSection />
+			</DashBoard> */}
+			<PostView></PostView>
 
-				<DashBoard>
-					<QuickPost />
-					<FeedSection />
-				</DashBoard>
-
-				<RightPanel notiModalState={[showNotiModal, setShowNotiModal]} rightPanelState={showRightPanel}/>
-				
-				<MobileControlPanel rightPanelState={[showRightPanel, setShowRightPanel]}/>
-			</SavedNotesProvider>
-
-		</UserProfileProvider>
+			<RightPanel notiModalState={[showNotiModal, setShowNotiModal]} rightPanelState={showRightPanel}/>
+			
+			<MobileControlPanel rightPanelState={[showRightPanel, setShowRightPanel]}/>
+		</Providers>
 	)
 }
 

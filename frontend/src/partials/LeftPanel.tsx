@@ -1,17 +1,6 @@
 import { useContext, useEffect, useState } from "react"
 import { SavedNotesContext } from "../context/SavedNotesContext";
-
-
-export class SavedNoteObject {
-    noteID: string;
-    noteTitle: string;
-
-    constructor(note: any) {
-        this.noteID = note._id;
-        this.noteTitle = note.title.length > 30 ? note.title.slice(0, 30) + "..." : note.title;
-    }
-}
-
+import { SavedNoteObject } from "../types/types";
 
 function SavedNote({ note }: { note: SavedNoteObject }) {
     return <div className="saved-note">

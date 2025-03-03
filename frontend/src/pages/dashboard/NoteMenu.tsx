@@ -1,35 +1,16 @@
 import { useContext, useState } from "react";
 import ShareModal from "../../partials/ShareModal";
 import { FeedNoteObject } from "./FeedSection";
-import { SavedNoteObject } from "../../partials/LeftPanel";
 import { SavedNotesContext } from "../../context/SavedNotesContext";
 
 export default function FeedNoteMenu({ note }: { note: FeedNoteObject }) {
   const [showMenu, setShowMenu] = useState(false);
   const [isSaveNote, setIsSaveNote] = useState(note.interactionData.isSaved);
   const [showShareModal, setShowShareModal] = useState(false);
-  const [savedNotes, setSavedNotes] = useContext(SavedNotesContext)
+  const [, , saveNoteFunction] = useContext(SavedNotesContext)
 
   async function saveNote() {
-    try {
-      setIsSaveNote((prev: any) => !prev)
-
-      if (isSaveNote) {
-        setSavedNotes((previousNotes: SavedNoteObject[]) => previousNotes.filter(savedNote => savedNote.noteID !== note.noteData.noteID))
-      } else {
-        setSavedNotes([...savedNotes, new SavedNoteObject( { _id: note.noteData.noteID, title: note.noteData.noteTitle }) ])
-      }
-
-      let noteData = new FormData()
-      noteData.append("noteDocID", note.noteData.noteID)
-
-      await fetch(`http://127.0.0.1:2000/api/note/save?action=${isSaveNote ? 'delete' : 'save'}`, {
-        method: 'post',
-        body: noteData
-      })
-    } catch (error) {
-      console.log(error)
-    }
+	saveNoteFunction({ noteID: note.noteData.noteID, noteTitle: note.noteData.noteTitle }, [isSaveNote, setIsSaveNote])
   }
 
   let isQuickPost = note.isQuickPost
