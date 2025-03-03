@@ -1533,11 +1533,11 @@ body {
 }
 
 .modal-carousel-control.prev {
-  left: 10px; /* Far left of the screen */
+  left: 20px; /* Far left of the screen */
 }
 
 .modal-carousel-control.next {
-  right: 10px; /* Far right of the screen */
+  right: 20px; /* Far right of the screen */
 }
 
 .modal-carousel-control .carousel-control-icon {
@@ -1831,5 +1831,83 @@ body {
     font-size: 11px;
     padding: 4px 6px;
     border-radius: 4px;
+  }
+}
+
+/* Image Modal Page Number */
+.image-modal-page-number {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #ffffff; /* White background to match top-right buttons */
+  padding: 8px 12px; /* Adjusted padding for a more polished look */
+  border-radius: 20px; /* Circular shape to match button style */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth, matching buttons */
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--squid-ink); /* Use squid-ink for text color to match button icons */
+  z-index: 3; /* Above the enlarged image (z-index: 2) */
+}
+
+.image-modal-page-number .page-number-icon {
+  width: 20px;
+  height: 20px;
+  stroke: var(--squid-ink); /* Match the text color and button icons */
+}
+
+.image-modal-page-number .page-number-text {
+  color: var(--squid-ink);
+}
+
+/* Responsive Adjustments for Image Modal Page Number */
+
+/* Smaller Screens (≤ 768px) */
+@media (max-width: 768px) {
+  .image-modal-page-number {
+    top: 15px;
+    left: 15px;
+    padding: 6px 10px;
+    border-radius: 18px;
+    font-size: 12px;
+  }
+
+  .image-modal-page-number .page-number-icon {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+/* Very Small Screens (≤ 480px) */
+@media (max-width: 480px) {
+  .image-modal-page-number {
+    top: 10px;
+    left: 10px;
+    padding: 5px 8px;
+    border-radius: 16px;
+    font-size: 11px;
+  }
+
+  .image-modal-page-number .page-number-icon {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+/* Extremely Small Screens (≤ 360px) */
+@media (max-width: 360px) {
+  .image-modal-page-number {
+    top: 8px;
+    left: 8px;
+    padding: 4px 6px;
+    border-radius: 14px;
+    font-size: 10px;
+  }
+
+  .image-modal-page-number .page-number-icon {
+    width: 14px;
+    height: 14px;
   }
 }
