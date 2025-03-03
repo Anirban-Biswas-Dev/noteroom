@@ -415,7 +415,6 @@ body {
 .editor {
   width: 100%;
   border: 1px solid var(--grayish-border);
-  border-radius: 8px;
   padding: 12px;
   font-size: 15px;
   background: #fff;
@@ -1773,8 +1772,6 @@ body {
   }
 }
 
-/* Link Copied Popup Styles remain unchanged */
-
 /* Link Copied Popup Styles */
 .link-copied-popup {
   position: absolute;
@@ -1795,7 +1792,6 @@ body {
 }
 
 /* Responsive Adjustments for Link Copied Popup */
-
 /* Smaller Screens (≤ 768px) */
 @media (max-width: 768px) {
   .link-copied-popup {
