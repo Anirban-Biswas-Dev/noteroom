@@ -272,13 +272,17 @@ body {
 .carousel-control {
   position: absolute;
   top: 50%;
-  border: none;
-  background: #ffffff;
-  border-radius: 10px;
   transform: translateY(-50%);
-  padding: 8px 12px;
+  border: none;
+  background: rgba(255, 255, 255, 0.95); /* Semi-transparent white */
+  border-radius: 50%; /* Circular buttons */
+  width: 48px;
+  height: 48px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.2s ease;
   z-index: 999;
 }
 
@@ -1446,6 +1450,7 @@ body {
 }
 
 /* Image Modal Styles */
+/* Image Modal Styles */
 .image-modal {
   position: fixed;
   top: 0;
@@ -1464,8 +1469,8 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(5px);
+  background: rgba(0, 0, 0, 0.8); /* Dark backdrop for contrast */
+  backdrop-filter: blur(6px); /* Polished blur effect */
   z-index: 1;
   transition: opacity 0.3s ease;
 }
@@ -1481,52 +1486,189 @@ body {
   height: 100%;
 }
 
+/* Enlarged Image */
 .enlarged-image {
-  max-height: calc(100vh - 80px);
-  max-width: calc(100vw - 80px);
+  max-height: calc(100vh - 80px); /* Leave space for top controls */
+  max-width: calc(100vw - 80px); /* Leave space for side controls on larger screens */
   object-fit: contain;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4); /* Enhanced shadow for depth */
+  transition: transform 0.3s ease; /* Smooth scaling on load */
 }
 
-.image-modal-buttons {
-  position: absolute;
-  bottom: 30px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 10px;
-  z-index: 3;
-  padding: 0;
+.enlarged-image:hover {
+  transform: scale(1.01); /* Subtle zoom on hover for larger screens */
 }
 
+/* Carousel Controls (Left and Right) */
 .modal-carousel-control {
   position: absolute;
   top: 50%;
-  border: none;
-  background: #F8F8F8;
-  box-shadow: 0px 2px 1.5px rgba(0, 0, 0, 0.25);
-  border-radius: 10px;
   transform: translateY(-50%);
-  padding: 8px 12px;
+  border: none;
+  background: rgba(255, 255, 255, 0.95); /* Semi-transparent white */
+  border-radius: 50%; /* Circular buttons */
+  width: 48px;
+  height: 48px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   cursor: pointer;
-  transition: background-color 0.3s ease;
-  z-index: 3;
-}
-
-.modal-carousel-control .carousel-control-icon {
-  width: 20px;
-  height: auto;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .modal-carousel-control.prev {
-  left: -60px;
+  left: 10px; /* Far left of the screen */
 }
 
 .modal-carousel-control.next {
-  right: -60px;
+  right: 10px; /* Far right of the screen */
 }
 
+.modal-carousel-control .carousel-control-icon {
+  width: 24px;
+  height: 24px;
+  stroke: var(--squid-ink); /* Use squid-ink color for consistency */
+}
+
+.modal-carousel-control:hover {
+  background-color: #ffffff; /* Solid white on hover */
+  transform: translateY(-50%) scale(1.05); /* Slight scale on hover */
+}
+
+.modal-carousel-control:active {
+  background-color: #f0f0f0;
+  transform: translateY(-50%) scale(0.95); /* Scale down on click */
+}
+
+.modal-carousel-control.touched {
+  background-color: #f0f0f0;
+  transform: translateY(-50%) scale(0.95); /* Scale down on touch */
+}
+
+/* Top Controls (Download, Share, Close) */
+.image-modal-top-controls {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  gap: 10px;
+  z-index: 3;
+}
+
+/* Download Button */
+.image-modal-download {
+  background: #ffffff; /* White background */
+  border: none;
+  padding: 10px;
+  border-radius: 50%; /* Circular button */
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.image-modal-download svg {
+  width: 20px;
+  height: 20px;
+  stroke: var(--squid-ink); /* Use squid-ink for consistency */
+}
+
+.image-modal-download:hover {
+  background-color: #f8f8f8;
+  transform: scale(1.05); /* Slight scale on hover */
+}
+
+.image-modal-download:active {
+  background-color: #e0e0e0;
+  transform: scale(0.95); /* Scale down on click */
+}
+
+.image-modal-download.touched {
+  background-color: #e0e0e0;
+  transform: scale(0.95); /* Scale down on touch */
+}
+
+/* Share Button */
+.image-modal-share {
+  background: #ffffff; /* White background */
+  border: none;
+  padding: 10px;
+  border-radius: 50%; /* Circular button */
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.image-modal-share svg {
+  width: 20px;
+  height: 20px;
+  fill: var(--squid-ink); /* Use squid-ink for consistency */
+}
+
+.image-modal-share:hover {
+  background-color: #f8f8f8;
+  transform: scale(1.05); /* Slight scale on hover */
+}
+
+.image-modal-share:active {
+  background-color: #e0e0e0;
+  transform: scale(0.95); /* Scale down on click */
+}
+
+.image-modal-share.touched {
+  background-color: #e0e0e0;
+  transform: scale(0.95); /* Scale down on touch */
+}
+
+/* Close Button */
+.image-modal-close {
+  background: #ffffff;
+  border: none;
+  padding: 10px;
+  border-radius: 50%; /* Circular button */
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.image-modal-close svg {
+  width: 20px;
+  height: 20px;
+  stroke: var(--squid-ink); /* Use squid-ink for consistency */
+}
+
+.image-modal-close:hover {
+  background-color: #f8f8f8;
+  transform: scale(1.05); /* Slight scale on hover */
+}
+
+.image-modal-close:active {
+  background-color: #e0e0e0;
+  transform: scale(0.95); /* Scale down on click */
+}
+
+.image-modal-close.touched {
+  background-color: #e0e0e0;
+  transform: scale(0.95); /* Scale down on touch */
+}
+
+/* Smaller Screens (≤ 768px) */
 @media (max-width: 768px) {
   .image-modal-content {
     padding: 15px;
@@ -1534,179 +1676,149 @@ body {
 
   .enlarged-image {
     max-width: calc(100vw - 30px);
-    max-height: calc(100vh - 60px);
+    max-height: calc(100vh - 70px); /* Adjusted for top controls */
     object-fit: contain;
   }
 
+  /* Remove carousel control buttons on smaller screens */
   .modal-carousel-control {
-    position: static;
-    transform: none;
+    display: none;
   }
 
-  .image-modal-buttons {
-    position: absolute;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    width: auto;
+  .image-modal-top-controls {
+    top: 15px;
+    right: 15px;
+    gap: 8px;
   }
 
-  /* Image Modal Button Adjustments */
-  .image-modal-download {
-    padding: 8px 16px;
-    font-size: 12px;
-  }
-  .image-modal-download svg {
-    width: 20px;
-    height: 20px;
-  }
+  .image-modal-download,
+  .image-modal-share,
   .image-modal-close {
     width: 36px;
     height: 36px;
-    font-size: 20px;
+    padding: 8px;
   }
-  .modal-carousel-control {
-    padding: 6px 10px;
-  }
-  .modal-carousel-control .carousel-control-icon {
-    width: 18px;
-  }
-}
 
-@media (max-width: 480px) {
-  .image-modal-download {
-    padding: 6px 12px;
-    font-size: 11px;
-  }
-  .image-modal-download svg {
+  .image-modal-download svg,
+  .image-modal-share svg,
+  .image-modal-close svg {
     width: 18px;
     height: 18px;
   }
+}
+
+/* Very Small Screens (≤ 480px) */
+@media (max-width: 480px) {
+  .image-modal-content {
+    padding: 10px;
+  }
+
+  .enlarged-image {
+    max-width: calc(100vw - 20px);
+    max-height: calc(100vh - 60px);
+  }
+
+  .image-modal-top-controls {
+    top: 10px;
+    right: 10px;
+    gap: 6px;
+  }
+
+  .image-modal-download,
+  .image-modal-share,
   .image-modal-close {
     width: 32px;
     height: 32px;
-    font-size: 18px;
+    padding: 6px;
   }
-  .modal-carousel-control {
-    padding: 5px 8px;
-  }
-  .modal-carousel-control .carousel-control-icon {
-    width: 16px;
-  }
-}
 
-@media (max-width: 360px) {
-  .image-modal-download {
-    padding: 5px 10px;
-    font-size: 10px;
-  }
-  .image-modal-download svg {
+  .image-modal-download svg,
+  .image-modal-share svg,
+  .image-modal-close svg {
     width: 16px;
     height: 16px;
   }
+}
+
+/* Extremely Small Screens (≤ 360px) */
+@media (max-width: 360px) {
+  .image-modal-content {
+    padding: 8px;
+  }
+
+  .enlarged-image {
+    max-width: calc(100vw - 16px);
+    max-height: calc(100vh - 50px);
+  }
+
+  .image-modal-top-controls {
+    top: 8px;
+    right: 8px;
+    gap: 5px;
+  }
+
+  .image-modal-download,
+  .image-modal-share,
   .image-modal-close {
     width: 28px;
     height: 28px;
-    font-size: 16px;
+    padding: 5px;
   }
-  .modal-carousel-control {
-    padding: 4px 6px;
-  }
-  .modal-carousel-control .carousel-control-icon {
+
+  .image-modal-download svg,
+  .image-modal-share svg,
+  .image-modal-close svg {
     width: 14px;
+    height: 14px;
   }
 }
 
-.image-modal-download {
-  background: #fff;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 25px;
+/* Link Copied Popup Styles remain unchanged */
+
+/* Link Copied Popup Styles */
+.link-copied-popup {
+  position: absolute;
+  background: rgba(0, 0, 0, 0.8); /* Dark background with transparency */
+  color: #ffffff;
   font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  transition: background-color 0.3s ease;
-}
-
-.image-modal-download:hover {
-  background-color: #f8f8f8;
-}
-
-.image-modal-download:active {
-  background-color: #e0e0e0;
-}
-
-.image-modal-download.touched {
-  background-color: #e0e0e0;
-}
-
-.image-modal-close {
-  background: #fff;
-  border: none;
-  font-size: 24px;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  transition: background-color 0.3s ease;
-  z-index: 3;
-}
-
-.image-modal-close:hover {
-  background-color: #f0f0f0;
-}
-
-.image-modal-close:active {
-  background-color: #e0e0e0;
-}
-
-.image-modal-close.touched {
-  background-color: #e0e0e0;
-}
-
-.modal-carousel-control:hover {
-  background-color: #f2f2f2;
-}
-
-.modal-carousel-control:active {
-  background-color: #e0e0e0;
-}
-
-.modal-carousel-control.touched {
-  background-color: #e0e0e0;
-}
-
-.logo {
-  position: relative;
-  z-index: 3000;
-  transition: box-shadow 0.3s ease;
-}
-
-.logo.highlight-logo {
-  box-shadow: 0 0 10px 5px rgba(255, 255, 255, 0.8);
-}
-
-.carousel-slide img {
-  width: 100%;
-  max-height: 600px;
-  object-fit: contain;
+  font-weight: 500;
+  padding: 8px 12px;
   border-radius: 8px;
-  cursor: pointer;
-  transition: transform 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3); /* Subtle shadow for depth */
+  z-index: 4; /* Above image-modal-content (z-index: 2) and controls (z-index: 3) */
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
-.carousel-slide img:hover {
-  transform: scale(1.02);
+.link-copied-popup.show {
+  opacity: 1; /* Fade in when show class is added */
+}
+
+/* Responsive Adjustments for Link Copied Popup */
+
+/* Smaller Screens (≤ 768px) */
+@media (max-width: 768px) {
+  .link-copied-popup {
+    font-size: 13px;
+    padding: 6px 10px;
+    border-radius: 6px;
+  }
+}
+
+/* Very Small Screens (≤ 480px) */
+@media (max-width: 480px) {
+  .link-copied-popup {
+    font-size: 12px;
+    padding: 5px 8px;
+    border-radius: 5px;
+  }
+}
+
+/* Extremely Small Screens (≤ 360px) */
+@media (max-width: 360px) {
+  .link-copied-popup {
+    font-size: 11px;
+    padding: 4px 6px;
+    border-radius: 4px;
+  }
 }

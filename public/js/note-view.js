@@ -586,27 +586,45 @@ function enlargeImage(imageSrc, noteId, initialIndex) {
   modal.classList.add('image-modal');
 
   let currentIndex = initialIndex;
+  const isSmallScreen = window.innerWidth <= 768; // Determine screen size
+
+  // Get note title for sharing (assuming it's available in the DOM)
+  const noteTitleElement = document.querySelector('.post-title');
+  const noteTitle = noteTitleElement ? noteTitleElement.textContent : 'Note';
+
+  // Conditionally render carousel control buttons only on larger screens
+  const carouselControlsHTML = isSmallScreen ? '' : `
+    <button class="modal-carousel-control prev" aria-label="Previous Image">
+      <svg class="carousel-control-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M15 18L9 12L15 6" stroke="#1D1B20" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    <button class="modal-carousel-control next" aria-label="Next Image">
+      <svg class="carousel-control-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M9 6L15 12L9 18" stroke="#1D1B20" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  `;
 
   modal.innerHTML = `
     <div class="image-modal-backdrop"></div>
     <div class="image-modal-content">
       <img src="${imageSrc}" class="enlarged-image" alt="Enlarged Note Image" />
-      <div class="image-modal-buttons">
-        <button class="modal-carousel-control prev">
-          <svg class="carousel-control-icon" width="68" height="68" viewBox="0 0 68 68" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M16.6029 29.8333H67.332V38.1666H16.6029L39.9362 61.5L33.9987 67.3333L0.665367 34L33.9987 0.666649L39.9362 6.49998L16.6029 29.8333Z" fill="#1D1B20"/>
+      ${carouselControlsHTML}
+      <div class="image-modal-top-controls">
+        <button class="image-modal-download" aria-label="Download Image" data-noteid="${noteId}" data-notetitle="${noteTitle}" data-imageindex="${initialIndex}">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 16V4M12 16L8 12M12 16L16 12M20 20H4" stroke="#1D1B20" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </button>
-        <button class="image-modal-download">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 16V4M12 16L8 12M12 16L16 12M20 20H4" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <button class="image-modal-share" aria-label="Share Image" data-noteid="${noteId}" data-notetitle="${noteTitle}" data-imageindex="${initialIndex}" data-isquickpost="false">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M18 8C19.6569 8 21 6.65685 21 5C21 3.34315 19.6569 2 18 2C16.3431 2 15 3.34315 15 5C15 5.24747 15.0352 5.48699 15.1019 5.71404L8.46583 9.03208C7.91399 8.41233 7.10344 8 6.17647 8C4.51959 8 3.17647 9.34315 3.17647 11C3.17647 12.6569 4.51959 14 6.17647 14C7.10344 14 7.91399 13.5877 8.46583 12.9679L15.1019 16.286C15.0352 16.513 15 16.7525 15 17C15 18.6569 16.3431 20 18 20C19.6569 20 21 18.6569 21 17C21 15.3431 19.6569 14 18 14C17.0939 14 16.2926 14.4037 15.7471 15.0116L9.11104 11.6935C9.17774 11.4665 9.21296 11.227 9.21296 11C9.21296 10.773 9.17774 10.5335 9.11104 10.3065L15.7471 6.98843C16.2926 7.59629 17.0939 8 18 8Z" fill="#1D1B20"/>
           </svg>
-          Download
         </button>
-        <button class="image-modal-close">×</button>
-        <button class="modal-carousel-control next">
-          <svg class="carousel-control-icon" width="68" height="68" viewBox="0 0 68 68" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M51.3971 38.1667H0.667969V29.8334H51.3971L28.0638 6.50002L34.0013 0.666687L67.3346 34L34.0013 67.3334L28.0638 61.5L51.3971 38.1667Z" fill="#1D1B20"/>
+        <button class="image-modal-close" aria-label="Close Modal">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6 6L18 18M6 18L18 6" stroke="#1D1B20" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </button>
       </div>
@@ -620,26 +638,141 @@ function enlargeImage(imageSrc, noteId, initialIndex) {
 
   const imageElement = modal.querySelector('.enlarged-image');
   const downloadButton = modal.querySelector('.image-modal-download');
+  const shareButton = modal.querySelector('.image-modal-share');
+  const prevButton = modal.querySelector('.modal-carousel-control.prev');
+  const nextButton = modal.querySelector('.modal-carousel-control.next');
+  const closeButton = modal.querySelector('.image-modal-close');
+
+  // Function to show the "Link Copied" popup
+  function showLinkCopiedPopup() {
+    const linkCopiedPopup = document.createElement('div');
+    linkCopiedPopup.classList.add('link-copied-popup');
+    linkCopiedPopup.textContent = 'Link Copied';
+    modal.appendChild(linkCopiedPopup);
+
+    const shareButtonRect = shareButton.getBoundingClientRect();
+    linkCopiedPopup.style.top = `${shareButtonRect.bottom + 10}px`;
+    linkCopiedPopup.style.right = `${window.innerWidth - shareButtonRect.right + 10}px`;
+
+    setTimeout(() => {
+      linkCopiedPopup.classList.add('show');
+    }, 10);
+
+    setTimeout(() => {
+      linkCopiedPopup.classList.remove('show');
+      setTimeout(() => {
+        if (linkCopiedPopup.parentNode) {
+          modal.removeChild(linkCopiedPopup);
+        }
+      }, 300);
+    }, 2000);
+  }
+
+  // Function to copy the note's URL to the clipboard
+  function copyNoteLink() {
+    const noteUrl = window.location.href;
+    navigator.clipboard.writeText(noteUrl).then(() => {
+      showLinkCopiedPopup();
+    }).catch(err => {
+      console.error('Failed to copy link:', err);
+      alert('Failed to copy link. Please copy the URL manually: ' + noteUrl);
+    });
+  }
 
   function updateImage(index) {
     imageElement.src = noteImages[index] || "/images/placeholders/unavailable_content.png";
+    downloadButton.setAttribute('data-imageindex', index);
+    shareButton.setAttribute('data-imageindex', index);
+  }
+
+  // Add touch control (swipe gestures) for smaller screens
+  if (isSmallScreen) {
+    let touchStartX = 0;
+    let touchEndX = 0;
+    const swipeThreshold = 50; // Minimum distance for a swipe to register
+
+    imageElement.addEventListener("touchstart", (event) => {
+      touchStartX = event.changedTouches[0].screenX;
+    });
+
+    imageElement.addEventListener("touchend", (event) => {
+      touchEndX = event.changedTouches[0].screenX;
+      const swipeDistance = touchEndX - touchStartX;
+
+      if (Math.abs(swipeDistance) > swipeThreshold) {
+        if (swipeDistance > 0) {
+          // Swipe right: previous image
+          currentIndex = (currentIndex - 1 + noteImages.length) % noteImages.length;
+          updateImage(currentIndex);
+        } else {
+          // Swipe left: next image
+          currentIndex = (currentIndex + 1) % noteImages.length;
+          updateImage(currentIndex);
+        }
+      }
+    });
+  }
+
+  // Event listeners for carousel controls (only on larger screens)
+  if (!isSmallScreen) {
+    prevButton.addEventListener('click', () => {
+      currentIndex = (currentIndex - 1 + noteImages.length) % noteImages.length;
+      updateImage(currentIndex);
+    });
+    prevButton.addEventListener('touchstart', () => {
+      prevButton.classList.add('touched');
+    });
+    prevButton.addEventListener('touchend', (event) => {
+      event.preventDefault();
+      currentIndex = (currentIndex - 1 + noteImages.length) % noteImages.length;
+      updateImage(currentIndex);
+    });
+
+    nextButton.addEventListener('click', () => {
+      currentIndex = (currentIndex + 1) % noteImages.length;
+      updateImage(currentIndex);
+    });
+    nextButton.addEventListener('touchstart', () => {
+      nextButton.classList.add('touched');
+    });
+    nextButton.addEventListener('touchend', (event) => {
+      event.preventDefault();
+      currentIndex = (currentIndex + 1) % noteImages.length;
+      updateImage(currentIndex);
+    });
   }
 
   downloadButton.addEventListener('click', () => {
     downloadImage(noteImages[currentIndex], noteId, currentIndex);
   });
-
-  modal.querySelector('.modal-carousel-control.prev').addEventListener('click', () => {
-    currentIndex = (currentIndex - 1 + noteImages.length) % noteImages.length;
-    updateImage(currentIndex);
+  downloadButton.addEventListener('touchstart', () => {
+    downloadButton.classList.add('touched');
+  });
+  downloadButton.addEventListener('touchend', (event) => {
+    event.preventDefault();
+    downloadImage(noteImages[currentIndex], noteId, currentIndex);
   });
 
-  modal.querySelector('.modal-carousel-control.next').addEventListener('click', () => {
-    currentIndex = (currentIndex + 1) % noteImages.length;
-    updateImage(currentIndex);
+  shareButton.addEventListener('click', () => {
+    copyNoteLink();
+  });
+  shareButton.addEventListener('touchstart', () => {
+    shareButton.classList.add('touched');
+  });
+  shareButton.addEventListener('touchend', (event) => {
+    event.preventDefault();
+    copyNoteLink();
   });
 
-  modal.querySelector('.image-modal-close').addEventListener('click', () => {
+  closeButton.addEventListener('click', () => {
+    document.body.removeChild(modal);
+    if (logo) logo.classList.remove('highlight-logo');
+  });
+  closeButton.addEventListener('touchstart', () => {
+    closeButton.classList.add('touched');
+  });
+  closeButton.addEventListener('touchend', (event) => {
+    event.preventDefault();
     document.body.removeChild(modal);
     if (logo) logo.classList.remove('highlight-logo');
   });
