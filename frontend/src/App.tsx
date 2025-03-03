@@ -6,9 +6,10 @@ import MobileControlPanel from "./partials/MobileControlPanel";
 import { ReactNode, useState } from "react";
 import PostView from "./pages/post-view/PostView";
 import { VoteProvider } from "./context/VoteContext";
+import { Route, Routes } from "react-router-dom";
 
 
-function Providers({ children }: { children: ReactNode[] }) {
+function Providers({ children }: { children: ReactNode | ReactNode[] }) {
 	return (
 		<UserProfileProvider>
 			<SavedNotesProvider>
@@ -27,18 +28,20 @@ function App() {
 	return (
 		<Providers>
 			<LeftPanel />
-
 			<NoteSearchBar notiModalState={[showNotiModal, setShowNotiModal]} />
 			<NotificationModal notiState={[showNotiModal, setShowNotiModal]} />
 
-			{/* <DashBoard>
-				<QuickPost />
-				<FeedSection />
-			</DashBoard> */}
-			<PostView></PostView>
+			<Routes>
+				<Route path="/feed" element={
+					<DashBoard>
+						<QuickPost />
+						<FeedSection />
+					</DashBoard>
+				} />
+				<Route path="/post/:postID" element={<PostView></PostView>} />
+			</Routes>
 
-			<RightPanel notiModalState={[showNotiModal, setShowNotiModal]} rightPanelState={showRightPanel}/>
-			
+			<RightPanel notiModalState={[showNotiModal, setShowNotiModal]} rightPanelState={showRightPanel}/>		
 			<MobileControlPanel rightPanelState={[showRightPanel, setShowRightPanel]}/>
 		</Providers>
 	)
