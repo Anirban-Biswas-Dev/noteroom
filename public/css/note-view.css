@@ -684,7 +684,16 @@ body {
     margin: 40px 0;
   }
   .main__author-threadline-wrapper {
-    flex: 0 0 12%;
+    flex: 0 0 50px; /* Adjusted to match image size */
+    max-width: 50px;
+  }
+  .cmnt-author-img {
+    width: 36px; /* Slightly smaller */
+    height: 36px;
+    aspect-ratio: 1 / 1; /* Maintain aspect ratio */
+    object-fit: cover;
+    border-radius: 50%;
+    overflow: hidden;
   }
   .main__cmnts-replies-wrapper {
     padding: 0 5px;
@@ -718,7 +727,12 @@ body {
     gap: 8px;
   }
   .thread-avatar {
-    flex: 0 0 10%;
+    flex: 0 0 40px; /* Adjusted to match image size */
+    width: 40px;
+    height: 40px;
+    aspect-ratio: 1 / 1; /* Maintain aspect ratio */
+    object-fit: cover;
+    border-radius: 50%;
   }
   .thread-author-name {
     padding: 0;
@@ -833,7 +847,16 @@ body {
     margin: 40px 0;
   }
   .main__author-threadline-wrapper {
-    flex: 0 0 12%;
+    flex: 0 0 40px; /* Adjusted to match image size */
+    max-width: 40px;
+  }
+  .cmnt-author-img {
+    width: 32px; /* Smaller for very small screens */
+    height: 32px;
+    aspect-ratio: 1 / 1; /* Maintain aspect ratio */
+    object-fit: cover;
+    border-radius: 50%;
+    overflow: hidden;
   }
   .main__cmnts-replies-wrapper {
     padding: 0 5px;
@@ -863,9 +886,12 @@ body {
     gap: 5px;
   }
   .thread-avatar {
-    flex: 0 0 12%;
-    max-width: 50px;
-    max-height: 50px;
+    flex: 0 0 32px; /* Adjusted to match image size */
+    width: 32px;
+    height: 32px;
+    aspect-ratio: 1 / 1; /* Maintain aspect ratio */
+    object-fit: cover;
+    border-radius: 50%;
   }
   .thread-author-name {
     padding: 0;
@@ -1158,19 +1184,12 @@ body {
 .main__author-threadline-wrapper {
   height: 100%;
   min-height: 100%;
-  flex: 0 0 10%;
+  flex: 0 0 60px; /* Fixed width to match image size */
   max-width: 60px;
   display: flex;
   flex-direction: column;
   align-items: center;
   position: relative;
-}
-
-.main__cmnt-author-img {
-  width: 100%;
-  height: auto;
-  z-index: -1;
-  aspect-ratio: 1 / 1;
 }
 
 .cmnt-author-img {
@@ -1179,10 +1198,8 @@ body {
   object-fit: cover;
   overflow: hidden;
   aspect-ratio: 1 / 1;
-  width: 100%; /* Take the full width of the parent container */
-  max-width: 40px; /* Limit the size to match typical avatars */
-  height: auto; /* Maintain aspect ratio */
-  min-height: 40px;
+  width: 40px; /* Fixed width */
+  height: 40px; /* Fixed height to match width */
 }
 
 .thread-line {
@@ -1208,7 +1225,7 @@ body {
 .main__body {
   width: 100%;
   min-width: 200px;
-  padding: 10px;
+  padding: 0px;
 }
 
 .cmnt-body-3rows {
@@ -1260,7 +1277,7 @@ body {
   display: flex;
   align-items: center;
   width: 100%;
-  gap: 20px;
+  gap: 10px;
 }
 
 .like-wrapper {
@@ -1357,17 +1374,16 @@ body {
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  margin: 20px 0;
+  margin: 10px 0;
 }
 
 .thread-avatar {
-  width: 100%;
-  height: auto;
-  flex: 0 0 10%;
+  flex: 0 0 25px; /* Fixed width to match image size */
   border-radius: 50%;
-  max-width: 50px;
-  max-height: 50px;
   object-fit: cover;
+  width: 25px; /* Fixed width */
+  height: 25px; /* Fixed height to match width */
+  aspect-ratio: 1 / 1;
 }
 
 .thread-editor-container {
@@ -1448,7 +1464,6 @@ body {
   }
 }
 
-/* Image Modal Styles */
 /* Image Modal Styles */
 .image-modal {
   position: fixed;
