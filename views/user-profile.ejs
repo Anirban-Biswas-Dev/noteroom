@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="/css/main-pages.css">
     <link rel="stylesheet" href="/css/user-profile.css">
     <link rel="stylesheet" href="/css/nav-section.css">
-
     <meta name="robots" content="index, follow">
     
     <script src="https://cdn.socket.io/socket.io-3.0.1.min.js" defer></script>
@@ -17,193 +16,198 @@
     <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js" defer></script>
 
     <%- include('partials/links.ejs') %>
-
 </head>
 <body>
     <%- include('side-panel', { block: 'search-bar' }) %>
-    
-    <!-- COMPONENT: Left panel -->
-	<%- include('side-panel', { block: 'left-panel' }) %> 
-    
-    <% function changeDetails(dataField, dataName, className) {
-        let template = !visiting ? `
-        <svg class="change-detail changable ${className}" width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" data-field='${dataField}' data-name='${dataName}' onclick='changeDetail(this)'>
-            <path d="M1 22C1 21.4477 1.44772 21 2 21H22C22.5523 21 23 21.4477 23 22C23 22.5523 22.5523 23 22 23H2C1.44772 23 1 22.5523 1 22Z" fill="#0F0F0F"/>
-            <path fill-rule="evenodd" clip-rule="evenodd" d="M18.3056 1.87868C17.1341 0.707107 15.2346 0.707107 14.063 1.87868L3.38904 12.5526C2.9856 12.9561 2.70557 13.4662 2.5818 14.0232L2.04903 16.4206C1.73147 17.8496 3.00627 19.1244 4.43526 18.8069L6.83272 18.2741C7.38969 18.1503 7.89981 17.8703 8.30325 17.4669L18.9772 6.79289C20.1488 5.62132 20.1488 3.72183 18.9772 2.55025L18.3056 1.87868ZM15.4772 3.29289C15.8677 2.90237 16.5009 2.90237 16.8914 3.29289L17.563 3.96447C17.9535 4.35499 17.9535 4.98816 17.563 5.37868L15.6414 7.30026L13.5556 5.21448L15.4772 3.29289ZM12.1414 6.62869L4.80325 13.9669C4.66877 14.1013 4.57543 14.2714 4.53417 14.457L4.0014 16.8545L6.39886 16.3217C6.58452 16.2805 6.75456 16.1871 6.88904 16.0526L14.2272 8.71448L12.1414 6.62869Z" fill="#0F0F0F"/>
-            </svg>` : ``
-            return template
-        } %>
+    <%- include('side-panel', { block: 'left-panel' }) %> 
 
-
-<div class="middle-section">
-    <div class="nav-section">
-        <svg class="nav-back-btn" onclick="goPrevPage()" width="20" height="auto" viewBox="0 0 68 68" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M16.6029 29.8333H67.332V38.1666H16.6029L39.9362 61.5L33.9987 67.3333L0.665367 34L33.9987 0.666649L39.9362 6.49998L16.6029 29.8333Z" fill="#1D1B20"/>
-        </svg>
-    </div>
-    <div class="ms-first-row">
-        <div class="user-prfl-pic-wrapper">
-            <img class="user-prfl-pic" src="<%= student.profile_pic %>" alt="Profile Picture" data-field="Profile Picture" data-name="profile_pic" 
-                <% if (!visiting) { %>
-                    onclick="changeDetail(this)" data-tippy-content="Click to change picture"
-                <% } else { %>
-                    onclick="showProfilePreview('<%= student.profile_pic %>')"
-                <% } %>>
-            <%- changeDetails('Profile Picture', 'profile_pic', 'prfl-pic-edit')  %>
+    <div class="middle-section">
+        <div class="nav-section">
+            <svg class="nav-back-btn" onclick="goPrevPage()" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15 18L9 12L15 6" stroke="#1D1B20" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
         </div>
-        
-        <div class="info-items">
-            <!-- We'll update the frontend js codes for these element soon -->
-            <span class="display-name"><%= student.displayname %>&nbsp;<%- changeDetails('Display Name', 'displayname') %></span>
-            <!-- for this non-editable data, basic data fetch will do or even DOM -->
-            <div class="user-group"><%= student.group %></div>
-            <div class="user-gains">    
-                <div class="badge">
-                    <img class="badge-logo" src="/images/badges/<%= badge.badgeLogo %>">
-                    <div class="top-voice-badge"><%= badge.badgeText %></div>
-                </div>
-                <% let featuredNotesCount = student.featured_notes.length %>
-            <% if (featuredNotesCount) { %>
-                <div class="featured-note">
-                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                        <rect x="0.5" y="0.365234" width="39.0075" height="39.0075" fill="url(#pattern0_4312_5887)"/>
-                        <defs>
-                        <pattern id="pattern0_4312_5887" patternContentUnits="objectBoundingBox" width="1" height="1">
-                        <use xlink:href="#image0_4312_5887" transform="scale(0.01)"/>
-                        </pattern>
-                        <image id="image0_4312_5887" width="100" height="100" xlink:href="data:image/png;base64,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"/>
-                        </defs>
-                        </svg>                        
-                    Featured Notes <span class="featured-notes-count"><%= featuredNotesCount %></span></div>
-            <% } else { %>
-                <div class="no featured-note">
-                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                        <rect x="0.5" y="0.365234" width="39.0075" height="39.0075" fill="url(#pattern0_4312_5887)"/>
-                        <defs>
-                        <pattern id="pattern0_4312_5887" patternContentUnits="objectBoundingBox" width="1" height="1">
-                        <use xlink:href="#image0_4312_5887" transform="scale(0.01)"/>
-                        </pattern>
-                        <image id="image0_4312_5887" width="100" height="100" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAAAXNSR0IArs4c6QAACD9JREFUeAHtnXtsFEUcx4uKPFQUQiKB9nb2rg+42Wu5npSSViACllIe5ZmYNrRAAWmh0GJCgAYwpFiKPAJGjYKgSZGHgCIVoSjGf3jIQwoGSDARgfKsgOVZSn/md82abbu92z12926302Sy273ZnZ3vZ3+/+c3c3GxYGPtjCjAFmAJMAaYAU4ApwBRgCjAFmAIWUoDjYnkbEfI5XlhLeOdWwgvbgpoITbGQvMqrYnO4PITQ/RxPIVQS73CCjdDHETwdqbwmFsjJ2Z2FHE/rEITg6g35s0bBpg1T4ftds2DPt/lBSVvK3gVBoDB6JN+6oBA7fR9BEDuF4qXvwN0bpQCP1gQ9VV8rAbfbBbWXXoCMCaR1QOHswhiOp/WOSAF+2D076BCkD4IIBK6GQd2V5yAny2ZtKISQ9hGEXkTr2Lg+J6RgIBgpEBHKjMkR1oXC8cIUhDEsbQA8fbA65IEglPqqNjB3Zg9rQrERoRyBbP861yeMm1c+8FrQnPxRMG1aGjy5bwy8phaCQMS0ZF43LxRCeqVbIKZqqALH01sI5MblZbJAUPgVyzMgzh0P7xWOgW+25MJvh+bL5pX6fq32fQFBMMULX7eOpURGRrbDxjwqJhbqHzZ/4h/eWQmTJ6XCpOyhLQLTSviWruMPCEL5uLSrNSyle3R0V7QOt9sj+8TPnzcO8vJGGOae5KAoAYJQNq3rgh1Zc3cefQE5fngBJCUnwr3qFbKw5MTT45hSIAil7NPO2I96bNo2xReQuYWjYcNnwQ+D/7lWAr3drv8bchTeV9qx8TXgHSaF4gtIn4Q+UPVXcVCtAy0Og4rIaAGeXvENQgqpYvsrEBXdy3yW0hKQx/+uhJhe8g29Hm7J3zUT+vaGyyfb+rQMKRDcP7jzZYiOMRmUloA0+G35ht6feHp8Pic/Fco+6aIKCEI5srcjUKGneSzFLEAO/FgIw1N7QX2VcrclWsyJig4QGxtjDihmAYJ9pPT0JNi+vrNqK0Ewf/zaHtzu6NqQj77MAgTd4NnKxeB5IxZOHewQEJQ/j7SDxISo0IZiJiAI5ad9hRDvccG+rZ0CgnLx2IuQnBTCUMwGBKGcOlYEA/p7YFJmFBwqfwnqLrdRBaeqsi28NdBRa+PpiJAbkDQjEIRSW7MKvvwiB0YM7wuxcQKMHE4hJzsGcnP8p8mZDhifzkNMz541DIgOXwlXXy2Bk0cXwP7yOYq+89+yeYZ38oaNOO8wIDoAQYtRk7CPhQOqHEdvMiAqxVMjtNK8DEgIQJDCYkAYEOWe0axRlvSJV7vPLIRZiD4Wgt9LFMxOh9wZIzRNOEsSn3LsWxTMHga50wcFnJYuGes34rKUhfxSMVdRrK9mHvCxww0zWFAoJxVgT1mngNLWzzuD2x3XuoCo9ddq8iMQnMMrDpur3Vafe54BUSO4v7wMSFhYWChFWQwIA8KGTny5LWYhKi1E77BXDyAYSpeWZDSKvLAcywwu6h32ah1lNUBuPHvGUkB8uZxn/UwPC2FAnmGYRA8gt68th3gPs5BGPlup5egBBMvG2SrSe8ByLNOGSCum9b4eQCzfqGsNQXo9PYA0XNOiLkvvsLfB32s7lmVpIPg06xn24vXPVi4CqJkKcLOH6kFGucFFywORuhh991fDk9sToSDP/zwrcS5WTlYMxHsaD78zIM8Q9soBVmuR4ncr4rUYEI2BiMIGumX9kBADgiBZPySEoFi6HxJo2CtOYgj0fDWTKsSyRBdn+TZEbSOLkx2kDW0g5wcyYaLVABErapat5S3ELCDE+2RAQqhBRygMCAOifNqoXM5QmgYkuhktt5a2EK3CVjE0VXs9PE/JOeL1W4XL0iJsDTQMFs/zdw9ivlYBREt3YsS1LO2yjBBQ6zIYEBZlycVOyo+xKEu5VobkZEAMkVl5IWqAKAk51YzMyuVVGtrKnYvHpCEvtkeWb0P8hZxqRmbl8ooha6DliOeLwYHlgYgVNcvWMkDwu2hcWtwswrd0n7eqSqwxtxffkoDLj2O70VJlzXD8/JnFMGRIcqM6oNWYbm4vip0y9E04ccS4Rff1ALx1cy7MnDnSGkDWrJwIuPa7HkIZdc1xYwdB+XeN3xgU0hYSHk67oPnKtRd3rjf8tuL3owtNCWXHtjwYmtq/2UtqsF3BOtuI87ryDoJxOdvg6+iIXYAn91Y1Ex7Xy01MTICzpxY1+8yopzyQcjBsxh/qnDvd/L5xnhYCIcRZaZzMKkriiPMC3uCZE0WyomN/wR3vgbWrswAXxg9EIKPOwbXqFxVNgL6JfVps/3ZtnykC2a1CJuOycjz9CIE0/bWqVMS/LyyFwoLR4IpzQ9rwATBlcqqmC9C01PNWejw7KxUGD0n2PjjYW8ewXXr/0v2cnLSGKMtOc41TWUVJHOfqh0Co4Ab0r9Kbb7r/6O6HcPp4EVTsLdR8ERq5nrvSYz/vL/S6pzo/YTouMYvumePpA0Kc3VTIZGxWQpy7EUpmxtum73s0fYjE/2tulXqtCOvJ8c5iYxVWWVqPyNhwjqdVeLPojoL9Vh1RRK222Lagq8X62Xh6ont3T0eVEhmfPcJO++DSqXjT2CiWfTU9ZF6/GiiY65eWwbo12d73+notg9DzDocQYby6AZaIr+zmeHrYe/M8BUeUyxvL41valDawoZAvMzMFBg1OAt7hbS+8lhFhpzttNlfnAKUJ6mltbLxzAsfTAzbirBXhmHPrvI8gCBEGBlVRrQq32z2v8jyN4+xCmo13jjdLIoSm2CKdNDy8XwettGDXYQowBZgCTAGmAFOAKcAUYAowBZgCTAGmAFPAbAr8B3TKGw00VjlBAAAAAElFTkSuQmCC"/>
-                        </defs>
+
+        <div class="ms-first-row">
+            <div class="profile-centered">
+                <div class="user-prfl-pic-wrapper">
+                    <img class="user-prfl-pic" src="<%= student.profile_pic %>" alt="Profile Picture" data-field="Profile Picture" data-name="profile_pic" 
+                        <% if (!visiting) { %>
+                            onclick="changeDetail(this)" data-tippy-content="Click to change picture"
+                        <% } else { %>
+                            onclick="showProfilePreview('<%= student.profile_pic %>')"
+                        <% } %>>
+                    <%- !visiting ? `
+                    <button class="edit-btn prfl-pic-edit" onclick="changeDetail(this)" data-field="Profile Picture" data-name="profile_pic">
+                        <svg class="edit-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7m-2.5-9.5L20 7m-2-5L13 7" stroke="#07192D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
-                        
-                    No featured notes</div>
-            <% } %>
+                    </button>` : '' %>
+                </div>
+                
+                <div class="info-items">
+                    <div class="info-header">
+                        <h1 class="display-name"><%= student.displayname %> 
+                            <%- !visiting ? `
+                            <button class="edit-btn inline-edit" onclick="changeDetail(this)" data-field="Display Name" data-name="displayname">
+                                <svg class="edit-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7m-2.5-9.5L20 7m-2-5L13 7" stroke="#07192D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </button>` : '' %>
+                        </h1>
+                    </div>
+                    <div class="user-clg-wrapper">
+                        <div class="user-clg" data-collegeid="<%= student.collegeID %>">
+                            <p class="user-info-text" id="college-name"><%= student.collegeID %></p>
+                        </div>
+                    </div> 
+                    <span class="user-group"><%= student.group %></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="actions-section">
+            <div class="actions-box">
+                <div class="stats-section stats-left">
+                    <div class="badge" data-tippy-content="<%= badge.badgeText %>">
+                        <img class="badge-logo" src="/images/badges/<%= badge.badgeLogo %>" alt="Badge">
+                    </div>
+                    <div class="featured-note">
+                        <% let featuredNotesCount = student.featured_notes.length %>
+                        <% if (featuredNotesCount) { %>
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 2L15.09 8.26 22 9.27 17 14.14 18.18 21 12 17.77 5.82 21 7 14.14 2 9.27 8.91 8.26 12 2Z" fill="#FEE819" stroke="#FEE819" stroke-width="1.5"/>
+                            </svg>
+                            <span class="featured-text">Featured Notes <span class="featured-notes-count"><%= featuredNotesCount %></span></span>
+                        <% } else { %>
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 2L15.09 8.26 22 9.27 17 14.14 18.18 21 12 17.77 5.82 21 7 14.14 2 9.27 8.91 8.26 12 2Z" stroke="#666" stroke-width="1.5"/>
+                            </svg>
+                            <span class="featured-text">No featured notes</span>
+                        <% } %>
+                    </div>
+                </div>
+                <div class="user-profile-interaction-container stats-right">
+                    <% if (visiting) { %>
+                        <button 
+                            class="user-profile-request-btn db-note-card-request-option"
+                            data-req-pfp="<%= student.profile_pic %>" 
+                            data-req-dn="<%= student.displayname %>" 
+                            data-req-un="<%= student.username%>"
+                        >
+                            Request
+                        </button>
+                    <% } %>
+                    <button class="share-btn share-user-profile">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92zM18 4c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zM6 13c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm12 7.02c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z" fill="#07192D"/>
+                        </svg>
+                    </button>    
+                </div>
             </div>
         </div>
         
-        <div class="user-profile-interaction-container">
-            <% if (visiting) { %>
-                <button 
-                    class="user-profile-request-btn db-note-card-request-option"
-                    data-req-pfp="<%= student.profile_pic %>" 
-                    data-req-dn="<%= student.displayname %>" 
-                    data-req-un="<%= student.username%>"
-                >
-                    Request
-                </button>
-            <% } %>
-            <svg data-tippy-content="Share" class="share-user-profile" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                <rect width="27.9032" height="27.9032" fill="url(#pattern0_4312_5925)"/>
-                <defs>
-                <pattern id="pattern0_4312_5925" patternContentUnits="objectBoundingBox" width="1" height="1">
-                <use xlink:href="#image0_4312_5925" transform="scale(0.01)"/>
-                </pattern>
-                <image id="image0_4312_5925" width="100" height="100" xlink:href="data:image/png;base64,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"/>
-                </defs>
-            </svg>    
-        </div>
-
-    </div>
-    
-    <div class="ms-personal-info-container">
-        <div class="p-info__first-row">
-            <div class="user-clg-wrapper">
-                <span class="input-label">College</span>
-                <div class="user-clg" data-collegeid="<%= student.collegeID %>">
-                    <img src="" class="user-clg--img">
-                    <p class="user-info-text" id="college-name"><%= student.collegeID %></p>
+        <div class="ms-personal-info-container">
+            <div class="p-info__first-row">
+                <div class="user-bio-wrapper">
+                    <span class="input-label">Bio</span>
+                    <p class="user-info-text changable" data-field="Bio" data-name="bio"><%= student.bio || "Not Provided" %> 
+                        <%- !visiting ? `
+                        <button class="edit-btn inline-edit" onclick="changeDetail(this)" data-field="Bio" data-name="bio">
+                            <svg class="edit-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7m-2.5-9.5L20 7m-2-5L13 7" stroke="#07192D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>` : '' %>
+                    </p>
                 </div>
-            </div> 
-        </div>
-        <div class="p-info__second-row">
-            <div class="user-bio-wrapper">
-                <span class="input-label">Bio</span>
-                <p class="user-info-text changable" data-field="Bio" data-name="bio"><%= student.bio %>&nbsp;<%- changeDetails('Bio', 'bio') %></p>
             </div>
-        </div>
-        <div class="p-info__third-row">
-            <div class="user-clg-year-wrapper">
-                <span class="input-label">College Year</span>
-                <p class="user-info-text"><%= student.collegeyear || "Not Provided" %></p>
-            </div>
-
-            <div class="user-clg-roll-wrapper">
+            <div class="p-info__second-row">
+                <div class="user-clg-year-wrapper">
+                    <span class="input-label">College Year</span>
+                    <p class="user-info-text"><%= student.collegeyear || "Not Provided" %></p>
+                </div>
+                <div class="user-clg-roll-wrapper">
                     <span class="input-label">College Roll</span>
-                    <p class="user-info-text changable" data-field="Roll Number" data-name="rollnumber"><%= student.rollnumber || "Not Provided" %>&nbsp;<%- changeDetails('Roll Number', 'rollnumber') %></p>
+                    <p class="user-info-text changable" data-field="Roll Number" data-name="rollnumber"><%= student.rollnumber || "Not Provided" %> 
+                        <%- !visiting ? `
+                        <button class="edit-btn inline-edit" onclick="changeDetail(this)" data-field="Roll Number" data-name="rollnumber">
+                            <svg class="edit-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7m-2.5-9.5L20 7m-2-5L13 7" stroke="#07192D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>` : '' %>
+                    </p>
+                </div>
             </div>
-        </div>
-        <div class="p-info__fourth-row">
-            <div class="user-fav-sub-wrapper">
-                <span class="input-label">Favourite Subject</span>
-                <p class="user-info-text changable" data-field="Favourite Subject" data-name="favouritesubject"><%= student.favouritesubject %>&nbsp;<%- changeDetails('Favourite Subject', 'favouritesubject') %></p>
-            </div>
-            <div class="user-non-fav-sub-wrapper">
-                <span class="input-label">Not So Favourite Subject</span>
-                <p class="user-info-text changable" data-field="Non-Favourite Subject" data-name="notfavsubject"><%= student.notfavsubject %>&nbsp;<%- changeDetails('Non-Favourite Subject', 'notfavsubject') %></p>
+            <div class="p-info__third-row">
+                <div class="user-fav-sub-wrapper">
+                    <span class="input-label">Favourite Subject</span>
+                    <p class="user-info-text changable" data-field="Favourite Subject" data-name="favouritesubject"><%= student.favouritesubject || "Not Provided" %> 
+                        <%- !visiting ? `
+                        <button class="edit-btn inline-edit" onclick="changeDetail(this)" data-field="Favourite Subject" data-name="favouritesubject">
+                            <svg class="edit-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7m-2.5-9.5L20 7m-2-5L13 7" stroke="#07192D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>` : '' %>
+                    </p>
+                </div>
+                <div class="user-non-fav-sub-wrapper">
+                    <span class="input-label">Not So Favourite Subject</span>
+                    <p class="user-info-text changable" data-field="Non-Favourite Subject" data-name="notfavsubject"><%= student.notfavsubject || "Not Provided" %> 
+                        <%- !visiting ? `
+                        <button class="edit-btn inline-edit" onclick="changeDetail(this)" data-field="Non-Favourite Subject" data-name="notfavsubject">
+                            <svg class="edit-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7m-2.5-9.5L20 7m-2-5L13 7" stroke="#07192D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>` : '' %>
+                    </p>
+                </div>
             </div>
         </div>
 
+        <div class="uploaded-notes-section">
+            <div class="toggle-header-uploaded-notes">
+                <% if (visiting) { %>
+                    <button class="tab active-section" id="ownedNotes" data-username="<%= student.username %>">
+                        <%= student.displayname.match(/^\S+/i) %>'s Notes
+                    </button>
+                <% } else { %>
+                    <button class="tab active-section" id="ownedNotes" data-username="<%= student.username %>">My Notes</button>
+                    <button class="tab" id="savedNotes">Saved Notes</button>
+                <% } %>
+            </div>
+            <div class="notes-container visible-container" id="owned-notes-content">
+                <div class="notes-loading">
+                    <div class="loader"></div>
+                    <p>Getting your notes...</p>
+                </div>
+                <div class="no-notes-content" id="no-notes-owned" style='display: none;'>
+                    <svg width="80" height="80" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <p>No Notes to Show</p>
+                </div>
+            </div>
+            <% if(!visiting) { %>
+                <div class="sv-notes-container not-show" id="saved-notes-content">
+                    <div class="no-notes-content" id="no-notes-saved">
+                        <svg width="80" height="80" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <p>No Saved Notes to Show</p>
+                    </div>
+                </div>
+            <% } %>
+        </div>
     </div>
 
-    <div class="uploaded-notes-section">
-      <div class="toggle-header-uploaded-notes">
-        <% if (visiting) { %>
-            <h2 class="user-notes active-section" id="ownedNotes" data-username="<%= student.username %>">
-                <%= student.displayname.match(/^\S+/i) %>'s Notes
-            </h2>
-        <% } else { %>
-            <h2 class="user-notes active-section" id="ownedNotes" data-username="<%= student.username %>">My Notes</h2>
-            <h2 class="student-saved-notes" id="savedNotes">Saved Notes</h2>
-        <% } %>
-      </div>
-      <% function noNotesContent(message, for_) {
-        return `
-            <div class="no-notes-content" style='display: none;' id='no-notes-${for_}'>
-                <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather feather-frown">
-                    <circle cx="12" cy="12" r="10" stroke-width="1"></circle>
-                    <path d="M9 9h.01" stroke-width="1"></path>
-                    <path d="M15 9h.01" stroke-width="1"></path>
-                    <path d="M9 15a4 4 0 0 1 6 0" stroke-width="1"></path>
-                </svg>
-                <p class="notes-unavailable">${message}</p>
-            </div>`
-      } %>
-        <div class="notes-container visible-container">
-            <div class="no-notes-content owned-notes-status">
-                <div class="search-results-loader"></div>
-                <p>Getting your notes...</p>
-            </div>
-
-            <%- noNotesContent('No Notes to Show', 'owned') %>
-        </div>
-
-        <% if(!visiting) { %>
-            <div class="sv-notes-container not-show">
-                <%- noNotesContent('No Saved Notes to Show', 'saved') %>
-            </div>
-        <% } %>
-    </div>
-</div>
     <%- include('side-panel', { block: 'right-panel' }) %>
-	<%- include('side-panel', { block: 'notification-modal' }) %>
+    <%- include('side-panel', { block: 'notification-modal' }) %>
     <%- include('side-panel', { block: 'mbl-ctrl-panel' }) %>
-	<%- include('side-panel', { block: 'request-modal' }) %>
+    <%- include('side-panel', { block: 'request-modal' }) %>
 
+    <audio id="notificationAudio" src="/sounds/notification-ping-sound.mp3" preload="auto"></audio>
 
-	<audio id="notificationAudio" src="/sounds/notification-ping-sound.mp3" preload="auto"></audio>
-
-	<script src="/js/notificationHandler.js" defer></script>
+    <script src="/js/notificationHandler.js" defer></script>
     <script src="/js/onboarding-data.js" defer></script>
     <script src="/js/controller.js" defer></script> 
     <script src="/js/user-profile.js" defer></script> 

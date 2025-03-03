@@ -4,44 +4,55 @@
     padding: 0;
     box-sizing: border-box;
 }
+
 :root {
     --squid-ink: #07192d;
     --neon-blue: #04dbf6;
     --light-gray: #F8F8F8;
-  }  
+    --shadow: rgba(0, 0, 0, 0.05);
+    --border-light: #e4e7eb;
+}
 
 /* Middle Section */
 .middle-section {
-    padding-top: 125px;
-    padding-bottom: 125px;
+    backdrop-filter: blur(10px);
+    min-height: 100vh;
 }
 
-@media (min-width:1425px) and (max-width:1625px) {
-        .middle-section{
-            max-width: 650px;
-        }
-}
- 
-@media (min-width: 1025px) and (max-width: 1485px) {
+@media (min-width: 1425px) and (max-width: 1625px) {
     .middle-section {
-        max-width: 580px; /* Parent constraint */
+        max-width: 650px;
     }
 }
 
-/* First Row */
+@media (min-width: 1025px) and (max-width: 1485px) {
+    .middle-section {
+        max-width: 580px;
+    }
+}
+
+/* First Row (Profile Section) */
 .ms-first-row {
     width: 100%;
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
     max-width: 900px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 25px 30px;
+    border-radius: 12px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.profile-centered {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     gap: 10px;
 }
 
-.user-prfl-pic-wrapper{
-    width: fit-content;
+.user-prfl-pic-wrapper {
     position: relative;
-    height: 100%;
     display: flex;
     align-items: center;
     flex-direction: column;
@@ -49,235 +60,417 @@
 }
 
 .user-prfl-pic {
-    width: 100px;
-    height: 100px;
+    width: 120px;
+    height: 120px;
     border-radius: 50%;
     object-fit: cover;
-    aspect-ratio: 1 / 1;
-    cursor: pointer;
+    border: 3px solid var(--neon-blue);
+    box-shadow: 0 0 10px rgba(4, 219, 246, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.prfl-pic-edit{
+.user-prfl-pic:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(4, 219, 246, 0.5);
+}
+
+.edit-btn {
+    background: #fff;
+    border: none;
+    padding: 5px;
+    cursor: pointer;
+    border-radius: 50%;
+    box-shadow: 0 2px 5px var(--shadow);
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.edit-btn:hover {
+    background: var(--light-gray);
+    transform: scale(1.1);
+}
+
+.edit-btn:active {
+    transform: scale(0.95);
+}
+
+.prfl-pic-edit {
     position: absolute;
     top: 12px;
     right: 0;
 }
 
+.edit-icon {
+    display: block;
+}
+
 /* Information Items */
 .info-items {
-    width: 60%;
-    min-width: fit-content;
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: 8px;
     padding: 10px;
 }
 
+.info-header {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
 .display-name {
-    width: 100%;
-    font-weight: 450;
-    font-size: 1.2rem;
-    line-height: 1.5;
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: var(--squid-ink);
+    line-height: 1.4;
+    letter-spacing: -0.02em;
+}
+
+.user-clg-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.user-clg {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.user-clg--img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    display: none;
+}
+
+.user-info-text {
+    font-weight: 500;
+    font-size: 1rem;
+    text-transform: capitalize;
+    letter-spacing: -0.01em;
+    color: #666;
+    opacity: 0.9;
 }
 
 .user-group {
-    width: 100%;
-    font-style: normal;
     font-weight: 500;
-    font-size: .9rem;
+    font-size: 1rem;
     text-transform: capitalize;
     letter-spacing: -0.01em;
+    color: #666;
+    opacity: 0.9;
 }
 
-.user-gains {
+/* Actions Section (Badges, Featured Notes, Request Button, Share Button) */
+.actions-section {
     width: 100%;
+    max-width: 900px;
+    margin-top: 15px;
+}
+
+.actions-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    background: #fff;
+    padding: 10px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px var(--shadow);
+}
+
+.stats-section {
     display: flex;
     align-items: center;
     gap: 15px;
+}
+
+.stats-left {
+    justify-content: flex-start;
+}
+
+.stats-right {
+    justify-content: flex-end;
 }
 
 .badge {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
+    padding: 5px 10px;
+    border-radius: 20px;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.badge:hover {
+    background: var(--light-gray);
+    transform: translateY(-1px);
 }
 
 .badge-logo {
-    width: 50px;
-    height: 50px;
-    border: none;
-    object-fit: contain;
-}
-
-.top-voice-badge, .no-badge {
-    width: fit-content;
-    text-align: left;
-    font-weight: 400;
-    font-size: 15px;
-    line-height: 1.2;
-    letter-spacing: -0.02em;
-
-}
-.no-badge{
-    font-style: normal;
-}
-
-/* Featured Note */
-.featured-note {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    font-weight: 400;
-    font-size: 15px;
-    line-height: 1.2;
-    letter-spacing: -0.02em;
-}
-.no {
-    background: none;
-}
-.featured-notes-count{
-    background: #FEE819;
-    border-radius: 5px;
-    font-size: 1em;
-    padding: 2px 5px;
-
-}
-
-.user-profile-interaction-container{
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.user-profile-request-btn{
-    border: solid var(--squid-ink) 2px;
-    border-radius: 8px;
-    font-weight: 700;
-    font-size: 13px;
-    line-height: 14px;
-    padding: 12px 20px;
-    background-color: white;
-    color: var(--squid-ink);
-    cursor: pointer;
-    transition: background-color 0.1s ease;
-}
-
-.user-profile-request-btn:hover{
-    background-color: #F8F8F8;
-}
-.user-profile-request-btn:active{
-    background-color: transparent;
-}
-
-.share-user-profile{
-    cursor: pointer;
-    border-radius: 50%;
-    padding: 2px;
-    transition: background-color 0.1s ease;
-}
-.share-user-profile:hover {
-    background-color: rgb(226, 229, 233);
-}
-
-.share-user-profile:active {
-    background-color: rgb(200, 202, 204);
-    outline: none;
-}
-.share-user-profile:focus{
-    outline: none;
-}
-
-/* User Personal Info Section */
-
-.ms-personal-info-container{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
-
-    width: 100%;
-    max-width: 900px;
-    border: .9px solid rgba(7, 25, 45, 0.2);
-    border-radius: 15px;
-    padding: 20px;
-
-    margin-top: 15px;
-}
-
-.change-detail{
-    cursor: pointer;
-    width: 15px;
-    height: auto;
-    stroke:#e2e5e9;
-}
-
-.p-info__first-row, 
-.p-info__second-row, 
-.p-info__third-row, 
-.p-info__fourth-row {
-    width: 100%;
-    padding: 5px;
-    display: flex;
-    align-items: center;
-}
-
-/* These two rows have 1+ user info */
-.p-info__third-row, 
-.p-info__fourth-row {
-    justify-content: space-between;
-}
-
-
-.user-clg-wrapper,
-.user-bio-wrapper,
-.user-clg-year-wrapper,
-.user-clg-roll-wrapper,
-.user-fav-sub-wrapper,
-.user-non-fav-sub-wrapper
-{
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-
-    min-width: 180px;
-}
-
-
-/* Exception: Has clg logo and name both to be shown */
-.user-clg{
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    padding-top: 10px;
-}
-
-.user-clg--img{
     width: 40px;
     height: 40px;
     object-fit: contain;
 }
 
-/* This class is used for p tags for personal info */
-.user-info-text {
-    font-weight: 600;
-    font-size: .95rem;
-    line-height: 18px;
-    letter-spacing: -0.03em;
+.top-voice-badge {
+    display: none;
+}
+
+.featured-note {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: var(--squid-ink);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    padding: 5px 10px;
+    border-radius: 20px;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.featured-note:hover {
+    background: var(--light-gray);
+    transform: translateY(-1px);
+}
+
+.no {
+    color: #666;
+    background: none;
+    padding: 0;
+}
+
+.featured-text {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.featured-notes-count {
+    background: #FEE819;
+    border-radius: 5px;
+    font-size: 0.85rem;
+    padding: 2px 6px;
     color: var(--squid-ink);
 }
 
-
-/* Input Labels */
-.input-label {
-    font-weight: 600;
-    font-size: .95rem;
-    letter-spacing: -0.06em;
-    font-weight: 600;
-    padding-bottom: 5px;
-    line-height: 18px;
-    color: rgba(7, 25, 45, 0.5);
+.user-profile-interaction-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
 }
 
+.user-profile-request-btn {
+    border: 2px solid var(--squid-ink);
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 10px 18px;
+    background: #fff;
+    color: var(--squid-ink);
+    cursor: pointer;
+    transition: background 0.3s ease, color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.user-profile-request-btn:hover {
+    background: var(--squid-ink);
+    color: var(--light-gray);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.user-profile-request-btn:active {
+    background: transparent;
+    color: var(--squid-ink);
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+.share-user-profile {
+    background: none;
+    border: none;
+    padding: 6px;
+    border-radius: 50%;
+    transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.share-user-profile:hover {
+    background: var(--light-gray);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.share-user-profile:active {
+    background: rgb(200, 202, 204);
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+.share-user-profile:focus {
+    outline: none;
+}
+
+/* User Personal Info Section */
+.ms-personal-info-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    width: 100%;
+    max-width: 900px;
+    background: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 20px 25px;
+    margin-top: 15px;
+    box-shadow: 0 4px 12px var(--shadow);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.edit-btn.inline-edit {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 5px;
+}
+
+/* Custom SweetAlert2 Popup Styling */
+.custom-swal-popup {
+    background: linear-gradient(145deg, #fff, #f0f4f8);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px var(--shadow);
+    padding: 20px;
+    font-family: 'Inter', 'Hind Siliguri', sans-serif;
+}
+
+.custom-swal-title {
+    color: var(--squid-ink);
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    margin-bottom: 15px;
+}
+
+.custom-swal-input {
+    border: 1px solid var(--border-light) !important;
+    border-radius: 8px !important;
+    color: var(--squid-ink) !important;
+    font-size: 1rem !important;
+    padding: 8px 12px !important;
+    font-family: 'Inter', 'Hind Siliguri', sans-serif !important;
+}
+
+.custom-swal-confirm-button {
+    background: transparent !important;
+    border: 2px solid var(--neon-blue) !important;
+    color: var(--neon-blue) !important;
+    font-weight: 600 !important;
+    font-size: 0.9rem !important;
+    padding: 8px 16px !important;
+    border-radius: 20px !important;
+    transition: background 0.3s ease, color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.custom-swal-confirm-button:hover {
+    background: var(--neon-blue) !important;
+    color: #fff !important;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.custom-swal-cancel-button {
+    background: transparent !important;
+    border: 2px solid #666 !important;
+    color: #666 !important;
+    font-weight: 600 !important;
+    font-size: 0.9rem !important;
+    padding: 8px 16px !important;
+    border-radius: 20px !important;
+    transition: background 0.3s ease, color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.custom-swal-cancel-button:hover {
+    background: black !important;
+    color: #fff !important;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.p-info__first-row, 
+.p-info__second-row{
+    width: 100%;
+    padding: 10px 5px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid var(--border-light);
+}
+.p-info__third-row{
+    width: 100%;
+    padding: 10px 5px;
+    display: flex;
+    align-items: center;
+}
+.p-info__fourth-row {
+    width: 100%;
+    padding: 10px 5px;
+    display: flex;
+    align-items: center;
+}
+
+.p-info__first-row {
+    border-bottom: none;
+    justify-content: center;
+}
+
+.p-info__second-row {
+    justify-content: space-between;
+}
+
+.p-info__third-row, 
+.p-info__fourth-row {
+    justify-content: space-between;
+}
+
+.p-info__fourth-row {
+    border-bottom: none;
+}
+
+.user-bio-wrapper,
+.user-clg-year-wrapper,
+.user-clg-roll-wrapper,
+.user-fav-sub-wrapper,
+.user-non-fav-sub-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    min-width: 180px;
+}
+
+.user-bio-wrapper {
+    align-items: center;
+    text-align: center;
+}
+
+.user-info-text {
+    font-weight: 500;
+    font-size: 1rem;
+    line-height: 18px;
+    letter-spacing: -0.02em;
+    color: var(--squid-ink);
+}
+
+.input-label {
+    font-weight: 500;
+    font-size: 0.9rem;
+    letter-spacing: -0.03em;
+    padding-bottom: 5px;
+    line-height: 18px;
+    color: #666;
+}
 
 /* Uploaded Notes Section */
 .uploaded-notes-section {
@@ -285,337 +478,586 @@
     align-items: center;
     flex-direction: column;
     width: 100%;
-    margin: 2vh 0px;
+    margin: 30px 0;
 }
-.toggle-header-uploaded-notes{
+
+.toggle-header-uploaded-notes {
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-evenly;
     min-width: 200px;
-    padding: 20px;
+    padding: 15px 20px;
     box-sizing: border-box;
+    border-bottom: 2px solid var(--border-light);
 }
-.toggle-header-uploaded-notes h2 {
+
+.toggle-header-uploaded-notes .tab {
     font-size: 1.5rem;
     text-align: center;
     font-weight: 500;
-    line-height: 42px;
-    letter-spacing: -0.06em;
-    width: auto;
-    max-width: 100%;
-    min-width: fit-content;
-    border-bottom: 2px solid var(--squid-ink);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    background: none;
+    border: none;
     cursor: pointer;
-    padding: 5px 10px;
-    transition: font-size 0.2s ease, font-weight 0.2s ease, padding 0.3s ease;
+    padding: 5px 15px;
+    color: #666;
+    transition: all 0.3s ease, transform 0.2s ease;
 }
-.active-section{
-    font-size: 1.7rem !important;
-    font-weight: 550;
-    border-bottom: 4px solid var(--squid-ink) !important; 
-    padding: 5px 25px !important;
-    transition: font-size 0.2s ease, font-weight 0.2s ease, padding 0.3s ease;
+
+.toggle-header-uploaded-notes .tab:hover {
+    color: var(--squid-ink);
+    transform: translateY(-1px);
+}
+
+.toggle-header-uploaded-notes .active-section {
+    font-size: 1.7rem;
+    font-weight: 600;
+    border-bottom: 4px solid var(--neon-blue);
+    color: var(--squid-ink);
+    padding: 5px 25px;
 }
 
 /* Grid Container for Notes */
-/* Default off for saved notes */
-.not-show{
+.not-show {
     display: none;
 }
+
 .visible-container {
     flex: 1;
     width: 100%;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Ensure proper column fit */
-    gap: 20px; 
-    padding: 10px;
+    gap: 25px;
+    padding: 25px;
     justify-content: center;
+    align-content: center;
 }
 
 /* Individual Note Card */
-.note-card{
+.note-card {
     align-items: center;
-    background: #FFFFFF;
-    border-radius: 5px;
-    box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.15);
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px var(--shadow);
     cursor: pointer;
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 8px;
     height: auto;
-    max-width: 250px; 
-    width: 100%; 
     overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.note-card img {
-    width: 100%;
-    height: 100%; 
-    object-fit: cover; 
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
-    max-height: 150px;
-    transition: filter 0.1s ease;
+/* Desktop and Large Screens: Two Notes per Row */
+@media (min-width: 1025px) {
+    .visible-container {
+        grid-template-columns: repeat(2, minmax(300px, 1fr));
+        max-width: 700px;
+        margin: 0 auto;
+    }
+    .note-card {
+        max-width: 320px;
+        width: 100%;
+    }
+    .note-card img {
+        height: 200px;
+    }
+    .note-card h3 {
+        font-size: 1.2rem;
+        padding: 12px 16px;
+    }
+    .note-card__tr {
+        padding: 0 16px 12px;
+    }
+    .note-author-name {
+        font-size: 0.95rem;
+    }
 }
 
-.note-card img:hover{
-    filter: brightness(.9);
+/* Medium Screens: Adjust for Two Columns Where Possible */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .visible-container {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        max-width: 700px;
+        margin: 0 auto;
+        justify-items: center;
+    }
+    .note-card {
+        max-width: 300px;
+        width: 90%;
+    }
+    .note-card img {
+        height: 180px;
+    }
+    .note-card h3 {
+        font-size: 1.1rem;
+        padding: 10px 14px;
+    }
+    .note-card__tr {
+        padding: 0 14px 10px;
+    }
+    .note-author-name {
+        font-size: 0.9rem;
+    }
 }
 
-.note-card h3 {
-    width: 100%;
-    min-height: 49px;
-    height: 20%;
-    max-height: fit-content;
-    text-align: left;
-    font-weight: 400;
-    font-size: 1rem;
-    padding: 5px 10px;
-    line-height: 1.2;
+/* Smaller Screens: Refined Mobile Design with Separate Boxes */
+@media (max-width: 768px) {
+    /* Overall Page Adjustments */
+    .middle-section {
+        padding-top: 60px;
+        padding-bottom: 40px;
+        background: linear-gradient(145deg, #f0f4f8, #fff);
+    }
+
+    /* First Row (Profile Section) */
+    .ms-first-row {
+        background: transparent;
+        padding: 10px 15px;
+        border-radius: 0;
+        border: none;
+        box-shadow: none;
+        margin: 0;
+    }
+    .ms-first-row:hover {
+        transform: none;
+        box-shadow: none;
+    }
+    .user-prfl-pic {
+        width: 80px;
+        height: 80px;
+        border-width: 2px;
+        box-shadow: none;
+    }
+    .user-prfl-pic:hover {
+        transform: none;
+        box-shadow: none;
+    }
+    .prfl-pic-edit {
+        top: 5px;
+        right: -3px;
+        padding: 3px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    .edit-btn {
+        padding: 3px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    .display-name {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #333;
+        letter-spacing: -0.02em;
+    }
+    .user-info-text {
+        font-size: 0.9rem;
+        font-weight: 400;
+        color: #666;
+    }
+    .user-group {
+        font-size: 0.9rem;
+        font-weight: 400;
+        color: #666;
+    }
+    .info-items {
+        gap: 2px;
+        padding: 5px 0;
+    }
+
+    /* Actions Section: Separate Box with Balanced Spacing */
+    .actions-section {
+        margin-top: 5px;
+    }
+    .actions-box {
+        background: #fff;
+        padding: 10px 15px;
+        border-radius: 8px;
+        border: none;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        margin: 0 auto; /* Center the box */
+        justify-content: space-between;
+        gap: 6px;
+        width: 100%; /* Let the content determine the width */
+        max-width: 390px; /* Further reduced max-width to minimize empty space */
+    }
+    .stats-section {
+        justify-content: flex-start;
+        gap: 6px;
+    }
+    .badge {
+        padding: 3px 6px;
+        border-radius: 16px;
+    }
+    .badge-logo {
+        width: 32px;
+        height: 32px;
+    }
+    .featured-note {
+        font-size: 0.8rem;
+        padding: 3px 6px;
+        border-radius: 16px;
+    }
+    .user-profile-interaction-container {
+        width: auto;
+        flex-direction: row;
+        justify-content: flex-end;
+        gap: 4px;
+        padding: 0;
+    }
+    .user-profile-request-btn {
+        padding: 5px 10px;
+        font-size: 0.75rem;
+        border-radius: 16px;
+        font-weight: 600;
+        border-width: 1px;
+        background: #fff;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    .share-user-profile {
+        padding: 4px;
+    }
+
+    /* Personal Info Section: Separate Box with Balanced Spacing */
+    .ms-personal-info-container {
+        background: #fff;
+        padding: 15px;
+        border-radius: 8px;
+        border: none;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        margin: 10px auto; /* Center the box */
+        width: 100%; /* Let the content determine the width */
+        max-width: 390px; /* Match actions-box max-width for consistency */
+    }
+    .ms-personal-info-container:hover {
+        transform: none;
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+    }
+    .p-info__first-row,
+    .p-info__second-row,
+    .p-info__third-row,
+    .p-info__fourth-row {
+        padding: 5px 0;
+        border-bottom: none;
+    }
+    .user-bio-wrapper {
+        align-items: flex-start;
+        text-align: left;
+    }
+    .user-bio-wrapper,
+    .user-clg-year-wrapper,
+    .user-clg-roll-wrapper,
+    .user-fav-sub-wrapper,
+    .user-non-fav-sub-wrapper {
+        min-width: 140px;
+    }
+    .user-clg-roll-wrapper {
+        padding-left: 10px;
+    }
+    .input-label {
+        font-size: 0.8rem;
+        font-weight: 600;
+        padding-bottom: 2px;
+        color: #333;
+    }
+    .user-info-text {
+        font-size: 0.85rem;
+        font-weight: 400;
+        color: #666;
+    }
+    .edit-btn.inline-edit {
+        margin-left: 3px;
+        padding: 2px;
+    }
+
+    /* Uploaded Notes Section */
+    .uploaded-notes-section {
+        margin: 10px 0;
+    }
+    .toggle-header-uploaded-notes {
+        padding: 5px 10px;
+        border-bottom: 1px solid var(--border-light);
+    }
+    .toggle-header-uploaded-notes .tab {
+        font-size: 1.2rem;
+        font-weight: 700;
+        padding: 3px 8px;
+        color: #333;
+    }
+    .toggle-header-uploaded-notes .tab:hover {
+        color: var(--squid-ink);
+        transform: none;
+    }
+    .toggle-header-uploaded-notes .active-section {
+        font-size: 1.3rem;
+        padding: 3px 10px;
+        border-bottom: 2px solid var(--neon-blue);
+    }
+    .visible-container {
+        grid-template-columns: 1fr;
+        gap: 15px;
+        padding: 15px 10px;
+        justify-items: center;
+    }
+    .note-card {
+        max-width: 300px;
+        width: 100%;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        border: none;
+    }
+    .note-card:hover {
+        transform: none;
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+    }
+    .note-card img {
+        height: 160px;
+        border-radius: 8px;
+    }
+    .note-card h3 {
+        font-size: 1rem;
+        font-weight: 600;
+        padding: 8px 10px;
+        color: #333;
+    }
+    .note-card__tr {
+        padding: 0 10px 8px;
+    }
+    .note-author-name {
+        font-size: 0.8rem;
+        font-weight: 400;
+        color: #666;
+    }
 }
-.note-card__tr{
-    width: 100%;
+
+/* Extra Small Screens */
+@media (max-width: 480px) {
+    .visible-container {
+        gap: 12px;
+        padding: 12px 8px;
+    }
+    .note-card {
+        max-width: 280px;
+        width: 100%;
+    }
+    .note-card img {
+        height: 150px;
+    }
+    .note-card h3 {
+        font-size: 0.95rem;
+        padding: 6px 8px;
+    }
+    .note-card__tr {
+        padding: 0 8px 6px;
+    }
+}
+
+@media (max-width: 360px) {
+    .middle-section {
+        padding-top: 50px;
+        padding-bottom: 30px;
+    }
+    .ms-first-row {
+        padding: 8px 10px;
+    }
+    .actions-box {
+        padding: 8px 15px;
+        margin: 0 auto;
+        max-width: 280px; /* Adjusted for smaller screens */
+    }
+    .ms-personal-info-container {
+        padding: 12px 15px;
+        margin: 8px auto;
+        max-width: 280px; /* Adjusted for smaller screens */
+    }
+    .user-bio-wrapper,
+    .user-clg-year-wrapper,
+    .user-clg-roll-wrapper,
+    .user-fav-sub-wrapper,
+    .user-non-fav-sub-wrapper {
+        min-width: 120px;
+    }
+    .input-label {
+        font-size: 0.75rem;
+    }
+    .toggle-header-uploaded-notes {
+        padding: 3px 0;
+    }
+    .toggle-header-uploaded-notes .tab {
+        font-size: 1rem;
+        padding: 2px 6px;
+    }
+    .toggle-header-uploaded-notes .active-section {
+        font-size: 1.1rem;
+        padding: 2px 8px;
+    }
+}
+
+@media (min-width: 361px) and (max-width: 480px) {
+    .middle-section {
+        padding-top: 55px;
+        padding-bottom: 35px;
+    }
+    .ms-first-row {
+        padding: 10px 12px;
+    }
+    .actions-box {
+        padding: 10px 15px;
+        margin: 0 auto;
+    }
+    .ms-personal-info-container {
+        padding: 15px 18px;
+        margin: 10px auto;
+    }
+    .user-bio-wrapper,
+    .user-clg-year-wrapper,
+    .user-clg-roll-wrapper,
+    .user-fav-sub-wrapper,
+    .user-non-fav-sub-wrapper {
+        min-width: 130px;
+    }
+    .input-label {
+        font-size: 0.8rem;
+    }
+    .toggle-header-uploaded-notes {
+        padding: 5px 0;
+    }
+    .toggle-header-uploaded-notes .tab {
+        font-size: 1.1rem;
+        padding: 3px 8px;
+    }
+    .toggle-header-uploaded-notes .active-section {
+        font-size: 1.2rem;
+        padding: 3px 10px;
+    }
+}
+
+/* Loader for Notes */
+.notes-loading {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: space-between;
-    padding: 0 10px;
+    gap: 10px;
+    color: #666;
 }
-.note-author-name{
-    font-weight: 500;
-    font-size: 12px;
-    line-height: 1;
-    letter-spacing: -0.01em;
+
+.loader {
+    width: 40px;
+    height: 40px;
+    border: 4px solid var(--border-light);
+    border-top: 4px solid var(--neon-blue);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
 }
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
 /* No Notes Content */
 .no-notes-content {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 200px; 
+    height: 200px;
+    color: #666;
+    font-size: 1.1rem;
 }
 
 .no-notes-content svg {
-    font-size: 4rem;
-    color: rgba(0, 0, 0, 0.3);
     margin-bottom: 15px;
-    fill: #dbdada15;
-    stroke-width: 1; 
-}
-
-.no-notes-content p {
-    font-size: 1.2rem;
-    color: rgba(0, 0, 0, 0.8); 
 }
 
 /* Swal Preview */
-
 .swal-profile-pic-preview {
     max-width: 400px !important;
-    max-width: 400px !important;
     border-radius: 50%;
-    aspect-ratio: 1/1; 
-    object-fit: cover; 
+    aspect-ratio: 1/1;
+    object-fit: cover;
     display: block;
     margin: auto;
 }
 
-/* ****** Responsiveness ***** */
-/* Responsive adjustments only for my notes section */
-@media (min-width: 1201px) and (max-width:1785px) {
+/* Responsive Design for Medium Screens */
+@media (min-width: 769px) and (max-width: 1024px) {
     .visible-container {
-        /* grid-template-columns: repeat(auto-fit, minmax(250px, 2fr)); Adjust based on screen size */
-        grid-template-columns: repeat(auto-fit, minmax(150px, max(200px, 2fr)));
-        justify-content: center;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        max-width: 700px;
+        margin: 0 auto;
+        justify-items: center;
     }
-    .note-card { 
-        max-width: 250px;
-        width: 85%;
+    .note-card {
+        max-width: 300px;
+        width: 90%;
     }
-}
-@media (min-width: 1025px) and (max-width: 1485px) {
-    .visible-container {
-        gap: 15px; 
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Ensures 2 columns */
+    .note-card img {
+        height: 180px;
     }
-    .user-profile-interaction-container{
-        display: flex;
-        align-items: center;
-        gap: 8px;
+    .note-card h3 {
+        font-size: 1.1rem;
+        padding: 10px 14px;
     }
-    
-}
-
-@media (min-width:769px) and (max-width: 1200px) {
-    .notes
-    .visible-container{
-        grid-template-columns: repeat(auto-fit, minmax(250px, 2fr)); 
-        justify-items: center; 
+    .note-card__tr {
+        padding: 0 14px 10px;
     }
-    .note-card { 
-        max-width: 250px;
-        width: 85%;
-    }
-}
-@media (min-width:481px) and (max-width: 768px) {
-    .visible-container{
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
-        justify-items: center; 
-    }
-    .note-card { 
-        max-width: 250px;
-        width: 85%;
+    .note-author-name {
+        font-size: 0.9rem;
     }
 }
 
-@media (max-width: 480px) {
-    .visible-container{
-        grid-template-columns: 1fr; 
-        justify-items: center; 
-    }
-    .note-card { 
-        max-width: 250px;
-        width: 85%;
-    }
-}
-@media (max-width:360px) {
-    .middle-section{
-        padding-top: 100px;
-    }
-    .user-clg--img{
-        width: 30px;
-        height: 30px;
-    }
-    .user-info-text{
-        font-size: .8rem;
-        letter-spacing: 0rem;
-    }
-
-    .user-clg-wrapper,
-    .user-bio-wrapper,
-    .user-clg-year-wrapper,
-    .user-clg-roll-wrapper,
-    .user-fav-sub-wrapper,
-    .user-non-fav-sub-wrapper
-    {
-        min-width: 135px;
-    }
-
-    .input-label{
-        font-size: .8rem;
-    }
-    .toggle-header-uploaded-notes{
-        padding: 2px;
-    }
-    .toggle-header-uploaded-notes h2 {
-        font-size: 1rem;
-        padding: 1px 3px;
-    }
-    .active-section {
-        font-size: 1.2rem !important;
-        padding: 3px 5px !important;
-    }
-}
-@media (min-width: 361px) and (max-width: 480px) {
-    .middle-section{
-        padding-top: 100px;
-    }
-    .ms-first-row{
-        margin-bottom: 3vh;
-    }
-    .user-clg--img{
-        width: 30px;
-        height: 30px;
-    }
-    .user-info-text{
-        font-size: .9rem;
-        letter-spacing: 0rem;
-    }
-    .ms-personal-info-container{
-        margin-top: 0;
-    }
-    .user-clg-wrapper,
-    .user-bio-wrapper,
-    .user-clg-year-wrapper,
-    .user-clg-roll-wrapper,
-    .user-fav-sub-wrapper,
-    .user-non-fav-sub-wrapper
-    {
-        min-width: 145px;
-    }
-    
-    .input-label {
-        font-size: .85rem; 
-    }
-    .toggle-header-uploaded-notes{
-        padding: 10px;
-    }
-    .toggle-header-uploaded-notes h2 {
-        font-size: 1.3rem;
-        padding: 5px 10px;
-    }
-    .active-section {
-        font-size: 1.5rem !important;
-        padding: 5px 20px !important;
-    }
-}
-@media (min-width: 481px) and (max-width: 767px) {
+@media (min-width: 481px) and (max-width: 768px) {
     .middle-section {
-        padding-top: 120px; /* More top padding for larger screens */
+        padding-top: 120px;
     }
-       .input-label {
-        font-size: 1rem; /* Increased input label font */
+    .visible-container {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        justify-items: center;
     }
-    .toggle-header-uploaded-notes{
+    .note-card {
+        max-width: 300px;
+        width: 90%;
+    }
+    .input-label {
+        font-size: 1rem;
+    }
+    .toggle-header-uploaded-notes {
         padding: 15px;
     }
-    .toggle-header-uploaded-notes h2 {
+    .toggle-header-uploaded-notes .tab {
         font-size: 1.4rem;
         padding: 5px 12px;
     }
-    .active-section {
-        font-size: 1.6rem !important;
-        padding: 5px 22px !important;
+    .toggle-header-uploaded-notes .active-section {
+        font-size: 1.6rem;
+        padding: 5px 22px;
     }
 }
 
-@media (max-width:600px) {
-    .ms-first-row{
-        flex-direction: column;
-        gap: 5px;
+/* Responsive Design for Larger Screens */
+@media (min-width: 1025px) {
+    .visible-container {
+        grid-template-columns: repeat(2, minmax(300px, 1fr));
+        max-width: 700px;
+        margin: 0 auto;
     }
-    .user-prfl-pic{
-        width: 100px;
-        height: 100px;
-    }
-    .info-items{
+    .note-card {
+        max-width: 320px;
         width: 100%;
-        gap: 5px;
-        padding: 5px 8px;
     }
-    .display-name, .user-group{
-        text-align: center;
+    .note-card img {
+        height: 200px;
     }
-    .user-gains{
-        justify-content: center;
+    .note-card h3 {
+        font-size: 1.2rem;
+        padding: 12px 16px;
     }
-    .badge{
-        gap: 5px;
+    .note-card__tr {
+        padding: 0 16px 12px;
     }
-    .user-profile-interaction-container{
-        width: 100%;
-        flex-direction: row-reverse;
-        padding: 0 8px;
-    }
-    .user-profile-request-btn{
-        padding: 8px 12px;
-        font-size: .8rem;
-        border-radius: 25px;
-        font-weight: 650;
-
-    }
-    .swal-profile-pic-preview {
-        max-width: 280px !important;
-        max-width: 280px !important;
+    .note-author-name {
+        font-size: 0.95rem;
     }
 }
