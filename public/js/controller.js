@@ -1,49 +1,39 @@
 const conHost = window.location.origin
 const conSock = io(conHost)
 
-//* Badge images: user-profile + search-profile
-let baseURL = 'https://storage.googleapis.com/noteroom-fb1a7.appspot.com/badges/'
-let imageObject = {
-    'No Badge': `${baseURL}no-badge.png`,
-    'Biology': `${baseURL}biology.png`,
-    'English': `${baseURL}english.png`
-}
-
-
 function FeedNote(note) {
     this.isQuickPost = note.postType === "quick-post",
-    this.noteData = {
-        noteID: note._id,
-        noteTitle: !this.isQuickPost ? note.title : null,
-        description: note.description,
-        createdAt: note.createdAt,
-    },
-    this.contentData = {
-        content1: this.isQuickPost || note.content.length > 1 ? note.content[0] : null ,
-        content2: !this.isQuickPost ? note.content[1] : null,
-        contentCount: note.content.length,
-    },
-    this.ownerData = {
-        ownerID: note.ownerDocID.studentID,
-        profile_pic: note.ownerDocID.profile_pic,
-        ownerDisplayName: note.ownerDocID.displayname,
-        ownerUserName: note.ownerDocID.username,
-        isOwner: note.isOwner,
-    },
-    this.interactionData = {
-        feedbackCount: note.feedbackCount,
-        upvoteCount: note.upvoteCount,
-        isSaved: note.isSaved,
-        isUpvoted: note.isUpvoted,
-    },
-    this.extras = {
-        quickPost: this.isQuickPost,
-        pinned: note.pinned
-    }
+        this.noteData = {
+            noteID: note._id,
+            noteTitle: !this.isQuickPost ? note.title : null,
+            description: note.description,
+            createdAt: note.createdAt,
+        },
+        this.contentData = {
+            content1: this.isQuickPost || note.content.length > 1 ? note.content[0] : null,
+            content2: !this.isQuickPost ? note.content[1] : null,
+            contentCount: note.content.length,
+        },
+        this.ownerData = {
+            ownerID: note.ownerDocID.studentID,
+            profile_pic: note.ownerDocID.profile_pic,
+            ownerDisplayName: note.ownerDocID.displayname,
+            ownerUserName: note.ownerDocID.username,
+            isOwner: note.isOwner,
+        },
+        this.interactionData = {
+            feedbackCount: note.feedbackCount,
+            upvoteCount: note.upvoteCount,
+            isSaved: note.isSaved,
+            isUpvoted: note.isUpvoted,
+        },
+        this.extras = {
+            quickPost: this.isQuickPost,
+            pinned: note.pinned
+        }
 }
 
 function manageRequest(requestCard) {
-    const firstRow = requestCard.querySelector(".request__fr");
     const secondRow = requestCard.querySelector(".request__sr");
     const chevronIcon = requestCard.querySelector(".request-chevron-icon");
 
@@ -186,17 +176,17 @@ async function readNoti(noti) {
             await updateFromIndexedDB('requests')
         }
     }
-    
+
 
     if (redirectTo && redirectTo !== "") {
         window.location.href = redirectTo
-    } 
+    }
 }
 
-document.querySelector(".delete-all-noti-icon").addEventListener('click', async (event) => {
+document.querySelector(".delete-all-noti-icon").addEventListener('click', async () => {
     try {
         let container = document.querySelector('.notifications-container')
-        if(container.childElementCount !== 0) {
+        if (container.childElementCount !== 0) {
             Swal.fire(toastData('success', 'All notifications will be deleted', 3000))
             container.querySelectorAll('.notification').forEach(noti => noti.remove())
 
@@ -205,8 +195,8 @@ document.querySelector(".delete-all-noti-icon").addEventListener('click', async 
             if (data.ok) {
                 await db["notifications"].clear()
             }
-        }    
-    } catch (error) {}
+        }
+    } catch (error) { }
 })
 
 async function rerunRequestFunction() {
@@ -258,14 +248,14 @@ function truncatedTitle(title) {
 
 
 const db = new Dexie("Notes")
-const dbVersion = 18
+const dbVersion = 26
 
 db.version(dbVersion).stores({
-    savedNotes: "++id,noteID,noteTitle,noteThumbnail,ownerDisplayName,ownerUserName",
-    ownedNotes: "++id,noteID,noteTitle,noteThumbnail,ownerDisplayName,ownerUserName",
-    notifications: "++id,notiID,content,fromUserSudentDocID,redirectTo,isRead,createdAt,notiType",
-    requests: "++id,recID,message,createdAt,senderDisplayName,senderUserName",
-    feedNotes: "++id,noteID,noteData,contentData,ownerData,interactionData,extras"
+    savedNotes: "noteID,noteTitle,noteThumbnail,ownerDisplayName,ownerUserName",
+    ownedNotes: "noteID,noteTitle,noteThumbnail,ownerDisplayName,ownerUserName",
+    notifications: "notiID,content,fromUserSudentDocID,redirectTo,isRead,createdAt,notiType",
+    requests: "recID,message,createdAt,senderDisplayName,senderUserName",
+    feedNotes: "noteID,noteData,contentData,ownerData,interactionData,extras,count"
 })
 db.on('versionchange', async (event) => {
     console.log(`Changed the version to ${dbVersion}`)
@@ -274,7 +264,7 @@ db.on('versionchange', async (event) => {
             await db.delete()
             await db.open()
         }
-    } catch (error) { 
+    } catch (error) {
         console.log(`Error: ${error}`)
     }
 })
@@ -283,6 +273,29 @@ db.open().then(() => {
 }).catch((error) => {
     console.log(`Cannot initialize indexedDB: ${error}`)
 })
+
+
+function ManageFeedCache() {
+    this.addFeedNotes = async function (feedNoteObjects) {
+        await db.transaction('rw', db.feedNotes, async () => {
+            try {
+                await db.feedNotes.bulkAdd(feedNoteObjects)
+            } catch (error) {
+                console.error(error)
+            }
+        })
+    },
+
+    this.getCachedFeedNotes = async function () {
+        let notes = await db.feedNotes.orderBy("count").toArray()
+        return notes
+    },
+
+    this.getLastCount = async function() {
+        let lastNote = await db.feedNotes.orderBy("count").reverse().first()
+        return lastNote["count"] || 0
+    }
+}
 
 const manageDb = {
     async add(store, obj) {
@@ -339,7 +352,13 @@ const manageDb = {
 
     async delete(store, { idPath, id }) {
         let note = await db[store].where(idPath).equals(id).first()
-        await db[store].delete(note.id)
+        await db[store].delete(note.noteID)
+    },
+
+    async update(store, { idPath, id }, updatedObject, keyToUpdate) {
+        let note = await db[store].where(idPath).equals(id).first()
+        let updatedNote = merge(note, updatedObject, keyToUpdate)
+        await db[store].put(updatedNote)
     }
 }
 
@@ -386,10 +405,14 @@ async function upvote(voteContainer, fromDashboard = false) {
     })
     let data = await response.json()
     if (data.ok) {
-        voteContainer.removeAttribute('data-disabled')
-    } else {
-        voteContainer.removeAttribute('data-disabled')
+        await manageDb.update("feedNotes", { idPath: "noteID", id: noteDocID }, { interactionData: { isUpvoted: !isUpvoted, upvoteCount: parseInt(uvCount.innerHTML) } }, "interactionData" )
     }
+    voteContainer.removeAttribute('data-disabled')
+}
+
+function redirectToNote(noteID, isQuickPost) {
+    localStorage.setItem('lastVisitedNote', noteID)
+    window.location.href = `/view/${isQuickPost === 'true' ? 'quick-post/' : ''}${noteID}?from=dashboard`
 }
 
 const isAdmin = document.querySelector('span#admin') ? true : false
@@ -413,10 +436,9 @@ const manageNotes = {
         let existingUNote = document.querySelector(`#note-${noteData.noteID}`)
         let feedContainer = document.querySelector('.feed-container')
 
-        //FIXME: there should be a skeleton loader for the note card or for the note image
         if (!existingUNote) {
             let noteCardHtml = `
-                <div class="feed-note-card" id="note-${noteData.noteID}" data-posttype="${extras.quickPost ? 'quick-post' : 'note'}">
+                <div class="feed-note-card" id="note-${noteData.noteID}" data-posttype="${extras.quickPost ? 'quick-post' : 'note'}" data-noteid="${noteData.noteID}">
                     <div class="fnc__first-row">
                         <div class="fnc__fr-author-img-wrapper">
                             <img src="${ownerData.profile_pic}" class="fnc__fr-author-img" onclick="window.location.href='/user/${ownerData.ownerUserName}'"/>
@@ -523,14 +545,10 @@ const manageNotes = {
                         
                         <div class="note-info-wrapper--second-row">
                             <p class="fnc--note-desc">
-                                ${
-                                    (function() {
+                                ${(function () {
                                         let description = (new DOMParser()).parseFromString(noteData.description, 'text/html').querySelector('body').textContent.trim()
                                         let charLimit = extras.quickPost ? 250 : 100;
-                                        return description.length > charLimit ? `
-                                            ${description.slice(0, charLimit)}...
-                                            <span class="note-desc-see-more-btn" onclick="window.location.href='/view/${extras.quickPost ? `quick-post/${noteData.noteID}` : noteData.noteID}'">Read More</span>
-                                        ` : description;
+                                        return description.length > charLimit ? `${description.slice(0, charLimit)}...<span class="note-desc-see-more-btn" onclick="redirectToNote('${noteData.noteID}', '${extras.quickPost}')">Read More</span>` : description;
                                     })()
                                 }
                             </p>
@@ -543,16 +561,14 @@ const manageNotes = {
                         ${extras.quickPost ?
                             `${contentData.contentCount !== 0 ?
                                 `<div class="quickpost-thumbnail-wrapper">
-                                    <img onclick="window.location.href='/view/quick-post/${noteData.noteID}'" class="quickpost-thumbnail" src="" data-src="${contentData.content1}"/>
+                                    <img onclick="redirectToNote('${noteData.noteID}', '${extras.quickPost}')" class="quickpost-thumbnail" src="" data-src="${contentData.content1 || '/images/placeholders/unavailable_content.png' }"/>
                                 </div>`: ``} `
                             :
                             `<div class="thumbnail-grid">
-                                <img class="thumbnail primary-img" src="" onclick="window.location.href='/view/${noteData.noteID}'" data-src='${contentData.content1}'/>
+                                <img class="thumbnail primary-img" src="" onclick="redirectToNote('${noteData.noteID}', '${extras.quickPost}')" data-src='${contentData.content1 || '/images/placeholders/unavailable_content.png'}'/>
                                 <div class="thumbnail-secondary-wrapper">
-                                    <img class="thumbnail secondary-img" src="" onclick="window.location.href='/view/${noteData.noteID}'" data-src='${contentData.content2}'/>
-                                    ${contentData.contentCount > 2 ?
-                                        `<div class="thumbnail-overlay" onclick="window.location.href='/view/${noteData.noteID}'">+${parseInt(contentData.contentCount) - 2}</div>` : ''
-                                    }
+                                    <img class="thumbnail secondary-img" src="" onclick="redirectToNote('${noteData.noteID}', '${extras.quickPost}')" data-src='${contentData.content2 || '/images/placeholders/unavailable_content.png'}'/>
+                                    ${contentData.contentCount > 2 ? `<div class="thumbnail-overlay" onclick="redirectToNote('${noteData.noteID}', '${extras.quickPost}')">+${parseInt(contentData.contentCount) - 2}</div>` : ''}
                                 </div>
                             </div>`
                         }
@@ -593,7 +609,7 @@ const manageNotes = {
                                 <div class="review-metric-wrapper">
                                     <span
                                         class="review-count metric-count-font cmnt-count"
-                                        onclick="window.location.href='/view/${extras.quickPost ? `quick-post/${noteData.noteID}` : `${noteData.noteID}`}/#feedbacks'"
+                                        onclick="redirectToNote('${noteData.noteID}', '${extras.quickPost}')"
                                     >
                                         ${interactionData.feedbackCount === 0 ? `No reviews yet` : `${interactionData.feedbackCount} Review${interactionData.feedbackCount === 1 ? "" : "s"}`}
                                     </span>
@@ -618,7 +634,7 @@ const manageNotes = {
                                         xmlns="http://www.w3.org/2000/svg"
                                     >
                                     ${interactionData.isUpvoted ?
-                                        `<path
+                    `<path
                                             d="M27.5227 2.53147C26.7991 1.80756 25.94 1.2333 24.9944 0.841502C24.0489 0.449705 23.0354 0.248047 22.0119 0.248047C20.9883 0.248047 19.9748 0.449705 19.0293 0.841502C18.0837 1.2333 17.2246 1.80756 16.501 2.53147L14.9994 4.03313L13.4977 2.53147C12.0361 1.0699 10.0538 0.248804 7.98685 0.248804C5.91989 0.248804 3.93759 1.0699 2.47602 2.53147C1.01446 3.99303 0.193359 5.97534 0.193359 8.0423C0.193359 10.1093 1.01446 12.0916 2.47602 13.5531L14.9994 26.0765L27.5227 13.5531C28.2466 12.8296 28.8209 11.9705 29.2126 11.0249C29.6044 10.0793 29.8061 9.06582 29.8061 8.0423C29.8061 7.01878 29.6044 6.00528 29.2126 5.05971C28.8209 4.11415 28.2466 3.25504 27.5227 2.53147Z"
                                             fill="url(#paint0_linear_4170_1047)"
                                         />
@@ -635,22 +651,22 @@ const manageNotes = {
                                             <stop offset="1" stop-color="#FF0000" />
                                         </linearGradient>
                                         </defs>`
-                                            :
-                                        `<path
+                    :
+                    `<path
                                             d="M26.0497 5.76283C25.4112 5.12408 24.6532 4.61739 23.8189 4.27168C22.9845 3.92598 22.0903 3.74805 21.1872 3.74805C20.2841 3.74805 19.3898 3.92598 18.5555 4.27168C17.7211 4.61739 16.9631 5.12408 16.3247 5.76283L14.9997 7.08783L13.6747 5.76283C12.385 4.47321 10.636 3.74872 8.81216 3.74872C6.98837 3.74872 5.23928 4.47321 3.94966 5.76283C2.66005 7.05244 1.93555 8.80154 1.93555 10.6253C1.93555 12.4491 2.66005 14.1982 3.94966 15.4878L14.9997 26.5378L26.0497 15.4878C26.6884 14.8494 27.1951 14.0913 27.5408 13.257C27.8865 12.4227 28.0644 11.5284 28.0644 10.6253C28.0644 9.72222 27.8865 8.82796 27.5408 7.99363C27.1951 7.15931 26.6884 6.40127 26.0497 5.76283Z"
                                             stroke="#1E1E1E"
                                             stroke-width="0.909091"
                                             stroke-linecap="round"
                                             stroke-linejoin="round"
                                         />`
-                                    }
+                }
                                     </svg>
                                     <span class="fnc__tr--icon-label like-padding-top-5">Like</span>
                                 </div>
 
                                 <div
                                     class="cmnt-engagement"
-                                    onclick="window.location.href='/view/${extras.quickPost ? `quick-post/${noteData.noteID}` : noteData.noteID}/#feedbacks'"
+                                    onclick="redirectToNote('${noteData.noteID}', '${extras.quickPost}')"
                                 >
                                     <svg
                                     width="24"
@@ -658,7 +674,7 @@ const manageNotes = {
                                     viewBox="0 0 24 24"
                                     fill="none"
                                     xmlns="http://www.w3.org/2000/svg"
-                                    onclick="window.location.href='/view/${extras.quickPost ? `quick-post/${noteData.noteID}` : noteData.noteID}/#feedbacks'"
+                                    onclick="redirectToNote('${noteData.noteID}', '${extras.quickPost}')"
                                     class="comment-icon"
                                     >
                                     <path
@@ -735,7 +751,7 @@ const manageNotes = {
                             </defs>
                         </svg>
                         `
-                    }
+                }
                     </div>
 
                     <div class="noti__sec-col--msg-wrapper" data-redirectTo='${notiData.redirectTo}' data-notiID='${notiData.notiID}' data-isread='${notiData.isRead}' data-notitype="${notiData.notiType}">
@@ -781,9 +797,9 @@ const manageNotes = {
             that will be a bit complex but minimal and less DRY.
         */
 
-        const {name, logo} = getCollegeFromID(student.collegeID)
+        const { name, logo } = getCollegeFromID(student.collegeID)
         console.log([name, logo])
-        
+
         if (!existingUser) {
             let profileCard = `
                 <div class="results-prfl" onclick="window.location.href = '/user/${student.username}'" id="user-${student.username}-${container}" data-username="${student.username}"
@@ -793,7 +809,7 @@ const manageNotes = {
                         <span class="prfl-name" onclick="window.location.href = '/user/${student.username}'">${student.displayname}</span>
                         <span class="prfl-desc">${truncatedTitle(student.bio)}</span>
                     </div>
-                </div>` 
+                </div>`
             profileContainer.insertAdjacentHTML('beforeend', profileCard);
 
             if (container === "random") {
@@ -951,9 +967,9 @@ const manageNotes = {
     },
 
     addAllFeedback: function (feedback) {
-    let commentsContainer = document.querySelector('.cmnts-list')
+        let commentsContainer = document.querySelector('.cmnts-list')
 
-    let template = `
+        let template = `
         <div class="main__author-threadline-wrapper" onclick="window.location.href='/user/${feedback[0].commenterDocID.username}'" >
             <img src="${feedback[0].commenterDocID.profile_pic}" 
             onclick="window.location.href='/user/${feedback[0].commenterDocID.username}'"
@@ -974,9 +990,9 @@ const manageNotes = {
                     <div class="like-wrapper" data-noteid='${feedback[0].noteDocID}' data-feedbackid="${feedback[0]._id}" data-isupvoted="${feedback[0].isUpVoted}" onclick="upvoteComment(this)">
                         <svg class="like-icon" data-tippy-content="Like" width="20" height="22" viewBox="0 0 115 117" fill="none" xmlns="http://www.w3.org/2000/svg">
                             ${feedback[0].isUpVoted ?
-                                `<path class='like-icon-fill' d="M28.4938 47.5373C28.4938 47.5373 28.4863 108.91 28.493 110.455C28.4996 112 84.4861 110.998 88.993 110.998C93.5 110.998 108.994 88.5431 109.494 70.581C109.994 52.6188 107.998 49.9985 107.498 49.9985L66 49.9982C78.4744 33.916 62.958 -7.56607 57.9956 8.99958C53.0332 25.5652 49.9956 32.4996 49.9956 32.4996L28.4938 47.5373Z" fill="black"/>` :
-                                `<path d="M107.498 49.9985C107.998 49.9985 109.994 52.6188 109.494 70.581C108.994 88.5431 93.5 110.998 88.993 110.998C84.4861 110.998 28.4996 112 28.493 110.455C28.4863 108.91 28.4938 47.5373 28.4938 47.5373L49.9956 32.4996C49.9956 32.4996 53.0332 25.5652 57.9956 8.99958C62.958 -7.56607 78.4744 33.916 66 49.9982M107.498 49.9985C106.998 49.9985 66 49.9982 66 49.9982M107.498 49.9985L66 49.9982" stroke="#606770" stroke-width="10" stroke-linecap="round"/>`
-                            }
+                `<path class='like-icon-fill' d="M28.4938 47.5373C28.4938 47.5373 28.4863 108.91 28.493 110.455C28.4996 112 84.4861 110.998 88.993 110.998C93.5 110.998 108.994 88.5431 109.494 70.581C109.994 52.6188 107.998 49.9985 107.498 49.9985L66 49.9982C78.4744 33.916 62.958 -7.56607 57.9956 8.99958C53.0332 25.5652 49.9956 32.4996 49.9956 32.4996L28.4938 47.5373Z" fill="black"/>` :
+                `<path d="M107.498 49.9985C107.998 49.9985 109.994 52.6188 109.494 70.581C108.994 88.5431 93.5 110.998 88.993 110.998C84.4861 110.998 28.4996 112 28.493 110.455C28.4863 108.91 28.4938 47.5373 28.4938 47.5373L49.9956 32.4996C49.9956 32.4996 53.0332 25.5652 57.9956 8.99958C62.958 -7.56607 78.4744 33.916 66 49.9982M107.498 49.9985C106.998 49.9985 66 49.9982 66 49.9982M107.498 49.9985L66 49.9982" stroke="#606770" stroke-width="10" stroke-linecap="round"/>`
+            }
                         </svg>
                         <span class="like-count">${feedback[0].upvoteCount}</span>
                     </div>
@@ -988,7 +1004,7 @@ const manageNotes = {
 
             <div class='thread-section' id='thread-${feedback[0]._id}'>
                 ${feedback[1].map(reply => {
-                    return `
+                return `
                     <div class='thread-msg'>
                         <img src="${reply.commenterDocID.profile_pic}" alt="User Avatar" class="cmnt-author-img thread-avatar">
                         <div class="cmnt-body-3rows">
@@ -1007,16 +1023,16 @@ const manageNotes = {
                         </div>
                     </div>
                     `
-                }).join('')}
+            }).join('')}
             </div>
         </div>
     `
 
-    let mainCommentContainer = document.createElement('div')
-    mainCommentContainer.classList.add('main-cmnt-container')
-    mainCommentContainer.innerHTML = template
-    commentsContainer.appendChild(mainCommentContainer)
-},
+        let mainCommentContainer = document.createElement('div')
+        mainCommentContainer.classList.add('main-cmnt-container')
+        mainCommentContainer.innerHTML = template
+        commentsContainer.appendChild(mainCommentContainer)
+    },
 
     addRequest: function (request) {
         let requestContainer = document.querySelector('.requests-container')
@@ -1027,7 +1043,7 @@ const manageNotes = {
                 <div class="request" id="request-${request.recID}" data-senderusername="${request.senderUserName}" onclick="manageRequest(this)">
                     <div class="request__fr">
                         <span class="open-request-card">
-                            <svg width="15" height="auto" class="request-chevron-icon" viewBox="0 0 60 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <svg width="15"  class="request-chevron-icon" viewBox="0 0 60 34" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M5 4.5L30 29.5L55 4.5" stroke="#1E1E1E" stroke-width="8.33333" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </span>
@@ -1190,6 +1206,9 @@ function share(platform) {
 }
 
 
+function merge(previous, update, key) {
+    return { ...previous, [key]: { ...previous[key], ...update[key] } }
+}
 
 async function saveNote(svButton, fromDashboard = false) {
     if (svButton.getAttribute('data-disabled')) return
@@ -1226,10 +1245,11 @@ async function saveNote(svButton, fromDashboard = false) {
         isSaved === "false" ? (async function () {
             Swal.fire(toastData('success', 'Note saved successfully!'))
             await manageDb.add('savedNotes', body.savedNote[0])
-        })() : (function () {
-            manageDb.delete('savedNotes', { idPath: "noteID", id: noteDocID })
+        })() : (async function () {
+            await manageDb.delete('savedNotes', { idPath: "noteID", id: noteDocID })
             body.count !== 0 || (document.querySelector('.no-saved-notes-message').classList.remove('hide'))
         })()
+        await manageDb.update('feedNotes', { idPath: "noteID", id: noteDocID }, { interactionData: { isSaved: isSaved === "true" ? false : true } }, "interactionData")
 
         svButton.removeAttribute('data-disabled')
     } else {
@@ -1263,7 +1283,7 @@ async function searchNotes() {
                     <a href="/view/${note._id}" style="text-decoration: none;">
                         <div class="results-card" id="note-${note._id}">
                             <p class="result-note-title">${note.title}</p>
-                            <svg style="transform: rotate(135deg)" width="15" height="auto" viewBox="0 0 68 68" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <svg style="transform: rotate(135deg)" width="15"  viewBox="0 0 68 68" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M16.6029 29.8333H67.332V38.1666H16.6029L39.9362 61.5L33.9987 67.3333L0.665367 34L33.9987 0.666649L39.9362 6.49998L16.6029 29.8333Z" fill="#1D1B20"/>
                             </svg>
                         </div>
@@ -1436,30 +1456,30 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 window.addEventListener('load', async () => {
-    
+
 })
 
 document.addEventListener("DOMContentLoaded", function () {
     document.querySelectorAll(".threads-component__subject").forEach((element) => {
-      element.addEventListener("click", function () {
-        Swal.fire({
-          title: "Unlock Threads and Join Exclusive Discussions! 🚀",
-          html: `<p>Want to join the most insightful study groups on NoteRoom? Start <b>uploading notes</b>, <b>helping others with requests</b>, <b>sharing insights</b>, and <b>engaging with fellow learners</b> to unlock <b>Threads</b>—your gateway to structured, chapter-wise discussions.</p>
+        element.addEventListener("click", function () {
+            Swal.fire({
+                title: "Unlock Threads and Join Exclusive Discussions! 🚀",
+                html: `<p>Want to join the most insightful study groups on NoteRoom? Start <b>uploading notes</b>, <b>helping others with requests</b>, <b>sharing insights</b>, and <b>engaging with fellow learners</b> to unlock <b>Threads</b>—your gateway to structured, chapter-wise discussions.</p>
                  <p>💡 <b>The most active contributors are already in! Don’t miss out. Start engaging today!</b></p>`,
-          icon: "info",
-          confirmButtonText: "Start Now!",
+                icon: "info",
+                confirmButtonText: "Start Now!",
+            });
         });
-      });
     });
-  });
-  
+});
+
 // @ Threads Update Pop Up
 document.addEventListener("DOMContentLoaded", function () {
     document.querySelectorAll(".threads-component__subject").forEach((element) => {
-      element.addEventListener("click", function () {
-        Swal.fire({
-          title: "🔓 Unlock Threads & Join the Conversation!",
-          html: `
+        element.addEventListener("click", function () {
+            Swal.fire({
+                title: "🔓 Unlock Threads & Join the Conversation!",
+                html: `
             <p class="swal-description">
               Start by sharing your notes, engaging with others, and giving feedback. 
               Keep contributing, and you’ll be able to join discussions as well!
@@ -1468,16 +1488,15 @@ document.addEventListener("DOMContentLoaded", function () {
               <img src="\\images\\threads-unload-update.png" alt="Threads Feature Image" class="swal-body-image">
             </div>
           `,
-          background: "", 
-          customClass: {
-            popup: 'custom-swal-popup',
-            title: 'custom-swal-title',
-            confirmButton: 'custom-swal-button'
-          },
-          showConfirmButton: true,
-          confirmButtonText: "Got it!",
+                background: "",
+                customClass: {
+                    popup: 'custom-swal-popup',
+                    title: 'custom-swal-title',
+                    confirmButton: 'custom-swal-button'
+                },
+                showConfirmButton: true,
+                confirmButtonText: "Got it!",
+            });
         });
-      });
     });
-  });
-  
+});

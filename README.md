@@ -22,7 +22,7 @@
 - **Environment Variables**: dotenv
 - **Build Tools**: tsc (TypeScript Compiler)
 
-## 🔧 Installation
+## Installation
 
 Follow these steps carefully to set up the project on your local machine:
 
