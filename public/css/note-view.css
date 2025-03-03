@@ -23,7 +23,7 @@ body {
 .middle-section {
   padding: 95px 0; /* Consistent top padding to avoid overlap */
   width: 100%;
-  max-width: 680px; /* Match screenshot width */
+  max-width: 680px;
   margin: 0 auto;
 }
 
