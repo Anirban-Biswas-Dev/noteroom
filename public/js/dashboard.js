@@ -26,7 +26,7 @@ if (navigate?.type === "reload" || navigate?.type === "navigate") {
 
 	const previousSeed = Number(localStorage.getItem('feedNoteLastFetchSeed'))
 	if (!previousSeed || seed !== previousSeed) {
-		db.feedNotes.clear()
+		db.feedNote.clear()
 		localStorage.setItem('feedLastPageFetched', 1)
 	}
 } else {
@@ -192,7 +192,7 @@ socket.on('note-upload', (feedNote) => {
 	manageNotes.addNote(feedNote)
 
 	let { noteData, contentData, ownerData, interactionData, extras } = feedNote
-	manageDb.add('feedNotes', { noteID: noteData.noteID, noteData, contentData, ownerData, interactionData, extras })
+	manageDb.add('feedNote', { noteID: noteData.noteID, noteData, contentData, ownerData, interactionData, extras })
 })
 
 
