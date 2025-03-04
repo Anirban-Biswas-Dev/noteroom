@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { Server } from "socket.io";
 import { Convert } from "../userService";
-import { addSaveNote, deleteNote, deleteSavedNote } from "../noteService";
+import { addSaveNote, deleteNote, deleteSavedNote, getNote } from "../noteService";
 import { manageProfileNotes } from "../noteService";
 import notesModel from "../../schemas/notes";
 
@@ -27,6 +27,34 @@ export default function noteRouter(io: Server) {
             res.json({ objects: [] })
         }
     })
+
+    router.get('/:noteID/metadata', async (req, res) => {
+        try {
+            let studentID = req.session["stdid"] || "9181e241-575c-4ef3-9d3c-2150eac4566d"
+            let studentDocID = (await Convert.getDocumentID_studentid(studentID)).toString()
+            let noteData: any = await getNote({ noteDocID: req.params.noteID, studentDocID })
+            if (!noteData.error) {
+                res.json({ ok: true, noteData })
+            } else {
+                res.json({ ok: false })
+            }
+        } catch (error) {
+            res.json({ ok: false })
+        }
+    })
+    router.get('/:noteID/images', async (req, res) => {
+        try {
+            let images: any = await getNote({ noteDocID: req.params.noteID, studentDocID: undefined }, true)
+            if (!images.error) {
+                res.json({ ok: true, images })
+            } else {
+                res.json({ ok: false })
+            }
+        } catch (error) {
+            res.json({ ok: false })
+        }
+    })
+    
 
     router.delete("/delete/:noteDocID", async (req, res) => {
         let noteDocID = req.params.noteDocID

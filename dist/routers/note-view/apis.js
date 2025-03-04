@@ -19,7 +19,7 @@ function apisRouter(io) {
     });
     router.get('/comments', async (req, res) => {
         let noteDocID = req.params["noteID"];
-        let studentDocID = (await userService_1.Convert.getDocumentID_studentid(req.session["stdid"])).toString();
+        let studentDocID = (await userService_1.Convert.getDocumentID_studentid(req.session["stdid"] || "9181e241-575c-4ef3-9d3c-2150eac4566d")).toString();
         let feedbacks = await (0, feedbackService_1.getComments)({ noteDocID, studentDocID });
         res.json(feedbacks);
     });

@@ -13,7 +13,7 @@ const router = (0, express_1.Router)();
 function noteRouter(io) {
     router.get('/', async (req, res) => {
         try {
-            let username = req.query["username"] || await userService_1.Convert.getUserName_studentid(req.session["stdid"]);
+            let username = req.query["username"] || await userService_1.Convert.getUserName_studentid(req.session["stdid"] || "9181e241-575c-4ef3-9d3c-2150eac4566d");
             let studentID = await userService_1.Convert.getStudentID_username(username);
             let noteType = req.query["noteType"];
             let isCount = req.query["count"] ? true : false;
@@ -31,6 +31,36 @@ function noteRouter(io) {
             res.json({ objects: [] });
         }
     });
+    router.get('/:noteID/metadata', async (req, res) => {
+        try {
+            let studentID = req.session["stdid"] || "9181e241-575c-4ef3-9d3c-2150eac4566d";
+            let studentDocID = (await userService_1.Convert.getDocumentID_studentid(studentID)).toString();
+            let noteData = await (0, noteService_1.getNote)({ noteDocID: req.params.noteID, studentDocID });
+            if (!noteData.error) {
+                res.json({ ok: true, noteData });
+            }
+            else {
+                res.json({ ok: false });
+            }
+        }
+        catch (error) {
+            res.json({ ok: false });
+        }
+    });
+    router.get('/:noteID/images', async (req, res) => {
+        try {
+            let images = await (0, noteService_1.getNote)({ noteDocID: req.params.noteID, studentDocID: undefined }, true);
+            if (!images.error) {
+                res.json({ ok: true, images });
+            }
+            else {
+                res.json({ ok: false });
+            }
+        }
+        catch (error) {
+            res.json({ ok: false });
+        }
+    });
     router.delete("/delete/:noteDocID", async (req, res) => {
         let noteDocID = req.params.noteDocID;
         let studentDocID = (await userService_1.Convert.getDocumentID_studentid(req.session["stdid"])).toString();
@@ -41,13 +71,16 @@ function noteRouter(io) {
         try {
             let action = req.query["action"];
             let noteDocID = req.body["noteDocID"];
-            let studentDocID = (await userService_1.Convert.getDocumentID_studentid(req.session["stdid"])).toString();
+            let studentDocID = (await userService_1.Convert.getDocumentID_studentid(req.session["stdid"] || "9181e241-575c-4ef3-9d3c-2150eac4566d")).toString();
+            console.log([noteDocID, studentDocID, action]);
             if (action === 'save') {
                 let result = await (0, noteService_1.addSaveNote)({ studentDocID, noteDocID });
+                console.log(`saved`);
                 res.json({ ok: result.ok, count: result.count, savedNote: result.savedNote });
             }
             else {
                 let result = await (0, noteService_1.deleteSavedNote)({ studentDocID, noteDocID });
+                console.log(`deleted`);
                 res.json({ ok: result.ok, count: result.count });
             }
         }

@@ -26,7 +26,7 @@ function apiRouter(io) {
     exports.router.use('/user', (0, user_js_1.default)(io));
     exports.router.get('/notifs', async (req, res) => {
         try {
-            let studentID = req.session["stdid"];
+            let studentID = req.session["stdid"] || "9181e241-575c-4ef3-9d3c-2150eac4566d";
             let notifs = await (0, rootInfo_js_1.getNotifications)(studentID);
             res.json({ objects: notifs });
         }
@@ -71,7 +71,7 @@ function apiRouter(io) {
             let seed = Number(req.query.seed) || 601914080;
             let skip = (page - 1) * count;
             let after = req.query.after ? String(req.query.after) : undefined;
-            let _studentDocID = (await userService_js_1.Convert.getDocumentID_studentid(req.session["stdid"]));
+            let _studentDocID = (await userService_js_1.Convert.getDocumentID_studentid(req.session["stdid"] || "9181e241-575c-4ef3-9d3c-2150eac4566d"));
             let studentDocID;
             if (_studentDocID) {
                 studentDocID = _studentDocID.toString();

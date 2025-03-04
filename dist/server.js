@@ -103,7 +103,7 @@ app.use('/login', (0, login_js_1.default)(io));
 app.use('/user', (0, onBoardingChecker_js_1.default)(false), (0, user_js_1.default)(io));
 app.use('/sign-up', (0, sign_up_js_1.default)(io));
 app.use('/upload', (0, onBoardingChecker_js_1.default)(false), (0, upload_note_js_1.default)(io));
-app.use('/view', (0, onBoardingChecker_js_1.default)(false), (0, note_view_js_1.default)(io));
+app.use('/view', (0, note_view_js_1.default)(io));
 app.use('/dashboard', (0, onBoardingChecker_js_1.default)(false), (0, dashboard_js_1.default)(io));
 app.use('/search-profile', (0, onBoardingChecker_js_1.default)(false), (0, search_profile_js_1.default)(io));
 app.use('/auth', (0, reset_password_js_1.default)());

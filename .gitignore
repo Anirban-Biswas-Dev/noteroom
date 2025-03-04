@@ -7,10 +7,9 @@ logs.log
 /server/routers/db/
 /experiment/
 /.idea
-/dist/.env
+/dist
 *.log
 *.http
 *.rest
 /views/test.*
-frontend/
 *.drawio

@@ -246,8 +246,12 @@ export const manageProfileNotes = {
 }
 
 export async function getOwner({noteDocID}: IManageUserNote) {
-    let ownerInfo = await Notes.findById(noteDocID, { ownerDocID: 1 }).populate('ownerDocID')
-    return ownerInfo
+    try {
+        let ownerInfo = await Notes.findById(noteDocID, { ownerDocID: 1 }).populate('ownerDocID')
+        return ownerInfo
+    } catch (error) {
+        return { error: true }
+    }
 }
 
 export async function isSaved({ studentDocID, noteDocID }: IManageUserNote) {

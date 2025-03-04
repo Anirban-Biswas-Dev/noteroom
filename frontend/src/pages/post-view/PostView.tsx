@@ -2,13 +2,15 @@ import { useContext, useEffect, useState } from "react";
 import { SavedNotesContext } from "../../context/SavedNotesContext";
 import { VoteContext } from "../../context/VoteContext";
 import { useParams } from "react-router-dom";
+import { ImageContainer } from "./ImageContainer";
+import { NoteEngagement } from "./NoteEngagements";
+import CommentsContainer from "./CommentsContainer";
 import "../../public/css/note-view.css"
 import "../../public/css/loaders.css"
 import "../../public/css/nav-section.css"
 import "../../public/css/main-pages.css"
 import "../../public/css/share-note.css"
-import { ImageContainer } from "./ImageContainer";
-import { NoteEngagement } from "./NoteEngagements";
+import CommentEditor from "./CommentBox";
 
 export default function PostView() {
     const [noteImages, setNoteImages] = useState<string[]>([])
@@ -21,7 +23,6 @@ export default function PostView() {
     const [, , saveNoteFunction] = useContext(SavedNotesContext)
     const [upvoteFunction] = useContext(VoteContext)
     const { postID } = useParams()
-
 
     const nextImage = () => setOffset(currentIndex => (currentIndex + 1) % noteImages.length)
     const prevImage = () => setOffset(currentIndex => (currentIndex - 1 + noteImages.length) % noteImages.length)
@@ -131,6 +132,12 @@ export default function PostView() {
                     <h3 className="desc-label">Description</h3>
                 </div>
                 <div className="desc-content" dangerouslySetInnerHTML={{__html: noteData?.description}}></div>
+            </div>
+
+
+            <div className="cmnts-section">
+                <CommentEditor></CommentEditor>
+                <CommentsContainer postID={postID}></CommentsContainer>
             </div>
         </div>
     )

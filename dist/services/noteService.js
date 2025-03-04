@@ -207,8 +207,13 @@ exports.manageProfileNotes = {
     }
 };
 async function getOwner({ noteDocID }) {
-    let ownerInfo = await notes_js_1.default.findById(noteDocID, { ownerDocID: 1 }).populate('ownerDocID');
-    return ownerInfo;
+    try {
+        let ownerInfo = await notes_js_1.default.findById(noteDocID, { ownerDocID: 1 }).populate('ownerDocID');
+        return ownerInfo;
+    }
+    catch (error) {
+        return { error: true };
+    }
 }
 async function isSaved({ studentDocID, noteDocID }) {
     let document = await students_js_1.default.find({ $and: [

@@ -112,6 +112,7 @@ function voteRouter(io) {
                 res.json({ ok: true });
             }
             else {
+                console.log(`I got called`);
                 let upvoteCount = await (0, voteService_1.deleteVote)({ noteDocID, voterStudentDocID });
                 io.emit('update-upvote-dashboard', noteDocID, upvoteCount);
                 io.to(noteDocID).emit('update-upvote', upvoteCount);
