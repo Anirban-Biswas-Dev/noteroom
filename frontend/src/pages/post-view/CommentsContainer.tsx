@@ -1,4 +1,5 @@
 import { ReactNode, useEffect, useState } from "react"
+import CommentBox from "./CommentBox"
 
 
 function Comment({ feedbackData, children }: { feedbackData: any, children: ReactNode | ReactNode[] }) {
@@ -98,7 +99,8 @@ export default function CommentsContainer({ postID }: { postID: any }) {
     }, [])
 
     return (
-        <>
+        <div className="comment-section">
+            <CommentBox></CommentBox>
             {
                 comments?.length > 0 ?
                 <div className="cmnts-list">
@@ -116,6 +118,6 @@ export default function CommentsContainer({ postID }: { postID: any }) {
                 </div>
                 : <div>No Feedbacks yet. Be the first to provide</div>
             }
-        </>
+        </div>
     )
 }
