@@ -80,7 +80,7 @@ function FeedNoteFirstRow({ note }: { note: FeedNoteObject }) {
       {!note.ownerData.isOwner ? (
         <RequestModal
           modalShow={[showReqModal, setShowReqModal]}
-          note={note}
+          recipientData={{ profile_pic: note.ownerData.profile_pic, displayname: note.ownerData.ownerDisplayName}}
         ></RequestModal>
       ) : (
         ""

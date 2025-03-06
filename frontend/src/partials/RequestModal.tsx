@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import { FeedNoteObject } from "../pages/dashboard/FeedSection";
 
-export default function RequestModal({ modalShow, note }: { modalShow: [any, any], note: FeedNoteObject }) {
+export default function RequestModal({ modalShow, recipientData }: any) {
   const MAX_MESSAGE_LENGTH = 170;
   const [reqMsg, setReqMsg] = useState("");
   const [charCounter, setCharCounter] = useState(0);
@@ -36,7 +35,7 @@ export default function RequestModal({ modalShow, note }: { modalShow: [any, any
           </div>
           <span className="request-modal__fr--requested-label">To:</span>
           <img
-            src={note.ownerData.profile_pic}
+            src={recipientData.profile_pic}
             alt="UserName"
             className="request-modal__fr-requested-userpic"
             id="request-rec-pfp"
@@ -45,7 +44,7 @@ export default function RequestModal({ modalShow, note }: { modalShow: [any, any
             className="request-modal__fr--requested-username"
             id="request-rec-dn"
           >
-            {note.ownerData.ownerDisplayName}
+            {recipientData.displayname}
           </span>
         </div>
         <div className="request-modal__sr">
