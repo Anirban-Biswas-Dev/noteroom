@@ -10,6 +10,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@editorjs/editorjs": "^2.30.8",
+    "@editorjs/header": "^2.8.8",
+    "@editorjs/list": "^2.0.6",
+    "@editorjs/quote": "^2.7.6",
     "@lexical/react": "^0.27.0",
     "lexical": "^0.27.0",
     "react": "^19.0.0",

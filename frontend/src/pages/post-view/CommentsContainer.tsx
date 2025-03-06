@@ -3,7 +3,7 @@ import CommentBox from "./CommentBox"
 import ThreadEditor from "./ThreadEditor"
 
 function Comment({ feedbackData, children}: any) {
-    const { threadID: [threadID, ], controller: [handleOpenThread] } = useContext(ThreadOpenerContext)
+    const { openedThreadID: [openedThreadID, ], controller: [handleOpenThread] } = useContext(CommentsControllerContext)
 
     return (
         <div className='main-cmnt-container'>
@@ -42,7 +42,7 @@ function Comment({ feedbackData, children}: any) {
 
                 <div className="thread-section" id={"thread-" + feedbackData?._id}>
                     { children }
-                    { threadID === (`thread-${feedbackData?._id}`) ? <ThreadEditor /> : '' }
+                    { openedThreadID === (`thread-${feedbackData?._id}`) ? <ThreadEditor /> : '' }
                 </div>
             </div>
         </div>
@@ -51,7 +51,7 @@ function Comment({ feedbackData, children}: any) {
 
 
 function Reply({ replyData }: { replyData: any }) {
-    const { controller: [handleOpenThread] } = useContext(ThreadOpenerContext)
+    const { controller: [handleOpenThread] } = useContext(CommentsControllerContext)
 
     return (
         <div className='thread-msg'>
@@ -67,7 +67,7 @@ function Reply({ replyData }: { replyData: any }) {
                 </div>
                 <div className="reply-msg" dangerouslySetInnerHTML={{__html: replyData.feedbackContents }}></div>
                 <div className="main__engagement-opts engagement-opts">
-                    <svg className="reply-icon thread-opener" onClick={(e) => handleOpenThread(e)} data-tippy-content="Reply" width="25" height="24" viewBox="0 0 22 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <svg className="reply-icon thread-opener" onClick={(e) => handleOpenThread(e, false)} data-tippy-content="Reply" width="25" height="24" viewBox="0 0 22 21" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M18.7186 12.9452C18.7186 13.401 18.5375 13.8382 18.2152 14.1605C17.8929 14.4829 17.4557 14.6639 16.9999 14.6639H6.68747L3.25 18.1014V4.35155C3.25 3.89571 3.43108 3.45854 3.75341 3.13622C4.07573 2.81389 4.5129 2.63281 4.96873 2.63281H16.9999C17.4557 2.63281 17.8929 2.81389 18.2152 3.13622C18.5375 3.45854 18.7186 3.89571 18.7186 4.35155V12.9452Z" stroke="#1E1E1E" strokeWidth="1.14582" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
                 </div>
@@ -77,7 +77,9 @@ function Reply({ replyData }: { replyData: any }) {
 }
 
 
-function CommentSection({ comments }: any) {
+function CommentSection() {
+    const { comments: [comments, ] } = useContext(CommentsControllerContext)
+
     return (
         <>
             {
@@ -101,20 +103,32 @@ function CommentSection({ comments }: any) {
     )
 }
 
-
-
-const ThreadOpenerContext = createContext<any>(null)
+export const CommentsControllerContext = createContext<any>(null)
 export default function CommentsContainer({ postID }: { postID: any }) {
     const [comments, setComments] = useState<any[]>([])
-    const [threadID, setThreadID] = useState<string | null>(null)
+    const [openedThreadID, setOpenedThreadID] = useState<string | null>(null)
 
+    /* 
+    Comments structure:
+        [
+            [
+                { ...commentData },
+                [ {...replyData}, {...replyData} ]
+            ],
+            [
+                { ...commentData },
+                [ {...replyData}, {...replyData} ]
+            ]
+        ]
+    */
+    
     function handleOpenThread(event: any, fromComment: boolean = false) {
         let clickedThreadSection = event.target.closest('.thread-section')
         if (fromComment) {
             clickedThreadSection = event.target.closest(".main__cmnts-replies-wrapper").querySelector('.thread-section')
         }
         const clickedThreadID = clickedThreadSection.getAttribute("id")
-        setThreadID(clickedThreadID)
+        setOpenedThreadID(clickedThreadID)
     }
 
     useEffect(() => {
@@ -136,10 +150,10 @@ export default function CommentsContainer({ postID }: { postID: any }) {
 
     return (
         <div className="comment-section">
-            <CommentBox></CommentBox>
-            <ThreadOpenerContext.Provider value={{ threadID: [threadID, setThreadID], controller: [handleOpenThread] }}>
-                <CommentSection comments={comments} ></CommentSection>           
-            </ThreadOpenerContext.Provider>
+            <CommentsControllerContext.Provider value={{ comments: [comments, setComments], openedThreadID: [openedThreadID, setOpenedThreadID], controller: [handleOpenThread] }}>
+                <CommentBox></CommentBox>
+                <CommentSection></CommentSection>           
+            </CommentsControllerContext.Provider>
         </div>
     )
 }

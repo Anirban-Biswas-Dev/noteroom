@@ -1,19 +1,26 @@
-function PostAction({ isSaveNote, isQuickPost, controller: [saveNote] }: any) {
+import { useState } from "react"
+import { RequestModal } from "../../partials"
+
+function PostAction({ isSaveNote, isQuickPost, controller: [saveNote], owner }: any) {
+    const [showReqModal, setShowReqModal] = useState(false)
     return (
-        <div className="post-header__actions">
-            <button className="request-btn db-note-card-request-option">Request</button>
-            { 
-                !isQuickPost ? 
-                    <button className={"save-btn " + (isSaveNote ? "saved" : "")} onClick={() => saveNote()}>
-                        <svg className="bookmark-outline" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M17 3H7C5.89543 3 5 3.89543 5 5V21L12 18L19 21V5C19 3.89543 18.1046 3 17 3Z" stroke="#1D1B20" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                        <svg className="bookmark-filled" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M17 3H7C5.89543 3 5 3.89543 5 5V21L12 18L19 21V5C19 3.89543 18.1046 3 17 3Z" fill="#1D1B20"/>
-                        </svg>
-                    </button> : ''
-            } 
-        </div>
+        <>
+            <div className="post-header__actions">
+                <button className="request-btn db-note-card-request-option" onClick={() => setShowReqModal(prev => !prev)}>Request</button>
+                { 
+                    !isQuickPost ? 
+                        <button className={"save-btn " + (isSaveNote ? "saved" : "")} onClick={() => saveNote()}>
+                            <svg className="bookmark-outline" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M17 3H7C5.89543 3 5 3.89543 5 5V21L12 18L19 21V5C19 3.89543 18.1046 3 17 3Z" stroke="#1D1B20" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                            <svg className="bookmark-filled" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M17 3H7C5.89543 3 5 3.89543 5 5V21L12 18L19 21V5C19 3.89543 18.1046 3 17 3Z" fill="#1D1B20"/>
+                            </svg>
+                        </button> : ''
+                } 
+            </div>
+            <RequestModal modalShow={[showReqModal, setShowReqModal]} recipientData={{profile_pic: owner?.profile_pic, displayname: owner?.displayname }}></RequestModal>
+        </>
     )
 }
 
@@ -28,7 +35,7 @@ export default function PostHeader({ owner, isSaveNote, isQuickPost, controller:
                 <span className="post-author-name">{owner?.displayname}</span>
             </div>
 
-            <PostAction isSaveNote={isSaveNote} controller={[saveNote]} isQuickPost={isQuickPost}></PostAction>
+            <PostAction isSaveNote={isSaveNote} controller={[saveNote]} isQuickPost={isQuickPost} owner={owner}></PostAction>
         </div>
     )
 }

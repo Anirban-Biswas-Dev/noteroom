@@ -10,7 +10,6 @@ import "../../public/css/loaders.css"
 import "../../public/css/nav-section.css"
 import "../../public/css/main-pages.css"
 import "../../public/css/share-note.css"
-import CommentEditor from "./CommentBox";
 import PostHeader from "./PostHeader";
 
 export default function PostView() {
@@ -89,7 +88,7 @@ export default function PostView() {
                     <ImageContainer noteImages={noteImages} controller={[prevImage, nextImage, offset]}></ImageContainer>
                 </div>
 
-                <NoteEngagement upvote={upvote} controller={[upvoteManage]} upvoteCount={upvoteCount} isQuickPost={noteData?.postType === 'quick-post'}></NoteEngagement>
+                <NoteEngagement upvote={upvote} controller={[upvoteManage]} upvoteCount={upvoteCount} isQuickPost={noteData?.postType === 'quick-post'} postID={postID}></NoteEngagement>
                 <CommentsContainer postID={postID}></CommentsContainer>
             </div>
         </div>

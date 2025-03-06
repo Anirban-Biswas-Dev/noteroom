@@ -14,7 +14,6 @@ export default function FeedNoteMenu({ note }: { note: FeedNoteObject }) {
   }
 
   let isQuickPost = note.isQuickPost
-  let noteLink = `${window.location.origin}/${isQuickPost ? `quick-post/${note.noteData.noteID}` : `${note.noteData.noteID}`}`
 
   return (
     <div className="note-menu">
@@ -77,7 +76,6 @@ export default function FeedNoteMenu({ note }: { note: FeedNoteObject }) {
 
           <div className="option">
             <svg
-              className="download-icon"
               width="40"
               height="40"
               viewBox="0 0 43 43"
@@ -98,10 +96,9 @@ export default function FeedNoteMenu({ note }: { note: FeedNoteObject }) {
 
         <div
           className="option"
-          onClick={() => setShowShareModal(!showShareModal)}
+          onClick={() => setShowShareModal(prev => !prev)}
         >
           <svg
-            className="share-icon"
             width="40"
             height="40"
             viewBox="0 0 46 46"
@@ -119,7 +116,7 @@ export default function FeedNoteMenu({ note }: { note: FeedNoteObject }) {
         
       </div>
 
-      <ShareModal showState={[showShareModal, setShowShareModal]} noteLink={noteLink}></ShareModal>
+      <ShareModal showState={[showShareModal, setShowShareModal]} noteLink={`/post/${note.noteData.noteID}`}></ShareModal>
     </div>
   );
 }
