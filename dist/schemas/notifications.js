@@ -4,7 +4,7 @@ exports.InteractionNotifs = exports.Notifs = void 0;
 const mongoose_1 = require("mongoose");
 const baseOptions = {
     discriminatorKey: 'docType',
-    collection: 'notifications'
+    collection: 'notifications-test'
 };
 const NotifsSchema = new mongoose_1.Schema({
     isRead: {
@@ -32,7 +32,7 @@ const NotifsSchema = new mongoose_1.Schema({
     },
     ownerStudentID: String
 }, baseOptions);
-const NotifsModel = (0, mongoose_1.model)('notifications', NotifsSchema);
+const NotifsModel = (0, mongoose_1.model)('notifications-test', NotifsSchema);
 exports.Notifs = NotifsModel;
 const interactionNotifsSchema = new mongoose_1.Schema({
     fromUserSudentDocID: {

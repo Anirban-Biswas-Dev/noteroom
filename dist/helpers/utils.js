@@ -105,7 +105,6 @@ const logger = (0, winston_1.createLogger)({
         return `${(new Date(String(timestamp))).toString()} [${level.toUpperCase()}]: ${message}`;
     })),
     transports: [
-        new winston_1.transports.File({ filename: 'noteroom_logs.log' }),
         new winston_1.transports.Console(),
     ],
 });
