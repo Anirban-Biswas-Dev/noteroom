@@ -10,9 +10,7 @@ import { ListNode, ListItemNode } from "@lexical/list";
 const initialConfig = {
   namespace: "CommentBox",
   nodes: [ListNode, ListItemNode],
-  onError: (error: Error) => {
-    console.error("Lexical Error:", error);
-  },
+  onError: (error: Error) => {},
 };
 
 function CommentBox() {
@@ -26,9 +24,7 @@ function CommentBox() {
         <HistoryPlugin />
         <AutoFocusPlugin />
         <OnChangePlugin
-          onChange={(editorState) => {
-            console.log("Comment changed", editorState);
-          }}
+          onChange={(editorState) => {}}
         />
         <ListPlugin />
       </div>
