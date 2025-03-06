@@ -192,7 +192,7 @@ socket.on('note-upload', (feedNote) => {
 	manageNotes.addNote(feedNote)
 
 	let { noteData, contentData, ownerData, interactionData, extras } = feedNote
-	manageDb.add('feedNote', { noteID: noteData.noteID, noteData, contentData, ownerData, interactionData, extras })
+	manageDb.add('feedNote', { noteID: noteData.noteID, noteData, contentData, ownerData, interactionData, extras, count: -1 })
 })
 
 

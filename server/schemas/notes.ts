@@ -45,7 +45,7 @@ const notesSchema = new Schema({
     },
     type_: {
         type: String,
-        default: "public"
+        default: "private"
     },
     completed: {
         type: Boolean,
