@@ -4,7 +4,7 @@ exports.replyModel = exports.feedbacksModel = void 0;
 const mongoose_1 = require("mongoose");
 const baseOptions = {
     discriminatorKey: 'docType',
-    collection: 'comments-test'
+    collection: 'comments'
 };
 const CommentsSchema = new mongoose_1.Schema({
     noteDocID: {
@@ -21,7 +21,7 @@ const CommentsSchema = new mongoose_1.Schema({
         default: Date.now
     }
 }, baseOptions);
-const CommentsModel = (0, mongoose_1.model)('comments-test', CommentsSchema);
+const CommentsModel = (0, mongoose_1.model)('comments', CommentsSchema);
 const feedbackSchema = new mongoose_1.Schema({
     commenterDocID: {
         type: mongoose_1.Schema.Types.ObjectId,
