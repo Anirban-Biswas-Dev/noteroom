@@ -6,16 +6,72 @@
     <title>About NoteRoom</title>
     <link rel="stylesheet" href="/css/about-us.css" />
     <link rel="stylesheet" href="/css/header-footer.css">
+    <link rel="stylesheet" href="/css/main-header.css" />
 
     <%- include('partials/links.ejs') %>
 </head>
 <body>
-    <header>
-      <svg class="header-back-btn" onclick="goPrevPage()" width="25"  viewBox="0 0 68 68" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M16.6029 29.8333H67.332V38.1666H16.6029L39.9362 61.5L33.9987 67.3333L0.665367 34L33.9987 0.666649L39.9362 6.49998L16.6029 29.8333Z" fill="#1D1B20"/>
-      </svg>
-        <h1>About Us</h1>
-    </header>
+  <header class="header flex-col-center">
+    <div class="header__container-1 flex-row-center">
+      <div class="header__logo flex-row-center">
+        <img
+          src="\assets\apple-touch-icon.png"
+          alt="NoteRoom Logo"
+          onclick="window.location.href='/'"
+        />
+        <span class="header__logo--subtitle">NoteRoom</span>
+      </div>
+
+      <nav class="header__nav nav-pc" id="headerNav">
+        <ul class="nav-list">
+          <li><a href="/about-us">About</a></li>
+          <li><a href="/support">Support</a></li>
+          <li><a href="/about-us/#join-noteroom-team">Join Team</a></li>
+          <li><a href="/blog">Blog</a></li>
+        </ul>
+      </nav>
+
+      <div class="auth-buttons flex-row-center">
+        <button
+          class="header__btn login"
+          onclick="window.location.href = '/login'"
+        >
+          Login
+        </button>
+        <button
+          class="header__btn create-account"
+          onclick="window.location.href = '/sign-up'"
+        >
+          Create Account
+        </button>
+        <button
+          class="menu-toggle"
+          id="menuToggle"
+          aria-label="Toggle Menu"
+          aria-expanded="false"
+        >
+          ☰
+        </button>
+      </div>
+    </div>
+
+    <div class="mobile-menu">
+      <ul class="mobile-nav-list">
+        <li><a href="/about-us">About</a></li>
+        <li><a href="/support">Support</a></li>
+        <li><a href="/about-us/#join-noteroom-team">Join Team</a></li>
+        <li><a href="/blog">Blog</a></li>
+        <li>
+          <button
+            class="mobile-nav-signup-btn"
+            onclick="window.location.href = '/sign-up'"
+          >
+            Create Account
+          </button>
+        </li>
+      </ul>
+    </div>
+  </header>
 <div class="hero-section">
   <div class="hero-content">
     <img src="/images/Noteroom site logo 192x192.png" alt="NoteRoom Logo" class="hero-logo">
@@ -174,6 +230,7 @@
 </footer>
 
 <script type="module" src="/js/about-us.js"></script>
+<script src="/js/header.js" defer></script>
 <script src="/js/utils.js"></script>
 </body>
 </html>

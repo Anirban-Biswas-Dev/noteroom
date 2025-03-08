@@ -12,6 +12,9 @@ export default function blogsRouter() {
     router.get('/why-use-noteroom', (req, res) => {
         res.render('blog/why-use-noteroom')
     })
+    router.get('/the-productivity-code-by-anirban-biswas', (req, res) => {
+        res.render('blog/the-productivity-code-by-anirban-biswas')
+    })
 
 
     return router    

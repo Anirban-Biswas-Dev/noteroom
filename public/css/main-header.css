@@ -1,4 +1,20 @@
 /* The primary header that has login and sign up button */
+/* || Utility Classes */
+
+.flex-row-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.flex-col-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+button {
+  cursor: pointer;
+  outline: none;
+}
 
 .header {
   position: sticky;
