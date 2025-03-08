@@ -248,14 +248,14 @@ function truncatedTitle(title) {
 
 
 const db = new Dexie("Notes")
-const dbVersion = 26
+const dbVersion = 27
 
 db.version(dbVersion).stores({
     savedNotes: "noteID,noteTitle,noteThumbnail,ownerDisplayName,ownerUserName",
     ownedNotes: "noteID,noteTitle,noteThumbnail,ownerDisplayName,ownerUserName",
     notifications: "notiID,content,fromUserSudentDocID,redirectTo,isRead,createdAt,notiType",
     requests: "recID,message,createdAt,senderDisplayName,senderUserName",
-    feedNotes: "noteID,noteData,contentData,ownerData,interactionData,extras,count"
+    feedNote: "noteID,noteData,contentData,ownerData,interactionData,extras,count"
 })
 db.on('versionchange', async (event) => {
     console.log(`Changed the version to ${dbVersion}`)
@@ -272,14 +272,19 @@ db.open().then(() => {
     console.log(`indexedDB is initialized`)
 }).catch((error) => {
     console.log(`Cannot initialize indexedDB: ${error}`)
+    Swal.fire({
+        title: `<svg fill="#000000" width="50px" height="50px" viewBox="0 0 1024 1024" t="1569683368540" class="icon" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="9723" xmlns:xlink="http://www.w3.org/1999/xlink"><defs><style type="text/css"></style></defs><path d="M899.1 869.6l-53-305.6H864c14.4 0 26-11.6 26-26V346c0-14.4-11.6-26-26-26H618V138c0-14.4-11.6-26-26-26H432c-14.4 0-26 11.6-26 26v182H160c-14.4 0-26 11.6-26 26v192c0 14.4 11.6 26 26 26h17.9l-53 305.6c-0.3 1.5-0.4 3-0.4 4.4 0 14.4 11.6 26 26 26h723c1.5 0 3-0.1 4.4-0.4 14.2-2.4 23.7-15.9 21.2-30zM204 390h272V182h72v208h272v104H204V390z m468 440V674c0-4.4-3.6-8-8-8h-48c-4.4 0-8 3.6-8 8v156H416V674c0-4.4-3.6-8-8-8h-48c-4.4 0-8 3.6-8 8v156H202.8l45.1-260H776l45.1 260H672z" p-id="9724"></path></svg>`,
+        html: "Please <b>clear your browser cache</b> for noteroom.co to get the latest updates!",
+        showConfirmButton: true
+    })
 })
 
 
 function ManageFeedCache() {
     this.addFeedNotes = async function (feedNoteObjects) {
-        await db.transaction('rw', db.feedNotes, async () => {
+        await db.transaction('rw', db.feedNote, async () => {
             try {
-                await db.feedNotes.bulkAdd(feedNoteObjects)
+                await db.feedNote.bulkAdd(feedNoteObjects)
             } catch (error) {
                 console.error(error)
             }
@@ -287,12 +292,12 @@ function ManageFeedCache() {
     },
 
     this.getCachedFeedNotes = async function () {
-        let notes = await db.feedNotes.orderBy("count").toArray()
+        let notes = await db.feedNote.orderBy("count").toArray()
         return notes
     },
 
     this.getLastCount = async function() {
-        let lastNote = await db.feedNotes.orderBy("count").reverse().first()
+        let lastNote = await db.feedNote.orderBy("count").reverse().first()
         return lastNote["count"] || 0
     }
 }
@@ -337,7 +342,7 @@ const manageDb = {
                 existingNoti = Object.assign(existingNoti, obj)
                 await db[store].put(existingNoti)
             }
-        } else if (store === "feedNotes") {
+        } else if (store === "feedNote") {
             let existingNote = await db[store].where("noteID").equals(obj.noteData.noteID).first()
             if (!existingNote) {
                 await db[store].add(obj)
@@ -405,7 +410,7 @@ async function upvote(voteContainer, fromDashboard = false) {
     })
     let data = await response.json()
     if (data.ok) {
-        await manageDb.update("feedNotes", { idPath: "noteID", id: noteDocID }, { interactionData: { isUpvoted: !isUpvoted, upvoteCount: parseInt(uvCount.innerHTML) } }, "interactionData" )
+        await manageDb.update("feedNote", { idPath: "noteID", id: noteDocID }, { interactionData: { isUpvoted: !isUpvoted, upvoteCount: parseInt(uvCount.innerHTML) } }, "interactionData" )
     }
     voteContainer.removeAttribute('data-disabled')
 }
@@ -1249,7 +1254,7 @@ async function saveNote(svButton, fromDashboard = false) {
             await manageDb.delete('savedNotes', { idPath: "noteID", id: noteDocID })
             body.count !== 0 || (document.querySelector('.no-saved-notes-message').classList.remove('hide'))
         })()
-        await manageDb.update('feedNotes', { idPath: "noteID", id: noteDocID }, { interactionData: { isSaved: isSaved === "true" ? false : true } }, "interactionData")
+        await manageDb.update('feedNote', { idPath: "noteID", id: noteDocID }, { interactionData: { isSaved: isSaved === "true" ? false : true } }, "interactionData")
 
         svButton.removeAttribute('data-disabled')
     } else {
