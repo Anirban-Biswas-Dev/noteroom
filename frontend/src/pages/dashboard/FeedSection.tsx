@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import FeedNote from "./FeedNoteCard";
+import { useFeed } from "../../context/FeedNoteContext";
 
 
 export class FeedNoteObject {
@@ -45,53 +46,12 @@ export class FeedNoteObject {
 }
 
 export default function FeedSection() {
-	const [feedNotes, setFeedNotes] = useState<FeedNoteObject[]>([])
-	const [page, setPage] = useState(1)
-	const [loading, setLodaing] = useState(false)
-	const [hasMore, setHasMore] = useState(true)
-
-	const observer = useRef<IntersectionObserver | null>(null)
-	
-	const lastNoteRef = useCallback((node: any) => {
-		if (loading) return
-		if (observer.current) observer.current.disconnect()
-
-		observer.current = new IntersectionObserver(async (entries: IntersectionObserverEntry[]) => {
-			if (entries[0].isIntersecting && hasMore) {
-				await fetchNotes()
-			}
-		})
-
-		if (node) observer.current.observe(node)
-	}, [loading])
-
-	async function fetchNotes() {
-		setLodaing(true)
-		try {
-			let response = await fetch(`http://127.0.0.1:2000/api/getnote?type=seg&seed=123123412&page=${page}&count=10`);
-			let notes = await response.json()
-			if (notes.length !== 0) {
-				setLodaing(false)
-				setFeedNotes(prev => [...prev, ...notes.map((note: any) => new FeedNoteObject(note))])
-				setPage(prev => prev + 1)
-			} else {
-				setLodaing(false)
-				setHasMore(false)
-				return
-			}
-		} catch (error) {
-			console.log(error)
-		}
-	}
-
-	useEffect(() => {
-		fetchNotes()
-	}, [])
+	const { feedNotes, loading, lastNoteRef } = useFeed()!
 
 	return (
 		<>		
 			<div className="feed-container">
-				{feedNotes.map((note, index) => {
+				{feedNotes?.map((note: any, index: number) => {
 					return <FeedNote note={note} key={note.noteData.noteID} ref={feedNotes.length === index + 1 ? lastNoteRef : null}></FeedNote>
 				})}
 

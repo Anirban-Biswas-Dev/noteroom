@@ -1,4 +1,4 @@
-import { FeedSection, QuickPost, DashBoard } from "./pages/dashboard/index";
+import { DashBoard } from "./pages/dashboard/index";
 import { LeftPanel, NoteSearchBar, NotificationModal, RightPanel } from "./partials/index";
 import { SavedNotesProvider } from "./context/SavedNotesContext";
 import { UserProfileProvider } from "./context/UserProfileContext";
@@ -8,17 +8,20 @@ import PostView from "./pages/post-view/PostView";
 import { VoteProvider } from "./context/VoteContext";
 import { Route, Routes } from "react-router-dom";
 import SearchProfile from "./pages/search-profile/SearchProfile";
+import FeedNotesProvider from "./context/FeedNoteContext";
 
 
 function Providers({ children }: { children: ReactNode | ReactNode[] }) {
 	return (
-		<UserProfileProvider>
-			<SavedNotesProvider>
-				<VoteProvider>
-					{ children }
-				</VoteProvider>
-			</SavedNotesProvider>
-		</UserProfileProvider>
+		<FeedNotesProvider>
+			<UserProfileProvider>
+				<SavedNotesProvider>
+					<VoteProvider>
+						{ children }
+					</VoteProvider>
+				</SavedNotesProvider>
+			</UserProfileProvider>
+		</FeedNotesProvider>
 	)
 }
 
