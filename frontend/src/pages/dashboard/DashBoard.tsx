@@ -1,13 +1,15 @@
-import { ReactNode } from "react";
 import "../../public/css/dashboard.css";
 import '../../public/css/quick-post.css';
 import "../../public/css/main-pages.css";
 import "../../public/css/share-note.css";
+import QuickPost from "./QuickPost";
+import FeedSection from "./FeedSection";
 
-export default function DashBoard({ children }: { children: ReactNode[] }) {
+export default function DashBoard() {
     return (
         <div className="middle-section">
-            { children }
+            <QuickPost></QuickPost>
+            <FeedSection></FeedSection>
         </div>
     )
 }

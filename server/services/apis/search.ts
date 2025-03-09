@@ -21,9 +21,18 @@ export default function searchRouter(io: Server) {
         try {
             if (req.query) {
                 let term = <string>req.query.term
-                let students = await SearchProfile.getStudent(term)
-        
-                res.json(students)
+
+                if (req.query.batch) {
+                    let batch = Number(req.query.batch || "1")
+                    let maxCount = 20
+                    let skip = (batch - 1) * maxCount
+                    let countDoc = req.query.countdoc ? true : false
+                    let students = await SearchProfile.getStudent(term, { maxCount: maxCount, skip: skip, countDoc })
+                    res.json(students)
+                } else {
+                    let students = await SearchProfile.getStudent(term)
+                    res.json(students)
+                }
             }
         } catch (error) {
             res.json([])

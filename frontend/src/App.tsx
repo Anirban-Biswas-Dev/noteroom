@@ -7,6 +7,7 @@ import { ReactNode, useState } from "react";
 import PostView from "./pages/post-view/PostView";
 import { VoteProvider } from "./context/VoteContext";
 import { Route, Routes } from "react-router-dom";
+import SearchProfile from "./pages/search-profile/SearchProfile";
 
 
 function Providers({ children }: { children: ReactNode | ReactNode[] }) {
@@ -32,13 +33,9 @@ function App() {
 			<NotificationModal notiState={[showNotiModal, setShowNotiModal]} />
 
 			<Routes>
-				<Route path="/feed" element={
-					<DashBoard>
-						<QuickPost />
-						<FeedSection />
-					</DashBoard>
-				} />
-				<Route path="/post/:postID" element={<PostView></PostView>} />
+				<Route path="/feed" element={<DashBoard />} />
+				<Route path="/post/:postID" element={<PostView />} />
+				<Route path="/search-profile" element={<SearchProfile />} />
 			</Routes>
 
 			<RightPanel notiModalState={[showNotiModal, setShowNotiModal]} rightPanelState={showRightPanel}/>		

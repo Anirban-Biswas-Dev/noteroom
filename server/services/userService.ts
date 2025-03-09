@@ -92,16 +92,59 @@ export const SearchProfile = {
         }
     },
 
-    async getMutualCollegeStudents(studentDocID: string) {
+    async getMutualCollegeStudents(studentDocID: string, options?: any) {
         let collegeID = (await Students.findOne({ _id: studentDocID }, { collegeID: 1 }))["collegeID"]
-        let students = await Students.find({ collegeID: collegeID, visibility: "public", _id: { $ne: studentDocID } }, { profile_pic: 1, displayname: 1, bio: 1, username: 1, _id: 0, collegeID: 1 })
-        return students
+        if (!options) {
+            let students = await Students.find({ collegeID: collegeID, visibility: "public", _id: { $ne: studentDocID } }, { profile_pic: 1, displayname: 1, bio: 1, username: 1, _id: 0, collegeID: 1 })
+            return students
+        } else {
+            let resultCount: number | null 
+            if (options.countDoc) {
+                resultCount = await Students.countDocuments({ collegeID: collegeID, visibility: "public", _id: { $ne: new mongoose.Types.ObjectId(studentDocID) } })
+            }
+
+            let students = await Students.aggregate([
+                { $match: { collegeID: collegeID, visibility: "public", _id: { $ne: new mongoose.Types.ObjectId(studentDocID) } } },
+                { $skip: options.skip },
+                { $limit: options.count },
+                { $project: {
+                    profile_pic: 1, 
+                    displayname: 1, 
+                    bio: 1, 
+                    username: 1, 
+                    _id: 0, 
+                    collegeID: 1
+                } }
+            ])
+            return {students, totalCount: resultCount}
+        }
     },
 
-    async getStudent(searchTerm: string) {
+    async getStudent(searchTerm: string, options?: any) {
         const regex = new RegExp(searchTerm.split(' ').map(word => `(${word})`).join('.*'), 'i');
-        let students = await Students.find({ username: { $regex: regex }, visibility: "public", onboarded: true }, { profile_pic: 1, displayname: 1, bio: 1, username: 1, _id: 0 })
-        return students
+        if (!options) {
+            let students = await Students.find({ username: { $regex: regex }, visibility: "public", onboarded: true }, { profile_pic: 1, displayname: 1, bio: 1, username: 1, _id: 0 })
+            return students
+        } else {
+            let resultCount: number | null 
+            if (options.countDoc) {
+                resultCount = await Students.countDocuments({ username: { $regex: regex }, visibility: "public", onboarded: true })
+            }
+
+            let students = await Students.aggregate([
+                { $match: { username: { $regex: regex }, visibility: "public", onboarded: true } },
+                { $skip: options.skip },
+                { $limit: options.maxCount },
+                { $project: {
+                    profile_pic: 1, 
+                    displayname: 1, 
+                    bio: 1, 
+                    username: 1, 
+                    _id: 0 
+                } }
+            ])
+            return {students, totalCount: resultCount}
+        }
     }
 }
 
