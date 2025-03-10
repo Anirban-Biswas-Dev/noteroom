@@ -1,9 +1,9 @@
 import { useState } from "react";
 import FeedNoteMenu from "./NoteMenu";
 import RequestModal from "../../partials/RequestModal";
-import { FeedNoteObject } from "./FeedSection";
 import { Link } from "react-router-dom";
 import { FeedNoteEngagement } from "./NoteEngagements";
+import { FeedNoteObject } from "../../types/types";
 
 function FeedNoteFirstRow({ note }: { note: FeedNoteObject }) {
   const [showReqModal, setShowReqModal] = useState(false);
@@ -80,7 +80,7 @@ function FeedNoteFirstRow({ note }: { note: FeedNoteObject }) {
       {!note.ownerData.isOwner ? (
         <RequestModal
           modalShow={[showReqModal, setShowReqModal]}
-          recipientData={{ profile_pic: note.ownerData.profile_pic, displayname: note.ownerData.ownerDisplayName}}
+          recipientData={{ profile_pic: note.ownerData.profile_pic, displayname: note.ownerData.ownerDisplayName }}
         ></RequestModal>
       ) : (
         ""
@@ -118,9 +118,7 @@ function FeedNoteSecondRow({ note }: { note: FeedNoteObject }) {
 }
 
 function FeedNoteThirdRow({ note }: { note: FeedNoteObject }) {
-  const [upvoteCount, setUpvoteCount] = useState(
-    note.interactionData.upvoteCount
-  );
+  const upvoteCount = note.interactionData.upvoteCount
 
   return (
     <div className="fnc__third-row">
@@ -163,15 +161,12 @@ function FeedNoteThirdRow({ note }: { note: FeedNoteObject }) {
           </span>
         </div>
       </div>
-      <FeedNoteEngagement
-        setUpvoteCount={[upvoteCount, setUpvoteCount]}
-        note={note}
-      ></FeedNoteEngagement>
+      <FeedNoteEngagement note={note} ></FeedNoteEngagement>
     </div>
   );
 }
 
-export default function FeedNote({ note, ref }: { note: FeedNoteObject, ref? :any }) {
+export default function FeedNote({ note, ref }: { note: FeedNoteObject, ref?: any }) {
   return (
     <div className="feed-note-card" ref={ref} id={note.noteData.noteID}>
       <FeedNoteFirstRow note={note}></FeedNoteFirstRow>

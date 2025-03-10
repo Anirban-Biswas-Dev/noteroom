@@ -1,17 +1,33 @@
-import { createContext, ReactNode, useCallback, useContext, useEffect, useRef, useState } from "react";
-import { FeedNoteObject } from "../pages/dashboard/FeedSection";
+import { createContext, ReactNode, useCallback, useContext, useEffect, useReducer, useRef, useState } from "react";
+import { FeedNoteObject } from "../types/types";
 
-type FeedNoteContextValues = {
-    feedNotes: any,
-    fetchNotes: any,
-    loading: any,
-    lastNoteRef: any
+export enum FeedActions { ADD_NOTES, TOGGLE_SAVE_NOTE, TOGGLE_UPVOTE_NOTE } 
+function feedReducer(feedNotes: FeedNoteObject[], actions: { type: FeedActions, payload?: any }) {
+    switch(actions.type) {
+        case FeedActions.ADD_NOTES:
+            return [...feedNotes, ...actions.payload.notes.map((note: any) => new FeedNoteObject(note))]
+        case FeedActions.TOGGLE_SAVE_NOTE:
+            return feedNotes.map(note => {
+                if (note.noteData.noteID === actions.payload.noteID) {
+                    return { ...note, interactionData: { ...note.interactionData, isSaved: !note.interactionData.isSaved } }
+                }
+                return note
+            })
+        case FeedActions.TOGGLE_UPVOTE_NOTE:
+            return feedNotes.map(note => {
+                if (note.noteData.noteID === actions.payload.noteID) {
+                    return { ...note, interactionData: { ...note.interactionData, isUpvoted: !note.interactionData.isUpvoted, upvoteCount: note.interactionData.upvoteCount + (note.interactionData.isUpvoted ? -1 : +1) } }
+                }
+                return note
+            })
+        default:
+            return feedNotes
+    }
 }
 
-export const FeedNoteContext = createContext<FeedNoteContextValues | null>(null)
-
+export const FeedNoteContext = createContext<any>(null)
 export default function FeedNotesProvider({ children }: { children: ReactNode | ReactNode[] }) {
-    const [feedNotes, setFeedNotes] = useState<any[]>([])
+    const [feedNotes, dispatch] = useReducer(feedReducer, [])
     const [loading, setLodaing] = useState<boolean>(true)
     const [page, setPage] = useState<number>(1)
     const [hasMore, setHasMore] = useState<boolean>(true)
@@ -34,11 +50,11 @@ export default function FeedNotesProvider({ children }: { children: ReactNode | 
     async function fetchNotes() {
         setLodaing(true)
         try {
-            let response = await fetch(`http://127.0.0.1:2000/api/getnote?type=seg&seed=123123412&page=${page}&count=10`);
+            let response = await fetch(`http://127.0.0.1:2000/api/getnote?type=seg&seed=&page=${page}&count=10`);
             let notes = await response.json()
             if (notes.length !== 0) {
                 setLodaing(false)
-                setFeedNotes(prev => [...prev, ...notes.map((note: any) => new FeedNoteObject(note))])
+                dispatch({ type: FeedActions.ADD_NOTES, payload: { notes: notes } })
                 setPage(prev => prev + 1)
             } else {
                 setLodaing(false)
@@ -55,7 +71,7 @@ export default function FeedNotesProvider({ children }: { children: ReactNode | 
     }, [])
 
     return (
-        <FeedNoteContext.Provider value={{ feedNotes, loading, fetchNotes, lastNoteRef }}>
+        <FeedNoteContext.Provider value={{ feedNotes, loading, fetchNotes, lastNoteRef, dispatch, FeedActions }}>
             { children }
         </FeedNoteContext.Provider>
     )

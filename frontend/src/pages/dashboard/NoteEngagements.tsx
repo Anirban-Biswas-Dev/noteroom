@@ -1,15 +1,14 @@
-import { useState, useContext } from "react";
 import { Link } from "react-router-dom";
-import { VoteContext } from "../../context/VoteContext";
-import { FeedNoteObject } from "./FeedSection";
+import { FeedNoteObject } from "../../types/types";
+import { useFeed } from "../../context/FeedNoteContext";
 
-export function FeedNoteEngagement({ setUpvoteCount, note }: { setUpvoteCount: [any, any], note: FeedNoteObject }) {
-  const [upvote, setUpvote] = useState(note.interactionData.isUpvoted);
-  const [upvoteFunction] = useContext(VoteContext)
+export function FeedNoteEngagement({ note }: { note: FeedNoteObject }) {
+  const { dispatch, FeedActions } = useFeed()
+  const upvote = note.interactionData.isUpvoted
   const noteID = note.noteData.noteID;
 
   async function upvoteManage() {
-    upvoteFunction({noteID: noteID, studentID: "9181e241-575c-4ef3-9d3c-2150eac4566d"}, [upvote, setUpvote], setUpvoteCount)
+    dispatch({ type: FeedActions.TOGGLE_UPVOTE_NOTE, payload: { noteID: noteID } })
   }
 
   return (

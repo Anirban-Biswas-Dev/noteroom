@@ -1,16 +1,17 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import ShareModal from "../../partials/ShareModal";
-import { FeedNoteObject } from "./FeedSection";
-import { SavedNotesContext } from "../../context/SavedNotesContext";
+import { FeedNoteObject } from "../../types/types";
+import { useFeed } from "../../context/FeedNoteContext";
 
 export default function FeedNoteMenu({ note }: { note: FeedNoteObject }) {
   const [showMenu, setShowMenu] = useState(false);
-  const [isSaveNote, setIsSaveNote] = useState(note.interactionData.isSaved);
   const [showShareModal, setShowShareModal] = useState(false);
-  const [, , saveNoteFunction] = useContext(SavedNotesContext)
+
+  const { dispatch, FeedActions } = useFeed()
+  const isSaveNote = note.interactionData.isSaved
 
   async function saveNote() {
-	saveNoteFunction({ noteID: note.noteData.noteID, noteTitle: note.noteData.noteTitle }, [isSaveNote, setIsSaveNote])
+    dispatch({ type: FeedActions.TOGGLE_SAVE_NOTE, payload: { noteID: note.noteData.noteID } })
   }
 
   let isQuickPost = note.isQuickPost
