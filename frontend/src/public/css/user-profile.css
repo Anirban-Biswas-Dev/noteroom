@@ -1,0 +1,621 @@
+* {
+    font-family: 'Inter', 'Hind Siliguri', sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+:root {
+    --squid-ink: #07192d;
+    --neon-blue: #04dbf6;
+    --light-gray: #F8F8F8;
+  }  
+
+/* Middle Section */
+.middle-section {
+    padding-top: 125px;
+    padding-bottom: 125px;
+}
+
+@media (min-width:1425px) and (max-width:1625px) {
+        .middle-section{
+            max-width: 650px;
+        }
+}
+ 
+@media (min-width: 1025px) and (max-width: 1485px) {
+    .middle-section {
+        max-width: 580px; /* Parent constraint */
+    }
+}
+
+/* First Row */
+.ms-first-row {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    max-width: 900px;
+    gap: 10px;
+}
+
+.user-prfl-pic-wrapper{
+    width: fit-content;
+    position: relative;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.user-prfl-pic {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    aspect-ratio: 1 / 1;
+    cursor: pointer;
+}
+
+.prfl-pic-edit{
+    position: absolute;
+    top: 12px;
+    right: 0;
+}
+
+/* Information Items */
+.info-items {
+    width: 60%;
+    min-width: fit-content;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px;
+}
+
+.display-name {
+    width: 100%;
+    font-weight: 450;
+    font-size: 1.2rem;
+    line-height: 1.5;
+}
+
+.user-group {
+    width: 100%;
+    font-style: normal;
+    font-weight: 500;
+    font-size: .9rem;
+    text-transform: capitalize;
+    letter-spacing: -0.01em;
+}
+
+.user-gains {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.badge-logo {
+    width: 50px;
+    height: 50px;
+    border: none;
+    object-fit: contain;
+}
+
+.top-voice-badge, .no-badge {
+    width: fit-content;
+    text-align: left;
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+
+}
+.no-badge{
+    font-style: normal;
+}
+
+/* Featured Note */
+.featured-note {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+}
+.no {
+    background: none;
+}
+.featured-notes-count{
+    background: #FEE819;
+    border-radius: 5px;
+    font-size: 1em;
+    padding: 2px 5px;
+
+}
+
+.user-profile-interaction-container{
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.user-profile-request-btn{
+    border: solid var(--squid-ink) 2px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 13px;
+    line-height: 14px;
+    padding: 12px 20px;
+    background-color: white;
+    color: var(--squid-ink);
+    cursor: pointer;
+    transition: background-color 0.1s ease;
+}
+
+.user-profile-request-btn:hover{
+    background-color: #F8F8F8;
+}
+.user-profile-request-btn:active{
+    background-color: transparent;
+}
+
+.share-user-profile{
+    cursor: pointer;
+    border-radius: 50%;
+    padding: 2px;
+    transition: background-color 0.1s ease;
+}
+.share-user-profile:hover {
+    background-color: rgb(226, 229, 233);
+}
+
+.share-user-profile:active {
+    background-color: rgb(200, 202, 204);
+    outline: none;
+}
+.share-user-profile:focus{
+    outline: none;
+}
+
+/* User Personal Info Section */
+
+.ms-personal-info-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+
+    width: 100%;
+    max-width: 900px;
+    border: .9px solid rgba(7, 25, 45, 0.2);
+    border-radius: 15px;
+    padding: 20px;
+
+    margin-top: 15px;
+}
+
+.change-detail{
+    cursor: pointer;
+    width: 15px;
+    height: auto;
+    stroke:#e2e5e9;
+}
+
+.p-info__first-row, 
+.p-info__second-row, 
+.p-info__third-row, 
+.p-info__fourth-row {
+    width: 100%;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+}
+
+/* These two rows have 1+ user info */
+.p-info__third-row, 
+.p-info__fourth-row {
+    justify-content: space-between;
+}
+
+
+.user-clg-wrapper,
+.user-bio-wrapper,
+.user-clg-year-wrapper,
+.user-clg-roll-wrapper,
+.user-fav-sub-wrapper,
+.user-non-fav-sub-wrapper
+{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    min-width: 180px;
+}
+
+
+/* Exception: Has clg logo and name both to be shown */
+.user-clg{
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding-top: 10px;
+}
+
+.user-clg--img{
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+}
+
+/* This class is used for p tags for personal info */
+.user-info-text {
+    font-weight: 600;
+    font-size: .95rem;
+    line-height: 18px;
+    letter-spacing: -0.03em;
+    color: var(--squid-ink);
+}
+
+
+/* Input Labels */
+.input-label {
+    font-weight: 600;
+    font-size: .95rem;
+    letter-spacing: -0.06em;
+    font-weight: 600;
+    padding-bottom: 5px;
+    line-height: 18px;
+    color: rgba(7, 25, 45, 0.5);
+}
+
+
+/* Uploaded Notes Section */
+.uploaded-notes-section {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+    margin: 2vh 0px;
+}
+.toggle-header-uploaded-notes{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    min-width: 200px;
+    padding: 20px;
+    box-sizing: border-box;
+}
+.toggle-header-uploaded-notes h2 {
+    font-size: 1.5rem;
+    text-align: center;
+    font-weight: 500;
+    line-height: 42px;
+    letter-spacing: -0.06em;
+    width: auto;
+    max-width: 100%;
+    min-width: fit-content;
+    border-bottom: 2px solid var(--squid-ink);
+    cursor: pointer;
+    padding: 5px 10px;
+    transition: font-size 0.2s ease, font-weight 0.2s ease, padding 0.3s ease;
+}
+.active-section{
+    font-size: 1.7rem !important;
+    font-weight: 550;
+    border-bottom: 4px solid var(--squid-ink) !important; 
+    padding: 5px 25px !important;
+    transition: font-size 0.2s ease, font-weight 0.2s ease, padding 0.3s ease;
+}
+
+/* Grid Container for Notes */
+/* Default off for saved notes */
+.not-show{
+    display: none;
+}
+.visible-container {
+    flex: 1;
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Ensure proper column fit */
+    gap: 20px; 
+    padding: 10px;
+    justify-content: center;
+}
+
+/* Individual Note Card */
+.note-card{
+    align-items: center;
+    background: #FFFFFF;
+    border-radius: 5px;
+    box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    height: auto;
+    max-width: 250px; 
+    width: 100%; 
+    overflow: hidden;
+}
+
+.note-card img {
+    width: 100%;
+    height: 100%; 
+    object-fit: cover; 
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    max-height: 150px;
+    transition: filter 0.1s ease;
+}
+
+.note-card img:hover{
+    filter: brightness(.9);
+}
+
+.note-card h3 {
+    width: 100%;
+    min-height: 49px;
+    height: 20%;
+    max-height: fit-content;
+    text-align: left;
+    font-weight: 400;
+    font-size: 1rem;
+    padding: 5px 10px;
+    line-height: 1.2;
+}
+.note-card__tr{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 10px;
+}
+.note-author-name{
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 1;
+    letter-spacing: -0.01em;
+}
+/* No Notes Content */
+.no-notes-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px; 
+}
+
+.no-notes-content svg {
+    font-size: 4rem;
+    color: rgba(0, 0, 0, 0.3);
+    margin-bottom: 15px;
+    fill: #dbdada15;
+    stroke-width: 1; 
+}
+
+.no-notes-content p {
+    font-size: 1.2rem;
+    color: rgba(0, 0, 0, 0.8); 
+}
+
+/* Swal Preview */
+
+.swal-profile-pic-preview {
+    max-width: 400px !important;
+    max-width: 400px !important;
+    border-radius: 50%;
+    aspect-ratio: 1/1; 
+    object-fit: cover; 
+    display: block;
+    margin: auto;
+}
+
+/* ****** Responsiveness ***** */
+/* Responsive adjustments only for my notes section */
+@media (min-width: 1201px) and (max-width:1785px) {
+    .visible-container {
+        /* grid-template-columns: repeat(auto-fit, minmax(250px, 2fr)); Adjust based on screen size */
+        grid-template-columns: repeat(auto-fit, minmax(150px, max(200px, 2fr)));
+        justify-content: center;
+    }
+    .note-card { 
+        max-width: 250px;
+        width: 85%;
+    }
+}
+@media (min-width: 1025px) and (max-width: 1485px) {
+    .visible-container {
+        gap: 15px; 
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Ensures 2 columns */
+    }
+    .user-profile-interaction-container{
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+}
+
+@media (min-width:769px) and (max-width: 1200px) {
+    .notes
+    .visible-container{
+        grid-template-columns: repeat(auto-fit, minmax(250px, 2fr)); 
+        justify-items: center; 
+    }
+    .note-card { 
+        max-width: 250px;
+        width: 85%;
+    }
+}
+@media (min-width:481px) and (max-width: 768px) {
+    .visible-container{
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
+        justify-items: center; 
+    }
+    .note-card { 
+        max-width: 250px;
+        width: 85%;
+    }
+}
+
+@media (max-width: 480px) {
+    .visible-container{
+        grid-template-columns: 1fr; 
+        justify-items: center; 
+    }
+    .note-card { 
+        max-width: 250px;
+        width: 85%;
+    }
+}
+@media (max-width:360px) {
+    .middle-section{
+        padding-top: 100px;
+    }
+    .user-clg--img{
+        width: 30px;
+        height: 30px;
+    }
+    .user-info-text{
+        font-size: .8rem;
+        letter-spacing: 0rem;
+    }
+
+    .user-clg-wrapper,
+    .user-bio-wrapper,
+    .user-clg-year-wrapper,
+    .user-clg-roll-wrapper,
+    .user-fav-sub-wrapper,
+    .user-non-fav-sub-wrapper
+    {
+        min-width: 135px;
+    }
+
+    .input-label{
+        font-size: .8rem;
+    }
+    .toggle-header-uploaded-notes{
+        padding: 2px;
+    }
+    .toggle-header-uploaded-notes h2 {
+        font-size: 1rem;
+        padding: 1px 3px;
+    }
+    .active-section {
+        font-size: 1.2rem !important;
+        padding: 3px 5px !important;
+    }
+}
+@media (min-width: 361px) and (max-width: 480px) {
+    .middle-section{
+        padding-top: 100px;
+    }
+    .ms-first-row{
+        margin-bottom: 3vh;
+    }
+    .user-clg--img{
+        width: 30px;
+        height: 30px;
+    }
+    .user-info-text{
+        font-size: .9rem;
+        letter-spacing: 0rem;
+    }
+    .ms-personal-info-container{
+        margin-top: 0;
+    }
+    .user-clg-wrapper,
+    .user-bio-wrapper,
+    .user-clg-year-wrapper,
+    .user-clg-roll-wrapper,
+    .user-fav-sub-wrapper,
+    .user-non-fav-sub-wrapper
+    {
+        min-width: 145px;
+    }
+    
+    .input-label {
+        font-size: .85rem; 
+    }
+    .toggle-header-uploaded-notes{
+        padding: 10px;
+    }
+    .toggle-header-uploaded-notes h2 {
+        font-size: 1.3rem;
+        padding: 5px 10px;
+    }
+    .active-section {
+        font-size: 1.5rem !important;
+        padding: 5px 20px !important;
+    }
+}
+@media (min-width: 481px) and (max-width: 767px) {
+    .middle-section {
+        padding-top: 120px; /* More top padding for larger screens */
+    }
+       .input-label {
+        font-size: 1rem; /* Increased input label font */
+    }
+    .toggle-header-uploaded-notes{
+        padding: 15px;
+    }
+    .toggle-header-uploaded-notes h2 {
+        font-size: 1.4rem;
+        padding: 5px 12px;
+    }
+    .active-section {
+        font-size: 1.6rem !important;
+        padding: 5px 22px !important;
+    }
+}
+
+@media (max-width:600px) {
+    .ms-first-row{
+        flex-direction: column;
+        gap: 5px;
+    }
+    .user-prfl-pic{
+        width: 100px;
+        height: 100px;
+    }
+    .info-items{
+        width: 100%;
+        gap: 5px;
+        padding: 5px 8px;
+    }
+    .display-name, .user-group{
+        text-align: center;
+    }
+    .user-gains{
+        justify-content: center;
+    }
+    .badge{
+        gap: 5px;
+    }
+    .user-profile-interaction-container{
+        width: 100%;
+        flex-direction: row-reverse;
+        padding: 0 8px;
+    }
+    .user-profile-request-btn{
+        padding: 8px 12px;
+        font-size: .8rem;
+        border-radius: 25px;
+        font-weight: 650;
+
+    }
+    .swal-profile-pic-preview {
+        max-width: 280px !important;
+        max-width: 280px !important;
+    }
+}
