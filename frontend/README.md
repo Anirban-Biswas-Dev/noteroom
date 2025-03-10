@@ -38,3 +38,6 @@ Don't push any feature branch to the remote unless you are confused about its st
 
 ### <u>Development Strategies</u>
 React development can be overwhelming for 2 reasons. Either you can't understand the "React-way thinking" or you have thousands of solutions for a specific problem. I recommend you not to implement a logic or a feature directly in the development. Rather test that in an online editor which gives pre-made React envionment for testing logics or building prototypes. The one I use is [CodeSandBox](https://codesandbox.io). Create a React sandbox and test the prototype of your implementation there using hardcoded templates. Also if you use sandbox and face any problems with your solution, you can share that with the team and they can give reviews. This is one of the coolest way of collaboration rather than sharing code-files or committing changes in git with comments. (Btw CodeSandBox isn't a sponsor🫥)
+
+
+***In this AI-Dominated world, I chose to write all the things by my own🙎‍♂️***
