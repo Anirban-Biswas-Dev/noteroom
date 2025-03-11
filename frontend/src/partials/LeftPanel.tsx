@@ -1,5 +1,5 @@
-import { useContext, useEffect, useState } from "react"
-import { SavedNotesContext } from "../context/SavedNotesContext";
+import { useEffect, useState } from "react"
+import { useSavedNotes } from "../context/SavedNotesContext";
 import { SavedNoteObject } from "../types/types";
 
 function SavedNote({ note }: { note: SavedNoteObject }) {
@@ -13,10 +13,10 @@ function SavedNote({ note }: { note: SavedNoteObject }) {
 
 export default function LeftPanel() {
     const [showNoSavedNotesMsg, setShowSavedNotesMsg] = useState(false)
-    const [savedNotes, ] = useContext(SavedNotesContext)
+    const [savedNotes, ] = useSavedNotes()
 
     useEffect(() => {
-        if (savedNotes.length === 0) setShowSavedNotesMsg(true)
+        if (savedNotes?.length === 0) setShowSavedNotesMsg(true)
         else setShowSavedNotesMsg(false)
     }, [savedNotes])
 

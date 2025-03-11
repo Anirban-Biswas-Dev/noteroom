@@ -1,5 +1,7 @@
 import { createContext, ReactNode, useCallback, useContext, useEffect, useReducer, useRef, useState } from "react";
-import feedReducer, { FeedActions} from "../reducers/feedReducer";
+import feedReducer, { FeedActions } from "../reducers/feedReducer";
+import { useSavedNotes } from "./SavedNotesContext";
+import { SavedNoteObject } from "../types/types";
 
 
 export const FeedNoteContext = createContext<any>(null)
@@ -8,6 +10,7 @@ export default function FeedNotesProvider({ children }: { children: ReactNode | 
     const [loading, setLodaing] = useState<boolean>(true)
     const [page, setPage] = useState<number>(1)
     const [hasMore, setHasMore] = useState<boolean>(true)
+    const [, setSavedNotes] = useSavedNotes()
 
     const observer = useRef<IntersectionObserver | null>(null)
     
@@ -46,8 +49,15 @@ export default function FeedNotesProvider({ children }: { children: ReactNode | 
     function upvoteNote(noteID: string) {
         dispatch({ type: FeedActions.TOGGLE_UPVOTE_NOTE, payload: { noteID: noteID } })
     }
-    function saveNote(noteID: string) {
+    function saveNote(noteID: string, noteTitle: string, savedState: boolean) {
         dispatch({ type: FeedActions.TOGGLE_SAVE_NOTE, payload: { noteID: noteID }})
+        setSavedNotes((prev: any) => {
+            if (savedState) {
+                return prev.filter((note: SavedNoteObject) => note.noteID !== noteID)
+            } else {
+                return [...prev, { noteID: noteID, noteTitle: noteTitle }]
+            }
+        })
     }
 
     useEffect(() => {

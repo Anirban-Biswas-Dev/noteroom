@@ -7,14 +7,8 @@ export default function FeedNoteMenu({ note }: { note: FeedNoteObject }) {
   const [showMenu, setShowMenu] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
 
-  const { dispatch, FeedActions } = useFeed()
+  const { controller: [, saveNote] } = useFeed()
   const isSaveNote = note.interactionData.isSaved
-
-  async function saveNote() {
-    dispatch({ type: FeedActions.TOGGLE_SAVE_NOTE, payload: { noteID: note.noteData.noteID } })
-  }
-
-  let isQuickPost = note.isQuickPost
 
   return (
     <div className="note-menu">
@@ -33,10 +27,10 @@ export default function FeedNoteMenu({ note }: { note: FeedNoteObject }) {
         </svg>
       </button>
       <div className={"menu-options " + (showMenu ? "active" : "")}>
-        { isQuickPost || <>
+        { note.isQuickPost || <>
           <div
             className="option svn-btn-parent"
-            onClick={() => saveNote()}
+            onClick={() => saveNote(note?.noteData.noteID, note?.noteData.noteTitle, isSaveNote)}
           >
             <button
               className={"save-note-btn " + (isSaveNote ? "saved" : "")}

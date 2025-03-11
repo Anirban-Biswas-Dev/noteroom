@@ -13,15 +13,15 @@ import FeedNotesProvider from "./context/FeedNoteContext";
 
 function Providers({ children }: { children: ReactNode | ReactNode[] }) {
 	return (
-		<FeedNotesProvider>
-			<UserProfileProvider>
-				<SavedNotesProvider>
+		<SavedNotesProvider>
+			<FeedNotesProvider>
+				<UserProfileProvider>
 					<VoteProvider>
 						{ children }
 					</VoteProvider>
-				</SavedNotesProvider>
-			</UserProfileProvider>
-		</FeedNotesProvider>
+				</UserProfileProvider>
+			</FeedNotesProvider>
+		</SavedNotesProvider>
 	)
 }
 
