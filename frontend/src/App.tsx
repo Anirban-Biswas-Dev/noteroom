@@ -5,7 +5,6 @@ import { UserProfileProvider } from "./context/UserProfileContext";
 import MobileControlPanel from "./partials/MobileControlPanel";
 import { ReactNode, useState } from "react";
 import PostView from "./pages/post-view/PostView";
-import { VoteProvider } from "./context/VoteContext";
 import { Route, Routes } from "react-router-dom";
 import SearchProfile from "./pages/search-profile/SearchProfile";
 import FeedNotesProvider from "./context/FeedNoteContext";
@@ -16,9 +15,7 @@ function Providers({ children }: { children: ReactNode | ReactNode[] }) {
 		<SavedNotesProvider>
 			<FeedNotesProvider>
 				<UserProfileProvider>
-					<VoteProvider>
-						{ children }
-					</VoteProvider>
+					{ children }
 				</UserProfileProvider>
 			</FeedNotesProvider>
 		</SavedNotesProvider>

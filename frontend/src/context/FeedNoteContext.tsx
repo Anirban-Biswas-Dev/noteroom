@@ -2,6 +2,7 @@ import { createContext, ReactNode, useCallback, useContext, useEffect, useReduce
 import feedReducer, { FeedActions } from "../reducers/feedReducer";
 import { useSavedNotes } from "./SavedNotesContext";
 import { SavedNoteObject } from "../types/types";
+import { saveNoteApi, voteNoteApi } from "../utils/noteActionsApi";
 
 
 export const FeedNoteContext = createContext<any>(null)
@@ -46,8 +47,9 @@ export default function FeedNotesProvider({ children }: { children: ReactNode | 
         }
     }
 
-    function upvoteNote(noteID: string) {
+    function upvoteNote(noteID: string, upvoteState: boolean) {
         dispatch({ type: FeedActions.TOGGLE_UPVOTE_NOTE, payload: { noteID: noteID } })
+        voteNoteApi({ noteID, studentID: "9181e241-575c-4ef3-9d3c-2150eac4566d" }, upvoteState)
     }
     function saveNote(noteID: string, noteTitle: string, savedState: boolean) {
         dispatch({ type: FeedActions.TOGGLE_SAVE_NOTE, payload: { noteID: noteID }})
@@ -58,6 +60,7 @@ export default function FeedNotesProvider({ children }: { children: ReactNode | 
                 return [...prev, { noteID: noteID, noteTitle: noteTitle }]
             }
         })
+        saveNoteApi(noteID, savedState)
     }
 
     useEffect(() => {

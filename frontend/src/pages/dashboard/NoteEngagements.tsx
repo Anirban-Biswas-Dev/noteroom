@@ -3,17 +3,12 @@ import { FeedNoteObject } from "../../types/types";
 import { useFeed } from "../../context/FeedNoteContext";
 
 export function FeedNoteEngagement({ note }: { note: FeedNoteObject }) {
-  const { dispatch, FeedActions } = useFeed()
+  const { controller: [upvoteNote] } = useFeed()
   const upvote = note.interactionData.isUpvoted
-  const noteID = note.noteData.noteID;
-
-  async function upvoteManage() {
-    dispatch({ type: FeedActions.TOGGLE_UPVOTE_NOTE, payload: { noteID: noteID } })
-  }
 
   return (
     <div className="note-engagement">
-      <div className="uv-container" onClick={() => upvoteManage()}>
+      <div className="uv-container" onClick={() => upvoteNote(note.noteData.noteID, upvote)}>
         <svg
           className="uv-icon"
           width="18"
