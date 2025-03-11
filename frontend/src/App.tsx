@@ -8,17 +8,21 @@ import PostView from "./pages/post-view/PostView";
 import { Route, Routes } from "react-router-dom";
 import SearchProfile from "./pages/search-profile/SearchProfile";
 import FeedNotesProvider from "./context/FeedNoteContext";
+import ScrollPositionProvider from "./context/ScrollPosition";
 
 
 function Providers({ children }: { children: ReactNode | ReactNode[] }) {
+	// FIXME: Combine the saved notes and user profile in one context. cause they are under user profile maybe.
 	return (
-		<SavedNotesProvider>
-			<FeedNotesProvider>
-				<UserProfileProvider>
-					{ children }
-				</UserProfileProvider>
-			</FeedNotesProvider>
-		</SavedNotesProvider>
+		<ScrollPositionProvider>
+			<SavedNotesProvider>
+				<FeedNotesProvider>
+					<UserProfileProvider>
+						{ children }
+					</UserProfileProvider>
+				</FeedNotesProvider>
+			</SavedNotesProvider>
+		</ScrollPositionProvider>
 	)
 }
 
