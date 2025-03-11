@@ -1,29 +1,6 @@
 import { createContext, ReactNode, useCallback, useContext, useEffect, useReducer, useRef, useState } from "react";
-import { FeedNoteObject } from "../types/types";
+import feedReducer, { FeedActions} from "../reducers/feedReducer";
 
-export enum FeedActions { ADD_NOTES, TOGGLE_SAVE_NOTE, TOGGLE_UPVOTE_NOTE } 
-function feedReducer(feedNotes: FeedNoteObject[], actions: { type: FeedActions, payload?: any }) {
-    switch(actions.type) {
-        case FeedActions.ADD_NOTES:
-            return [...feedNotes, ...actions.payload.notes.map((note: any) => new FeedNoteObject(note))]
-        case FeedActions.TOGGLE_SAVE_NOTE:
-            return feedNotes.map(note => {
-                if (note.noteData.noteID === actions.payload.noteID) {
-                    return { ...note, interactionData: { ...note.interactionData, isSaved: !note.interactionData.isSaved } }
-                }
-                return note
-            })
-        case FeedActions.TOGGLE_UPVOTE_NOTE:
-            return feedNotes.map(note => {
-                if (note.noteData.noteID === actions.payload.noteID) {
-                    return { ...note, interactionData: { ...note.interactionData, isUpvoted: !note.interactionData.isUpvoted, upvoteCount: note.interactionData.upvoteCount + (note.interactionData.isUpvoted ? -1 : +1) } }
-                }
-                return note
-            })
-        default:
-            return feedNotes
-    }
-}
 
 export const FeedNoteContext = createContext<any>(null)
 export default function FeedNotesProvider({ children }: { children: ReactNode | ReactNode[] }) {
@@ -66,12 +43,19 @@ export default function FeedNotesProvider({ children }: { children: ReactNode | 
         }
     }
 
+    function upvoteNote(noteID: string) {
+        dispatch({ type: FeedActions.TOGGLE_UPVOTE_NOTE, payload: { noteID: noteID } })
+    }
+    function saveNote(noteID: string) {
+        dispatch({ type: FeedActions.TOGGLE_SAVE_NOTE, payload: { noteID: noteID }})
+    }
+
     useEffect(() => {
         fetchNotes()
     }, [])
 
     return (
-        <FeedNoteContext.Provider value={{ feedNotes, loading, fetchNotes, lastNoteRef, dispatch, FeedActions }}>
+        <FeedNoteContext.Provider value={{ feedNotes, loading, fetchNotes, lastNoteRef, dispatch, FeedActions, controller: [upvoteNote, saveNote] }}>
             { children }
         </FeedNoteContext.Provider>
     )

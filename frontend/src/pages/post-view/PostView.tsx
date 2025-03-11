@@ -1,59 +1,54 @@
-import { useContext, useEffect, useState } from "react";
-import { SavedNotesContext } from "../../context/SavedNotesContext";
-import { VoteContext } from "../../context/VoteContext";
-import { useParams } from "react-router-dom";
+import { createContext, useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { ImageContainer } from "./ImageContainer";
 import { NoteEngagement } from "./NoteEngagements";
+import PostHeader from "./PostHeader";
+import { FeedNoteObject } from "../../types/types";
+import { useFeed } from "../../context/FeedNoteContext";
 import CommentsContainer from "./CommentsContainer";
 import "../../public/css/note-view.css"
 import "../../public/css/loaders.css"
 import "../../public/css/nav-section.css"
 import "../../public/css/main-pages.css"
 import "../../public/css/share-note.css"
-import PostHeader from "./PostHeader";
+
+
+export const PostContext = createContext<any>(null)
 
 export default function PostView() {
-    const [noteImages, setNoteImages] = useState<string[]>([])
-    const [noteData, setNoteData] = useState<any>()
-    const [ownerProfile, setOwnerProfile] = useState<any>()
-    const [offset, setOffset] = useState<number>(0)
-    const [upvoteCount, setUpvoteCount] = useState<number>(0)
-    const [upvote, setUpvote] = useState<boolean>()
-    const [isSaveNote, setIsSaveNote] = useState<boolean>(false)
-    const [, , saveNoteFunction] = useContext(SavedNotesContext)
-    const [upvoteFunction] = useContext(VoteContext)
-    const { postID } = useParams()
+    const { feedNotes, controller: [upvoteNote, saveNote] } = useFeed()
 
+    const [noteImages, setNoteImages] = useState<string[]>([])
+    const [offset, setOffset] = useState<number>(0)
+    const { postID } = useParams()
+    
+    const [noteData, setNoteData] = useState<any>(null)
+    
     const nextImage = () => setOffset(currentIndex => (currentIndex + 1) % noteImages.length)
     const prevImage = () => setOffset(currentIndex => (currentIndex - 1 + noteImages.length) % noteImages.length)
-    
-    async function upvoteManage() {
-        upvoteFunction({noteID: postID, studentID: "9181e241-575c-4ef3-9d3c-2150eac4566d"}, [upvote, setUpvote], [upvoteCount, setUpvoteCount])
-    }
-
-    async function saveNote() {
-        saveNoteFunction({ noteID: postID, noteTitle: noteData.title }, [isSaveNote, setIsSaveNote])
-    }
     
     useEffect(() => {
         async function getNoteData() {
             try {
-                let response = await fetch(`http://127.0.0.1:2000/api/note/${postID}/metadata`)
-                let data = await response.json()
-                if (data.ok) {
-                    let { note, owner } = data.noteData
-                    setNoteData(note)
-                    setOwnerProfile(owner)
-                    setUpvoteCount(note.upvoteCount)
-                    setUpvote(note.isUpvoted)
-                    setIsSaveNote(note.isSaved)
+                const noteData = feedNotes.find((note: any) => note.noteData.noteID === postID)
+                if (noteData) {
+                    setNoteData(noteData)
+                } else {
+                    let response = await fetch(`http://127.0.0.1:2000/api/note/${postID}/metadata`)
+                    let data = await response.json()
+                    if (data.ok) {
+                        let note = new FeedNoteObject(data.noteData)
+                        setNoteData(note)   
+                    }
                 }
             } catch (error) {
                 console.error(error)
             }
         }
         getNoteData()
-
+    }, [feedNotes])
+    
+    useEffect(() => {
         async function getNoteImages() {
             try {
                 let response = await fetch(`http://127.0.0.1:2000/api/note/${postID}/images`)
@@ -78,19 +73,21 @@ export default function PostView() {
     }, [])
         
     return (
-        <div className="middle-section">
-            <div className="post-container">
-                <PostHeader owner={ownerProfile} isSaveNote={isSaveNote} controller={[saveNote]} isQuickPost={noteData?.postType === 'quick-post'}></PostHeader>
+        <PostContext.Provider value={{noteData, controller: [upvoteNote, saveNote]}}>
+            <div className="middle-section">
+                <div className="post-container">
+                    <PostHeader></PostHeader>
 
-                <div className="post-content">
-                    <h1 className="post-title">{noteData?.title}</h1>
-                    <div className="post-description" dangerouslySetInnerHTML={{__html: noteData?.description}}></div>
-                    <ImageContainer noteImages={noteImages} controller={[prevImage, nextImage, offset]}></ImageContainer>
+                    <div className="post-content">
+                        <h1 className="post-title">{noteData?.noteData.noteTitle}</h1>
+                        <div className="post-description" dangerouslySetInnerHTML={{__html: noteData?.noteData.description}}></div>
+                        <ImageContainer noteImages={noteImages} controller={[prevImage, nextImage, offset]}></ImageContainer>
+                    </div>
+
+                    <NoteEngagement></NoteEngagement>
+                    <CommentsContainer></CommentsContainer>
                 </div>
-
-                <NoteEngagement upvote={upvote} controller={[upvoteManage]} upvoteCount={upvoteCount} isQuickPost={noteData?.postType === 'quick-post'} postID={postID}></NoteEngagement>
-                <CommentsContainer postID={postID}></CommentsContainer>
             </div>
-        </div>
+        </PostContext.Provider>
     )
 }

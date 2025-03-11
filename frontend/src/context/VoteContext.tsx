@@ -1,5 +1,5 @@
 import { createContext, ReactNode } from "react";
-import { voteNoteApi } from "../utils/noteActions";
+import { voteNoteApi } from "../utils/noteActionsApi";
 
 export const VoteContext = createContext<any>(null)
 
@@ -12,7 +12,7 @@ export function VoteProvider({ children }: { children: ReactNode | ReactNode[] }
 
     return (
         <VoteContext.Provider value={[upvoteFunction]}>
-            { children }
+            {children}
         </VoteContext.Provider>
     )
 } 

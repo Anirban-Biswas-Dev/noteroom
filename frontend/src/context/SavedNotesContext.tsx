@@ -1,5 +1,5 @@
 import { createContext, ReactNode, useEffect, useState } from "react";
-import { saveNoteApi } from "../utils/noteActions";
+import { saveNoteApi } from "../utils/noteActionsApi";
 import { SavedNoteObject } from "../types/types";
 
 export const SavedNotesContext = createContext<any>(null)
@@ -14,7 +14,7 @@ export function SavedNotesProvider({ children }: { children: ReactNode | ReactNo
                 let svNotes = await response.json()
                 if (svNotes.objects && svNotes.objects.length !== 0) {
                     setSavedNotes([
-                        ...savedNotes, 
+                        ...savedNotes,
                         ...svNotes.objects.map((note: any) => {
                             return { noteID: note._id, noteTitle: note.title.length > 30 ? note.title.slice(0, 30) + "..." : note.title }
                         })
@@ -46,7 +46,7 @@ export function SavedNotesProvider({ children }: { children: ReactNode | ReactNo
 
     return (
         <SavedNotesContext.Provider value={[savedNotes, setSavedNotes, saveNoteFunction]}>
-            { children }
+            {children}
         </SavedNotesContext.Provider>
     )
 } 

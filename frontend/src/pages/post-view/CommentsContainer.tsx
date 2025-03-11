@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react"
 import CommentBox from "./CommentBox"
 import ThreadEditor from "./ThreadEditor"
+import { PostContext } from "./PostView"
 
 function Comment({ feedbackData, children}: any) {
     const { openedThreadID: [openedThreadID, ], controller: [handleOpenThread] } = useContext(CommentsControllerContext)
@@ -104,9 +105,11 @@ function CommentSection() {
 }
 
 export const CommentsControllerContext = createContext<any>(null)
-export default function CommentsContainer({ postID }: { postID: any }) {
+export default function CommentsContainer() {
     const [comments, setComments] = useState<any[]>([])
     const [openedThreadID, setOpenedThreadID] = useState<string | null>(null)
+    const { noteData } = useContext(PostContext)
+    const postID = noteData?.noteData.noteID
 
     /* 
     Comments structure:
@@ -134,19 +137,22 @@ export default function CommentsContainer({ postID }: { postID: any }) {
     useEffect(() => {
         async function getComments() {
             try {
-                let response = await fetch(`http://127.0.0.1:2000/view/${postID}/comments`)
-                let comments = await response.json()
-                if (comments && comments.length !== 0) {
-                    setComments(prev => [...prev, ...comments])
-                } else {
-                    setComments([])
+                if (postID) {
+                    let response = await fetch(`http://127.0.0.1:2000/view/${postID}/comments`)
+                    let comments = await response.json()
+                    if (comments && comments.length !== 0) {
+                        console.log(comments)
+                        setComments(prev => [...prev, ...comments])
+                    } else {
+                        setComments([])
+                    }
                 }
             } catch (error) {
                 console.error(error)
             }
         }
         getComments()
-    }, [])
+    }, [postID])
 
     return (
         <div className="comment-section">
