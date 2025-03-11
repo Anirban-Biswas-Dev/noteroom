@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { Server } from "socket.io";
 import { Convert } from "../userService";
-import { addSaveNote, deleteNote, deleteSavedNote, getNote } from "../noteService";
+import { addSaveNote, deleteNote, deleteSavedNote, getNote, getSingleNote } from "../noteService";
 import { manageProfileNotes } from "../noteService";
 import notesModel from "../../schemas/notes";
 
@@ -32,8 +32,8 @@ export default function noteRouter(io: Server) {
         try {
             let studentID = req.session["stdid"] || "9181e241-575c-4ef3-9d3c-2150eac4566d"
             let studentDocID = (await Convert.getDocumentID_studentid(studentID)).toString()
-            let noteData: any = await getNote({ noteDocID: req.params.noteID, studentDocID })
-            if (!noteData.error) {
+            let noteData: any = await getSingleNote(req.params.noteID, studentDocID)
+            if (!noteData.ok) {
                 res.json({ ok: true, noteData })
             } else {
                 res.json({ ok: false })

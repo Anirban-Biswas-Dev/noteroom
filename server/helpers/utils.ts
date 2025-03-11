@@ -102,7 +102,7 @@ export function setSession({ recordID, studentID, username }, req: any, res: any
 
 
 const logger = createLogger({
-    level: 'info',
+    level: 'silent',
     format: format.combine(
         format.timestamp(),
         format.printf(({ timestamp, level, message }) => {
