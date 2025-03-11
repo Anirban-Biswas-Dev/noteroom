@@ -8,6 +8,7 @@ import PostView from "./pages/post-view/PostView";
 import { VoteProvider } from "./context/VoteContext";
 import { Route, Routes } from "react-router-dom";
 import SearchProfile from "./pages/search-profile/SearchProfile";
+// import Settings from "./pages/Settings/Settings";	
 
 
 function Providers({ children }: { children: ReactNode | ReactNode[] }) {
@@ -37,6 +38,9 @@ function App() {
 				<Route path="/post/:postID" element={<PostView />} />
 				<Route path="/search-profile" element={<SearchProfile />} />
 			</Routes>
+			{/* <Routes>
+				<Route path="/settings" element={<Settings />} />
+			</Routes> */}
 
 			<RightPanel notiModalState={[showNotiModal, setShowNotiModal]} rightPanelState={showRightPanel}/>		
 			<MobileControlPanel rightPanelState={[showRightPanel, setShowRightPanel]}/>
