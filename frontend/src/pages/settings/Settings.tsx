@@ -1,8 +1,8 @@
-import React from "react";
-import ".\public\css\settings.css";
+import "../../public/css/settings.css"
+import "../../public/css/header-footer.css"
 
-function Settings () {
-  const handleNavigation = (url) => {
+export default function Settings () {
+  const handleNavigation = (url: any) => {
     window.location.href = url;
   };
 
@@ -76,4 +76,3 @@ function Settings () {
   );
 };
 
-export default Settings;

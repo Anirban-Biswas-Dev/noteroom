@@ -9,7 +9,8 @@ import { Route, Routes } from "react-router-dom";
 import SearchProfile from "./pages/search-profile/SearchProfile";
 import FeedNotesProvider from "./context/FeedNoteContext";
 import ScrollPositionProvider from "./context/ScrollPosition";
-// import Settings from "./pages/Settings/Settings";	
+import Settings from "./pages/settings/Settings";	
+import UserProfile from "./pages/user-profile/UserProfile";
 
 
 function Providers({ children }: { children: ReactNode | ReactNode[] }) {
@@ -40,11 +41,10 @@ function App() {
 			<Routes>
 				<Route path="/feed" element={<DashBoard />} />
 				<Route path="/post/:postID" element={<PostView />} />
+				<Route path="/user/:userID" element={<UserProfile />} />
 				<Route path="/search-profile" element={<SearchProfile />} />
-			</Routes>
-			{/* <Routes>
 				<Route path="/settings" element={<Settings />} />
-			</Routes> */}
+			</Routes>
 
 			<RightPanel notiModalState={[showNotiModal, setShowNotiModal]} rightPanelState={showRightPanel}/>		
 			<MobileControlPanel rightPanelState={[showRightPanel, setShowRightPanel]}/>

@@ -18,6 +18,11 @@ All the components and boilerplate code are placed inside the `frontend/src` fol
 
 These are the core folders. But we will create more folders and files for specific purposes and to isolate and consolidate the logics. For example, all the **contexts** can be placed inside a specific folder for better context managements.
 
+#### Component File Naming
+Use typescript (`.tsx`/`.ts`) first of all.
+****
+For components, give a suitable name that aligns with the component's funcionality. And make an root component that will contain all the separate components of that page. Give that a name which directly reflects the page's behaviour. For example, for dashboard, **DashBoard.tsx** contains all the visible components (**QuickPost Container** and **FeedSection**. By just looking at dashbord, you can tell it has these 2 components). Those components can have components, but keep a clear intention when consolidating them. And make an `index.ts` which will consolidate the root components, reducers, contenxts or other functions or states and export them from there.
+
 #### Component Strcuture
 For seamless flow, create a base component which will contain all the components of that page and consolidate them. For example, in dashboard, there is a base component called `DashBoard.tsx` which contains the main components of that page. In this way we can directly use that base component in our router. 
 

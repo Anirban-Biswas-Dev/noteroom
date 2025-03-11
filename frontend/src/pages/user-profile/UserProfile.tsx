@@ -1,7 +1,7 @@
-import React, { useState } from "react";
-import ".\public\css\User-profile.css";
+import { useState } from "react";
+import "../../public/css/user-profile.css"
 
-const UserProfilePage = () => {
+export default function UserProfile() {
   const [visiting, setVisiting] = useState(false); // Simulating visiting mode
   const [user, setUser] = useState({
     profilePic: ".\sample-profile-pic.jpg",
@@ -134,4 +134,3 @@ const UserProfilePage = () => {
   );
 };
 
-export default UserProfilePage;
