@@ -11,6 +11,8 @@ import FeedNotesProvider from "./context/FeedNoteContext";
 import ScrollPositionProvider from "./context/ScrollPosition";
 import Settings from "./pages/settings/Settings";	
 import UserProfile from "./pages/user-profile/UserProfile";
+// import SignUp from "./pages/sign-up/SignUp";
+// import Login from "./pages/login/Login";
 
 
 function Providers({ children }: { children: ReactNode | ReactNode[] }) {
