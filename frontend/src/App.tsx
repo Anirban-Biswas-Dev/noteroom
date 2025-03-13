@@ -43,7 +43,7 @@ function App() {
 			<Routes>
 				<Route path="/feed" element={<DashBoard />} />
 				<Route path="/post/:postID" element={<PostView />} />
-				<Route path="/user/:userID" element={<UserProfile />} />
+				<Route path="/user/:username" element={<UserProfile />} />
 				<Route path="/search-profile" element={<SearchProfile />} />
 				<Route path="/settings" element={<Settings />} />
 			</Routes>

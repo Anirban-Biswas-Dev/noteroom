@@ -1,6 +1,7 @@
 export interface SavedNoteObject {
     noteID: string,
-    noteTitle: string
+    noteTitle: string,
+	noteThumbnail: string
 }
 
 export class FeedNoteObject {

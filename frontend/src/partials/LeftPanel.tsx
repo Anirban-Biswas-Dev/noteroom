@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react"
 import { useSavedNotes } from "../context/SavedNotesContext";
 import { SavedNoteObject } from "../types/types";
+import { Link } from "react-router-dom";
 
 function SavedNote({ note }: { note: SavedNoteObject }) {
     return <div className="saved-note">
         <span className="sv-note-title">
-            <a className="sv-n-link"><b>{note.noteTitle}</b></a>
+            <Link className="sv-n-link" to={"/post/" + note.noteID}><b>{note.noteTitle}</b></Link>
         </span>
     </div>
 }

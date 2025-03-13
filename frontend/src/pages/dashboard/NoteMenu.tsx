@@ -30,7 +30,7 @@ export default function FeedNoteMenu({ note }: { note: FeedNoteObject }) {
         { note.isQuickPost || <>
           <div
             className="option svn-btn-parent"
-            onClick={() => saveNote(note?.noteData.noteID, note?.noteData.noteTitle, isSaveNote)}
+            onClick={() => saveNote({ noteID: note?.noteData.noteID, noteTitle: note?.noteData.noteTitle, noteThumbnail: note?.contentData.content1}, isSaveNote)}
           >
             <button
               className={"save-note-btn " + (isSaveNote ? "saved" : "")}

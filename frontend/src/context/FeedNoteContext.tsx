@@ -51,13 +51,13 @@ export default function FeedNotesProvider({ children }: { children: ReactNode | 
         dispatch({ type: FeedActions.TOGGLE_UPVOTE_NOTE, payload: { noteID: noteID } })
         voteNoteApi({ noteID, studentID: "9181e241-575c-4ef3-9d3c-2150eac4566d" }, upvoteState)
     }
-    function saveNote(noteID: string, noteTitle: string, savedState: boolean) {
+    function saveNote({noteID, noteTitle, noteThumbnail}: SavedNoteObject, savedState: boolean) {
         dispatch({ type: FeedActions.TOGGLE_SAVE_NOTE, payload: { noteID: noteID }})
         setSavedNotes((prev: any) => {
             if (savedState) {
                 return prev.filter((note: SavedNoteObject) => note.noteID !== noteID)
             } else {
-                return [...prev, { noteID: noteID, noteTitle: noteTitle }]
+                return [...prev, { noteID, noteTitle, noteThumbnail }]
             }
         })
         saveNoteApi(noteID, savedState)

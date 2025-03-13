@@ -6,6 +6,7 @@ export default function RequestModal({ modalShow, recipientData }: any) {
   const [charCounter, setCharCounter] = useState(0);
   const [isDisabled, setIsDisabled] = useState(true);
 
+  //TODO: fix the character resistence
   function writeRequest(e: any) {
     setReqMsg(e.target.value);
     let charLength = e.target.value.length;
