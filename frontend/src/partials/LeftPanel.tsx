@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { useSavedNotes } from "../context/SavedNotesContext";
 import { SavedNoteObject } from "../types/types";
 import { Link } from "react-router-dom";
+import { useAppData } from "../context/AppDataContext";
 
 function SavedNote({ note }: { note: SavedNoteObject }) {
     return <div className="saved-note">
@@ -14,7 +15,7 @@ function SavedNote({ note }: { note: SavedNoteObject }) {
 
 export default function LeftPanel() {
     const [showNoSavedNotesMsg, setShowSavedNotesMsg] = useState(false)
-    const [savedNotes, ] = useSavedNotes()
+    const { savedNotes: [savedNotes, ] } = useAppData()
 
     useEffect(() => {
         if (savedNotes?.length === 0) setShowSavedNotesMsg(true)

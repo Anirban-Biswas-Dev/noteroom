@@ -4,6 +4,22 @@ export interface SavedNoteObject {
 	noteThumbnail: string
 }
 
+export class NotificationObject {
+    notiID: string;
+    fromUserSudentDocID: { profile_pic: string, displayname: string } | null;
+    content: string;
+    isRead: boolean;
+    createdAt: string;
+
+    constructor(noti: any) {
+        this.notiID = noti._id;
+        this.fromUserSudentDocID = noti.fromUserSudentDocID;
+        this.content = noti.content;
+        this.isRead = noti.isRead;
+        this.createdAt = noti.createdAt;
+    }
+}
+
 export class FeedNoteObject {
 	isQuickPost: boolean;
 	noteData: any;

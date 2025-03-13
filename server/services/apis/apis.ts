@@ -126,7 +126,7 @@ export default function apiRouter(io: Server) {
 
     router.delete('/notifications/delete', async (req, res) => {
         try {
-            let studentID = req.session["stdid"]
+            let studentID = req.session["stdid"] || "9181e241-575c-4ef3-9d3c-2150eac4566d"
             let deletedResult = await deleteAllNoti(studentID)
             res.json({ ok: deletedResult })
         } catch (error) {

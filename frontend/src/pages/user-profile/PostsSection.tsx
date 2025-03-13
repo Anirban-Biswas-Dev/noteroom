@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { useSavedNotes } from "../../context/SavedNotesContext"
+import { useAppData } from "../../context/AppDataContext"
 
 function NoteCard({ note }: { note: any }) {
 	// let description = note.description ? (new DOMParser()).parseFromString(note.description, "text/html").body.textContent?.slice(0, 50) + "..." : ""
@@ -15,7 +16,8 @@ function NoteCard({ note }: { note: any }) {
 export default function PostsSection({ user }: { user: any }) {
 	enum TabSection { MY_POSTS, SAVED_POSTS }
 	const [tab, setTab] = useState<TabSection>(TabSection.MY_POSTS)
-	const [savedNotes,] = useSavedNotes()
+	// const [savedNotes,] = useSavedNotes()
+	const { savedNotes: [savedNotes,] } = useAppData()
 
 	const NoNotesMessage = () => {
 		return (

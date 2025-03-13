@@ -46,7 +46,7 @@ export default function PostView() {
             }
         }
         getNoteData()
-    }, [feedNotes])
+    }, [feedNotes, postID])
     
     useEffect(() => {
         async function getNoteImages() {
@@ -70,7 +70,7 @@ export default function PostView() {
             }
         }
         getNoteImages()
-    }, [])
+    }, [postID])
         
     return (
         <PostContext.Provider value={{noteData, controller: [upvoteNote, saveNote]}}>

@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react"
-import { UserProfileContext } from "../../context/UserProfileContext"
+import { useAppData } from "../../context/AppDataContext"
 
 function QuickPostOverlay({ showState, profile }: { showState: [any, any], profile: any }) {
     const [quickPostText, setQuickPostText] = useState("")
@@ -76,7 +76,7 @@ function QuickPostOverlay({ showState, profile }: { showState: [any, any], profi
 export default function QuickPost() {
     const [showQuickPostOverlay, setShowQUickPostOverlay] = useState(false)
     const openQuickPost = () => setShowQUickPostOverlay(true)
-    const [profile, ] = useContext(UserProfileContext)
+    const {userProfile: [profile, ]} = useAppData()
 
     return (
         <>

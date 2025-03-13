@@ -1,7 +1,5 @@
 import { DashBoard } from "./pages/dashboard/index";
 import { LeftPanel, NoteSearchBar, NotificationModal, RightPanel } from "./partials/index";
-import { SavedNotesProvider } from "./context/SavedNotesContext";
-import { UserProfileProvider } from "./context/UserProfileContext";
 import MobileControlPanel from "./partials/MobileControlPanel";
 import { ReactNode, useState } from "react";
 import PostView from "./pages/post-view/PostView";
@@ -11,6 +9,7 @@ import FeedNotesProvider from "./context/FeedNoteContext";
 import ScrollPositionProvider from "./context/ScrollPosition";
 import Settings from "./pages/settings/Settings";	
 import UserProfile from "./pages/user-profile/UserProfile";
+import AppDataProvider from "./context/AppDataContext";
 // import SignUp from "./pages/sign-up/SignUp";
 // import Login from "./pages/login/Login";
 
@@ -19,13 +18,11 @@ function Providers({ children }: { children: ReactNode | ReactNode[] }) {
 	// FIXME: Combine the saved notes and user profile in one context. cause they are under user profile maybe.
 	return (
 		<ScrollPositionProvider>
-			<SavedNotesProvider>
+			<AppDataProvider>
 				<FeedNotesProvider>
-					<UserProfileProvider>
-						{ children }
-					</UserProfileProvider>
+					{ children }
 				</FeedNotesProvider>
-			</SavedNotesProvider>
+			</AppDataProvider>
 		</ScrollPositionProvider>
 	)
 }

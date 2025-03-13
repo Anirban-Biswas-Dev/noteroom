@@ -1,9 +1,8 @@
-import { useContext } from "react";
 import { Requests } from ".";
-import { UserProfileContext } from "../context/UserProfileContext";
+import { useAppData } from "../context/AppDataContext";
 
 export default function RightPanel({ notiModalState, rightPanelState }: { notiModalState: [any, any ], rightPanelState: boolean }) {
-    const [profile, ] = useContext(UserProfileContext)
+    const {userProfile: [profile, ]} = useAppData()
 
     return (
         <div className={"right-panel " + (rightPanelState ? "show" : "")}>

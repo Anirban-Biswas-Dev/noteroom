@@ -3,6 +3,7 @@ import feedReducer, { FeedActions } from "../reducers/feedReducer";
 import { useSavedNotes } from "./SavedNotesContext";
 import { SavedNoteObject } from "../types/types";
 import { saveNoteApi, voteNoteApi } from "../utils/noteActionsApi";
+import { useAppData } from "./AppDataContext";
 
 
 export const FeedNoteContext = createContext<any>(null)
@@ -11,7 +12,8 @@ export default function FeedNotesProvider({ children }: { children: ReactNode | 
     const [loading, setLodaing] = useState<boolean>(true)
     const [page, setPage] = useState<number>(1)
     const [hasMore, setHasMore] = useState<boolean>(true)
-    const [, setSavedNotes] = useSavedNotes()
+    // const [, setSavedNotes] = useSavedNotes()
+    const { savedNotes: [, setSavedNotes] } = useAppData()
 
     const observer = useRef<IntersectionObserver | null>(null)
     
