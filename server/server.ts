@@ -78,7 +78,7 @@ app.use(session({
 app.use(cookieParser()) // Middleware for working with cookies
 app.use(fileUpload()) // Middleware for working with files
 app.use('/login', loginRouter(io))
-app.use('/user', checkOnboarded(false), userRouter(io))
+app.use('/user', userRouter(io))
 app.use('/sign-up', signupRouter(io))
 app.use('/upload', checkOnboarded(false), uploadRouter(io))
 app.use('/view', noteViewRouter(io))

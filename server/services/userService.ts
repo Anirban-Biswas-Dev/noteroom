@@ -175,36 +175,50 @@ export const LogIn = {
     }
 } 
 
-export async function getProfile(studentID: string) {
+export async function getProfile(username: string) {
     try {
-        let _student = await Students.aggregate([
-            { $match: { studentID: studentID } },
+        let student = await Students.aggregate([
+            { $match: { username: username } },
+            { $addFields: {
+                featuredNoteCount: { $size: "$featured_notes" }
+            } },
+            { $lookup: {
+                from: "notes",
+                localField: "owned_notes",
+                foreignField: "_id",
+                as: "owned_posts"
+            } },
             { $lookup: {
                 from: 'badges',
                 localField: 'badges',
                 foreignField: 'badgeID',
                 as: 'badges'
-            } },
-            { $lookup: {
-                from: 'notes',
-                localField: 'owned_notes',
-                foreignField: '_id',
-                as: 'owned_notes'
+            } },    
+            { $project: {
+                _id: 0,
+                username: 1, displayname: 1, group: 1,
+                profile_pic: 1, bio: 1, collegeID: 1, collegeyear: 1,
+                favouritesubject: 1, notfavsubject: 1, featuredNoteCount: 1,
+                rollnumber: 1, badges: 1,
+                owned_posts: {
+                    $map: {
+                        input: "$owned_posts",
+                        as: "post",
+                        in: {
+                            noteTitle: "$$post.title",
+                            noteID: "$$post._id",
+                            noteThumbnail: { $first: "$$post.content" }
+                        }
+                    }
+                }
             } }
         ])
+        if (student.length === 0) return { ok: false }
 
-        return new Promise((resolve, reject) => {
-            if (_student && _student["length"] !== 0) {
-                resolve({ _student: _student[0] })
-                log('info', `On getProfile StudentID=${studentID || "--studentid--"}: Got user data`)
-            } else {
-                reject('No students found!')
-                log('error', `On getProfile StudentID=${studentID || "--studentid--"}: Couldn't got user data`)
-            }
-        })
+        return { ok: true, student: student[0] }
     } catch (error) {
-        log('error', `On getProfile StudentID=${studentID || "--studentid--"}: ${error.message}`)
-        return {_student: {}}
+        console.log(error)
+        return { ok: false }
     }
 }
 
