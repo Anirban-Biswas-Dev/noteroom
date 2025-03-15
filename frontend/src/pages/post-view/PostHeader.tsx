@@ -20,7 +20,7 @@ export default function PostHeader() {
             </div>
 
             <div className="post-header__actions">
-                <button className="request-btn db-note-card-request-option" onClick={() => setShowReqModal(prev => !prev)}>Request</button>
+                { !noteData?.ownerData.isOwner && <button className="request-btn db-note-card-request-option" onClick={() => setShowReqModal(prev => !prev)}>Request</button> }
                 { 
                     !(noteData?.isQuickPost) ? 
                         <button className={"save-btn " + (isSaved ? "saved" : "")} onClick={() => saveNote({ noteID: noteData?.noteData.noteID, noteTitle: noteData?.noteData.noteTitle, noteThumbnail: noteData?.contentData.content1}, isSaved)}>

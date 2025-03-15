@@ -1,6 +1,5 @@
 import { createContext, ReactNode, useCallback, useContext, useEffect, useReducer, useRef, useState } from "react";
 import feedReducer, { FeedActions } from "../reducers/feedReducer";
-import { useSavedNotes } from "./SavedNotesContext";
 import { SavedNoteObject } from "../types/types";
 import { saveNoteApi, voteNoteApi } from "../utils/noteActionsApi";
 import { useAppData } from "./AppDataContext";
@@ -33,7 +32,7 @@ export default function FeedNotesProvider({ children }: { children: ReactNode | 
     async function fetchNotes() {
         setLodaing(true)
         try {
-            let response = await fetch(`http://127.0.0.1:2000/api/getnote?type=seg&seed=&page=${page}&count=10`);
+            let response = await fetch(`http://127.0.0.1:2000/api/feed?seed=601914080&page=${page}`);
             let notes = await response.json()
             if (notes.length !== 0) {
                 setLodaing(false)

@@ -12,7 +12,7 @@ export default function SearchBar({
     async function searchProfile(showMore: boolean) {
         try {
             if (text.trim().length !== 0) {
-                let response = await fetch(`http://127.0.0.1:2000/api/search/user?term=${text}&batch=${schBatch}${!showMore ? "&countdoc=true" : ""}`) 
+                let response = await fetch(`http://127.0.0.1:2000/api/search?q=${text}&type=profiles&batch=${schBatch}${!showMore ? "&countdoc=true" : ""}`) 
                 let data = await response.json()
     
                 if (data && data.students.length !== 0) {

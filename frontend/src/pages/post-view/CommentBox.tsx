@@ -1,34 +1,51 @@
 import { useContext, useState } from "react"
 import { CommentsControllerContext } from "./CommentsContainer"
+import { useParams } from "react-router-dom"
 
 export default function CommentEditor() {
-  const {comments: [, setComments]} = useContext(CommentsControllerContext)
-  const [commentData, setCommentData] = useState<string>()
-  function sendComment() {
-    let data = [
-      {
-          _id: Math.random().toString(),
-          noteDocID: "n--no-id--",
-          feedbackContents: `<p>${commentData}</p>`,
-          docType: "feedbacks",
-          commenterDocID: {
-              _id: "--no-id--",
-              profile_pic: "--no-profilepic--",
-              displayname: "Commenter",
-              studentID: "--no-studentid--",
-              username: "--no-username--"
-          },
-          replyCount: 0,
-          upvoteCount: 0,
-          createdAt: "--no-date--",
-          __v: 0,
-          isUpVoted: false
-      },
-      []
-  ]
-    setComments((comments: any) => [...[data], ...comments])
-    setCommentData("")
-  }
+	const {comments: [, setComments]} = useContext(CommentsControllerContext)
+	const [commentData, setCommentData] = useState<string>("")
+	const { postID } = useParams()
+	async function sendComment() {
+		try {
+			const feedbackFormData = new FormData()
+			feedbackFormData.append("commenter", "9181e241-575c-4ef3-9d3c-2150eac4566d")
+			feedbackFormData.append("feedbackContent", commentData)
+
+			const response = await fetch(`http://127.0.0.1:2000/api/posts/${postID}/feedbacks`, {
+				method: "post",
+				body: feedbackFormData 
+			})
+			if (response.ok) {
+				const jsonData = await response.json()
+				if (jsonData.ok) {
+					const comment = jsonData.feedback
+					let fetchedComment = [
+						{
+							_id: comment._id,
+							feedbackContents: comment.feedbackContents,
+							commenterDocID: {
+								profile_pic: comment.commenterDocID.profile_pic,
+								displayname: comment.commenterDocID.displayname,
+								username: comment.commenterDocID.username
+							},
+							replyCount: 0,
+							upvoteCount: 0,
+							createdAt: comment.createdAt,
+							isUpVoted: false
+						},
+						[]
+					]
+					setComments((comments: any) => [...[fetchedComment], ...comments])
+					setCommentData("")
+				} else {
+					console.log(jsonData)
+				}
+			}
+		} catch (error) {
+			console.error(error)
+		}
+	}
 
   return (
     <>

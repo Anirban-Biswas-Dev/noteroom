@@ -4,27 +4,35 @@ import PostsSection from "./PostsSection";
 import PersonalInformation from "./PersonalInformation";
 import BasicInformation from "./BasicInformation"
 import "../../public/css/user-profile.css"
+import { useAppData } from "../../context/AppDataContext";
 
 export default function UserProfile() {
 	const [user, setUser] = useState<any>({})
+	const { userProfile: [profile, , currentUsername] } = useAppData()
 	const { username } = useParams()
 	const navigate = useNavigate()
 
 	useEffect(() => {
 		async function getProfile() {
-			const response = await fetch(`http://127.0.0.1:2000/user/${username}`)
-			if (response.ok) {
-				const data = await response.json()
-				if (data && data.ok) {
-					setUser(data.profile)
+			if (username === currentUsername) {
+				setUser(profile)
+			} else {
+				const response = await fetch(`http://127.0.0.1:2000/api/users/${username}`)
+				if (response.ok) {
+					const data = await response.json()
+					if (data && data.ok) {
+						setUser(data.profile)
+					} else {
+						setUser({})
+					}
 				} else {
-					console.log(data)
+					setUser({})
 				}
 			}
 		}
 
 		getProfile()
-	}, [username])
+	}, [username, profile])
 
 	return (
 		<div className="middle-section">

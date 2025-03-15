@@ -34,7 +34,7 @@ export default function PostView() {
                 if (noteData) {
                     setNoteData(noteData)
                 } else {
-                    let response = await fetch(`http://127.0.0.1:2000/api/note/${postID}/metadata`)
+                    let response = await fetch(`http://127.0.0.1:2000/api/posts/${postID}/metadata`)
                     let data = await response.json()
                     if (data.ok) {
                         let note = new FeedNoteObject(data.noteData)
@@ -51,7 +51,7 @@ export default function PostView() {
     useEffect(() => {
         async function getNoteImages() {
             try {
-                let response = await fetch(`http://127.0.0.1:2000/api/note/${postID}/images`)
+                let response = await fetch(`http://127.0.0.1:2000/api/posts/${postID}/images`)
                 let data = await response.json()
                 if (data.ok && data.images?.length !== 0) {
                     setNoteImages(data.images)

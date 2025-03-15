@@ -1,18 +1,6 @@
-import { useEffect, useState } from "react"
-
-class RequestObject {
-    recID: string;
-    senderDisplayName: string;
-    createdAt: string;
-    message: string;
-
-    constructor(request: any) {
-        this.recID = request._id
-        this.senderDisplayName = request.senderDocID.displayname
-        this.createdAt = request.createdAt
-        this.message = request.message
-    }
-}
+import { useState } from "react"
+import { RequestObject } from "../types/types"
+import { useAppData } from "../context/AppDataContext"
 
 function Request({ request }: { request: RequestObject }) {
     const [isReqExpanded, setIsReqExpanded] = useState(false)
@@ -51,24 +39,7 @@ function Request({ request }: { request: RequestObject }) {
 }
 
 export default function RequestsContainer() {
-    const [requests, setRequests] = useState([])
-
-    useEffect(() => {
-        async function getRequests() {
-            try {
-                let response = await fetch('http://127.0.0.1:2000/api/request/get')
-                let requests = await response.json()
-                if (requests.objects && requests.objects.length !== 0) {
-                    setRequests(requests.objects.map((request: any) => new RequestObject(request)))
-                } else {
-                    console.log(`No requests`)
-                }
-            } catch (error) {
-                console.log(error)
-            }
-        }
-        getRequests()
-    }, [])
+    const {requests: [requests, ]} = useAppData()
 
     return (
         <div className="right-panel__requests-component">
@@ -76,7 +47,7 @@ export default function RequestsContainer() {
                 <h4 className="requests-component__header-label">Requests</h4>
             </div>
             <div className="requests-container">
-                {requests.map((request: any) => {
+                {requests?.map((request: any) => {
                     return <Request request={request} key={request.recID}></Request>
                 })}
             </div>

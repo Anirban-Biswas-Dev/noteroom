@@ -19,7 +19,7 @@ export default function SearchProfile() {
 
     async function getMtcProfiles(showMore: boolean) {
         try {
-            let response = await fetch(`http://127.0.0.1:2000/search-profile/student/mutual-college?batch=${mtcBatch}${!showMore ? "&countdoc=true" : ""}`)
+            let response = await fetch(`http://127.0.0.1:2000/api/users/mutual-college?batch=${mtcBatch}${!showMore ? "&countdoc=true" : ""}`)
             let data = await response.json()
             if (data && data.students.length !== 0) {
                 if (showMore) {

@@ -33,7 +33,7 @@ export default function NotificationModal({ notiState }: { notiState: [any, any]
     async function deleteAllNotification() {
         if (notifs.length === 0) return 
         
-        let response = await fetch('http://127.0.0.1:2000/api/notifications/delete', { method: 'delete' })
+        let response = await fetch('http://127.0.0.1:2000/api/notifications', { method: 'delete' })
         if (response.ok) {
             let data = await response.json()
             if (data.ok) {

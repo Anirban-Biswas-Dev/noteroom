@@ -138,11 +138,10 @@ export default function CommentsContainer() {
         async function getComments() {
             try {
                 if (postID) {
-                    let response = await fetch(`http://127.0.0.1:2000/view/${postID}/comments`)
-                    let comments = await response.json()
-                    if (comments && comments.length !== 0) {
-                        console.log(comments)
-                        setComments(prev => [...prev, ...comments])
+                    let response = await fetch(`http://127.0.0.1:2000/api/posts/${postID}/comments`)
+                    let data = await response.json()
+                    if (data && data.ok) {
+                        setComments(prev => [...prev, ...data.comments])
                     } else {
                         setComments([])
                     }
