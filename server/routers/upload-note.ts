@@ -83,7 +83,7 @@ function uploadRouter(io: Server) {
                         log('info', `On /upload StudentID=${req.session['stdid'] || "--studentid--"}: Note upload success notification sent`)
         
                         try {
-                            let owner = await profileInfo(req.session["stdid"]) 
+                            let {profile: owner} = await profileInfo(req.session["stdid"]) 
                             io.emit('note-upload', { 
                                 noteData: {
                                     noteID /* Document ID of the note */: noteDocId,

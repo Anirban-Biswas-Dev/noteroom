@@ -84,7 +84,7 @@ export function quickPostRouter(io: Server) {
                 event: 'notification-note-upload-success'
             })
 
-            let owner = await profileInfo(req.session["stdid"]) //* Getting the user information, basically the owner of the note
+            let {profile: owner} = await profileInfo(req.session["stdid"]) //* Getting the user information, basically the owner of the note
             io.emit('note-upload', { //* Handler 1: Dashboard; for adding the note at feed via websockets
                 noteData: {
                     noteID /* Document ID of the note */: postID,

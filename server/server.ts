@@ -1,6 +1,5 @@
 import express, { static as _static } from 'express'
-import { join, dirname } from 'path'
-import { fileURLToPath } from 'url';
+import { join } from 'path'
 import { config } from 'dotenv';
 import { createServer } from 'http';
 import { Server as SocketIOServer } from 'socket.io';
@@ -15,25 +14,21 @@ import cors from 'cors'
 import pkg from 'connect-mongo';
 const { create } = pkg;
 
-import loginRouter from './routers/login.js'
-import userRouter from './routers/user.js'
-import signupRouter from './routers/sign-up.js'
 import errorHandler from './middlewares/errors.js'
-import uploadRouter from './routers/upload-note.js'
-import noteViewRouter from './routers/note-view/note-view.js'
-import dashboardRouter from './routers/dashboard.js'
-import serachProfileRouter from './routers/search-profile/search-profile.js'
-import settingsRouter from './routers/settings.js'
-import apiRouter  from './services/apis/apis.js';
 
 import Alerts from './schemas/alerts.js'
 
 import noteIOHandler from './services/io/ioNoteService.js';
 import notificationIOHandler from './services/io/ioNotifcationService.js';
 import checkOnboarded from './middlewares/onBoardingChecker.js';
-import resetPasswordRouter from './routers/reset-password.js';
 import blogsRouter from './routers/blogs.js';
 
+import postApiRouter from './services/new_apis/post.js';
+import feedApiRouter from './services/new_apis/feed.js';
+import seacrhApiRouter from './services/new_apis/search.js';
+import profileApiRouter from './services/new_apis/profile.js';
+import notificationApiRouter from './services/new_apis/notifications.js';
+import requestsApiRouter from './services/new_apis/requests.js';
 
 
 // const __filename = fileURLToPath(import.meta.url);
@@ -43,8 +38,8 @@ config({ path: join(__dirname, '.env') });
 const app = express()
 const server = createServer(app);
 const io = new SocketIOServer(server, { cors: { origin: '*' } });
-const url = process.env.MONGO_URI
-// const url = 'mongodb://localhost:27017/information'
+// const url = process.env.MONGO_URI
+const url = 'mongodb://localhost:27017/information'
 connect(url).then(() => {
     console.log(`Connected to database information`);
 })
@@ -77,16 +72,24 @@ app.use(session({
 })) // Middleware for working with sessions
 app.use(cookieParser()) // Middleware for working with cookies
 app.use(fileUpload()) // Middleware for working with files
-app.use('/login', loginRouter(io))
-app.use('/user', userRouter(io))
-app.use('/sign-up', signupRouter(io))
-app.use('/upload', checkOnboarded(false), uploadRouter(io))
-app.use('/view', noteViewRouter(io))
-app.use('/dashboard',checkOnboarded(false), dashboardRouter(io))
-app.use('/search-profile', serachProfileRouter(io))
-app.use('/auth', resetPasswordRouter())
-app.use('/settings', checkOnboarded(false), settingsRouter(io))
-app.use('/api', apiRouter(io))
+// app.use('/login', loginRouter(io))
+// app.use('/sign-up', signupRouter(io))
+// app.use('/upload', checkOnboarded(false), uploadRouter(io))
+// app.use('/view', noteViewRouter(io))
+// app.use('/dashboard',checkOnboarded(false), dashboardRouter(io))
+// app.use('/search-profile', serachProfileRouter(io))
+// app.use('/auth', resetPasswordRouter())
+// app.use('/settings', checkOnboarded(false), settingsRouter(io))
+// app.use('/api', apiRouter(io))
+
+app.use('/api/users', profileApiRouter(io))
+app.use('/api/posts', postApiRouter(io))
+app.use('/api/notifications', notificationApiRouter(io))
+app.use('/api/requests', requestsApiRouter(io))
+
+app.use('/api/feed', feedApiRouter(io))
+app.use('/api/search', seacrhApiRouter(io))
+
 app.use('/blog', blogsRouter())
 app.use(errorHandler) // Middleware for handling errors
 

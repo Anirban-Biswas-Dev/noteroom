@@ -4,6 +4,7 @@ import { Convert } from "../userService";
 import { addSaveNote, deleteNote, deleteSavedNote, getNote, getSingleNote } from "../noteService";
 import { manageProfileNotes } from "../noteService";
 import notesModel from "../../schemas/notes";
+import { addFeedback, addReply } from "../feedbackService";
 
 const router = Router()
 
@@ -32,7 +33,7 @@ export default function noteRouter(io: Server) {
         try {
             let studentID = req.session["stdid"] || "9181e241-575c-4ef3-9d3c-2150eac4566d"
             let studentDocID = (await Convert.getDocumentID_studentid(studentID)).toString()
-            let noteData: any = await getSingleNote(req.params.noteID, studentDocID)
+            let noteData: any = await getSingleNote(req.params.noteID, studentDocID, {images: false})
             if (!noteData.ok) {
                 res.json({ ok: true, noteData })
             } else {
@@ -74,14 +75,54 @@ export default function noteRouter(io: Server) {
             if (action === 'save') {
                 let result = await addSaveNote({ studentDocID, noteDocID })
                 console.log(`saved`)
-                res.json({ ok: result.ok, count: result.count, savedNote: result.savedNote })
+                res.json({ ok: result.ok })
             } else {
                 let result = await deleteSavedNote({ studentDocID, noteDocID })
                 console.log(`deleted`)
-                res.json({ ok: result.ok, count: result.count })
+                res.json({ ok: result.ok })
             }
         } catch (error) {
             res.json({ ok: false, count: undefined })
+        }
+    })
+
+    router.post("/:postID/comments", async (req, res) => {
+        try {
+            const postID = req.params.postID
+            const studentID = req.session["stdid"] || req.body.commenter
+            const commentContent = req.body.commentData
+            const commenterDocID = (await Convert.getDocumentID_studentid(studentID)).toString()
+
+            const commentData = {
+                noteDocID: postID,
+                commenterDocID: commenterDocID,
+                feedbackContents: commentContent
+            }
+            const savedCommentData = await addFeedback(commentData)
+            res.json({ ok: true, comment: savedCommentData})
+        } catch (error) {
+            res.json({ ok: false })
+        }
+    })
+    router.post("/:postID/replies", async (req, res) => {
+        try {
+            const postID = req.params.postID
+            const studentID = req.session["stdid"] || req.body.replier
+            const replyContent = req.body.replyData
+            const parentFeedbackDocID = req.body.parentFeedbackDocID 
+            const replierDocID = (await Convert.getDocumentID_studentid(studentID)).toString()
+
+            const replyData = {
+                noteDocID: postID,
+                feedbackContents: replyContent,
+                commenterDocID: replierDocID,
+                parentFeedbackDocID: parentFeedbackDocID
+            }
+            const savedReplyData = await addReply(replyData)
+            res.json({ ok: true, reply: savedReplyData })
+
+        } catch (error) {
+            res.json({ ok: true })
         }
     })
 

@@ -71,7 +71,7 @@ export function postNoteFeedbackRouter(io: Server) {
                     feedbackContents: await replaceFeedbackText(_feedbackContents)
                 }
                 let feedback = await addFeedback(feedbackData)
-                io.to(feedbackData.noteDocID).emit('add-feedback', feedback.toObject())
+                io.to(feedbackData.noteDocID).emit('add-feedback', feedback.feedback.toObject())
                 
                 if (_ownerStudentID !== _commenterStudentID) {
                     let postTitle = (feedback['noteDocID']['title']?.slice(0, 20) || feedback['noteDocID']['description']?.slice(0, 20)) + '...'
@@ -106,7 +106,7 @@ export function postNoteFeedbackRouter(io: Server) {
                     commenterDocID: commenterDocID,
                     parentFeedbackDocID: req.body["parentFeedbackDocID"],
                 } 
-                let _reply = await addReply(replyData)
+                let {reply: _reply} = await addReply(replyData)
                 let parentFeedbackCommenterInfo = _reply["parentFeedbackDocID"]["commenterDocID"]
     
                 
@@ -153,6 +153,7 @@ export function postNoteFeedbackRouter(io: Server) {
             }
         }
     })
+
 
     return router
 }

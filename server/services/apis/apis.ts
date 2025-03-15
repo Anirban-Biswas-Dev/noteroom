@@ -5,7 +5,7 @@ import Notes from "../../schemas/notes.js";
 import Students from "../../schemas/students.js";
 import archiver from "archiver";
 import { getNotifications } from "../../helpers/rootInfo.js";
-import { getAllNotes } from "../noteService.js";
+import { getPosts } from "../noteService.js";
 import { Convert, deleteAccount, deleteSessionsByStudentID } from "../userService.js";
 import { checkLoggedIn } from "../../middlewares/checkLoggedIn.js";
 import noteRouter from "./note.js";
@@ -86,7 +86,7 @@ export default function apiRouter(io: Server) {
                 studentDocID = _studentDocID.toString()
                 log('info', `On /getnote StudentID=${req.session["stdid"] || "--studentid--"}: Converted studentID->documentID`)
 
-                let notes = await getAllNotes(studentDocID, { skip: skip, limit: count, seed: seed, after: after })
+                let notes = await getPosts(studentDocID, { skip: skip, limit: count, seed: seed, after: after })
                 log('info', `On /getnote StudentID=${req.session["stdid"] || "--studentid--"}: Got notes with skip=${skip}, limit=${count}, seed=${seed}`)
                 
                 if (notes.length != 0) {
@@ -101,6 +101,7 @@ export default function apiRouter(io: Server) {
                 res.json([])
             }
         } catch (error) {
+            console.log(error)
             log('error', `On /getnote StudentID=${req.session["stdid"] || "--studentid--"}: ${error.message}`)
             res.json([])
         }

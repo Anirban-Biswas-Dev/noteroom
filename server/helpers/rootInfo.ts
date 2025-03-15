@@ -32,17 +32,20 @@ export async function getNotifications(studentID: rootStudentID) {
                 }
             })
         )
-        return populatedNotifications
+        return { ok: true, notifications: populatedNotifications }
     } catch (error) {
-        log('error', `On getNotifications StudentID=${studentID || "--studentid--"}: Couldn't get the notifications.`)
-        return []
+        return { ok: false }
     }
 }
 
 
 export async function profileInfo(studentID: rootStudentID) {
-    let profile = await Students.findOne({ studentID: studentID })
-    return profile
+    try {
+        let profile = await Students.findOne({ studentID: studentID })
+        return { ok: true, profile: profile }
+    } catch (error) {
+        return { ok: false }
+    }
 }
 
 export async function unreadNotiCount(studentID: rootStudentID) {
